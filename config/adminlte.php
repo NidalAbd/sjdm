@@ -176,9 +176,9 @@ return [
             'can'  => 'view_orders',
         ],
         [
-            'text' => 'Balance',
+            'text' => 'transactions',
             'url'  => 'transactions', // Just the relative URL
-            'icon' => 'fas fa-wallet',
+            'icon' => 'fas fa-comments-dollar',
             'topnav_center' => true,
             'can'  => 'add_balance',
         ],
