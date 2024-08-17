@@ -109,18 +109,13 @@ return [
 
     'menu' => [
         // Left-aligned items (close to the username)
-
-        [
-            'type' => 'navbar-search',
-            'text' => 'Search',
-            'topnav_right' => true, // Left alignment
-        ],
         [
             'text'         => '',
             'url'          => '#',
             'icon'         => 'fas fa-moon',
             'topnav_right' => true, // Left alignment
             'id'           => 'dark-mode-toggle',
+            'icon_color'   => 'secondary', // Set predefined color
         ],
         [
             'type'          => 'navbar-notification',
@@ -130,6 +125,7 @@ return [
             'label_color'   => 'danger',
             'topnav_right'  => true, // Left alignment
             'url'           => 'notifications',
+            'icon_color'    => 'danger', // Set predefined color
         ],
 
         // Admin category remains with submenu items
@@ -138,24 +134,28 @@ return [
             'icon'    => 'fas fa-fw fa-user-shield',
             'topnav_center' => true,
             'can' => 'view_dashboard',
+            'icon_color'   => 'primary', // Set predefined color
             'submenu' => [
                 [
                     'text' => 'Users',
                     'url'  => 'users',
                     'icon' => 'fas fa-fw fa-user',
                     'can'  => 'view_any_user',
+                    'icon_color'   => 'success', // Set predefined color
                 ],
                 [
                     'text' => 'Roles',
                     'url'  => 'roles',
                     'icon' => 'fas fa-fw fa-user-shield',
                     'can'  => 'view_any_role',
+                    'icon_color'   => 'info', // Set predefined color
                 ],
                 [
                     'text' => 'Permissions',
                     'url'  => 'permissions',
                     'icon' => 'fas fa-fw fa-lock',
                     'can'  => 'view_any_permission',
+                    'icon_color'   => 'warning', // Set predefined color
                 ],
             ],
         ],
@@ -167,6 +167,7 @@ return [
             'icon' => 'fas fa-cart-plus',
             'topnav_center' => true,
             'can'  => 'create_order',
+            'icon_color'   => 'primary', // Set predefined color
         ],
         [
             'text' => 'Orders',
@@ -174,21 +175,23 @@ return [
             'icon' => 'fas fa-shopping-cart',
             'topnav_center' => true,
             'can'  => 'view_orders',
+            'icon_color'   => 'success', // Set predefined color
         ],
-        [
-            'text' => 'transactions',
-            'url'  => 'transactions', // Just the relative URL
-            'icon' => 'fas fa-comments-dollar',
-            'topnav_center' => true,
-            'can'  => 'add_balance',
-        ],
-
         [
             'text' => 'Add Balance',
             'url'  => 'transactions/create', // Just the relative URL
             'icon' => 'fab fa-stripe',
             'topnav_center' => true,
             'can'  => 'add_balance',
+            'icon_color'   => 'purple', // Set predefined color
+        ],
+        [
+            'text' => 'Transactions',
+            'url'  => 'transactions', // Just the relative URL
+            'icon' => 'fas fa-comments-dollar',
+            'topnav_center' => true,
+            'can'  => 'add_balance',
+            'icon_color'   => 'warning', // Set predefined color
         ],
         [
             'text' => 'Support',
@@ -196,6 +199,7 @@ return [
             'icon' => 'fas fa-headset',
             'topnav_center' => true,
             'can'  => 'view_support',
+            'icon_color'   => 'danger', // Set predefined color
         ],
         [
             'text' => 'Service',
@@ -203,8 +207,20 @@ return [
             'icon' => 'fas fa-tools',
             'topnav_center' => true,
             'can'  => 'view_services',
+            'icon_color'   => 'info', // Set predefined color
+        ],
+        [
+            'text' => 'Logout',
+            'url'  => 'logout',
+            'icon' => 'fas fa-sign-out-alt',
+            'icon_color' => 'danger', // Set predefined color
+            'topnav_center' => true,
+            'attributes' => [
+                'onclick' => "event.preventDefault(); document.getElementById('logout-form').submit();"
+            ],
         ],
     ],
+
 
 
     'filters' => [
