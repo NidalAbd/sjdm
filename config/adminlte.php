@@ -125,7 +125,6 @@ return [
             'label_color'   => 'danger',
             'topnav_right'  => true, // Left alignment
             'url'           => 'notifications',
-            'icon_color'    => 'danger', // Set predefined color
         ],
 
         // Admin category remains with submenu items
