@@ -163,29 +163,29 @@ return [
         // Flattened main items
         [
             'text' => 'Add Order',
-            'url'  => 'orders/create',
-            'icon' => '	fas fa-cart-plus',
+            'url'  => 'orders/create', // Just the relative URL
+            'icon' => 'fas fa-cart-plus',
             'topnav_center' => true,
             'can'  => 'create_order',
         ],
         [
             'text' => 'Orders',
-            'url'  => 'orders',
+            'url'  => 'orders', // Just the relative URL
             'icon' => 'fas fa-shopping-cart',
             'topnav_center' => true,
             'can'  => 'view_orders',
         ],
-
         [
             'text' => 'Balance',
-            'url'  => 'balance/transactions',
+            'url'  => 'transactions', // Just the relative URL
             'icon' => 'fas fa-wallet',
             'topnav_center' => true,
             'can'  => 'add_balance',
         ],
+
         [
             'text' => 'Add Balance',
-            'url'  => 'balance/add',
+            'url'  => 'transactions/create', // Just the relative URL
             'icon' => 'fab fa-stripe',
             'topnav_center' => true,
             'can'  => 'add_balance',

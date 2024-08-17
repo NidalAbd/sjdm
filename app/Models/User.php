@@ -85,26 +85,33 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all transactions for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    /**
      * Get the URL to the user's profile image.
      *
      * @return string
      */
-// app/Models/User.php
-
     public function adminlte_image()
     {
         $profileMedia = $this->media()->where('file_type', 'like', 'image%')->first();
 
         return $profileMedia
-            ? asset( $profileMedia->path)
+            ? asset($profileMedia->path)
             : 'https://example.com/default-profile.png'; // Default profile image if none is found
     }
-
 
     /**
      * Get all of the media for the user.
      *
-     * @return MorphMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function media(): MorphMany
     {
@@ -112,7 +119,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Add balance to the user's account.
+     * Add balance to the user's account and log the transaction.
      *
      * @param float $amount
      * @param string|null $currency
@@ -127,5 +134,13 @@ class User extends Authenticatable
         }
 
         $this->save();
+
+        // Log the transaction
+        $this->transactions()->create([
+            'type' => 'credit',
+            'amount' => $amount,
+            'currency' => $currency ?? $this->currency,
+            'status' => 'completed',
+        ]);
     }
 }
