@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
-}
+
+    protected $fillable = [
+        'service_id', 'link', 'quantity', 'runs', 'interval',
+    ];
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id', 'service_id');
+    }}

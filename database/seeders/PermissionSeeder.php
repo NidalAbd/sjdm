@@ -73,6 +73,7 @@ class PermissionSeeder extends Seeder
 
             // Service Permissions
             'view_services',
+            'fetch_services',
         ];
 
 

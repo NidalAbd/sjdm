@@ -38,9 +38,26 @@ Route::middleware(['auth'])->group(function () {
         // Permission Routes
         Route::resource('permissions', PermissionController::class);
 
-        Route::resource('orders', OrderController::class);
-        Route::resource('services', ServiceController::class);
-        Route::resource('transactions', TransactionController::class);
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    Route::get('/orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
+
+    Route::get('services', [ServiceController::class, 'index'])->name('services.index');
+    Route::get('services/create', [ServiceController::class, 'create'])->name('services.create');
+    Route::post('services', [ServiceController::class, 'store'])->name('services.store');
+    Route::get('services/fetch', [ServiceController::class, 'fetchFromApi'])->name('services.fetch');
+    Route::get('services/{service}', [ServiceController::class, 'show'])->name('services.show');
+    Route::get('services/{service}/edit', [ServiceController::class, 'edit'])->name('services.edit');
+    Route::put('services/{service}', [ServiceController::class, 'update'])->name('services.update');
+    Route::delete('services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+    Route::get('/services/filter', [ServiceController::class, 'filter'])->name('services.filter');
+    Route::get('/services/getCategories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
+    Route::get('/services/categories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
+
+    Route::resource('transactions', TransactionController::class);
 
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');

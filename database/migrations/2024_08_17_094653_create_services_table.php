@@ -14,10 +14,19 @@ return new class extends Migration
     public function up()
     {
         Schema::create('services', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('service_id')->primary();
+            $table->string('name', 500); // Increase the length of the name column
+            $table->string('type');
+            $table->string('category');
+            $table->decimal('rate', 8, 2);
+            $table->integer('min');
+            $table->integer('max');
+            $table->boolean('refill')->default(false);
+            $table->boolean('cancel')->default(false);
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
@@ -29,3 +38,4 @@ return new class extends Migration
         Schema::dropIfExists('services');
     }
 };
+

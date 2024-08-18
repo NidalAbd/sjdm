@@ -37,12 +37,32 @@
     document.addEventListener('DOMContentLoaded', function() {
         const body = document.body;
         const navbar = document.querySelector('.main-header');
-        document.addEventListener('DOMContentLoaded', function () {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
+
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const rtlToggle = document.getElementById('rtl-toggle');
+
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', function() {
+                const isDarkMode = !body.classList.contains('dark-mode');
+                applyDarkMode(isDarkMode);
+                localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
             });
+        }
+
+        if (rtlToggle) {
+            rtlToggle.addEventListener('click', function() {
+                const isRtlMode = body.getAttribute('dir') !== 'rtl';
+                applyRtlMode(isRtlMode);
+                localStorage.setItem('rtlMode', isRtlMode ? 'enabled' : 'disabled');
+            });
+        }
+
+        // Existing tooltip initialization code
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
+
         // Function to apply or remove dark mode classes
         function applyDarkMode(isDarkMode) {
             if (isDarkMode) {
@@ -74,21 +94,6 @@
         // Initialize RTL mode based on localStorage
         const rtlModeEnabled = localStorage.getItem('rtlMode') === 'enabled';
         applyRtlMode(rtlModeEnabled);
-
-        // Event listener for the dark mode toggle
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        darkModeToggle.addEventListener('click', function() {
-            const isDarkMode = !body.classList.contains('dark-mode');
-            applyDarkMode(isDarkMode);
-            localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-        });
-
-        // Event listener for the RTL mode toggle
-        const rtlToggle = document.getElementById('rtl-toggle');
-        rtlToggle.addEventListener('click', function() {
-            const isRtlMode = body.getAttribute('dir') !== 'rtl';
-            applyRtlMode(isRtlMode);
-            localStorage.setItem('rtlMode', isRtlMode ? 'enabled' : 'disabled');
-        });
     });
+
 </script>
