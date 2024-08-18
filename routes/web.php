@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::get('/orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
+    Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
 
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('services/create', [ServiceController::class, 'create'])->name('services.create');

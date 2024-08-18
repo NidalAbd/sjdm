@@ -57,30 +57,40 @@ class OrderController extends Controller
 
         $query = Service::query();
 
+        // Apply platform filter
         if ($request->filled('platform') && $request->platform !== 'all') {
             $query->where('category', 'like', '%' . $request->platform . '%');
         }
 
+        // Apply category filter
         if ($request->filled('category') && $request->category !== 'all') {
             $query->where('category', $request->category);
+        }
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
 
         $services = $query->get();
         $uniqueCategories = $query->distinct()->pluck('category');
 
-        $selectedService = null;
+        if ($request->ajax()) {
+            return response()->json([
+                'categories' => view('partials.category_options', compact('uniqueCategories'))->render(),
+                'services' => view('partials.service_options', compact('services'))->render(),
+            ]);
+        }
+
+        $selectedService = $services->first();
         $charge = null;
 
-        if ($request->filled('service_id')) {
-            $selectedService = Service::find($request->service_id);
-            if ($selectedService && $request->filled('quantity')) {
-                $charge = ($request->quantity * $selectedService->rate) / 1000;
-            }
+        if ($selectedService && $request->filled('quantity')) {
+            $charge = ($request->quantity * $selectedService->rate) / 1000;
         }
 
         return view('orders.create', compact('platforms', 'uniqueCategories', 'services', 'selectedService', 'charge'));
     }
-
 
     public function store(Request $request)
     {
@@ -126,4 +136,28 @@ class OrderController extends Controller
         $order->delete();
         return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
     }
-}
+
+    public function search(Request $request)
+    {
+        $query = $request->input('search');
+
+        // Search for services by ID or name
+        $services = Service::where('id', 'like', '%' . $query . '%')
+            ->orWhere('name', 'like', '%' . $query . '%')
+            ->get();
+
+        // Return the services with necessary data in JSON format
+        return response()->json([
+            'services' => $services->map(function($service) {
+                return [
+                    'id' => $service->id,
+                    'name' => $service->name,
+                    'rate' => $service->rate,
+                    'min' => $service->min,
+                    'max' => $service->max,
+                    'average_time' => $service->average_time,
+                    'category' => $service->category,
+                ];
+            }),
+        ]);
+    }}
