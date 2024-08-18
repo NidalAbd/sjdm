@@ -101,22 +101,25 @@ class ServiceController extends Controller
         $storedServices = 0;
 
         foreach ($servicesFromApi as $service) {
-            $storedService = Service::updateOrCreate(
-                ['service_id' => $service->service], // Use 'service_id' from the API
-                [
-                    'name' => $service->name,
-                    'type' => $service->type,
-                    'category' => $service->category,
-                    'rate' => $service->rate,
-                    'min' => $service->min,
-                    'max' => $service->max,
-                    'refill' => $service->refill,
-                    'cancel' => $service->cancel,
-                ]
-            );
+            // Only process services where type is 'Default'
+            if ($service->type === 'Default') {
+                $storedService = Service::updateOrCreate(
+                    ['service_id' => $service->service], // Use 'service_id' from the API
+                    [
+                        'name' => $service->name,
+                        'type' => $service->type,
+                        'category' => $service->category,
+                        'rate' => $service->rate,
+                        'min' => $service->min,
+                        'max' => $service->max,
+                        'refill' => $service->refill,
+                        'cancel' => $service->cancel,
+                    ]
+                );
 
-            if ($storedService->wasRecentlyCreated || $storedService->wasChanged()) {
-                $storedServices++;
+                if ($storedService->wasRecentlyCreated || $storedService->wasChanged()) {
+                    $storedServices++;
+                }
             }
         }
 
@@ -125,6 +128,7 @@ class ServiceController extends Controller
         return redirect()->route('services.index')
             ->with('success', "Services have been updated from the API. $storedServices out of $totalServices services were stored. ($percentageStored%)");
     }
+
 
     public function show(Service $service)
     {

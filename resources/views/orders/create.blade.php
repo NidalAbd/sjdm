@@ -83,6 +83,71 @@
                                 <input type="number" name="quantity" id="quantity" class="form-control" placeholder="Enter quantity" value="{{ request()->get('quantity') }}">
                             </div>
 
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="comments">Comments (1 per line)</label>
+                                <textarea id="comments" name="comments" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="new_posts">New Posts</label>
+                                <input type="text" id="new_posts" name="new_posts" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="old_posts">Old Posts</label>
+                                <input type="text" id="old_posts" name="old_posts" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="min">Min</label>
+                                <input type="number" id="min" name="min" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="max">Max</label>
+                                <input type="number" id="max" name="max" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="delay">Delay</label>
+                                <input type="text" id="delay" name="delay" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="no_delay">No Delay</label>
+                                <input type="text" id="no_delay" name="no_delay" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="expiry">Expiry</label>
+                                <input type="text" id="expiry" name="expiry" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="usernames">Usernames (1 per line)</label>
+                                <textarea id="usernames" name="usernames" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="hashtags">Hashtags (1 per line)</label>
+                                <textarea id="hashtags" name="hashtags" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="media_url">Media URL</label>
+                                <input type="url" id="media_url" name="media_url" class="form-control">
+                            </div>
+
+                            <div class="form-group custom-field" style="display: none;">
+                                <label for="hashtag">Hashtag</label>
+                                <input type="text" id="hashtag" name="hashtag" class="form-control">
+                            </div>
+
                             <div class="form-group">
                                 <label for="charge">Charge</label>
                                 <input type="text" id="charge" class="form-control" value="{{ $charge }}" readonly>
@@ -156,6 +221,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        // Platform selection logic
+        function selectPlatform(platform) {
+            $('#platformSelect').val(platform);
+            $('#orderForm').submit();
+        }
         $(document).ready(function() {
             // Fetch services and categories when a platform is selected
             $('.btn-outline-primary').click(function() {
@@ -172,10 +242,7 @@
                         $('#serviceSelect').html(response.services);
 
                         // Reset other fields
-                        $('#description').val('');
-                        $('#charge').val('');
-                        $('#quantity').val('');
-                        $('#average_time').val('');
+                        resetFormFields();
                     },
                     error: function(xhr) {
                         console.log(xhr.responseText);
@@ -183,7 +250,7 @@
                 });
             });
 
-            // Update service details when a service is selected
+            // Update form fields based on the selected service type
             $('#serviceSelect').change(function() {
                 var selectedService = $('#serviceSelect option:selected');
                 var serviceName = selectedService.text();
@@ -191,6 +258,30 @@
                 var min = selectedService.data('min');
                 var max = selectedService.data('max');
                 var speed = selectedService.data('speed');
+
+                // Reset all fields first
+                resetFormFields();
+
+                // Show fields based on service type
+                if (serviceName.includes('Custom Comments')) {
+                    showCustomCommentsFields();
+                } else if (serviceName.includes('Subscriptions')) {
+                    showSubscriptionsFields();
+                } else if (serviceName.includes('Package')) {
+                    showPackageFields();
+                } else if (serviceName.includes('Mentions with Hashtags')) {
+                    showMentionsWithHashtagsFields();
+                } else if (serviceName.includes('Mentions User Followers')) {
+                    showMentionsUserFollowersFields();
+                } else if (serviceName.includes('Mentions Media Likers')) {
+                    showMentionsMediaLikersFields();
+                } else if (serviceName.includes('Mentions Hashtag')) {
+                    showMentionsHashtagFields();
+                } else if (serviceName.includes('Mentions Custom List')) {
+                    showMentionsCustomListFields();
+                } else {
+                    showDefaultFields();
+                }
 
                 // Update the description, charge, and quantity fields based on selected service
                 $('#description').val(serviceName);
@@ -219,13 +310,84 @@
                     $('#charge').val('');
                 }
             }
+
+            // Functions to reset and show specific fields
+            function resetFormFields() {
+                $('#link').closest('.form-group').show();
+                $('#quantity').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+                $('#average_time').closest('.form-group').show();
+                // Hide all custom fields by default
+                $('.custom-field').hide();
+            }
+
+            function showCustomCommentsFields() {
+                $('#comments').closest('.form-group').show();
+            }
+
+            function showSubscriptionsFields() {
+                $('#username').closest('.form-group').show();
+                $('#new_posts').closest('.form-group').show();
+                $('#old_posts').closest('.form-group').show();
+                $('#min').closest('.form-group').show();
+                $('#max').closest('.form-group').show();
+                $('#delay').closest('.form-group').show();
+                $('#no_delay').closest('.form-group').show();
+                $('#expiry').closest('.form-group').show();
+                $('#average_time').closest('.form-group').show();
+            }
+
+            function showPackageFields() {
+                $('#link').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+            }
+
+            function showMentionsWithHashtagsFields() {
+                $('#link').closest('.form-group').show();
+                $('#quantity').closest('.form-group').show();
+                $('#usernames').closest('.form-group').show();
+                $('#hashtags').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+            }
+
+            function showMentionsUserFollowersFields() {
+                $('#link').closest('.form-group').show();
+                $('#quantity').closest('.form-group').show();
+                $('#username').closest('.form-group').show();
+                $('#average_time').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+            }
+
+            function showMentionsMediaLikersFields() {
+                $('#link').closest('.form-group').show();
+                $('#quantity').closest('.form-group').show();
+                $('#media_url').closest('.form-group').show();
+                $('#average_time').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+            }
+
+            function showMentionsHashtagFields() {
+                $('#link').closest('.form-group').show();
+                $('#quantity').closest('.form-group').show();
+                $('#hashtag').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+            }
+
+            function showMentionsCustomListFields() {
+                $('#link').closest('.form-group').show();
+                $('#quantity').closest('.form-group').show();
+                $('#min').closest('.form-group').show();
+                $('#max').closest('.form-group').show();
+                $('#usernames').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+            }
+
+            function showDefaultFields() {
+                $('#link').closest('.form-group').show();
+                $('#quantity').closest('.form-group').show();
+                $('#average_time').closest('.form-group').show();
+                $('#charge').closest('.form-group').show();
+            }
         });
-
-
-        // Platform selection logic
-        function selectPlatform(platform) {
-            $('#platformSelect').val(platform);
-            $('#orderForm').submit();
-        }
     </script>
 @stop
