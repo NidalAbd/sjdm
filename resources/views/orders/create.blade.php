@@ -6,6 +6,7 @@
     @include('partials.breadcrumbs')
     <h1>Create Order</h1>
 @stop
+
 @php
     $platformIconMap = [
         'all' => 'fas fa-globe',
@@ -31,13 +32,13 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <form id="orderForm" action="{{ route('orders.create') }}" method="GET">
+                    <form id="orderForm" action="{{ route('orders.store') }}" method="POST">
                         @csrf
                         <!-- 4x4 Grid of Platforms -->
                         <div class="row text-center">
                             @foreach($platforms as $platform)
                                 <div class="col-md-3 mb-3">
-                                    <button type="button" class="btn btn-block btn-primary" onclick="selectPlatform('{{ $platform }}')">
+                                    <button type="button" class="btn btn-block btn-primary platform-btn" data-platform="{{ $platform }}">
                                         <i class="{{ $platformIconMap[$platform] }} mr-2"></i> {{ ucfirst($platform) }}
                                     </button>
                                 </div>
@@ -58,12 +59,16 @@
                         <!-- Hidden Field to Store Selected Platform -->
                         <input type="hidden" name="platform" id="platformSelect" value="{{ request()->get('platform', 'all') }}">
 
+                        <!-- Hidden Field to Store Selected Service ID -->
+                        <input type="hidden" name="service_id" id="serviceIdSelect" value="">
+
                         <!-- Category and Service Selection -->
                         <div class="row mt-4">
                             <div class="col-md-6">
                                 <div class="input-group input-group-sm">
                                     <select name="category" class="form-control" id="categorySelect">
                                         @foreach($uniqueCategories as $category)
+
                                             <option value="{{ $category }}" {{ $loop->first || request()->get('category') == $category ? 'selected' : '' }}>
                                                 {{ ucfirst($category) }}
                                             </option>
@@ -74,9 +79,14 @@
 
                             <div class="col-md-6">
                                 <div class="input-group input-group-sm">
-                                    <select name="service_id" class="form-control" id="serviceSelect">
+                                    <select class="form-control" id="serviceSelect">
                                         @foreach($services as $service)
-                                            <option value="{{ $service->id }}" data-rate="{{ $service->rate }}" data-min="{{ $service->min }}" data-max="{{ $service->max }}" data-speed="{{ $service->average_time }}" {{ $loop->first || request()->get('service_id') == $service->id ? 'selected' : '' }}>
+                                            <option value="{{ $service->service_id }}"
+                                                    data-rate="{{ $service->rate }}"
+                                                    data-min="{{ $service->min }}"
+                                                    data-max="{{ $service->max }}"
+                                                    data-speed="{{ $service->average_time }}"
+                                                {{ $loop->first || request()->get('service_id') == $service->service_id ? 'selected' : '' }}>
                                                 {{ $service->name }}
                                             </option>
                                         @endforeach
@@ -171,7 +181,6 @@
 @stop
 
 @section('scripts')
-    <!-- Load jQuery from a CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
@@ -183,19 +192,20 @@
                 var min = serviceElement.data('min');
                 var max = serviceElement.data('max');
                 var averageTime = serviceElement.data('speed');
+                var serviceId = serviceElement.val(); // Get the service ID
 
-                // Check if rate is a valid number before applying toFixed
-                var rateDisplay = isNaN(rate) ? "N/A" : rate.toFixed(2);
+                console.log('populateForm - Selected Service ID:', serviceId); // Debugging: Log the selected service ID
+                $('#serviceIdSelect').val(serviceId); // Set the hidden field with the selected service ID
 
                 // Construct the description
                 var description = "NOTES :\n";
                 description += "- Link = please put your VIDEO Link\n";
-                description += "- PLEASE do NOT put more than 1 order for the same link at the same time to avoid the overlap and we CAN'T CANCEL the order in this case.\n\n";
+                description += "- PLEASE do NOT put more than 1 order for the same link at the same time to avoid overlap and we CAN'T CANCEL the order in this case.\n\n";
                 description += serviceName;
 
-                // Update the description, charge, quantity, and average time fields
+                // Update the form fields
                 $('#description').val(description);
-                $('#charge').val(rateDisplay + ' per 1k');
+                $('#charge').val(rate.toFixed(2) + ' per 1k');
                 $('#quantity').attr('min', min);
                 $('#quantity').attr('max', max);
                 $('#quantity').attr('placeholder', 'Enter quantity (' + min + ' - ' + max + ')');
@@ -297,38 +307,14 @@
                 }
             });
 
-            // Initial form population
-            var firstService = $('#serviceSelect option:selected');
-            if (firstService.length > 0) {
-                populateForm(firstService);
+            // Initial category and service selection on page load
+            var firstCategory = $('#categorySelect option:first').val();
+            if (firstCategory) {
+                loadServices(firstCategory);
             }
 
-            // Platform selection logic
-            $('.btn-primary').click(function() {
-                var platform = $(this).text().trim().toLowerCase();
-                selectPlatform(platform);
-            });
-
-            // Define selectPlatform function
-            function selectPlatform(platform) {
-                $('#platformSelect').val(platform);
-
-                $.ajax({
-                    url: "{{ route('orders.create') }}",
-                    method: 'GET',
-                    data: { platform: platform },
-                    success: function(response) {
-                        handleAjaxResponse(response);
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText);
-                    }
-                });
-            }
-
-            // Fetch services when a category is selected
-            $('#categorySelect').change(function() {
-                var category = $(this).val();
+            // Function to load services based on selected category
+            function loadServices(category) {
                 var platform = $('#platformSelect').val();
 
                 $.ajax({
@@ -342,12 +328,41 @@
                         console.log(xhr.responseText);
                     }
                 });
+            }
+
+            // Platform selection logic
+            $('.btn-primary').click(function() {
+                var platform = $(this).data('platform');
+                $('#platformSelect').val(platform);
+
+                $.ajax({
+                    url: "{{ route('orders.create') }}",
+                    method: 'GET',
+                    data: { platform: platform },
+                    success: function(response) {
+                        handleAjaxResponse(response);
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+
+            // Fetch services when a category is selected
+            $('#categorySelect').change(function() {
+                var category = $(this).val();
+                loadServices(category);
             });
 
             // Update service details when a service is selected
             $('#serviceSelect').change(function() {
-                var selectedService = $('#serviceSelect option:selected');
-                populateForm(selectedService);
+                var selectedOption = $(this).find('option:selected');
+
+                console.log('Service Select Change - Selected Service ID:', selectedOption.val());
+                console.log('Service Select Change - Selected Service Name:', selectedOption.text().trim());
+
+                // Populate the form with the selected service details
+                populateForm(selectedOption);
             });
 
             // Calculate charge whenever quantity changes
@@ -365,6 +380,22 @@
                     $('#charge').val('');
                 }
             }
+
+            // Ensure a service is selected before form submission
+            $('#orderForm').on('submit', function(e) {
+                var selectedServiceId = $('#serviceIdSelect').val();
+                console.log('Form Submit - Selected Service ID:', selectedServiceId);
+
+                if (!selectedServiceId || selectedServiceId === "") {
+                    alert('Please select a service before submitting the form.');
+                    e.preventDefault();
+                }
+            });
+
+            // Prevent "Select Category" from being added when categories are loaded
+            $('#categorySelect').on('change', function() {
+                $(this).find('option[value=""]').remove();
+            });
         });
     </script>
 @stop

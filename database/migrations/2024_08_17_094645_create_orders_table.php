@@ -10,15 +10,18 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id'); // Add this line
             $table->unsignedBigInteger('service_id');
             $table->string('link');
             $table->integer('quantity');
             $table->integer('runs')->nullable();
             $table->decimal('charge', 10, 2)->nullable(); // Store the charge amount
             $table->string('status')->nullable(); // Store the status of the order
+            $table->unsignedBigInteger('api_order_id')->nullable();
             $table->integer('interval')->nullable();
             $table->timestamps();
 
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('service_id')->references('service_id')->on('services')->onDelete('cascade');
         });
     }

@@ -16,6 +16,7 @@
 @stop
 
 @yield('scripts')
+
 <style>
 
     /* Button group */

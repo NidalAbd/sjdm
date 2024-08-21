@@ -13,6 +13,11 @@ class Order extends Model
         'service_id', 'link', 'quantity', 'runs', 'interval',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function service()
     {
         return $this->belongsTo(Service::class, 'service_id', 'service_id');

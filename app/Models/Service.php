@@ -12,6 +12,9 @@ class Service extends Model
     use HasFactory;
 
     protected $primaryKey = 'service_id'; // Primary key is 'service_id' instead of 'id'
+    public $incrementing = false; // Assuming the ID is not auto-incrementing
+    protected $keyType = 'unsignedBigInteger'; // Adjust based on your needs
+
 
     protected $fillable = [
         'service_id', 'name', 'type', 'category', 'rate', 'min', 'max', 'refill', 'cancel',

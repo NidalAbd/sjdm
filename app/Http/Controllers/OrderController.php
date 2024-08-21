@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Service;
+use App\Models\Transaction;
 use App\Services\Api;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -49,25 +51,24 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
+        // Define available platforms
         $platforms = [
             'all', 'facebook', 'instagram', 'tiktok', 'google', 'twitter',
             'youtube', 'spotify', 'snapchat', 'linkedin', 'telegram',
             'discord', 'reviews', 'twitch', 'traffic'
         ];
 
+        // Query services based on the selected platform and category
         $query = Service::query();
 
-        // Apply platform filter
         if ($request->filled('platform') && $request->platform !== 'all') {
             $query->where('category', 'like', '%' . $request->platform . '%');
         }
 
-        // Apply category filter
-        if ($request->filled('category') && $request->category !== 'all') {
+        if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
-        // Apply search filter
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
@@ -75,6 +76,7 @@ class OrderController extends Controller
         $services = $query->get();
         $uniqueCategories = $query->distinct()->pluck('category');
 
+        // If it's an AJAX request, return the categories and services as JSON
         if ($request->ajax()) {
             return response()->json([
                 'categories' => view('partials.category_options', compact('uniqueCategories'))->render(),
@@ -82,6 +84,7 @@ class OrderController extends Controller
             ]);
         }
 
+        // If not an AJAX request, return the regular view
         $selectedService = $services->first();
         $charge = null;
 
@@ -92,39 +95,83 @@ class OrderController extends Controller
         return view('orders.create', compact('platforms', 'uniqueCategories', 'services', 'selectedService', 'charge'));
     }
 
+
     public function store(Request $request)
     {
+        Log::info('Incoming request data:', $request->all());
+
+        // Validate the incoming request data
         $validated = $request->validate([
-            'service_id' => 'required|exists:services,id',
+            'service_id' => 'required|exists:services,service_id',
             'link' => 'required|url',
             'quantity' => 'required|integer|min:1',
         ]);
 
+        // Retrieve the service details
         $service = Service::find($validated['service_id']);
+
+        // Calculate the charge based on the rate and quantity
         $charge = ($validated['quantity'] * $service->rate) / 1000;
 
+        // Check if the user has enough balance
+        $user = auth()->user(); // Assuming the user is logged in
+        if ($user->balance < $charge) {
+            return redirect()->back()->with('error', 'Insufficient balance to place the order.');
+        }
+
+        // Deduct the charge from the user's balance
+        $user->balance -= $charge;
+        $user->save();
+
+        // Record the transaction
+        $transaction = new Transaction();
+        $transaction->user_id = $user->id;
+        $transaction->type = 'debit';
+        $transaction->amount = $charge;
+        $transaction->currency = 'USD'; // or any other currency you use
+        $transaction->status = 'completed';
+        $transaction->save();
+
+        // Prepare the data for the API request
         $data = [
             'service' => $validated['service_id'],
             'link' => $validated['link'],
             'quantity' => $validated['quantity'],
         ];
 
+        // Send the order to the API and handle the response
         $apiResponse = $this->api->order($data);
 
+        // Debugging: Log API response
+        Log::info('API Response:', (array) $apiResponse);
+
+        // Check if the API response contains the order ID
         if (isset($apiResponse->order)) {
+            // Debugging: Log before saving
+            Log::info('Saving order to database:', $data);
+
+            // Create a new order in the database
             $order = new Order();
+            $order->user_id = $user->id; // Link the order to the user
             $order->service_id = $validated['service_id'];
             $order->link = $validated['link'];
             $order->quantity = $validated['quantity'];
             $order->charge = $charge;
-            $order->status = 'Pending'; // Default status when order is created
+            $order->status = 'Pending'; // Set the default status to Pending
+            $order->api_order_id = $apiResponse->order; // Store the API order ID for reference
             $order->save();
 
+            // Redirect the user to the orders index page with a success message
             return redirect()->route('orders.index')->with('success', 'Order created successfully. Order ID: ' . $apiResponse->order);
         } else {
+            // Debugging: Log failure
+            Log::error('Failed to create order. API Response:', (array) $apiResponse);
+
+            // Redirect back with an error message if the API request failed
             return redirect()->back()->with('error', 'Failed to create order. Please try again.');
         }
     }
+
 
     public function show(Order $order)
     {
