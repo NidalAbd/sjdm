@@ -16,7 +16,8 @@ class UserPolicy
 
     public function add_balance(User $authUser, User $user)
     {
-        return $authUser->hasRole('admin'); // Only admins can add balance
+        // Only allow admin users to add balance
+        return $authUser->hasRole('admin');
     }
 
     public function view(User $user, User $model)

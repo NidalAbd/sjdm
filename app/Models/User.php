@@ -125,22 +125,5 @@ class User extends Authenticatable
      * @param string|null $currency
      * @return void
      */
-    public function addBalance(float $amount, string $currency = null): void
-    {
-        $this->balance += $amount;
 
-        if ($currency) {
-            $this->currency = $currency;
-        }
-
-        $this->save();
-
-        // Log the transaction
-        $this->transactions()->create([
-            'type' => 'credit',
-            'amount' => $amount,
-            'currency' => $currency ?? $this->currency,
-            'status' => 'completed',
-        ]);
-    }
 }

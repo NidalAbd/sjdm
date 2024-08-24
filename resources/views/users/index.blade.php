@@ -59,6 +59,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">User</th>
                                 <th scope="col">Status</th>
+                                <th scope="col">Balance</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Roles</th>
                                 <th scope="col" class="text-center">Actions</th>
@@ -73,6 +74,7 @@
                                         <td><span
                                                 class="badge bg-{{ $user->status == 'active' ? 'success' : 'secondary' }}">{{ ucfirst($user->status) }}</span>
                                         </td>
+                                        <td>{{ $user->balance }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>
                                             @foreach($user->roles as $role)
@@ -97,6 +99,11 @@
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 @endcan
+
+                                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addBalanceModal{{ $user->id }}" title="Add Balance">
+                                                        <i class="fas fa-dollar-sign"></i>
+                                                    </button>
+
                                                 @can('assign_role')
                                                     <a href="{{ route('users.assignRole', $user->id) }}"
                                                        class="btn btn-warning btn-sm"
@@ -127,10 +134,37 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <!-- Add Balance Modal -->
+                                    <!-- Add Balance Modal -->
+                                    <div class="modal fade" id="addBalanceModal{{ $user->id }}" tabindex="-1" aria-labelledby="addBalanceModalLabel{{ $user->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form action="{{ route('users.processAddBalance', $user->id) }}" method="POST">
+                                                    @csrf
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="addBalanceModalLabel{{ $user->id }}">Add Balance to {{ $user->name }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="amount">Amount</label>
+                                                            <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+                                                        </div>
+                                                        <!-- Add the hidden user_id field -->
+                                                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Add Balance</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted">No records found</td>
+                                    <td colspan="7" class="text-center text-muted">No records found</td>
                                 </tr>
                             @endif
                             </tbody>
@@ -139,6 +173,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">User</th>
                                 <th scope="col">Status</th>
+                                <th scope="col">Balance</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Roles</th>
                                 <th scope="col" class="text-center">Actions</th>
@@ -157,6 +192,7 @@
         </div>
     </div>
 @stop
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 @section('js')
     <script> console.log('Manage Users page loaded'); </script>

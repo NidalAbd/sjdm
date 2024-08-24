@@ -1,17 +1,17 @@
 <?php
 
-return [
+return array(
 
     'title' => 'SJDM',
     'title_prefix' => '',
     'title_postfix' => '',
 
     'use_ico_only' => false,
-    'use_full_favicon' => false,
+    'use_full_favicon' => true,
 
-    'google_fonts' => [
+    'google_fonts' => array(
         'allowed' => true,
-    ],
+    ),
 
     'logo' => '<b>SJDM</b>',
     'logo_img' => 'images/MaxPeak.png',
@@ -20,42 +20,42 @@ return [
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'SJDM Logo',
 
-    'auth_logo' => [
+    'auth_logo' => array(
         'enabled' => true,
-        'img' => [
+        'img' => array(
             'path' => 'images/MaxPeak.png',
             'alt' => 'SJDM Logo',
             'class' => 'brand-image img-circle elevation-3',
             'width' => 50,
             'height' => 50,
-        ],
-    ],
+        ),
+    ),
 
-    'preloader' => [
+    'preloader' => array(
         'enabled' => true,
         'mode' => 'fullscreen',
-        'img' => [
+        'img' => array(
             'path' => 'images/MaxPeak.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
             'height' => 60,
-        ],
-    ],
+        ),
+    ),
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary-outline',
     'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
     'layout_topnav' => false,
-    'layout_boxed' => null,
+    'layout_boxed' => null,  // Ensure this is null or false for full width
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
-    'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_fixed_footer' => true,
+    'layout_dark_mode' => true,
 
     'classes_auth_card' => 'card-outline card-primary',
     'classes_auth_header' => '',
@@ -67,14 +67,14 @@ return [
     'classes_body' => '',
     'classes_brand' => '',
     'classes_brand_text' => '',
-    'classes_content_wrapper' => '',
-    'classes_content_header' => '',
-    'classes_content' => 'container',
+    'classes_content_wrapper' => '',  // You can leave this as an empty string
+    'classes_content_header' => '',   // You can leave this as an empty string
+    'classes_content' => 'container-fluid',  // Use 'container-fluid' for full width
     'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
-    'classes_topnav_container' => 'container-fluid',
+    'classes_topnav_container' => 'container-fluid',  // Already set correctly
 
     'sidebar_mini' => 'lg',
     'sidebar_collapse' => false,
@@ -94,6 +94,7 @@ return [
     'right_sidebar_scrollbar_theme' => 'os-theme-light',
     'right_sidebar_scrollbar_auto_hide' => 'l',
 
+
     'use_route_url' => false,
     'dashboard_url' => 'home',
     'logout_url' => 'logout',
@@ -107,17 +108,17 @@ return [
     'laravel_mix_css_path' => 'css/app.css',
     'laravel_mix_js_path' => 'js/app.js',
 
-    'menu' => [
+    'menu' => array(
         // Left-aligned items (close to the username)
-        [
+        array(
             'text'         => '',
             'url'          => '#',
             'icon'         => 'fas fa-moon',
             'topnav_right' => true, // Left alignment
             'id'           => 'dark-mode-toggle',
             'icon_color'   => 'secondary', // Set predefined color
-        ],
-        [
+        ),
+        array(
             'type'          => 'navbar-notification',
             'id'            => 'notifications',
             'icon'          => 'far fa-bell',
@@ -125,215 +126,210 @@ return [
             'label_color'   => 'danger',
             'topnav_right'  => true, // Left alignment
             'url'           => 'notifications',
-        ],
+        ),
 
-        // Admin category remains with submenu items
-        [
-            'text'    => 'Admin',
+        // Admin category with submenu items
+        array(
+            'text'    => 'admin', // Use translation key
             'icon'    => 'fas fa-fw fa-user-shield',
             'topnav_center' => true,
             'can' => 'view_dashboard',
             'icon_color'   => 'primary', // Set predefined color
-            'submenu' => [
-                [
-                    'text' => 'Users',
+            'submenu' => array(
+                array(
+                    'text' => 'users', // Use translation key
                     'url'  => 'users',
                     'icon' => 'fas fa-fw fa-user',
                     'can'  => 'view_any_user',
                     'icon_color'   => 'success', // Set predefined color
-                ],
-                [
-                    'text' => 'Roles',
+                ),
+                array(
+                    'text' => 'roles', // Use translation key
                     'url'  => 'roles',
                     'icon' => 'fas fa-fw fa-user-shield',
                     'can'  => 'view_any_role',
                     'icon_color'   => 'info', // Set predefined color
-                ],
-                [
-                    'text' => 'Permissions',
+                ),
+                array(
+                    'text' => 'permissions', // Use translation key
                     'url'  => 'permissions',
                     'icon' => 'fas fa-fw fa-lock',
                     'can'  => 'view_any_permission',
                     'icon_color'   => 'warning', // Set predefined color
-                ],
-                [
-                    'text' => 'Fetch Services',
-                    'url'  => 'services/fetch', // Just the relative URL
+                ),
+                array(
+                    'text' => 'fetch_services', // Use translation key
+                    'url'  => 'services/fetch',
                     'icon' => 'fas fa-sync-alt',
                     'can'  => 'fetch_services',
                     'icon_color'   => 'info', // Set predefined color
-                ],
-            ],
-        ],
+                ),
+            ),
+        ),
 
         // Flattened main items
-        [
-            'text' => 'Add Order',
+        array(
+            'text' => 'add_order', // Use translation key
             'url'  => 'orders/create', // Just the relative URL
             'icon' => 'fas fa-cart-plus',
             'topnav_center' => true,
             'can'  => 'create_order',
             'icon_color'   => 'primary', // Set predefined color
-        ],
-        [
-            'text' => 'Orders',
+        ),
+        array(
+            'text' => 'orders', // Use translation key
             'url'  => 'orders', // Just the relative URL
             'icon' => 'fas fa-shopping-cart',
             'topnav_center' => true,
             'can'  => 'view_orders',
             'icon_color'   => 'success', // Set predefined color
-        ],
-        [
-            'text' => 'Service',
+        ),
+        array(
+            'text' => 'services', // Use translation key
             'url'  => 'services',
             'icon' => 'fas fa-tools',
             'topnav_center' => true,
             'can'  => 'view_services',
             'icon_color'   => 'info', // Set predefined color
-        ],
-
-
-        [
-            'text' => 'Add Balance',
+        ),
+        array(
+            'text' => 'add_balance', // Use translation key
             'url'  => 'transactions/create', // Just the relative URL
             'icon' => 'fab fa-stripe',
             'topnav_center' => true,
-            'can'  => 'add_balance',
+            'can'  => 'addBalance',
             'icon_color'   => 'purple', // Set predefined color
-        ],
-        [
-            'text' => 'Transactions',
+        ),
+        array(
+            'text' => 'transactions', // Use translation key
             'url'  => 'transactions', // Just the relative URL
             'icon' => 'fas fa-comments-dollar',
             'topnav_center' => true,
-            'can'  => 'add_balance',
+            'can'  => 'view_any_transaction',
             'icon_color'   => 'warning', // Set predefined color
-        ],
-        [
-            'text' => 'Support',
+        ),
+        array(
+            'text' => 'support', // Use translation key
             'url'  => 'support',
             'icon' => 'fas fa-headset',
             'topnav_center' => true,
             'can'  => 'view_support',
             'icon_color'   => 'danger', // Set predefined color
-        ],
-
-        [
-            'text' => 'Logout',
+        ),
+        array(
+            'text' => 'logout', // Use translation key
             'url'  => 'logout',
             'icon' => 'fas fa-sign-out-alt',
             'icon_color' => 'danger', // Set predefined color
             'topnav_center' => true,
-            'attributes' => [
+            'attributes' => array(
                 'onclick' => "event.preventDefault(); document.getElementById('logout-form').submit();"
-            ],
-        ],
-    ],
+            ),
+        ),
+    ),
 
-
-
-    'filters' => [
+    'filters' => array(
         JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
+        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class, // Ensure this filter is enabled
         JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
-    ],
+    ),
 
-    'plugins' => [
-        'Datatables' => [
+    'plugins' => array(
+        'Datatables' => array(
             'active' => true,
-            'files' => [
-                [
+            'files' => array(
+                array(
                     'type' => 'js',
                     'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
-                ],
-                [
+                ),
+                array(
                     'type' => 'js',
                     'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
-                ],
-                [
+                ),
+                array(
                     'type' => 'css',
                     'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
-                ],
-            ],
-        ],
-        'Select2' => [
+                ),
+            ),
+        ),
+        'Select2' => array(
             'active' => true,
-            'files' => [
-                [
+            'files' => array(
+                array(
                     'type' => 'js',
                     'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
-                ],
-                [
+                ),
+                array(
                     'type' => 'css',
                     'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css',
-                ],
-            ],
-        ],
-        'Chartjs' => [
+                ),
+            ),
+        ),
+        'Chartjs' => array(
             'active' => true,
-            'files' => [
-                [
+            'files' => array(
+                array(
                     'type' => 'js',
                     'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js',
-                ],
-            ],
-        ],
-        'Sweetalert2' => [
+                ),
+            ),
+        ),
+        'Sweetalert2' => array(
             'active' => true,
-            'files' => [
-                [
+            'files' => array(
+                array(
                     'type' => 'js',
                     'asset' => true,
                     'location' => '//cdn.jsdelivr.net/npm/sweetalert2@8',
-                ],
-            ],
-        ],
-        'Pace' => [
+                ),
+            ),
+        ),
+        'Pace' => array(
             'active' => true,
-            'files' => [
-                [
+            'files' => array(
+                array(
                     'type' => 'css',
                     'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-center-radar.min.css',
-                ],
-                [
+                ),
+                array(
                     'type' => 'js',
                     'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
-                ],
-            ],
-        ],
-    ],
+                ),
+            ),
+        ),
+    ),
 
-    'iframe' => [
-        'default_tab' => [
+    'iframe' => array(
+        'default_tab' => array(
             'url' => null,
             'title' => null,
-        ],
-        'buttons' => [
+        ),
+        'buttons' => array(
             'close' => true,
             'close_all' => true,
             'close_all_other' => true,
             'scroll_left' => true,
             'scroll_right' => true,
             'fullscreen' => true,
-        ],
-        'options' => [
+        ),
+        'options' => array(
             'loading_screen' => 1000,
             'auto_show_new_tab' => true,
             'use_navbar_items' => true,
-        ],
-    ],
+        ),
+    ),
 
     'livewire' => false,
-];
+);

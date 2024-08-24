@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Media;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Notifications\ProfileUpdatedNotification;
 use App\Notifications\UserStatusChangedNotification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Storage;
@@ -242,5 +244,50 @@ class UserController extends Controller
             // Associate the media with the user
             $user->media()->save($media);
         }
+    }
+
+    public function addBalance(User $user)
+    {
+        // Check and log if the policy is being invoked
+        Log::info('Checking add_balance policy for user: ', ['user_id' => $user->id]);
+
+        // Perform the actual authorization check
+        return $user->isAdmin() || $user->hasPermissionTo('add_balance');
+    }
+
+    /**
+     * Process adding balance to a user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function processAddBalance(Request $request)
+    {
+        Log::info('Process Add Balance: Start', ['request_data' => $request->all()]);
+
+        $this->authorize('add_balance', Transaction::class);
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        $amount = $request->amount;
+
+        Log::info('Adding balance to user:', ['user_id' => $user->id, 'amount' => $amount]);
+
+        $transaction = $user->transactions()->create([
+            'type' => 'credit',
+            'amount' => $amount,
+            'status' => 'completed',
+        ]);
+
+        Log::info('Created transaction:', ['transaction' => $transaction]);
+
+        $user->increment('balance', $amount);
+
+        return redirect()->route('transactions.index')->with('success', 'Balance added successfully for user.');
     }
 }

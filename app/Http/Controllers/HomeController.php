@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\Service;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
+use Stripe\Price;
 
 class HomeController extends Controller
 {
@@ -24,6 +29,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('layouts.app'); // Update with your actual dashboard view
+        // Retrieve data for the dashboard metrics
+        $userCount = User::count();
+        $serviceCount = Service::count();
+        $orderCount = Order::count();
+        $startingPrice = Service::min('rate'); // Get the minimum price from services
+        $transactionCount = Transaction::count();
+
+        // Pass the data to the dashboard view
+        return view('layouts.app', compact('userCount', 'serviceCount', 'orderCount', 'startingPrice', 'transactionCount'));
     }
+
 }

@@ -74,6 +74,23 @@ class PermissionSeeder extends Seeder
             // Service Permissions
             'view_services',
             'fetch_services',
+
+            // Support Ticket Permissions
+            'view_any_ticket',  // Admin can view all tickets
+            'view_ticket',      // View specific ticket
+            'create_ticket',    // Create a new support ticket
+            'update_ticket',    // Update a support ticket
+            'delete_ticket',    // Delete a support ticket
+            'manage_ticket_status', // Manage ticket statuses
+
+            // Transaction Permissions
+            'view_any_transaction',   // Admin or authorized users can view all transactions
+            'view_transaction',       // View specific transaction
+            'create_transaction',     // Create a new transaction
+            'update_transaction',     // Update a transaction
+            'delete_transaction',     // Delete a transaction
+            'manage_transaction',     // Manage transactions, possibly involving special actions like refunds or manual balance updates
+
         ];
 
 

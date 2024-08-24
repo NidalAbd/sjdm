@@ -6,11 +6,19 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+
+// routes/web.php
+Route::get('lang/{lang}', function ($lang) {
+    session(['applocale' => $lang]);
+    app()->setLocale($lang); // Set locale immediately
+    return redirect()->back();
+})->name('changeLang');
 
 
 // Welcome page
@@ -33,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('users/{user}/assign-project', [UserController::class, 'storeAssignProject'])->name('users.store_assign_project');
         Route::get('users/{user}/assignProject', [UserController::class, 'assignProject'])->name('users.assignProject');
         Route::post('users/{user}/assignProject', [UserController::class, 'storeAssignProject']);
+        Route::post('users/{user}/add-balance', [UserController::class, 'processAddBalance'])->name('users.processAddBalance');
+
+
         // Role Routes
         Route::resource('roles', RoleController::class);
         // Permission Routes
@@ -60,7 +71,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('transactions', TransactionController::class);
 
+
+    Route::resource('support', SupportTicketController::class);
+
+
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
-    });
+    // Routes for admin to add balance manually
+
+
+});

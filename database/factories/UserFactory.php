@@ -20,7 +20,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // default password for testing
-            'balance' => $this->faker->randomFloat(2, 0, 10000),
+            'balance' => 0,
             'currency' => $this->faker->randomElement(['USD', 'EUR', 'GBP', 'AED', 'SAR']),
             'language' => $this->faker->randomElement(['en', 'ar', 'fr', 'es']),
             'status' => $this->faker->randomElement(['active', 'inactive', 'suspended', 'banned']),

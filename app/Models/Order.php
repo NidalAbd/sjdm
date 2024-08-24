@@ -21,4 +21,11 @@ class Order extends Model
     public function service()
     {
         return $this->belongsTo(Service::class, 'service_id', 'service_id');
-    }}
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
+}

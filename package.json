@@ -15,6 +15,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "flag-icon-css": "^4.1.7",
         "jquery": "^3.7.1"
     }
 }

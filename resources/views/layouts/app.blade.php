@@ -9,9 +9,119 @@
 
 @section('content')
     <div class="container-fluid">
-
-        <!-- Your dashboard content here -->
+        <!-- Dashboard header -->
         <h1>Welcome to your Dashboard!</h1>
+
+        <!-- Metric widgets row -->
+        <div class="row mt-4">
+            <!-- Users widget -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ $userCount ?? 0 }}</h3>
+                        <p>Users</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <a href="{{ route('users.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Services widget -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ $serviceCount ?? 0 }}</h3>
+                        <p>Services</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <a href="{{ route('services.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Orders widget -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ $orderCount ?? 0 }}</h3>
+                        <p>Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <a href="{{ route('orders.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Prices Start widget -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ $startingPrice ?? 0 }}</h3>
+                        <p>Prices Start</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction widget -->
+        <div class="row mt-4">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>{{ $transactionCount ?? 0 }}</h3>
+                        <p>Transactions</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <a href="{{ route('transactions.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Create Order widget -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h3>Create Order</h3>
+                        <p>Quick Access</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <a href="{{ route('orders.create') }}" class="small-box-footer">Create now <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Routes overview section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Available Routes</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><a href="{{ route('users.index') }}">Manage Users</a></li>
+                            <li><a href="{{ route('services.index') }}">Manage Services</a></li>
+                            <li><a href="{{ route('orders.index') }}">View Orders</a></li>
+                            <li><a href="{{ route('orders.create') }}">Create Order</a></li>
+                            <li><a href="{{ route('transactions.index') }}">View Transactions</a></li>
+                            <li><a href="#">Manage Prices</a></li>
+                            <li><a href="{{ route('support.index') }}">Support</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @stop
 
@@ -98,3 +208,4 @@
     });
 
 </script>
+<!-- Include Bootstrap CSS in your <head> -->
