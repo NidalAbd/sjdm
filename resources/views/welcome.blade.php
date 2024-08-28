@@ -42,14 +42,10 @@
     <div class="mb-4">
         @include('widgets.support-widget')
     </div>
-    <div class="mb-4">
-        @include('widgets.control-panel')
-    </div>
-    <div class="mb-4">
+    <div class="row mb-4">
+
         @include('widgets.discounts')
-    </div>
-    <div class="mb-4">
-        @include('widgets.updates')
+
     </div>
     <div class="mb-4">
         @include('widgets.features')
