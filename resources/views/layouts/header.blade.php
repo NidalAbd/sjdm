@@ -51,35 +51,11 @@
                     Sign Up Now
                 </a>
             </div>
-            <div class="col-md-5">
-                <div class="mobile-slider slick-initialized slick-slider aos-init aos-animate" data-aos="fade-up" data-aos-duration="3000">
-                    <div class="slick-list draggable">
-                        <div class="slick-track">
-                            <!-- Example of social logo slides -->
-                            <div class="slick-slide slick-current slick-active" data-slick-index="0" aria-hidden="false" tabindex="0">
-                                <div class="social-logos-wrap logo-tw"></div>
-                            </div>
-                            <div class="slick-slide" data-slick-index="1" aria-hidden="true" tabindex="-1">
-                                <div class="social-logos-wrap logo-ig"></div>
-                            </div>
-                            <div class="slick-slide" data-slick-index="2" aria-hidden="true" tabindex="-1">
-                                <div class="social-logos-wrap logo-yt"></div>
-                            </div>
-                            <!-- Add more slides as needed -->
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </section>
 
-<!-- Include AOS for animations and Slick for the slider -->
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
 
 <style>
     .navbar-brand .circular-logo {

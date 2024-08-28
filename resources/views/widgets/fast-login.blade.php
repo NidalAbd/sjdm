@@ -1,12 +1,17 @@
 <!-- resources/views/widgets/fast-login.blade.php -->
 
-<div class="card shadow-sm rounded-lg border-0 mt-5">
+<!-- Title Outside Card -->
+<div class="text-center mt-5">
+    <h2 data-aos="fade-up" data-aos-duration="1500" class="fw-bold">Log In to Your Account</h2>
+    <p data-aos="fade-up" data-aos-duration="1500" class="text-muted">Access the CHEAPEST and FASTEST Social Media Marketing Platform</p>
+</div>
+
+<!-- Login Card -->
+<div class="card shadow-lg rounded-lg border-0 mt-4">
     <div class="card-body p-5">
-        <h2 data-aos="fade-up" data-aos-duration="1500" class="text-center mb-4 fw-bold">Log In to Your Account</h2>
-        <p data-aos="fade-up" data-aos-duration="1500" class="text-center text-muted mb-5">Access the CHEAPEST and FASTEST Social Media Marketing Platform</p>
         <form method="post" action="{{ route('login') }}" data-aos="fade-up" data-aos-duration="1500" class="px-md-5">
             @csrf
-            <div class="row align-items-center mb-3">
+            <div class="row align-items-center mb-4">
                 <div class="col-sm-5 mb-3 mb-sm-0">
                     <div class="form-floating position-relative">
                         <input type="text" class="form-control shadow-none" id="username" name="username" placeholder="Username">
@@ -55,6 +60,7 @@
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 <style>
+    /* Card and Form Styling */
     .form-floating .form-control:focus {
         border-color: #80bdff;
         outline: 0;
@@ -78,14 +84,18 @@
         font-size: 1.2rem;
     }
 
+    /* Button Styling */
     .btn-primary {
         transition: background-color 0.3s ease;
+        background-image: linear-gradient(90deg, rgba(0, 123, 255, 1) 0%, rgba(0, 70, 178, 1) 100%);
+        border: none;
     }
 
     .btn-primary:hover {
-        background-color: #0056b3;
+        background-image: linear-gradient(90deg, rgba(0, 70, 178, 1) 0%, rgba(0, 123, 255, 1) 100%);
     }
 
+    /* Text Styling */
     .text-primary {
         transition: color 0.3s ease;
     }
@@ -93,7 +103,20 @@
     .text-primary:hover {
         color: #003d82;
     }
+
+    /* Card Shadow and Rounded Corners */
+    .card {
+        border-radius: 1rem;
+    }
+
+    .card-body {
+        background-color: #f8f9fa;
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
 </style>
+
 
 <script>
     AOS.init();

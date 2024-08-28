@@ -1,4 +1,3 @@
-<!-- resources/views/welcome.blade.php -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -10,26 +9,22 @@
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-        }
-        .circular-logo {
-            border-radius: 50%;
-            max-width: 150px;
-        }
-        .widget-icon {
-            width: 50px;
-            height: 50px;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
 </head>
 
 <body class="antialiased bg-light">
+
+<!-- Add jQuery script before any other script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<div class="background-icons" id="background-icons"></div>
+
 @include('layouts.header')
 
 <main class="container my-5">
-    <!-- Add space between each widget by using mb-4 -->
     <div class="mb-4">
         @include('widgets.fast-login')
     </div>
@@ -43,9 +38,7 @@
         @include('widgets.support-widget')
     </div>
     <div class="row mb-4">
-
         @include('widgets.discounts')
-
     </div>
     <div class="mb-4">
         @include('widgets.features')
@@ -55,19 +48,71 @@
     </div>
 </main>
 
-
 @include('layouts.footer')
 
-<!-- Scripts -->
+<!-- Include Bootstrap Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Include AOS for animations and Slick for the slider -->
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+<script>
+    $(document).ready(function(){
+        AOS.init(); // Initialize AOS for animations
+
+        // Initialize Slick Carousel
+        $('.mobile-slider').slick({
+            autoplay: true,
+            autoplaySpeed: 2000,
+            arrows: false,
+            dots: false,
+        });
+
+        // JS for floating icons background
+        const icons = ['fa-facebook', 'fa-instagram', 'fa-twitter', 'fa-linkedin', 'fa-youtube', 'fa-tiktok'];
+        const backgroundIcons = document.getElementById('background-icons');
+
+        icons.forEach(icon => {
+            const el = document.createElement('i');
+            el.className = `fab ${icon} icon`;
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.animationDuration = Math.random() * 10 + 10 + 's';
+            backgroundIcons.appendChild(el);
+        });
+
+        // Check localStorage for theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.classList.add(savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light-mode');
+                updateThemeIcon('light-mode');
+            } else {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark-mode');
+                updateThemeIcon('dark-mode');
+            }
+        });
+
+        // Update theme icon based on the current theme
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (theme === 'dark-mode') {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        }
+    });
+</script>
 
 </body>
-
 </html>
