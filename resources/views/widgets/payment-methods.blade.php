@@ -1,7 +1,8 @@
 <!-- resources/views/widgets/payment-methods.blade.php -->
 <div class="row mb-4 justify-content-center">
+    <h4 class="text-center mb-4 platform-title">Payment method we support</h4>
+
     <div class="row col-md-12">
-        <h4 class="text-center mb-4 platform-title">Payment method we support</h4>
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">

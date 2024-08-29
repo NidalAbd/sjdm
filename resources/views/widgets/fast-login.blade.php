@@ -1,21 +1,19 @@
-<!-- resources/views/widgets/fast-login.blade.php -->
-
 <!-- Title Outside Card -->
-<div class="text-center mt-5">
-    <h2 data-aos="fade-up" data-aos-duration="1500" class="fw-bold">Log In to Your Account</h2>
-    <p data-aos="fade-up" data-aos-duration="1500" class="text-muted">Access the CHEAPEST and FASTEST Social Media Marketing Platform</p>
+<div class="text-center platform-title mt-5">
+    <h2 data-aos="fade-up" data-aos-duration="1500" class="fw-bold">Fast Log In</h2>
 </div>
 
 <!-- Login Card -->
 <div class="card shadow-lg rounded-lg border-0 mt-4">
     <div class="card-body p-5">
-        <form method="post" action="{{ route('login') }}" data-aos="fade-up" data-aos-duration="1500" class="px-md-5">
+        <form method="POST" action="{{ route('login') }}" data-aos="fade-up" data-aos-duration="1500" class="px-md-5">
             @csrf
             <div class="row align-items-center mb-4">
                 <div class="col-sm-5 mb-3 mb-sm-0">
                     <div class="form-floating position-relative">
-                        <input type="text" class="form-control shadow-none" id="username" name="username" placeholder="Username">
-                        <label for="username">Username</label>
+                        <!-- Adjusted name to 'email' for Laravel's default login -->
+                        <input type="email" class="form-control shadow-none" id="email" name="email" placeholder="Email">
+                        <label for="email">Email</label>
                         <span class="position-absolute top-50 end-0 translate-middle-y pe-3">
                             <i class="material-icons text-secondary">person</i>
                         </span>
@@ -54,10 +52,8 @@
     </div>
 </div>
 
-<!-- Include Material Icons and AOS for animations -->
+<!-- Include Material Icons -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 <style>
     /* Card and Form Styling */
@@ -68,12 +64,7 @@
     }
 
     .form-floating label {
-        color: #6c757d;
-    }
-
-    .form-floating .input-group-text {
-        background-color: transparent;
-        border: none;
+        color: var(--bs-secondary-color);
     }
 
     .position-relative .form-control {
@@ -81,7 +72,8 @@
     }
 
     .position-absolute i.material-icons {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
+        color: var(--bs-secondary-color);
     }
 
     /* Button Styling */
@@ -110,14 +102,55 @@
     }
 
     .card-body {
-        background-color: #f8f9fa;
+        background-color: var(--bs-body-bg); /* Dynamic background for dark/light mode */
+        color: var(--bs-body-color); /* Dynamic text color for dark/light mode */
         border-radius: 1rem;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
+    /* Dark mode styles */
+    .dark-mode .card-body {
+        background-color: #343a40;
+        color: #ffffff;
+    }
+
+    .dark-mode .form-floating .form-control {
+        background-color: #495057;
+        color: #ffffff;
+    }
+
+    .dark-mode .form-floating label {
+        color: #ffffff;
+    }
+
+    .dark-mode .form-check-input {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .dark-mode .form-check-label {
+        color: #ffffff;
+    }
+
+    .dark-mode .position-absolute i.material-icons {
+        color: #ffffff; /* Adjust icon color for dark mode */
+    }
 </style>
 
-
 <script>
-    AOS.init();
+    $(document).ready(function() {
+        AOS.init(); // Initialize AOS for animations
+
+        // Check localStorage for theme
+        const savedTheme = localStorage.getItem('theme') || 'light-mode';
+        document.body.classList.add(savedTheme);
+
+        // Theme Toggle
+        $('#themeToggle').on('click', function() {
+            const isDarkMode = $('body').hasClass('dark-mode');
+            $('body').toggleClass('dark-mode', !isDarkMode);
+            const newTheme = isDarkMode ? 'light-mode' : 'dark-mode';
+            localStorage.setItem('theme', newTheme);
+        });
+    });
 </script>

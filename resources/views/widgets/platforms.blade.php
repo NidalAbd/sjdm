@@ -4,100 +4,81 @@
         <h4 class="text-center mb-4 platform-title">Platforms We Support</h4>
         <div class="row justify-content-center">
             <!-- Platform cards -->
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-facebook fa-2x"></i>
                 </div>
                 <p class="platform-text">Facebook</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-instagram fa-2x"></i>
                 </div>
                 <p class="platform-text">Instagram</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-dark text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-tiktok fa-2x"></i>
                 </div>
                 <p class="platform-text">TikTok</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-google fa-2x"></i>
                 </div>
                 <p class="platform-text">Google</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-twitter fa-2x"></i>
                 </div>
                 <p class="platform-text">Twitter</p>
             </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-youtube fa-2x"></i>
                 </div>
                 <p class="platform-text">YouTube</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-spotify fa-2x"></i>
                 </div>
                 <p class="platform-text">Spotify</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-snapchat fa-2x"></i>
                 </div>
                 <p class="platform-text">Snapchat</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-linkedin fa-2x"></i>
                 </div>
                 <p class="platform-text">LinkedIn</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-telegram fa-2x"></i>
                 </div>
                 <p class="platform-text">Telegram</p>
             </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fab fa-discord fa-2x"></i>
                 </div>
                 <p class="platform-text">Discord</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+            <div class="col-lg-1 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
                 <div class="platform-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
                     <i class="fas fa-star fa-2x"></i>
                 </div>
                 <p class="platform-text">Reviews</p>
             </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-purple text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-twitch fa-2x"></i>
-                </div>
-                <p class="platform-text">Twitch</p>
-            </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-dark text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fas fa-traffic-light fa-2x"></i>
-                </div>
-                <p class="platform-text">Traffic</p>
-            </div>
-            <div class="col-lg-2 col-md-4 col-sm-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-pinterest fa-2x"></i>
-                </div>
-                <p class="platform-text">Pinterest</p>
-            </div>
+
         </div>
     </div>
 </div>
@@ -124,9 +105,10 @@
     }
 
     .platform-icon {
-        width: 70px;
-        height: 70px;
+        width: 100px;
+        height: 100px;
         margin-bottom: 10px;
+        margin-left: 20px;
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
     }
 
@@ -138,6 +120,7 @@
         font-size: 1rem;
         font-weight: 600;
         color: #333;
+        transition: color 0.3s ease;
     }
 
     .platform-card:hover .platform-text {
@@ -145,7 +128,7 @@
     }
 
     .platform-icon i {
-        font-size: 1.8rem;
+        font-size: 3.5rem;
     }
 
     .platform-card:hover {
@@ -155,7 +138,40 @@
     .row {
         justify-content: center;
     }
+
+    /* Dark mode styles */
+    .dark-mode .platform-title {
+        color: #ffffff;
+    }
+
+    .dark-mode .platform-text {
+        color: #ffffff;
+    }
+
+    .dark-mode .platform-card:hover .platform-text {
+        color: #007bff;
+    }
 </style>
+
 <script>
-    AOS.init(); // Initialize AOS for animations
+    $(document).ready(function() {
+        AOS.init(); // Initialize AOS for animations
+
+        // Check localStorage for theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.classList.add(savedTheme);
+        }
+
+        // Theme Toggle
+        $('#themeToggle').on('click', function() {
+            if ($('body').hasClass('dark-mode')) {
+                $('body').removeClass('dark-mode');
+                localStorage.setItem('theme', 'light-mode');
+            } else {
+                $('body').addClass('dark-mode');
+                localStorage.setItem('theme', 'dark-mode');
+            }
+        });
+    });
 </script>

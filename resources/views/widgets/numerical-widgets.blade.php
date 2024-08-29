@@ -1,57 +1,44 @@
-<!-- resources/views/widgets/numerical-widgets.blade.php -->
 <div class="row mb-4">
     <div class="col-md-12">
         <h2 class="text-center mb-4 platform-title">Our Achievements</h2>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm text-center border-0 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <div class="card-body py-5">
-                <h5 class="card-title mb-3">Services</h5>
-                <p class="card-text display-4 fw-bold">1000+</p>
-                <div class="icon-circle bg-primary text-white d-flex justify-content-center align-items-center mx-auto">
-                    <i class="fas fa-concierge-bell"></i>
-                </div>
+        <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+            <h5 class="stats-title mb-3">Services</h5>
+            <p class="stats-value">1000+</p>
+            <div class="icon-circle bg-primary text-white d-flex justify-content-center align-items-center mx-auto">
+                <i class="fas fa-concierge-bell"></i>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm text-center border-0 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <div class="card-body py-5">
-                <h5 class="card-title mb-3">Users</h5>
-                <p class="card-text display-4 fw-bold">500+</p>
-                <div class="icon-circle bg-success text-white d-flex justify-content-center align-items-center mx-auto">
-                    <i class="fas fa-users"></i>
-                </div>
+        <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+            <h5 class="stats-title mb-3">Users</h5>
+            <p class="stats-value">500+</p>
+            <div class="icon-circle bg-success text-white d-flex justify-content-center align-items-center mx-auto">
+                <i class="fas fa-users"></i>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm text-center border-0 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <div class="card-body py-5">
-                <h5 class="card-title mb-3">Transactions</h5>
-                <p class="card-text display-4 fw-bold">1500+</p>
-                <div class="icon-circle bg-warning text-white d-flex justify-content-center align-items-center mx-auto">
-                    <i class="fas fa-exchange-alt"></i>
-                </div>
+        <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+            <h5 class="stats-title mb-3">Transactions</h5>
+            <p class="stats-value">1500+</p>
+            <div class="icon-circle bg-warning text-white d-flex justify-content-center align-items-center mx-auto">
+                <i class="fas fa-exchange-alt"></i>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card shadow-sm text-center border-0 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <div class="card-body py-5">
-                <h5 class="card-title mb-3">Orders</h5>
-                <p class="card-text display-4 fw-bold">750+</p>
-                <div class="icon-circle bg-danger text-white d-flex justify-content-center align-items-center mx-auto">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
+        <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+            <h5 class="stats-title mb-3">Orders</h5>
+            <p class="stats-value">750+</p>
+            <div class="icon-circle bg-danger text-white d-flex justify-content-center align-items-center mx-auto">
+                <i class="fas fa-shopping-cart"></i>
             </div>
         </div>
     </div>
 </div>
-
-
-<!-- resources/views/widgets/stats-box.blade.php -->
-<!-- resources/views/widgets/stats-box.blade.php -->
 <div class="row mb-4">
     <div class="col-md-12">
         <h2 class="text-center mb-4 platform-title">Key Metrics</h2>
@@ -84,78 +71,105 @@
         </div>
     </div>
 </div>
-
-
-<!-- Include Font Awesome and AOS for animations -->
-<!-- Include Font Awesome and AOS for animations -->
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 <style>
     .achievements-title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         font-weight: 700;
-        color: #333;
-        position: relative;
-        display: inline-block;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
+        text-transform: uppercase;
+        color: var(--bs-body-color); /* Dynamic color based on theme */
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        letter-spacing: 1.2px;
     }
 
     .achievements-title::after {
         content: '';
-        position: absolute;
         left: 50%;
         transform: translateX(-50%);
         bottom: 0;
-        width: 60%;
-        height: 4px;
-        background-color: #007bff;
-        border-radius: 2px;
-    }
-
-    .icon-circle {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        font-size: 1.5rem;
+        width: 60px;
+        height: 3px;
+        background-color: var(--bs-primary);
     }
 
     .stats-box {
-        background-color: #f8f9fa;
-        border-radius: 10px;
+        background-color: var(--bs-body-bg);
+        border-radius: 12px;
         text-align: center;
-        padding: 30px 20px;
-        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
-        margin-bottom: 20px; /* Add margin-bottom for spacing */
+        margin-bottom: 20px;
     }
 
     .stats-box:hover {
-        transform: translateY(-10px);
+        transform: translateY(-5px);
         box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
     }
 
+    .stats-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--bs-body-color);
+        margin-bottom: 15px;
+    }
+
+    .stats-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--bs-primary);
+        margin-bottom: 15px;
+    }
+
+    .icon-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        font-size: 3.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .stat-pic {
-        font-size: 3rem;
-        color: #007bff;
+        font-size: 5rem;
+        color: var(--bs-primary);
         margin-bottom: 10px;
     }
 
     .stats-box h3 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: 700;
-        margin-bottom: 10px;
+        color: var(--bs-body-color);
+        margin-bottom: 5px;
     }
 
     .stats-box h4 {
         font-size: 1rem;
         font-weight: 400;
-        color: #6c757d;
+        color: var(--bs-secondary-color);
+        margin-bottom: 10px;
+    }
+
+    /* Dark mode styles */
+    .dark-mode .stats-box {
+        background-color: #343a40;
+        color: #ffffff;
+    }
+
+    .dark-mode .achievements-title,
+    .dark-mode .stats-box h3,
+    .dark-mode .stats-box h4,
+    .dark-mode .stats-title,
+    .dark-mode .stats-value {
+        color: #ffffff;
+    }
+
+    .dark-mode .stat-pic,
+    .dark-mode .icon-circle {
+        color: #ffffff;
     }
 </style>
-
-<script>
-    AOS.init();
-</script>
-

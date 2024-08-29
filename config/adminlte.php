@@ -216,16 +216,7 @@ return array(
             'can'  => 'view_support',
             'icon_color'   => 'danger', // Set predefined color
         ),
-        array(
-            'text' => 'logout', // Use translation key
-            'url'  => 'logout',
-            'icon' => 'fas fa-sign-out-alt',
-            'icon_color' => 'danger', // Set predefined color
-            'topnav_center' => true,
-            'attributes' => array(
-                'onclick' => "event.preventDefault(); document.getElementById('logout-form').submit();"
-            ),
-        ),
+
     ),
 
     'filters' => array(

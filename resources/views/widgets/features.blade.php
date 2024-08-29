@@ -1,8 +1,9 @@
 <!-- resources/views/widgets/features.blade.php -->
 <div class="row mb-4">
     <!-- Feature 1: Cheapest & Fastest Services -->
+    <h4 class="text-center mb-4 platform-title">Feature</h4>
+
     <div class="row col-md-12">
-        <h4 class="text-center mb-4 platform-title">Feature</h4>
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
@@ -62,19 +63,16 @@
             </div>
         </div>
     </div>
-
 </div>
-
 
 <style>
     .stats-box {
-        background-color: #f8f9fa;
+        background-color: var(--bs-light-bg-color); /* Dynamic background color */
         border-radius: 15px;
         text-align: center;
         padding: 30px;
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
-        height: 250px; /* Set a fixed height for uniform size */
     }
 
     .stats-box:hover {
@@ -83,14 +81,14 @@
     }
 
     .stat-pic {
-        height: 80px; /* Set a fixed height for icons */
+        height: 100px; /* Increased icon size */
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
     .widget-icon {
-        max-height: 60px; /* Set a maximum height for icons */
+        max-height: 80px; /* Increased icon size */
         transition: transform 0.3s ease;
     }
 
@@ -99,12 +97,45 @@
     }
 
     .stats-box h4 {
-        font-size: 1rem;
-        font-weight: 400;
-        color: #6c757d;
+        font-size: 1.2rem; /* Adjusted font size for titles */
+        font-weight: 600;
+        color: var(--bs-body-color); /* Dynamic color based on theme */
+    }
+
+    /* Dark mode styles */
+    .dark-mode .stats-box {
+        background-color: #343a40; /* Dark mode background */
+        color: #ffffff; /* Light text in dark mode */
+    }
+
+    .dark-mode .widget-icon {
+        filter: brightness(0) invert(1); /* Invert colors to make icons white in dark mode */
+    }
+
+    .dark-mode .stats-box h4 {
+        color: #ffffff; /* Light text for headings in dark mode */
     }
 </style>
 
 <script>
-    AOS.init(); // Initialize AOS for animations
+    $(document).ready(function() {
+        AOS.init(); // Initialize AOS for animations
+
+        // Check localStorage for theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.classList.add(savedTheme);
+        }
+
+        // Theme Toggle
+        $('#themeToggle').on('click', function() {
+            if ($('body').hasClass('dark-mode')) {
+                $('body').removeClass('dark-mode');
+                localStorage.setItem('theme', 'light-mode');
+            } else {
+                $('body').addClass('dark-mode');
+                localStorage.setItem('theme', 'dark-mode');
+            }
+        });
+    });
 </script>
