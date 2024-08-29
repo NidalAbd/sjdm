@@ -6,10 +6,10 @@
 
     <!-- Continuous Updates Widget -->
     <div class="col-md-4">
-        <div class="shadow-lg rounded-lg border-0 mb-4 aos-init aos-animate stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
             <div class="p-4 text-center">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/cyber-security.png') }}" alt="Update Icon" class="img-fluid widget-icon">
+                    <i class="fas fa-sync-alt fa-1x widget-icon"></i> <!-- Reduced icon size to fa-2x -->
                 </div>
                 <h3 class="widget-heading">Continuous Updates</h3>
                 <p class="text-muted">Stay ahead with our regularly updated services.</p>
@@ -19,10 +19,10 @@
 
     <!-- Easy Control Panel Widget -->
     <div class="col-md-4">
-        <div class="shadow-lg rounded-lg border-0 mb-4 aos-init aos-animate stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
             <div class="p-4 text-center">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/control-panel.png') }}" alt="Control Panel Icon" class="img-fluid widget-icon">
+                    <i class="fas fa-cogs fa-1x widget-icon"></i> <!-- Reduced icon size to fa-2x -->
                 </div>
                 <h3 class="widget-heading">Easy Control Panel</h3>
                 <p class="text-muted">Manage your services effortlessly with our intuitive control panel.</p>
@@ -32,10 +32,10 @@
 
     <!-- Special Discounts Widget -->
     <div class="col-md-4">
-        <div class="shadow-lg rounded-lg border-0 mb-4 aos-init aos-animate stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
             <div class="p-4 text-center">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/offer.png') }}" alt="Discount Icon" class="img-fluid widget-icon">
+                    <i class="fas fa-tags fa-1x widget-icon"></i> <!-- Reduced icon size to fa-2x -->
                 </div>
                 <h3 class="widget-heading">Special Discounts</h3>
                 <p class="text-muted">Exclusive discounts for our loyal customers.</p>
@@ -44,7 +44,8 @@
     </div>
 </div>
 
-<!-- Include AOS for animations -->
+<!-- Include Font Awesome and AOS for animations -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
@@ -74,14 +75,14 @@
     }
 
     .stat-pic {
-        height: 80px; /* Set a fixed height for icons */
+        height: 30px; /* Set a fixed height for icons */
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
     .widget-icon {
-        max-height: 60px; /* Set a maximum height for icons */
+        color: var(--bs-body-color); /* Dynamic color based on theme */
         transition: transform 0.3s ease;
     }
 
@@ -98,13 +99,15 @@
 
     .stats-box p {
         font-size: 1rem;
-        font-weight: 400;
+        font-weight: 200;
         color: var(--bs-secondary-color); /* Dynamic text color */
     }
 
     /* Dark mode styles */
-    .dark-mode .platform-title {
-        color: #ffffff; /* Light text for the platform title in dark mode */
+    .dark-mode .platform-title,
+    .dark-mode .widget-heading,
+    .dark-mode .stats-box p {
+        color: #ffffff; /* Light text in dark mode */
     }
 
     .dark-mode .stats-box {
@@ -112,12 +115,8 @@
         color: #ffffff; /* Light text in dark mode */
     }
 
-    .dark-mode .widget-heading {
-        color: #ffffff; /* Light text for headings in dark mode */
-    }
-
-    .dark-mode .stats-box p {
-        color: #ffffff; /* Light text for paragraph in dark mode */
+    .dark-mode .widget-icon {
+        color: #ffffff; /* Icon color in dark mode */
     }
 </style>
 

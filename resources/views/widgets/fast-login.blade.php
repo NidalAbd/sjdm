@@ -4,8 +4,6 @@
 </div>
 
 <!-- Login Card -->
-<div class="card shadow-lg rounded-lg border-0 mt-4">
-    <div class="card-body p-5">
         <form method="POST" action="{{ route('login') }}" data-aos="fade-up" data-aos-duration="1500" class="px-md-5">
             @csrf
             <div class="row align-items-center mb-4">
@@ -49,8 +47,6 @@
                 </div>
             </div>
         </form>
-    </div>
-</div>
 
 <!-- Include Material Icons -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
