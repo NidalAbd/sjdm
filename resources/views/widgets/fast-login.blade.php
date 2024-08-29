@@ -1,6 +1,6 @@
 <!-- Title Outside Card -->
 <div class="text-center platform-title mt-5">
-    <h2 data-aos="fade-up" data-aos-duration="1500" class="fw-bold">Fast Log In</h2>
+    <h2 data-aos="fade-up" data-aos-duration="1500" class="fw-bold">Log In</h2>
 </div>
 
 <!-- Login Card -->
