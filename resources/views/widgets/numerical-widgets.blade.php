@@ -1,11 +1,11 @@
 <div class="row mb-4">
     <div class="col-md-12">
-        <h2 class="text-center mb-4 platform-title">Our Achievements</h2>
+        <h2 class="text-center mb-4 platform-title">{{ __('adminlte.our_achievements') }}</h2>
     </div>
     <div class="col-md-3">
         <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <h5 class="stats-title mb-3">Services</h5>
-            <p class="stats-value">1000+</p>
+            <h5 class="stats-title mb-3">{{ __('adminlte.services') }}</h5>
+            <p class="stats-value">{{ __('adminlte.services_value') }}</p>
             <div class="icon-circle bg-primary text-white d-flex justify-content-center align-items-center mx-auto">
                 <i class="fas fa-concierge-bell"></i>
             </div>
@@ -13,8 +13,8 @@
     </div>
     <div class="col-md-3">
         <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <h5 class="stats-title mb-3">Users</h5>
-            <p class="stats-value">500+</p>
+            <h5 class="stats-title mb-3">{{ __('adminlte.users') }}</h5>
+            <p class="stats-value">{{ __('adminlte.users_value') }}</p>
             <div class="icon-circle bg-success text-white d-flex justify-content-center align-items-center mx-auto">
                 <i class="fas fa-users"></i>
             </div>
@@ -22,8 +22,8 @@
     </div>
     <div class="col-md-3">
         <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <h5 class="stats-title mb-3">Transactions</h5>
-            <p class="stats-value">1500+</p>
+            <h5 class="stats-title mb-3">{{ __('adminlte.transactions') }}</h5>
+            <p class="stats-value">{{ __('adminlte.transactions_value') }}</p>
             <div class="icon-circle bg-warning text-white d-flex justify-content-center align-items-center mx-auto">
                 <i class="fas fa-exchange-alt"></i>
             </div>
@@ -31,8 +31,8 @@
     </div>
     <div class="col-md-3">
         <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <h5 class="stats-title mb-3">Orders</h5>
-            <p class="stats-value">750+</p>
+            <h5 class="stats-title mb-3">{{ __('adminlte.orders') }}</h5>
+            <p class="stats-value">{{ __('adminlte.orders_value') }}</p>
             <div class="icon-circle bg-danger text-white d-flex justify-content-center align-items-center mx-auto">
                 <i class="fas fa-shopping-cart"></i>
             </div>
@@ -41,15 +41,15 @@
 </div>
 <div class="row mb-4">
     <div class="col-md-12">
-        <h2 class="text-center mb-4 platform-title">Key Metrics</h2>
+        <h2 class="text-center mb-4 platform-title">{{ __('adminlte.key_metrics') }}</h2>
     </div>
     <div class="col-md-4">
         <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
             <div class="stat-pic mb-3">
                 <i class="far fa-hourglass-half"></i>
             </div>
-            <h3>1 SEC</h3>
-            <h4>AN ORDER IS MADE EVERY</h4>
+            <h3>{{ __('adminlte.seconds') }}</h3>
+            <h4>{{ __('adminlte.an_order_is_made_every') }}</h4>
         </div>
     </div>
     <div class="col-md-4">
@@ -57,8 +57,8 @@
             <div class="stat-pic mb-3">
                 <i class="far fa-chart-line"></i>
             </div>
-            <h3>24,918,508</h3>
-            <h4>ORDERS COMPLETED</h4>
+            <h3>{{ __('adminlte.completed_orders') }}</h3>
+            <h4>{{ __('adminlte.orders_completed') }}</h4>
         </div>
     </div>
     <div class="col-md-4">
@@ -66,11 +66,12 @@
             <div class="stat-pic mb-3">
                 <i class="far fa-coins"></i>
             </div>
-            <h3>$0.0001/1k</h3>
-            <h4>PRICES STARTING FROM</h4>
+            <h3>{{ __('adminlte.price_value') }}</h3>
+            <h4>{{ __('adminlte.prices_starting_from') }}</h4>
         </div>
     </div>
 </div>
+
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 

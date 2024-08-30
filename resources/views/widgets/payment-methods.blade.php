@@ -1,65 +1,76 @@
 <!-- resources/views/widgets/payment-methods.blade.php -->
 <div class="row mb-4 justify-content-center">
-    <h4 class="text-center mb-4 platform-title">Payment method we support</h4>
+    <h4 class="text-center mb-4 platform-title">{{ __('adminlte.payment_methods_we_support') }}</h4>
 
     <div class="row col-md-12">
+        <!-- Payment Method: Visa -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/visa.png') }}" alt="Visa" class="img-fluid payment-icon">
+                    <img src="{{ asset('images/payement/visa.png') }}" alt="{{ __('adminlte.visa') }}" class="img-fluid payment-icon">
                 </div>
-                <h3>Visa</h3>
-                <h4>Pay securely with Visa cards</h4>
+                <h3>{{ __('adminlte.visa') }}</h3>
+                <h4>{{ __('adminlte.visa_desc') }}</h4>
             </div>
         </div>
+
+        <!-- Payment Method: MasterCard -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/card.png') }}" alt="MasterCard" class="img-fluid payment-icon">
+                    <img src="{{ asset('images/payement/card.png') }}" alt="{{ __('adminlte.mastercard') }}" class="img-fluid payment-icon">
                 </div>
-                <h3>MasterCard</h3>
-                <h4>Globally accepted payments with MasterCard</h4>
+                <h3>{{ __('adminlte.mastercard') }}</h3>
+                <h4>{{ __('adminlte.mastercard_desc') }}</h4>
             </div>
         </div>
+
+        <!-- Payment Method: American Express -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/american-express.png') }}" alt="American Express" class="img-fluid payment-icon">
+                    <img src="{{ asset('images/payement/american-express.png') }}" alt="{{ __('adminlte.american_express') }}" class="img-fluid payment-icon">
                 </div>
-                <h5><strong> American Express</strong></h5>
-                <h4>secure transactions with AmEx</h4>
+                <h5><strong>{{ __('adminlte.american_express') }}</strong></h5>
+                <h4>{{ __('adminlte.american_express_desc') }}</h4>
             </div>
         </div>
+
+        <!-- Payment Method: PayPal -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/paypal.png') }}" alt="PayPal" class="img-fluid payment-icon">
+                    <img src="{{ asset('images/payement/paypal.png') }}" alt="{{ __('adminlte.paypal') }}" class="img-fluid payment-icon">
                 </div>
-                <h3>PayPal</h3>
-                <h4>Convenient payments via PayPal</h4>
+                <h3>{{ __('adminlte.paypal') }}</h3>
+                <h4>{{ __('adminlte.paypal_desc') }}</h4>
             </div>
         </div>
+
+        <!-- Payment Method: Apple Pay -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/apple-pay.png') }}" alt="Apple Pay" class="img-fluid payment-icon">
+                    <img src="{{ asset('images/payement/apple-pay.png') }}" alt="{{ __('adminlte.apple_pay') }}" class="img-fluid payment-icon">
                 </div>
-                <h3>Apple Pay</h3>
-                <h4>Pay easily with Apple Pay</h4>
+                <h3>{{ __('adminlte.apple_pay') }}</h3>
+                <h4>{{ __('adminlte.apple_pay_desc') }}</h4>
             </div>
         </div>
+
+        <!-- Payment Method: Google Pay -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/google-pay.png') }}" alt="Google Pay" class="img-fluid payment-icon">
+                    <img src="{{ asset('images/payement/google-pay.png') }}" alt="{{ __('adminlte.google_pay') }}" class="img-fluid payment-icon">
                 </div>
-                <h3>Google Pay</h3>
-                <h4>Fast transactions with Google Pay</h4>
+                <h3>{{ __('adminlte.google_pay') }}</h3>
+                <h4>{{ __('adminlte.google_pay_desc') }}</h4>
             </div>
         </div>
     </div>
-
 </div>
+
 
 
 <style>

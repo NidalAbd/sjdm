@@ -1,15 +1,16 @@
 <!-- resources/views/widgets/features.blade.php -->
 <div class="row mb-4">
-    <!-- Feature 1: Cheapest & Fastest Services -->
-    <h4 class="text-center mb-4 platform-title">Feature</h4>
+    <!-- Feature Title -->
+    <h4 class="text-center mb-4 platform-title">{{ __('adminlte.feature') }}</h4>
 
     <div class="row col-md-12">
+        <!-- Feature 1: Cheapest & Fastest Services -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/arrows.png') }}" alt="Cheapest & Fastest Services Icon" class="img-fluid widget-icon">
+                    <img src="{{ asset('images/payement/arrows.png') }}" alt="{{ __('adminlte.cheapest_fastest_services_icon') }}" class="img-fluid widget-icon">
                 </div>
-                <h4 class="mb-2">Cheapest & Fastest Services</h4>
+                <h4 class="mb-2">{{ __('adminlte.cheapest_fastest_services') }}</h4>
             </div>
         </div>
 
@@ -17,9 +18,9 @@
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/on-time.png') }}" alt="Super Fast Delivery Icon" class="img-fluid widget-icon">
+                    <img src="{{ asset('images/payement/on-time.png') }}" alt="{{ __('adminlte.super_fast_delivery_icon') }}" class="img-fluid widget-icon">
                 </div>
-                <h4 class="mb-2">Super fast delivery</h4>
+                <h4 class="mb-2">{{ __('adminlte.super_fast_delivery') }}</h4>
             </div>
         </div>
 
@@ -27,9 +28,9 @@
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/call-center.png') }}" alt="Support 24/7 Icon" class="img-fluid widget-icon">
+                    <img src="{{ asset('images/payement/call-center.png') }}" alt="{{ __('adminlte.support_24_7_icon') }}" class="img-fluid widget-icon">
                 </div>
-                <h4 class="mb-2">Support 24/7</h4>
+                <h4 class="mb-2">{{ __('adminlte.support_24_7') }}</h4>
             </div>
         </div>
 
@@ -37,9 +38,9 @@
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/atm-machine.png') }}" alt="Many Payment Methods Icon" class="img-fluid widget-icon">
+                    <img src="{{ asset('images/payement/atm-machine.png') }}" alt="{{ __('adminlte.many_payment_methods_icon') }}" class="img-fluid widget-icon">
                 </div>
-                <h4 class="mb-2">Many Payment Methods</h4>
+                <h4 class="mb-2">{{ __('adminlte.many_payment_methods') }}</h4>
             </div>
         </div>
 
@@ -47,9 +48,9 @@
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/dashboard.png') }}" alt="Friendly Dashboard Icon" class="img-fluid widget-icon">
+                    <img src="{{ asset('images/payement/dashboard.png') }}" alt="{{ __('adminlte.friendly_dashboard_icon') }}" class="img-fluid widget-icon">
                 </div>
-                <h4 class="mb-2">Friendly Dashboard</h4>
+                <h4 class="mb-2">{{ __('adminlte.friendly_dashboard') }}</h4>
             </div>
         </div>
 
@@ -57,13 +58,14 @@
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="stat-pic mb-3">
-                    <img src="{{ asset('images/payement/cyber-security.png') }}" alt="Updates Page Icon" class="img-fluid widget-icon">
+                    <img src="{{ asset('images/payement/cyber-security.png') }}" alt="{{ __('adminlte.updates_page_icon') }}" class="img-fluid widget-icon">
                 </div>
-                <h4 class="mb-2">Updates page for services</h4>
+                <h4 class="mb-2">{{ __('adminlte.updates_page') }}</h4>
             </div>
         </div>
     </div>
 </div>
+
 
 <style>
     .stats-box {

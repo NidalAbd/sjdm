@@ -20,8 +20,11 @@ class SetLocale
      */
     public function handle($request, Closure $next)
     {
-        if (session()->has('applocale')) {
-            app()->setLocale(session('applocale'));
+        if (Session::has('applocale')) {
+            App::setLocale(Session::get('applocale'));
+        } else {
+            // Default locale if not set
+            App::setLocale(config('app.locale'));
         }
 
         return $next($request);

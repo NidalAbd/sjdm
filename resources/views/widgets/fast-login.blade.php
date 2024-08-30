@@ -1,52 +1,59 @@
 <!-- Title Outside Card -->
-<div class="text-center platform-title mt-5">
-    <h2 data-aos="fade-up" data-aos-duration="1500" class="fw-bold">Log In</h2>
-</div>
+
 
 <!-- Login Card -->
+<!-- Login Card -->
+<div class="card shadow-lg rounded-lg border-1 mt-4">
+    <div class="card-body p-5">
         <form method="POST" action="{{ route('login') }}" data-aos="fade-up" data-aos-duration="1500" class="px-md-5">
             @csrf
+
             <div class="row align-items-center mb-4">
-                <div class="col-sm-5 mb-3 mb-sm-0">
+                <div class="text-center platform-title col-sm-2 mb-3 mb-sm-0">
+                    <h2 data-aos="fade-up" data-aos-duration="1500" class="fw-bold">{{ __('adminlte.sign_in') }}</h2>
+                </div>
+                <div class="col-sm-4 mb-3 mb-sm-0">
                     <div class="form-floating position-relative">
-                        <!-- Adjusted name to 'email' for Laravel's default login -->
-                        <input type="email" class="form-control shadow-none" id="email" name="email" placeholder="Email">
-                        <label for="email">Email</label>
+                        <input type="email" class="form-control shadow-none" id="email" name="email" placeholder="{{ __('adminlte.email') }}">
+                        <label for="email">{{ __('adminlte.email') }}</label>
                         <span class="position-absolute top-50 end-0 translate-middle-y pe-3">
                             <i class="material-icons text-secondary">person</i>
                         </span>
                     </div>
                 </div>
-                <div class="col-sm-5 mb-3 mb-sm-0">
+                <div class="col-sm-4 mb-3 mb-sm-0">
                     <div class="form-floating position-relative">
-                        <input type="password" class="form-control shadow-none" id="password" name="password" placeholder="Password">
-                        <label for="password">Password</label>
+                        <input type="password" class="form-control shadow-none" id="password" name="password" placeholder="{{ __('adminlte.password') }}">
+                        <label for="password">{{ __('adminlte.password') }}</label>
                         <span class="position-absolute top-50 end-0 translate-middle-y pe-3">
                             <i class="material-icons text-secondary">lock</i>
                         </span>
                     </div>
                 </div>
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary btn-lg w-100">Sign in</button>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">{{ __('adminlte.sign_in') }}</button>
                 </div>
             </div>
-            <div class="row align-items-center mt-4">
+            <div class="row align-items-center mt-1">
                 <div class="col-sm-5">
                     <div class="form-check">
                         <input id="remember" type="checkbox" class="form-check-input" name="remember" value="1">
-                        <label for="remember" class="form-check-label">Remember me</label>
+                        <label for="remember" class="form-check-label">{{ __('adminlte.remember_me') }}</label>
                     </div>
-                    <div class="mt-3">
-                        <small>Do not have an account? <a href="{{ route('register') }}" class="text-primary">Sign up</a></small>
+                    <div class="">
+                        <small>{{ __('adminlte.do_not_have_account') }} <a href="{{ route('register') }}" class="text-primary">{{ __('adminlte.sign_up') }}</a></small>
                     </div>
                 </div>
                 <div class="col-sm-5 text-sm-end">
                     <small class="d-none d-sm-block">
-                        Forgot your password? <a href="{{ route('password.request') }}" class="text-primary">Reset It</a>
+                        {{ __('adminlte.forgot_password') }} <a href="{{ route('password.request') }}" class="text-primary">{{ __('adminlte.reset_it') }}</a>
                     </small>
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
 
 <!-- Include Material Icons -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
