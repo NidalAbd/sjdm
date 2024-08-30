@@ -9,7 +9,7 @@
     }
 
     .navbar {
-        background-color: #1f2123 !important;
+        background-color: #212529 !important;
         transition: background-color 0.3s ease;
     }
 
@@ -38,7 +38,7 @@
     }
 
     .hero-section {
-        background-image: url('{{ asset('images/payement/4801645.jpg') }}'); /* Background image for hero section */
+        background-image: url('{{ asset('images/payement/4826101.jpg') }}'); /* Background image for hero section */
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
