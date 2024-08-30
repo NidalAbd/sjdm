@@ -7,22 +7,22 @@
             <div class="col-lg-6 mb-4">
                 <div class="card border-0 shadow-sm rounded">
                     <div class="card-body">
-                        <h2 class="text-center mb-4 text-dark">Add Balance</h2>
-                        <p class="text-center text-muted mb-5">Securely add funds to your account via Stripe.</p>
+                        <h2 class="text-center mb-4 text-dark">{{ __('adminlte.add_balance') }}</h2>
+                        <p class="text-center text-muted mb-5">{{ __('adminlte.securely_add_funds') }}</p>
 
                         <!-- Display error messages -->
                         @if(session('error'))
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <strong>Error:</strong> {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <strong>{{ __('adminlte.error') }}:</strong> {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('adminlte.close') }}"></button>
                             </div>
                         @endif
 
                         <!-- Display success message -->
                         @if(session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <strong>Success:</strong> {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <strong>{{ __('adminlte.success') }}:</strong> {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('adminlte.close') }}"></button>
                             </div>
                         @endif
 
@@ -30,18 +30,18 @@
                         <form action="{{ route('checkout') }}" method="POST" class="needs-validation" novalidate>
                             @csrf
                             <div class="form-floating mb-4">
-                                <input type="number" name="amount" class="form-control" id="amount" required min="1" placeholder="Enter amount">
-                                <label for="amount">Amount</label>
+                                <input type="number" name="amount" class="form-control" id="amount" required min="1" placeholder="{{ __('adminlte.enter_amount') }}">
+                                <label for="amount">{{ __('adminlte.amount') }}</label>
                                 <div class="invalid-feedback">
-                                    Please enter a valid amount.
+                                    {{ __('adminlte.enter_valid_amount') }}
                                 </div>
                             </div>
 
                             <div class="alert alert-info text-center mb-4" role="alert">
-                                <i class="fas fa-shield-alt"></i> You will be redirected to Stripe's secure payment gateway.
+                                <i class="fas fa-shield-alt"></i> {{ __('adminlte.redirect_stripe') }}
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-lg w-100">Proceed to Payment</button>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">{{ __('adminlte.proceed_to_payment') }}</button>
                         </form>
                     </div>
                 </div>
@@ -51,17 +51,17 @@
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm rounded">
                     <div class="card-body p-5">
-                        <h3 class="text-center mb-4 text-dark">Payment Instructions & Policy</h3>
+                        <h3 class="text-center mb-4 text-dark">{{ __('adminlte.payment_instructions_policy') }}</h3>
 
-                        <p class="mb-3"><strong>Payment Process:</strong> After entering the amount you wish to add, click "Proceed to Payment". You will be redirected to Stripe’s secure payment gateway where you can complete your transaction using your credit or debit card.</p>
+                        <p class="mb-3"><strong>{{ __('adminlte.payment_process') }}:</strong> {{ __('adminlte.payment_process_detail') }}</p>
 
-                        <p class="mb-3"><strong>Security:</strong> All transactions are secured and encrypted by Stripe. Your payment details are not stored on our servers, ensuring the highest level of security.</p>
+                        <p class="mb-3"><strong>{{ __('adminlte.security') }}:</strong> {{ __('adminlte.security_detail') }}</p>
 
-                        <p class="mb-3"><strong>Refund Policy:</strong> Once the transaction is complete, the added balance is non-refundable. Please ensure you enter the correct amount before proceeding.</p>
+                        <p class="mb-3"><strong>{{ __('adminlte.refund_policy') }}:</strong> {{ __('adminlte.refund_policy_detail') }}</p>
 
-                        <p class="mb-3"><strong>Support:</strong> If you encounter any issues during the payment process, please contact our support team at <a href="mailto:support@sjdm.store">support@sjdm.store</a>. We are here to assist you.</p>
+                        <p class="mb-3"><strong>{{ __('adminlte.support') }}:</strong> {{ __('adminlte.support_detail') }}</p>
 
-                        <p class="text-center text-muted mt-5"><small>By proceeding with the payment, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</small></p>
+                        <p class="text-center text-muted mt-5"><small>{{ __('adminlte.agree_terms') }}</small></p>
                     </div>
                 </div>
             </div>

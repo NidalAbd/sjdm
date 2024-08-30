@@ -137,19 +137,19 @@
             <img src="{{ asset('images/MaxPeak.png') }}" alt="{{ config('app.name') }} Logo" class="img-fluid circular-logo me-2">
             <span class="fw-bold text-uppercase text-white">{{ config('app.name') }}</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ __('adminlte.toggle_navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('login') }}">Sign In</a>
+                    <a class="nav-link text-white" href="{{ route('login') }}">{{ __('adminlte.sign_in') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('register') }}">Register</a>
+                    <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">FAQ</a>
+                    <a class="nav-link text-white" href="#">{{ __('adminlte.faq') }}</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">

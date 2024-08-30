@@ -82,9 +82,22 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->load(['roles', 'media']);
-        return view('users.show', compact('user'));
+        $user->load(['roles', 'orders', 'transactions', 'media']);
+
+        // Fetch only active and verified referrals
+        $referrals = User::where('referred_by', $user->id)
+            ->where('status', 'active')
+            ->whereNotNull('email_verified_at')
+            ->latest()
+            ->get();
+
+        $orders = $user->orders()->latest()->get();
+        $transactions = $user->transactions()->latest()->get();
+
+        return view('users.show', compact('user', 'orders', 'transactions', 'referrals'));
     }
+
+
 
     public function edit(User $user)
     {

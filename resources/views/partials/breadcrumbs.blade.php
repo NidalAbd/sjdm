@@ -5,11 +5,14 @@
 
 <nav aria-label="breadcrumb" class="">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('adminlte.home') }}</a></li>
         @foreach($segments as $key => $segment)
             @php
                 $url = url(implode('/', array_slice($segments, 0, $key + 1)));
-                $name = ucfirst($segment);
+                // Convert segment to translation key if available
+                $translationKey = 'adminlte.breadcrumbs.' . strtolower($segment);
+                $name = __($translationKey) !== $translationKey ? __($translationKey) : ucfirst($segment);
+
                 if ($key + 1 === count($segments)) {
                     $breadcrumbs[] = ['name' => $name, 'url' => $url, 'active' => true];
                 } else {
@@ -27,3 +30,4 @@
         @endforeach
     </ol>
 </nav>
+@include('partials.alert')

@@ -1,6 +1,6 @@
 <div class="row mb-5">
     <!-- Header Title -->
-    <div class="col-md-12">
+    <div class="col-md-12 mt-5">
         <h2 class="text-center mb-4 platform-title">{{ __('adminlte.our_exclusive_features') }}</h2>
     </div>
 

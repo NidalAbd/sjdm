@@ -31,6 +31,9 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female', 'other'])->nullable(); // Gender
             $table->enum('marital_status', ['single', 'married', 'divorced', 'widowed'])->nullable(); // Marital Status
             $table->date('date_of_birth')->nullable(); // Date of Birth
+            $table->string('referral_code')->unique()->nullable();
+            $table->unsignedBigInteger('referred_by')->nullable()->index();
+            $table->foreign('referred_by')->references('id')->on('users')->onDelete('set null');
 
             // Timestamps and Soft Deletes
             $table->timestamps();

@@ -2,7 +2,7 @@
 <div class="row mb-4 justify-content-center">
     <h4 class="text-center mb-4 platform-title">{{ __('adminlte.payment_methods_we_support') }}</h4>
 
-    <div class="row col-md-12">
+    <div class="row col-md-12 mt-5">
         <!-- Payment Method: Visa -->
         <div class="col-md-2">
             <div class="stats-box aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">

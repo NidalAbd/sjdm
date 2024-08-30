@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Manage Orders')
+@section('title', __('adminlte.manage_orders'))
 
 @section('content_header')
     @include('partials.breadcrumbs')
-    <h1>Manage Orders</h1>
+    <h1>{{ __('adminlte.manage_orders') }}</h1>
 @stop
 
 @section('content')
@@ -16,24 +16,24 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" name="search" class="form-control" placeholder="Search orders..."
+                                    <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_orders') }}"
                                            value="{{ request()->get('search') }}">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" onchange="this.form.submit()">
-                                        <option value="all">Select Platform</option>
+                                        <option value="all">{{ __('adminlte.select_platform') }}</option>
                                         @foreach($platforms as $platform)
                                             <option value="{{ $platform }}" {{ request()->get('platform') == $platform ? 'selected' : '' }}>
-                                                {{ ucfirst($platform) }}
+                                                {{ __('adminlte.' . strtolower($platform)) }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary btn-sm btn-block">Search</button>
+                                <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button>
                             </div>
                         </div>
                     </form>
@@ -43,12 +43,12 @@
                             <thead class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Service</th>
-                                <th scope="col">Link</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Charge</th>
-                                <th scope="col">Status</th>
-                                <th scope="col" class="text-center">Actions</th>
+                                <th scope="col">{{ __('adminlte.service') }}</th>
+                                <th scope="col">{{ __('adminlte.link') }}</th>
+                                <th scope="col">{{ __('adminlte.quantity') }}</th>
+                                <th scope="col">{{ __('adminlte.charge') }}</th>
+                                <th scope="col">{{ __('adminlte.status') }}</th>
+                                <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -60,13 +60,13 @@
                                         <td><a href="{{ $order->link }}" target="_blank">{{ $order->link }}</a></td>
                                         <td>{{ $order->quantity }}</td>
                                         <td>${{ number_format($order->charge, 2) }}</td>
-                                        <td>{{ $order->status }}</td>
+                                        <td>{{ __('adminlte.' . strtolower($order->status)) }}</td>
                                         <td class="text-center">
-                                            <div class="btn-group" role="group" aria-label="Order Actions">
+                                            <div class="btn-group" role="group" aria-label="{{ __('adminlte.order_actions') }}">
                                                 <a href="{{ route('orders.show', $order->id) }}"
                                                    class="btn btn-secondary btn-sm"
                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                   title="View Order">
+                                                   title="{{ __('adminlte.view_order') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display:inline;">
@@ -74,7 +74,7 @@
                                                     @method('DELETE')
                                                     <button class="btn btn-danger btn-sm" type="submit"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Delete Order">
+                                                            title="{{ __('adminlte.delete_order') }}">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </form>
@@ -84,19 +84,19 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted">No orders found</td>
+                                    <td colspan="7" class="text-center text-muted">{{ __('adminlte.no_orders_found') }}</td>
                                 </tr>
                             @endif
                             </tbody>
                             <tfoot class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Service</th>
-                                <th scope="col">Link</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Charge</th>
-                                <th scope="col">Status</th>
-                                <th scope="col" class="text-center">Actions</th>
+                                <th scope="col">{{ __('adminlte.service') }}</th>
+                                <th scope="col">{{ __('adminlte.link') }}</th>
+                                <th scope="col">{{ __('adminlte.quantity') }}</th>
+                                <th scope="col">{{ __('adminlte.charge') }}</th>
+                                <th scope="col">{{ __('adminlte.status') }}</th>
+                                <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
                             </tfoot>
                         </table>

@@ -12,17 +12,6 @@ use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
     use RegistersUsers;
 
     /**
@@ -54,6 +43,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'referral_code' => 'nullable|string|exists:users,referral_code',
         ]);
     }
 
@@ -65,19 +55,27 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $referrer = null;
+
+        if (isset($data['referral_code'])) {
+            $referrer = User::where('referral_code', $data['referral_code'])->first();
+        }
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'referred_by' => $referrer ? $referrer->id : null,
         ]);
 
         // Assign the 'client' role to the newly registered user
         $role = Role::where('name', 'client')->first();
         if ($role) {
             $user->assignRole($role);
-            $user->syncPermissions($role->permissions);
         }
+
         event(new Registered($user));
+
         return $user;
     }
 }

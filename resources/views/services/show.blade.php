@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Service Details')
+@section('title', __('adminlte.service_details')) <!-- Use translation for the title -->
 
 @section('content_header')
-    <h1>Service Details</h1>
+    <h1>{{ __('adminlte.service_details') }}</h1> <!-- Use translation for the header -->
 @stop
 
 @section('content')
@@ -15,16 +15,16 @@
                         <h3>{{ $service->name }}</h3>
                     </div>
                     <div class="card-body">
-                        <p><strong>Type:</strong> {{ $service->type }}</p>
-                        <p><strong>Category:</strong> {{ $service->category }}</p>
-                        <p><strong>Rate:</strong> ${{ number_format($service->rate, 2) }} per 1000</p>
-                        <p><strong>Min:</strong> {{ $service->min }}</p>
-                        <p><strong>Max:</strong> {{ $service->max }}</p>
-                        <p><strong>Refill:</strong> {{ $service->refill ? 'Yes' : 'No' }}</p>
-                        <p><strong>Cancel:</strong> {{ $service->cancel ? 'Yes' : 'No' }}</p>
+                        <p><strong>{{ __('adminlte.type') }}:</strong> {{ $service->type }}</p> <!-- Use translation for labels -->
+                        <p><strong>{{ __('adminlte.category') }}:</strong> {{ $service->category }}</p>
+                        <p><strong>{{ __('adminlte.rate') }}:</strong> ${{ number_format($service->rate, 2) }} {{ __('adminlte.per_1000') }}</p>
+                        <p><strong>{{ __('adminlte.min') }}:</strong> {{ $service->min }}</p>
+                        <p><strong>{{ __('adminlte.max') }}:</strong> {{ $service->max }}</p>
+                        <p><strong>{{ __('adminlte.refill') }}:</strong> {{ $service->refill ? __('adminlte.yes') : __('adminlte.no') }}</p>
+                        <p><strong>{{ __('adminlte.cancel') }}:</strong> {{ $service->cancel ? __('adminlte.yes') : __('adminlte.no') }}</p>
                     </div>
                     <div class="card-footer">
-                        <a href="{{ route('services.index') }}" class="btn btn-primary">Back to Services</a>
+                        <a href="{{ route('services.index') }}" class="btn btn-primary">{{ __('adminlte.back_to_services') }}</a> <!-- Use translation for button -->
                     </div>
                 </div>
             </div>

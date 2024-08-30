@@ -1,9 +1,16 @@
 @extends('layouts.app')
 
-@section('title', __('adminlte.user_details'))
+@section('title', 'Profile Settings')
+
+@section('content_header')
+    @include('partials.breadcrumbs')  <!-- Automatically include breadcrumbs -->
+    <h1>{{ __('adminlte.profile') }}</h1>
+@stop
 
 @section('content')
     <div class="container mt-5">
+
+
         <div class="row">
             <div class="col-lg-4">
                 <!-- Sidebar for Profile Picture and Basic Info -->
@@ -13,10 +20,15 @@
                         <img src="{{ $user->adminlte_image() }}" alt="User Avatar" class="img-fluid rounded-circle mb-3" style="width: 250px; height: 250px;">
                         <h4>{{ $user->name }}</h4>
                         <p class="text-muted">{{ $user->email }}</p>
-                        <button class="btn btn-outline-primary btn-sm mt-2" onclick="editProfile()">{{ __('Edit Profile') }}</button>
+
+                        <!-- Status badge with dynamic styling based on user status -->
+                        <span class="badge {{ $user->status_badge_class }} mt-2">
+                {{ ucfirst($user->status) }}
+            </span>
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-8">
                 <!-- Main Content for Profile Settings -->
                 <div class="card shadow-sm">
@@ -49,6 +61,16 @@
                                             <label for="email">{{ __('Email') }}</label>
                                             <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" required>
                                         </div>
+                                    </div>
+                                    <!-- Referral Code and Link -->
+                                    <div class="mb-3">
+                                        <label for="referral-code">{{ __('Your Referral Code') }}</label>
+                                        <input type="text" id="referral-code" class="form-control" value="{{ $user->referral_code }}" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="referral-link">{{ __('Your Referral Link') }}</label>
+                                        <input type="text" id="referral-link" class="form-control" value="{{ route('register', ['ref' => $user->referral_code]) }}" readonly>
+                                        <small class="form-text text-muted">{{ __('Share this link to invite friends and earn rewards!') }}</small>
                                     </div>
                                     <div class="d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary" onclick="return confirmChanges()">{{ __('Save Changes') }}</button>

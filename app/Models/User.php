@@ -5,9 +5,12 @@ namespace App\Models;
 use App\Notifications\ProfileUpdatedNotification;
 use App\Notifications\UserStatusChangedNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -72,6 +75,17 @@ class User extends Authenticatable
                 $user->notify(new ProfileUpdatedNotification($user));
             }
         });
+
+        static::creating(function ($user) {
+            // Generate a unique referral code with a prefix and random alphanumeric string
+            $user->referral_code = strtoupper('REF-' . Str::random(6));
+
+            // Ensure the referral code is unique in the database
+            while (User::where('referral_code', $user->referral_code)->exists()) {
+                $user->referral_code = strtoupper('REF-' . Str::random(6));
+            }
+        });
+
     }
 
     /**
@@ -92,6 +106,11 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 
     /**
@@ -118,12 +137,52 @@ class User extends Authenticatable
         return $this->morphMany(Media::class, 'mediable');
     }
 
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
     /**
-     * Add balance to the user's account and log the transaction.
-     *
-     * @param float $amount
-     * @param string|null $currency
-     * @return void
+     * Get the users referred by this user.
      */
+    public function referrals()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+
+    public function canRequestBonus()
+    {
+        $referrals = $this->referrals()->get();
+        foreach ($referrals as $referral) {
+            Log::info("Referral User ID: {$referral->id}, Verified: {$referral->email_verified_at}, Balance: {$referral->balance}");
+        }
+
+        $qualifiedReferralsCount = $this->referrals()
+            ->whereNotNull('email_verified_at')
+            ->where('balance', '>=', 20)
+            ->count();
+
+        Log::info("User {$this->id} has {$qualifiedReferralsCount} qualified referrals.");
+
+        return $qualifiedReferralsCount >= 50;
+    }
+
+
+    public function getStatusBadgeClassAttribute()
+    {
+        switch ($this->status) {
+            case 'active':
+                return 'bg-success';  // Green badge for active
+            case 'inactive':
+                return 'bg-secondary'; // Gray badge for inactive
+            case 'suspended':
+                return 'bg-warning';  // Yellow badge for suspended
+            case 'banned':
+                return 'bg-danger';  // Red badge for banned
+            default:
+                return 'bg-secondary'; // Default color
+        }
+    }
+
 
 }

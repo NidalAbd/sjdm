@@ -128,9 +128,18 @@ return array(
             'url'           => 'notifications',
         ),
 
+        array(
+            'text' =>'home', // Use translation key with __() function
+            'url'  => '/', // Relative URL to the home page
+            'icon' => 'fas fa-home', // Font Awesome icon class
+            'topnav_center' => true, // Position the link in the center of the top navigation
+            'can' => 'create_order', // Permission check for displaying the item
+            'icon_color' => 'primary', // Set predefined icon color
+        ),
+
         // Admin category with submenu items
         array(
-            'text'    => 'admin', // Use translation key
+            'text'    => 'admin', // Just use the translation key
             'icon'    => 'fas fa-fw fa-user-shield',
             'topnav_center' => true,
             'can' => 'view_dashboard',

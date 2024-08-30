@@ -1,5 +1,5 @@
 <!-- resources/views/widgets/features.blade.php -->
-<div class="row mb-4">
+<div class="row mb-4 mt-5">
     <!-- Feature Title -->
     <h4 class="text-center mb-4 platform-title">{{ __('adminlte.feature') }}</h4>
 

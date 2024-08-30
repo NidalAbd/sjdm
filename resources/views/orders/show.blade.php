@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Service Details')
+@section('title', __('adminlte.service_details'))
 
 @section('content_header')
-    <h1>Service Details</h1>
+    <h1>{{ __('adminlte.service_details') }}</h1>
 @stop
 
 @section('content')
@@ -12,13 +12,13 @@
             <div class="card-body">
                 <h5 class="card-title">{{ $service->name }}</h5>
                 <p class="card-text">
-                    <strong>Type:</strong> {{ $service->type }}<br>
-                    <strong>Category:</strong> {{ $service->category }}<br>
-                    <strong>Rate:</strong> ${{ $service->rate }} per 1000<br>
-                    <strong>Min:</strong> {{ $service->min }}<br>
-                    <strong>Max:</strong> {{ $service->max }}<br>
-                    <strong>Refill:</strong> {{ $service->refill ? 'Yes' : 'No' }}<br>
-                    <strong>Cancel:</strong> {{ $service->cancel ? 'Yes' : 'No' }}<br>
+                    <strong>{{ __('adminlte.type') }}:</strong> {{ $service->type }}<br>
+                    <strong>{{ __('adminlte.category') }}:</strong> {{ $service->category }}<br>
+                    <strong>{{ __('adminlte.rate') }}:</strong> ${{ $service->rate }} {{ __('adminlte.per_1000') }}<br>
+                    <strong>{{ __('adminlte.min') }}:</strong> {{ $service->min }}<br>
+                    <strong>{{ __('adminlte.max') }}:</strong> {{ $service->max }}<br>
+                    <strong>{{ __('adminlte.refill') }}:</strong> {{ $service->refill ? __('adminlte.yes') : __('adminlte.no') }}<br>
+                    <strong>{{ __('adminlte.cancel') }}:</strong> {{ $service->cancel ? __('adminlte.yes') : __('adminlte.no') }}<br>
                 </p>
             </div>
         </div>

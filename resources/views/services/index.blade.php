@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Manage Services')
+@section('title', __('adminlte.manage_services')) <!-- Use translation for the title -->
 
 @section('content_header')
     @include('partials.breadcrumbs')
-    <h1>Manage Services</h1>
+    <h1>{{ __('adminlte.manage_services') }}</h1> <!-- Use translation for the header -->
 @stop
 
 @section('content')
@@ -16,14 +16,14 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" name="search" class="form-control" placeholder="Search services..."
-                                           value="{{ request()->get('search') }}">
+                                    <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_services') }}"
+                                           value="{{ request()->get('search') }}"> <!-- Use translation for placeholder -->
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" id="platformSelect">
-                                        <option value="all">Select Platform</option>
+                                        <option value="all">{{ __('adminlte.select_platform') }}</option> <!-- Use translation for default option -->
                                         @foreach($platforms as $platform)
                                             <option value="{{ $platform }}" {{ request()->get('platform') == $platform ? 'selected' : '' }}>
                                                 {{ ucfirst($platform) }}
@@ -35,7 +35,7 @@
                             <div class="col-md-3">
                                 <div class="input-group input-group-sm">
                                     <select name="category" class="form-control" id="categorySelect">
-                                        <option value="all">Select Category</option>
+                                        <option value="all">{{ __('adminlte.select_category') }}</option> <!-- Use translation for default option -->
                                         @foreach($uniqueCategories as $category)
                                             <option value="{{ $category }}" {{ request()->get('category') == $category ? 'selected' : '' }}>
                                                 {{ ucfirst($category) }}
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary btn-sm btn-block">Search</button>
+                                <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button> <!-- Use translation for button -->
                             </div>
                         </div>
                     </form>

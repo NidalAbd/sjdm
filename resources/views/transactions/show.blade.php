@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Transaction Details')
+@section('title', __('adminlte.transaction_details'))
 
 @section('content_header')
-    <h1 class="text-center display-4">{{ config('app.name') }} - Transaction Details</h1>
+    <h1 class="text-center display-4">{{ config('app.name') }} - {{ __('adminlte.transaction_details') }}</h1>
     @include('partials.breadcrumbs')
 @stop
 
@@ -13,7 +13,7 @@
             <div class="col-lg-10">
                 <div class="card shadow border-0 rounded-lg">
                     <div class="card-header bg-primary text-white py-4 d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">Transaction #{{ $transaction->id }}</h3>
+                        <h3 class="mb-0">{{ __('adminlte.transaction') }} #{{ $transaction->id }}</h3>
                         <span class="badge bg-{{ $transaction->status == 'completed' ? 'success' : 'danger' }} text-uppercase">
                             {{ ucfirst($transaction->status) }}
                         </span>
@@ -22,59 +22,59 @@
                         <div class="row mb-5">
                             <div class="col-md-6">
                                 <img src="{{ asset('images/MaxPeak.png') }}" alt="{{ config('app.name') }} Logo" class="img-fluid mb-3" style="max-width: 50px; border-radius: 50%;">
-                                <h5 class="text-secondary">Transaction Type</h5>
+                                <h5 class="text-secondary">{{ __('adminlte.transaction_type') }}</h5>
                                 <p class="lead">{{ ucfirst($transaction->type) }}</p>
                             </div>
                             <div class="col-md-6 text-end">
-                                <h5 class="text-secondary">Amount</h5>
+                                <h5 class="text-secondary">{{ __('adminlte.amount') }}</h5>
                                 <p class="lead fw-bold text-success">${{ number_format($transaction->amount, 2) }}</p>
                             </div>
                         </div>
                         <hr>
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <h5 class="text-secondary">Date</h5>
+                                <h5 class="text-secondary">{{ __('adminlte.date') }}</h5>
                                 <p>{{ $transaction->created_at->format('d M Y, H:i A') }}</p>
                             </div>
                             <div class="col-md-6 text-end">
-                                <h5 class="text-secondary">Payment Method</h5>
-                                <p>{{ $transaction->payment_method ?? 'Not specified' }}</p>
+                                <h5 class="text-secondary">{{ __('adminlte.payment_method') }}</h5>
+                                <p>{{ $transaction->payment_method ?? __('adminlte.not_specified') }}</p>
                             </div>
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-12">
-                                <h5 class="text-secondary">Description</h5>
+                                <h5 class="text-secondary">{{ __('adminlte.description') }}</h5>
                                 <p>
-                                    {{ $transaction->description ?? 'No description provided.' }}
+                                    {{ $transaction->description ?? __('adminlte.no_description_provided') }}
                                     @if($transaction->payment_method == 'admin')
-                                        (Added by Admin)
+                                        ({{ __('adminlte.added_by_admin') }})
                                     @elseif($transaction->payment_method == 'stripe')
-                                        (Processed via Stripe Payment)
+                                        ({{ __('adminlte.processed_via_stripe') }})
                                     @endif
                                 </p>
                             </div>
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-12">
-                                <h5 class="text-secondary">Details</h5>
+                                <h5 class="text-secondary">{{ __('adminlte.details') }}</h5>
                                 <table class="table table-striped table-bordered">
                                     <thead class="table-light">
                                     <tr>
-                                        <th scope="col">Detail</th>
-                                        <th scope="col">Value</th>
+                                        <th scope="col">{{ __('adminlte.detail') }}</th>
+                                        <th scope="col">{{ __('adminlte.value') }}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td>Transaction ID</td>
+                                        <td>{{ __('adminlte.transaction_id') }}</td>
                                         <td>{{ $transaction->id }}</td>
                                     </tr>
                                     <tr>
-                                        <td>User</td>
+                                        <td>{{ __('adminlte.user') }}</td>
                                         <td>{{ $transaction->user->name }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Status</td>
+                                        <td>{{ __('adminlte.status') }}</td>
                                         <td>{{ ucfirst($transaction->status) }}</td>
                                     </tr>
                                     <!-- Add more rows as needed -->
@@ -86,10 +86,10 @@
                     <div class="card-footer bg-white py-4">
                         <div class="d-flex justify-content-between">
                             <a href="{{ route('transactions.index') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Back to Transactions
+                                <i class="fas fa-arrow-left me-2"></i>{{ __('adminlte.back_to_transactions') }}
                             </a>
                             <button class="btn btn-primary" onclick="window.print()">
-                                <i class="fas fa-print me-2"></i>Print Receipt
+                                <i class="fas fa-print me-2"></i>{{ __('adminlte.print_receipt') }}
                             </button>
                         </div>
                     </div>
@@ -101,6 +101,6 @@
 
 @section('js')
     <script>
-        console.log('Transaction Details page loaded');
+        console.log('{{ __('adminlte.transaction_details_page_loaded') }}');
     </script>
 @stop

@@ -1,7 +1,3 @@
-<!-- Title Outside Card -->
-
-
-<!-- Login Card -->
 <!-- Login Card -->
 <div class="card shadow-lg rounded-lg border-1 mt-4">
     <div class="card-body p-5">
@@ -53,7 +49,6 @@
         </form>
     </div>
 </div>
-
 
 <!-- Include Material Icons -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

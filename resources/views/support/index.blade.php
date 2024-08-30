@@ -1,15 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Manage Support Tickets')
+@section('title', __('adminlte.manage_support_tickets'))
 
 @section('content_header')
-    @include('partials.breadcrumbs')  <!-- Automatically include breadcrumbs -->
-    <h1>Manage Support Tickets</h1>
+    @include('partials.breadcrumbs')
+    <h1>{{ __('adminlte.manage_support_tickets') }}</h1>
 @stop
 
 @section('content')
     <div class="row justify-content-center">
         <div class="col-md-12">
+
             <div class="card">
                 <div class="card-body">
                     <!-- Filter form for search and filter functionality -->
@@ -17,14 +18,14 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" name="search" class="form-control" placeholder="Search tickets..."
+                                    <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_tickets') }}"
                                            value="{{ request()->get('search') }}">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="input-group input-group-sm">
                                     <select name="status" class="form-control" onchange="this.form.submit()">
-                                        <option value="">Select Status</option>
+                                        <option value="">{{ __('adminlte.select_status') }}</option>
                                         @foreach($statuses as $status)
                                             <option value="{{ $status->id }}" {{ request()->get('status') == $status->id ? 'selected' : '' }}>
                                                 {{ $status->name }}
@@ -34,7 +35,10 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary btn-sm btn-block">Search</button>
+                                <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{{ route('support.create') }}" class="btn btn-success btn-sm btn-block col-md-12">{{ __('adminlte.create_ticket') }}</a>
                             </div>
                         </div>
                     </form>
@@ -45,10 +49,10 @@
                             <thead class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Subject</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Created At</th>
-                                <th scope="col" class="text-center">Actions</th>
+                                <th scope="col">{{ __('adminlte.subject') }}</th>
+                                <th scope="col">{{ __('adminlte.status') }}</th>
+                                <th scope="col">{{ __('adminlte.created_at') }}</th>
+                                <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -64,22 +68,20 @@
                                         </td>
                                         <td>{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
                                         <td class="text-center">
-                                            <div class="btn-group" role="group" aria-label="Ticket Actions">
+                                            <div class="btn-group" role="group" aria-label="{{ __('adminlte.ticket_actions') }}">
                                                 @can('view', $ticket)
                                                     <a href="{{ route('support.show', $ticket->id) }}"
                                                        class="btn btn-secondary btn-sm"
                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                       title="View Ticket">
+                                                       title="{{ __('adminlte.view_ticket') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                 @endcan
-                                                    @can('update', $ticket)
-                                                        <!-- Remove or comment out this section -->
-                                                        <a href="{{ route('support.edit', $ticket->id) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Ticket">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                    @endcan
-
+                                                @can('update', $ticket)
+                                                    <a href="{{ route('support.edit', $ticket->id) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('adminlte.edit_ticket') }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                @endcan
                                                 @can('delete', $ticket)
                                                     <form action="{{ route('support.destroy', $ticket->id) }}" method="POST" style="display:inline;">
                                                         @csrf
@@ -87,7 +89,7 @@
                                                         <button
                                                             class="btn btn-danger btn-sm"
                                                             type="submit" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Delete Ticket"><i class="fas fa-trash-alt"></i>
+                                                            title="{{ __('adminlte.delete_ticket') }}"><i class="fas fa-trash-alt"></i>
                                                         </button>
                                                     </form>
                                                 @endcan
@@ -97,17 +99,17 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted">No tickets found</td>
+                                    <td colspan="5" class="text-center text-muted">{{ __('adminlte.no_tickets_found') }}</td>
                                 </tr>
                             @endif
                             </tbody>
                             <tfoot class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Subject</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Created At</th>
-                                <th scope="col" class="text-center">Actions</th>
+                                <th scope="col">{{ __('adminlte.subject') }}</th>
+                                <th scope="col">{{ __('adminlte.status') }}</th>
+                                <th scope="col">{{ __('adminlte.created_at') }}</th>
+                                <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
                             </tfoot>
                         </table>

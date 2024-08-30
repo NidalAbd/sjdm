@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Create Order')
+@section('title', __('adminlte.create_order'))
 
 @section('content_header')
     @include('partials.breadcrumbs')
-    <h1>Create Order</h1>
+    <h1>{{ __('adminlte.create_order') }}</h1>
 @stop
 
 @php
@@ -39,7 +39,7 @@
                             @foreach($platforms as $platform)
                                 <div class="col-md-3 mb-3">
                                     <button type="button" class="btn btn-block btn-primary platform-btn" data-platform="{{ $platform }}">
-                                        <i class="{{ $platformIconMap[$platform] }} mr-2"></i> {{ ucfirst($platform) }}
+                                        <i class="{{ $platformIconMap[$platform] }} mr-2"></i> {{ __('adminlte.' . $platform) }}
                                     </button>
                                 </div>
                             @endforeach
@@ -49,7 +49,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <div class="input-group input-group-sm position-relative">
-                                    <input type="text" name="search" class="form-control" placeholder="Search services..." value="{{ request()->get('search') }}">
+                                    <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_services') }}" value="{{ request()->get('search') }}">
                                     <!-- Dropdown menu for search results -->
                                     <ul class="dropdown-menu w-100" id="searchResultsDropdown" style="display: none;"></ul>
                                 </div>
@@ -68,9 +68,8 @@
                                 <div class="input-group input-group-sm">
                                     <select name="category" class="form-control" id="categorySelect">
                                         @foreach($uniqueCategories as $category)
-
                                             <option value="{{ $category }}" {{ $loop->first || request()->get('category') == $category ? 'selected' : '' }}>
-                                                {{ ucfirst($category) }}
+                                                {{ ucfirst(__('adminlte.' . $category)) }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -98,31 +97,31 @@
                         <!-- Additional Fields -->
                         <div class="mt-4">
                             <div class="form-group">
-                                <label for="description">Description</label>
+                                <label for="description">{{ __('adminlte.description') }}</label>
                                 <textarea id="description" class="form-control" style="height: 150px;" readonly>{{ $selectedService ? $selectedService->name : '' }}</textarea>
                             </div>
 
                             <div class="form-group">
-                                <label for="link">Link</label>
-                                <input type="url" name="link" id="link" class="form-control" placeholder="Enter the link">
+                                <label for="link">{{ __('adminlte.link') }}</label>
+                                <input type="url" name="link" id="link" class="form-control" placeholder="{{ __('adminlte.enter_link') }}">
                             </div>
 
                             <div class="form-group">
-                                <label for="quantity">Quantity</label>
-                                <input type="number" name="quantity" id="quantity" class="form-control" placeholder="Enter quantity" value="{{ request()->get('quantity') }}">
+                                <label for="quantity">{{ __('adminlte.quantity') }}</label>
+                                <input type="number" name="quantity" id="quantity" class="form-control" placeholder="{{ __('adminlte.enter_quantity') }}" value="{{ request()->get('quantity') }}">
                             </div>
 
                             <div class="form-group">
-                                <label for="charge">Charge</label>
+                                <label for="charge">{{ __('adminlte.charge') }}</label>
                                 <input type="text" id="charge" class="form-control" value="{{ $charge }}" readonly>
                             </div>
 
                             <div class="form-group">
-                                <label for="average_time">Average Time</label>
+                                <label for="average_time">{{ __('adminlte.average_time') }}</label>
                                 <input type="text" id="average_time" class="form-control" readonly>
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">{{ __('adminlte.submit') }}</button>
                         </div>
                     </form>
                 </div>
@@ -135,10 +134,10 @@
                 <div class="card-header">
                     <ul class="nav nav-tabs card-header-tabs" id="orderInfoTabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Info and Updates</a>
+                            <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">{{ __('adminlte.info_and_updates') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" aria-selected="false">Important Notes</a>
+                            <a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" aria-selected="false">{{ __('adminlte.important_notes') }}</a>
                         </li>
                     </ul>
                 </div>
@@ -146,31 +145,31 @@
                     <div class="tab-content" id="orderInfoTabsContent">
                         <!-- Info and Updates Tab -->
                         <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-                            <p>READ before you order. All Services are written now on this format:</p>
+                            <p>{{ __('adminlte.read_before_ordering') }}</p>
                             <ul>
-                                <li>Service name [Max] [Start time - Speed]</li>
-                                <li>🔥 = Top service.</li>
-                                <li>💧 = Dripfeed is on.</li>
-                                <li>♻ = Refill button is enabled.</li>
-                                <li>🛑 = Cancel button is enabled.</li>
-                                <li>Rxx = Refill period (e.g., R30 = 30 Days Refill).</li>
-                                <li>ARxx = Automatic Refill period (e.g., AR30 = 30 Days Auto-Refill).</li>
+                                <li>{{ __('adminlte.service_format') }}</li>
+                                <li>🔥 = {{ __('adminlte.top_service') }}.</li>
+                                <li>💧 = {{ __('adminlte.dripfeed_on') }}.</li>
+                                <li>♻ = {{ __('adminlte.refill_enabled') }}.</li>
+                                <li>🛑 = {{ __('adminlte.cancel_enabled') }}.</li>
+                                <li>Rxx = {{ __('adminlte.refill_period') }}.</li>
+                                <li>ARxx = {{ __('adminlte.auto_refill_period') }}.</li>
                             </ul>
-                            <p>INSTANT start orders can take up to 1 hour to start. HQ/LQ = High Quality/Low Quality.</p>
+                            <p>{{ __('adminlte.instant_start_notice') }}</p>
                         </div>
 
                         <!-- Important Notes Tab -->
                         <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
-                            <p>Please READ these notes carefully before placing an order:</p>
+                            <p>{{ __('adminlte.read_notes_carefully') }}</p>
                             <ul>
-                                <li>All accounts must be Public, Not Private.</li>
-                                <li>Do NOT order more than one order for the same link at the same time until the first one is Completed.</li>
-                                <li>Ensure your Subs, Likes, and Views counter is public, not private before ordering.</li>
-                                <li>WE CAN'T Cancel/Edit any order after you place it unless it has no problems. Please make sure to place the correct order.</li>
-                                <li>If you change your account to private or your video/post gets deleted after placing the order, we will mark the order as completed and cannot cancel it in any case.</li>
-                                <li>Do NOT order for Porn, Politics, extremism, or any content that stirs public opinion.</li>
-                                <li>When you make a new order, you accept our terms and conditions.</li>
-                                <li>When you add funds, we can't reverse your payment. You can only use your funds on the website.</li>
+                                <li>{{ __('adminlte.account_public_notice') }}</li>
+                                <li>{{ __('adminlte.single_order_notice') }}</li>
+                                <li>{{ __('adminlte.counter_public_notice') }}</li>
+                                <li>{{ __('adminlte.order_cancellation_notice') }}</li>
+                                <li>{{ __('adminlte.account_private_notice') }}</li>
+                                <li>{{ __('adminlte.prohibited_content_notice') }}</li>
+                                <li>{{ __('adminlte.accept_terms_notice') }}</li>
+                                <li>{{ __('adminlte.funds_notice') }}</li>
                             </ul>
                         </div>
                     </div>
@@ -387,7 +386,7 @@
                 console.log('Form Submit - Selected Service ID:', selectedServiceId);
 
                 if (!selectedServiceId || selectedServiceId === "") {
-                    alert('Please select a service before submitting the form.');
+                    alert('{{ __('adminlte.select_service_warning') }}');
                     e.preventDefault();
                 }
             });

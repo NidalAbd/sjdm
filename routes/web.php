@@ -1,14 +1,17 @@
 <?php
 
+use App\Http\Controllers\BonusController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -21,33 +24,34 @@ Route::get('lang/{lang}', function ($lang) {
 })->name('changeLang');
 
 
-// Welcome page
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [WelcomeController::class, 'index'])->name('home');
+
 
 Auth::routes(['verify' => true]);
 
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
-        Route::resource('users', UserController::class);
-        Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
-        Route::post('users/{user}/assign-role', [UserController::class, 'storeAssignRole'])->name('users.storeAssignRole');
-        Route::get('users/{user}/assign-permission', [UserController::class, 'assignPermission'])->name('users.assignPermission');
-        Route::post('users/{user}/assign-permission', [UserController::class, 'storeAssignPermission'])->name('users.storeAssignPermission');
-        Route::get('users/{user}/assignTask', [UserController::class, 'assignTask'])->name('users.assignTask');
-        Route::post('users/{user}/assignTask', [UserController::class, 'storeAssignTask']);
-        Route::post('users/{user}/assign-project', [UserController::class, 'storeAssignProject'])->name('users.store_assign_project');
-        Route::get('users/{user}/assignProject', [UserController::class, 'assignProject'])->name('users.assignProject');
-        Route::post('users/{user}/assignProject', [UserController::class, 'storeAssignProject']);
-        Route::post('users/{user}/add-balance', [UserController::class, 'processAddBalance'])->name('users.processAddBalance');
+    Route::resource('users', UserController::class);
+    Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
+    Route::post('users/{user}/assign-role', [UserController::class, 'storeAssignRole'])->name('users.storeAssignRole');
+    Route::get('users/{user}/assign-permission', [UserController::class, 'assignPermission'])->name('users.assignPermission');
+    Route::post('users/{user}/assign-permission', [UserController::class, 'storeAssignPermission'])->name('users.storeAssignPermission');
+    Route::get('users/{user}/assignTask', [UserController::class, 'assignTask'])->name('users.assignTask');
+    Route::post('users/{user}/assignTask', [UserController::class, 'storeAssignTask']);
+    Route::post('users/{user}/assign-project', [UserController::class, 'storeAssignProject'])->name('users.store_assign_project');
+    Route::get('users/{user}/assignProject', [UserController::class, 'assignProject'])->name('users.assignProject');
+    Route::post('users/{user}/assignProject', [UserController::class, 'storeAssignProject']);
+    Route::post('users/{user}/add-balance', [UserController::class, 'processAddBalance'])->name('users.processAddBalance');
+    Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
+    Route::post('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
+    Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
 
 
-        // Role Routes
-        Route::resource('roles', RoleController::class);
-        // Permission Routes
-        Route::resource('permissions', PermissionController::class);
+    // Role Routes
+    Route::resource('roles', RoleController::class);
+    // Permission Routes
+    Route::resource('permissions', PermissionController::class);
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');

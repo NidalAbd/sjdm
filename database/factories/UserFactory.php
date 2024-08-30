@@ -28,6 +28,8 @@ class UserFactory extends Factory
             'marital_status' => $this->faker->randomElement(['single', 'married', 'divorced', 'widowed']),
             'date_of_birth' => $this->faker->date('Y-m-d', '2003-12-31'), // Users must be at least 18 years old
             'remember_token' => Str::random(10),
+            'referral_code' => $this->faker->unique()->bothify('REF-######'), // Adding a unique referral code
+            'referred_by' => null, // Can be updated to simulate referral relationships
         ];
     }
 
