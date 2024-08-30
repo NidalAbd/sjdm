@@ -4,14 +4,78 @@
         <h4 class="text-center mb-4 platform-title">{{ __('adminlte.platforms_we_support') }}</h4>
         <div class="row justify-content-center">
             <!-- Platform cards -->
-            @foreach (['facebook', 'instagram', 'tiktok', 'google', 'twitter', 'youtube', 'spotify', 'snapchat', 'linkedin', 'telegram', 'discord', 'reviews'] as $platform)
-                <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                    <div class="platform-icon bg-{{ $platform }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                        <i class="fab fa-{{ $platform }} fa-2x"></i>
-                    </div>
-                    <p class="platform-text">{{ __('adminlte.' . $platform) }}</p>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-facebook fa-2x"></i>
                 </div>
-            @endforeach
+                <p class="platform-text">{{ __('adminlte.facebook') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-instagram fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.instagram') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-dark text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-tiktok fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.tiktok') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-google fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.google') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-twitter fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.twitter') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-youtube fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.youtube') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-spotify fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.spotify') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-snapchat fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.snapchat') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-linkedin fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.linkedin') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-telegram fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.telegram') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fab fa-discord fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.discord') }}</p>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
+                <div class="platform-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                    <i class="fas fa-star fa-2x"></i>
+                </div>
+                <p class="platform-text">{{ __('adminlte.reviews') }}</p>
+            </div>
         </div>
     </div>
 </div>
@@ -38,8 +102,8 @@
     }
 
     .platform-icon {
-        width: 80px;
-        height: 80px;
+        width: 80px; /* Consistent icon size */
+        height: 80px; /* Consistent icon size */
         margin-bottom: 10px;
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
     }
@@ -60,7 +124,7 @@
     }
 
     .platform-icon i {
-        font-size: 2rem;
+        font-size: 2rem; /* Consistent icon size */
     }
 
     .platform-card:hover {
@@ -82,6 +146,28 @@
 
     .dark-mode .platform-card:hover .platform-text {
         color: #007bff;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .platform-icon {
+            width: 60px; /* Smaller icon size for mobile */
+            height: 60px; /* Smaller icon size for mobile */
+        }
+
+        .platform-icon i {
+            font-size: 1.5rem; /* Smaller icon size for mobile */
+        }
+
+        .platform-text {
+            font-size: 0.8rem; /* Smaller text size for mobile */
+        }
+    }
+
+    @media (max-width: 576px) {
+        .platform-card {
+            margin: 10px 0; /* Reduce margin for smaller screens */
+        }
     }
 </style>
 
