@@ -25,6 +25,7 @@ class ProfileController extends Controller
     }
 
 
+
     public function updateSettings(Request $request)
     {
         $request->validate([
