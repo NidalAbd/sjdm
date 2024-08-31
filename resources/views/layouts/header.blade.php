@@ -142,6 +142,24 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">{{ __('adminlte.faq') }}</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-globe"></i> {{ __('adminlte.language') }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
+                        <li><a class="dropdown-item" href="{{ route('changeLang', 'en') }}">{{ __('adminlte.english') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('changeLang', 'ar') }}">{{ __('adminlte.arabic') }}</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </a>
+                </li>
                 @guest
                     <!-- Show these links only if the user is not authenticated -->
                     <li class="nav-item">
@@ -161,28 +179,11 @@
                             <li><a class="dropdown-item" href="{{ route('profile.settings') }}">{{ __('adminlte.profile') }}</a></li>
                             <li><a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    {{ __('adminlte.sign_out') }}
+                                    {{ __('adminlte.log_out') }}
                                 </a></li>
                         </ul>
                     </li>
                 @endguest
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">{{ __('adminlte.faq') }}</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-globe"></i> {{ __('adminlte.language') }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
-                        <li><a class="dropdown-item" href="{{ route('changeLang', 'en') }}">{{ __('adminlte.english') }}</a></li>
-                        <li><a class="dropdown-item" href="{{ route('changeLang', 'ar') }}">{{ __('adminlte.arabic') }}</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#" id="darkModeToggle">
-                        <i class="fas fa-moon"></i>
-                    </a>
-                </li>
             </ul>
         </div>
     </div>

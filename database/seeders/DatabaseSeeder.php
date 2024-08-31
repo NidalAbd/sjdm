@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call(UserSeeder::class);
 
-//        $this->call(OrderSeeder::class);
-//        $this->call(TicketStatusSeeder::class);
-//
-//        $this->call(SupportTicketSeeder::class);
+        $this->call(OrderSeeder::class);
+        $this->call(TicketStatusSeeder::class);
+
+        $this->call(SupportTicketSeeder::class);
     }
 }
