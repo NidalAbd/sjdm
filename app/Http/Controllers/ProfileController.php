@@ -15,14 +15,17 @@ class ProfileController extends Controller
         $orders = Order::where('user_id', $user->id)->get();
         $transactions = Transaction::where('user_id', $user->id)->get();
 
-        // Fetch only active and verified referrals
-        $referrals = User::where('referred_by', $user->id)
-            ->where('status', 'active')
-            ->whereNotNull('email_verified_at')
-            ->get();
+        // Fetch all referrals
+        $totalReferrals = User::where('referred_by', $user->id)->get();
 
-        return view('profile.settings', compact('user', 'orders', 'transactions', 'referrals'));
+        // Fetch only active and verified referrals
+        $verifiedActiveReferrals = $totalReferrals->filter(function ($referral) {
+            return $referral->status === 'active' && $referral->email_verified_at !== null;
+        });
+
+        return view('profile.settings', compact('user', 'orders', 'transactions', 'totalReferrals', 'verifiedActiveReferrals'));
     }
+
 
 
 

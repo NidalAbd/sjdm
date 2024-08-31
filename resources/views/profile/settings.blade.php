@@ -152,6 +152,8 @@
                                         <li>{{ __('An active user is someone who has added at least $20 to their account.') }}</li>
                                         <li>{{ __('Once you refer 50 users who meet these criteria, you can request your $100 bonus!') }}</li>
                                     </ul>
+                                    <p>{{ __('Total referrals: ') }} {{ $totalReferrals->count() }}</p>
+                                    <p>{{ __('Verified and active referrals: ') }} {{ $verifiedActiveReferrals->count() }}</p>
                                     <a href="{{ route('bonus.request') }}" class="btn btn-primary text-decoration-none mt-2">{{ __('Request Your Bonus') }}</a>
                                 </div>
 
@@ -168,7 +170,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse ($referrals as $referral)
+                                        @forelse ($totalReferrals as $referral)
                                             <tr>
                                                 <td>{{ $referral->id }}</td>
                                                 <td>{{ $referral->name }}</td>
@@ -186,6 +188,7 @@
                                     </table>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
