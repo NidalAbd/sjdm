@@ -27,23 +27,35 @@ class HomeController extends Controller
      *
      * @return Renderable
      */
-    public function index()
+    public function settings()
     {
         $user = auth()->user();
+        $orders = Order::where('user_id', $user->id)->get();
+        $transactions = Transaction::where('user_id', $user->id)->get();
 
-        // Retrieve data for the dashboard metrics
-        $userCount = User::count();
-        $serviceCount = Service::count();
-        $orderCount = Order::count();
-        $startingPrice = Service::min('rate'); // Get the minimum price from services
-        $transactionCount = Transaction::count();
-        $referrals = User::where('referred_by', $user->id)
+        // Fetch all referrals
+        $totalReferrals = User::where('referred_by', $user->id)->get();
+
+        // Fetch only active and verified referrals
+        $verifiedActiveReferrals = User::where('referred_by', $user->id)
             ->where('status', 'active')
             ->whereNotNull('email_verified_at')
             ->get();
 
-        // Pass the data to the dashboard view
-        return view('layouts.app', compact('userCount', 'serviceCount', 'orderCount', 'startingPrice', 'transactionCount', 'referrals'));
+        return view('profile.settings', compact('user', 'orders', 'transactions', 'totalReferrals', 'verifiedActiveReferrals'));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+        ]);
+
+        $user = auth()->user();
+        $user->update($request->only('name', 'email'));
+
+        return redirect()->route('profile.settings')->with('success', 'Profile settings updated successfully.');
     }
 
 }

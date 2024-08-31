@@ -12,6 +12,7 @@ use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
+use http\Client\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -28,10 +29,15 @@ Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 
 Auth::routes(['verify' => true]);
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
 
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('users', UserController::class);
     Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
     Route::post('users/{user}/assign-role', [UserController::class, 'storeAssignRole'])->name('users.storeAssignRole');
@@ -46,7 +52,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::post('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
     Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
-    Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
 
 
     // Role Routes

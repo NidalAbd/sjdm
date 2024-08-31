@@ -24,7 +24,15 @@
 
         <!-- Dashboard header -->
         <h1>{{ __('adminlte.welcome_dashboard') }}</h1>
-
+        @if (session('warning'))
+            <div class="alert alert-warning">
+                {{ session('warning') }}
+                <form method="POST" action="{{ route('verification.resend') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('Click here to request another verification email') }}</button>.
+                </form>
+            </div>
+        @endif
         <!-- Metric widgets row -->
         <div class="row mt-4">
             @if(auth()->user()->isAdmin())
