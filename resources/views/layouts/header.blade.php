@@ -142,12 +142,15 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('login') }}">{{ __('adminlte.sign_in') }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
-                </li>
+                @guest
+                    <!-- Show these links only if the user is not authenticated -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('login') }}">{{ __('adminlte.sign_in') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
+                    </li>
+                @endguest
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#">{{ __('adminlte.faq') }}</a>
                 </li>
@@ -169,6 +172,7 @@
         </div>
     </div>
 </nav>
+
 
 <!-- Hero Section -->
 <section id="hero-sec" class="hero-section d-flex align-items-center justify-content-center text-center text-white position-relative overflow-hidden">

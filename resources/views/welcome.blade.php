@@ -25,9 +25,12 @@
     <div class="mb-4">
         @include('widgets.platforms')
     </div>
-    <div class="mb-4">
-        @include('widgets.fast-login')
-    </div>
+    @guest
+        <!-- Show "fast-login" widget only if the user is not logged in -->
+        <div class="mb-4">
+            @include('widgets.fast-login')
+        </div>
+    @endguest
 
     <div class="mb-4">
         @include('widgets.numerical-widgets')
