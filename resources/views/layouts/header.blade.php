@@ -150,6 +150,21 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
                     </li>
+                @else
+                    <!-- Show these links only if the user is authenticated -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i> {{ Auth::user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                            <li><a class="dropdown-item" href="{{ route('dashboard') }}">{{ __('adminlte.dashboard') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}">{{ __('adminlte.profile') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    {{ __('adminlte.sign_out') }}
+                                </a></li>
+                        </ul>
+                    </li>
                 @endguest
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#">{{ __('adminlte.faq') }}</a>
@@ -172,6 +187,12 @@
         </div>
     </div>
 </nav>
+
+<!-- Logout Form -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+    @csrf
+</form>
+
 
 
 <!-- Hero Section -->
