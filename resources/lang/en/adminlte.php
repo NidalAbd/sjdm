@@ -52,6 +52,7 @@ return [
     'active' => 'Active',
     'inactive' => 'Inactive',
     'bonus_offer_message' => 'Bonus Offer! Earn a $100 bonus by referring 50 verified and active users. To get your referral code, go to your profile settings and share your unique link with friends!',
+    'referrals' => 'Referrals',
 
     // Breadcrumbs
     'breadcrumbs' => [
