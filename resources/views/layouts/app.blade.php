@@ -24,15 +24,7 @@
 
         <!-- Dashboard header -->
         <h1>{{ __('adminlte.welcome_dashboard') }}</h1>
-        @if (session('warning'))
-            <div class="alert alert-warning">
-                {{ session('warning') }}
-                <form method="POST" action="{{ route('verification.resend') }}" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('Click here to request another verification email') }}</button>.
-                </form>
-            </div>
-        @endif
+
         <!-- Metric widgets row -->
         <div class="row mt-4">
             @if(auth()->user()->isAdmin())
@@ -99,7 +91,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>{{ $referrals->count() }}</h3>
+                            <h3>{{ $verifiedActiveReferrals->count() }}</h3>
                             <p>{{ __('adminlte.referrals') }}</p>
                         </div>
                         <div class="icon">

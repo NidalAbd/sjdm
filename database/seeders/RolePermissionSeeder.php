@@ -24,11 +24,13 @@ class RolePermissionSeeder extends Seeder
                 'assign_role',
             ])->pluck('id'),
 
-            'client' => Permission::whereIn('name', [
-                'view_profile', 'add_balance', 'view_any_user', 'view_user',
-                'create_order', 'view_order', 'update_order', 'delete_order',
-                'view_support', 'create_support', 'update_support', 'delete_support',
-                'change_language', 'change_currency',
+            'client' => Permission::whereNotIn('name', [
+                'view_any_user', 'view_user', 'create_user', 'update_user', 'delete_user',
+                'restore_user', 'force_delete_user', 'assign_role', 'assign_permission',
+                'view_any_role', 'view_role', 'create_role', 'update_role', 'delete_role',
+                'restore_role', 'force_delete_role', 'view_any_permission', 'view_permission',
+                'create_permission', 'update_permission', 'delete_permission', 'restore_permission',
+                'force_delete_permission'
             ])->pluck('id'),
 
             'guest' => Permission::whereIn('name', [

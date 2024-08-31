@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Media;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
+use Faker\Factory as Faker;
 
 class RegisterController extends Controller
 {
@@ -29,6 +31,7 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+        $this->faker = Faker::create();  // Initialize Faker
     }
 
     /**
@@ -72,7 +75,28 @@ class RegisterController extends Controller
         $role = Role::where('name', 'client')->first();
         if ($role) {
             $user->assignRole($role);
+            $user->syncPermissions($role->permissions);
         }
+
+        // Add a profile photo to the user's media
+        $avatars = [
+            'images/avatar1.png',
+            'images/avatar2.png',
+            'images/avatar3.png',
+            'images/avatar04.png',
+            'images/avatar5.png',
+        ];
+
+        $selectedAvatar = $this->faker->randomElement($avatars);
+
+        $media = new Media([
+            'file_name' => basename($selectedAvatar),
+            'file_type' => 'image/png',
+            'file_size' => filesize(public_path($selectedAvatar)),
+            'path' => $selectedAvatar,
+        ]);
+
+        $user->media()->save($media);
 
         event(new Registered($user));
 

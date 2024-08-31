@@ -12,32 +12,28 @@ use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
-use http\Client\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-
-// routes/web.php
+// Language change route
 Route::get('lang/{lang}', function ($lang) {
     session(['applocale' => $lang]);
     app()->setLocale($lang); // Set locale immediately
     return redirect()->back();
 })->name('changeLang');
 
-
+// Public route for the welcome page
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
-
+// Auth routes with email verification enabled
 Auth::routes(['verify' => true]);
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
 
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
+// Home route, redirecting to dashboard
+Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth', 'verified');
 
-Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
-
+// Middleware group for authenticated and verified users
 Route::middleware(['auth', 'verified'])->group(function () {
+    // User routes
     Route::resource('users', UserController::class);
     Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
     Route::post('users/{user}/assign-role', [UserController::class, 'storeAssignRole'])->name('users.storeAssignRole');
@@ -49,46 +45,43 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('users/{user}/assignProject', [UserController::class, 'assignProject'])->name('users.assignProject');
     Route::post('users/{user}/assignProject', [UserController::class, 'storeAssignProject']);
     Route::post('users/{user}/add-balance', [UserController::class, 'processAddBalance'])->name('users.processAddBalance');
+
+    // Profile settings routes
     Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::post('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
+
+    // Bonus request route
     Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
 
-
-    // Role Routes
+    // Role and Permission routes
     Route::resource('roles', RoleController::class);
-    // Permission Routes
     Route::resource('permissions', PermissionController::class);
 
-    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    // Order routes
+    Route::resource('orders', OrderController::class)->except(['edit', 'update']);
     Route::get('/orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
     Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
 
-    Route::get('services', [ServiceController::class, 'index'])->name('services.index');
-    Route::get('services/create', [ServiceController::class, 'create'])->name('services.create');
-    Route::post('services', [ServiceController::class, 'store'])->name('services.store');
+    // Service routes
+    Route::resource('services', ServiceController::class);
     Route::get('services/fetch', [ServiceController::class, 'fetchFromApi'])->name('services.fetch');
-    Route::get('services/{service}', [ServiceController::class, 'show'])->name('services.show');
-    Route::get('services/{service}/edit', [ServiceController::class, 'edit'])->name('services.edit');
-    Route::put('services/{service}', [ServiceController::class, 'update'])->name('services.update');
-    Route::delete('services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
     Route::get('/services/filter', [ServiceController::class, 'filter'])->name('services.filter');
     Route::get('/services/getCategories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
-    Route::get('/services/categories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
 
+    // Transaction routes
     Route::resource('transactions', TransactionController::class);
 
-
+    // Support ticket routes
     Route::resource('support', SupportTicketController::class);
 
-
+    // Stripe checkout routes
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
-    // Routes for admin to add balance manually
-
-
 });
+
+// Handle email verification notice
+Route::get('/email/verify', function () {
+    return view('auth.verify');
+})->middleware('auth')->name('verification.notice');
+

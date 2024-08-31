@@ -27,7 +27,7 @@ class HomeController extends Controller
      *
      * @return Renderable
      */
-    public function settings()
+    public function index()
     {
         $user = auth()->user();
         $orders = Order::where('user_id', $user->id)->get();
