@@ -87,18 +87,20 @@
             @else
                 <!-- User-specific Widgets -->
                 <!-- Referrals widget -->
+                <!-- Referrals widget -->
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>{{ auth()->user()->referrals()->count() }}</h3>
+                            <h3>{{ $referrals->count() }}</h3>
                             <p>{{ __('adminlte.referrals') }}</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-user-friends"></i>
                         </div>
-                        <a href="{{ route('referrals.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="{{ route('profile.settings') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
+
 
                 <!-- Orders widget -->
                 <div class="col-lg-3 col-6">

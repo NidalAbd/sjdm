@@ -92,7 +92,6 @@ return [
     'sign_up' => 'Sign Up',
     'forgot_password' => 'Forgot your password?',
     'reset_it' => 'Reset it',
-
     // Language
     'language' => 'Language',
     'english' => 'English',
