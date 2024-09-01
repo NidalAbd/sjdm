@@ -14,6 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('service_id');
             $table->string('link');
             $table->integer('quantity');
+            $table->integer('start_count')->nullable();
+            $table->integer('remains')->nullable();
             $table->integer('runs')->nullable();
             $table->decimal('charge', 10, 2)->nullable(); // Store the charge amount
             $table->string('status')->nullable(); // Store the status of the order

@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\UpdateOrderStatuses;
+use App\Models\Order;
+use App\Models\Service;
 use App\Models\Transaction;
 use App\Services\Api;
 use Illuminate\Http\Request;
-use App\Models\Service;
-use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class OrderController extends Controller
+class OrderOldController extends Controller
 {
     protected $api;
 
@@ -45,22 +45,6 @@ class OrderController extends Controller
 
         $orders = $query->paginate(5); // Paginate the results
 
-        // Fetch additional order details from the API using your Api service
-        $orderIds = $orders->pluck('id')->toArray();
-        $apiResponse = $this->api->multiStatus($orderIds);
-
-        // Update orders with the fetched data
-        foreach ($orders as $order) {
-            if (isset($apiResponse->{$order->id})) {
-                $orderData = $apiResponse->{$order->id};
-                $order->start_count = $orderData->start_count ?? null;
-                $order->remains = $orderData->remains ?? null;
-                $order->status = $orderData->status ?? $order->status; // Update status if available
-                $order->charge = $orderData->charge ?? $order->charge; // Update charge if needed
-                $order->save(); // Save changes to the database
-            }
-        }
-
         // Retrieve the list of services for the filter dropdown
         $services = Service::all();
 
@@ -75,36 +59,53 @@ class OrderController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new order.
-     */
-    public function create()
+    public function create(Request $request)
     {
-        Log::info('getCategories method called'); // Debugging log
-
-        // List of platforms (categories)
+        // Define available platforms
         $platforms = [
             'all', 'facebook', 'instagram', 'tiktok', 'google', 'twitter',
             'youtube', 'spotify', 'snapchat', 'linkedin', 'telegram',
             'discord', 'reviews', 'twitch', 'traffic'
         ];
 
-        // Fetch unique categories from the services table
-        $uniqueCategories = Service::select('category')->distinct()->pluck('category');
+        // Query services based on the selected platform and category
+        $query = Service::query();
 
-        // Fetch services to prepopulate for the initial platform/category
-        $services = Service::where('category', 'LIKE', "%all%")->get();
+        if ($request->filled('platform') && $request->platform !== 'all') {
+            $query->where('category', 'like', '%' . $request->platform . '%');
+        }
 
-        // Select the first service as the default selected service, if available
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $services = $query->get();
+        $uniqueCategories = $query->distinct()->pluck('category');
+
+        // If it's an AJAX request, return the categories and services as JSON
+        if ($request->ajax()) {
+            return response()->json([
+                'categories' => view('partials.category_options', compact('uniqueCategories'))->render(),
+                'services' => view('partials.service_options', compact('services'))->render(),
+            ]);
+        }
+
+        // If not an AJAX request, return the regular view
         $selectedService = $services->first();
+        $charge = null;
 
-        return view('orders.create', compact('platforms', 'uniqueCategories', 'services', 'selectedService'));
+        if ($selectedService && $request->filled('quantity')) {
+            $charge = ($request->quantity * $selectedService->rate) / 1000;
+        }
+
+        return view('orders.create', compact('platforms', 'uniqueCategories', 'services', 'selectedService', 'charge'));
     }
 
 
-    /**
-     * Store a newly created order in storage.
-     */
     public function store(Request $request)
     {
         Log::info('Incoming request data:', $request->all());
@@ -198,52 +199,30 @@ class OrderController extends Controller
         return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
     }
 
-    /**
-     * Get services based on the selected platform/category.
-     */
-
-    public function getCategories(Request $request)
+    public function search(Request $request)
     {
-//        Log::info('getCategories method called'); // Debugging log
+        $query = $request->input('search');
 
-        $platform = $request->query('platform', ''); // Using query method to get the parameter
-
-        if ($platform === 'all' || empty($platform)) {
-            // Fetch all categories
-            $categories = Service::select('category')->distinct()->pluck('category');
-        } else {
-            // Fetch categories based on the selected platform
-            $categories = Service::where('category', 'LIKE', "%$platform%")->distinct()->pluck('category');
-        }
-
-//        Log::info('Categories fetched', ['categories' => $categories]); // Debugging log
-
-        return response()->json($categories);
-    }
-
-
-
-    public function getServices(Request $request)
-    {
-//        Log::info('getServices method called'); // Debugging log
-
-        $platform = $request->query('platform', ''); // Using query method to get the parameter
-        $category = $request->query('category', ''); // Using query method to get the parameter
-
-        // Fetch services based on platform and category
-        $services = Service::when($platform !== 'all' && !empty($platform), function ($query) use ($platform) {
-            return $query->where('category', 'LIKE', "%$platform%");
-        })
-            ->when(!empty($category), function ($query) use ($category) {
-                return $query->where('category', 'LIKE', "%$category%");
-            })
+        // Search for services by ID or name
+        $services = Service::where('id', 'like', '%' . $query . '%')
+            ->orWhere('name', 'like', '%' . $query . '%')
             ->get();
 
-//        Log::info('Services fetched', ['services' => $services]); // Debugging log
-
-        return response()->json($services);
+        // Return the services with necessary data in JSON format
+        return response()->json([
+            'services' => $services->map(function($service) {
+                return [
+                    'id' => $service->id,
+                    'name' => $service->name,
+                    'rate' => $service->rate,
+                    'min' => $service->min,
+                    'max' => $service->max,
+                    'average_time' => $service->average_time,
+                    'category' => $service->category,
+                ];
+            }),
+        ]);
     }
-
 
     public function updateOrderStatuses()
     {
@@ -258,36 +237,4 @@ class OrderController extends Controller
     }
 
 
-    /**
-     * Search for services dynamically based on user input.
-     */
-    public function searchServices(Request $request)
-    {
-        $query = $request->get('query', '');
-
-        $services = Service::where('name', 'LIKE', "%$query%")
-            ->orWhere('category', 'LIKE', "%$query%")
-            ->get();
-
-        return response()->json($services);
-    }
-
-
-    /**
-     * Helper function to extract start time from the service name.
-     */
-    private function extractStartTime($serviceName)
-    {
-        preg_match('/\[Start time: ([^\]]+)\]/', $serviceName, $matches);
-        return $matches[1] ?? null;
-    }
-
-    /**
-     * Helper function to extract speed from the service name.
-     */
-    private function extractSpeed($serviceName)
-    {
-        preg_match('/\[Speed: ([^\]]+)\]/', $serviceName, $matches);
-        return $matches[1] ?? null;
-    }
 }

@@ -35,19 +35,34 @@ class UpdateOrderStatuses implements ShouldQueue
                 $apiResponse = $api->multiStatus($orderIds);
                 Log::info('API Response: ', (array) $apiResponse);
 
-                if ($apiResponse && isset($apiResponse->orders)) {
-                    foreach ($apiResponse->orders as $orderId => $status) {
+                if ($apiResponse && is_object($apiResponse)) {
+                    foreach ($apiResponse as $orderId => $orderData) {
+                        // Check if order exists in the response
+                        if (isset($orderData->error)) {
+                            Log::warning('Error for order ID ' . $orderId . ': ' . $orderData->error);
+                            continue;
+                        }
+
+                        // Find the order in the database
                         $order = Order::where('api_order_id', $orderId)->first();
                         if ($order) {
-                            if ($status === 'Completed') {
-                                $order->status = 'Completed';
-                            } elseif ($status === 'Canceled') {
-                                $order->status = 'Canceled';
-                            } elseif ($status === 'InProgress') {
-                                $order->status = 'In Progress';
+                            // Update order status
+                            $order->status = $orderData->status ?? $order->status;
+
+                            // Update start count if available
+                            if (isset($orderData->start_count)) {
+                                $order->start_count = $orderData->start_count;
                             }
+
+                            // Update remains if available
+                            if (isset($orderData->remains)) {
+                                $order->remains = $orderData->remains;
+                            }
+
                             $order->save();
-                            Log::info('Order ' . $orderId . ' status updated to ' . $order->status);
+                            Log::info('Order ' . $orderId . ' updated. Status: ' . $order->status . ', Start Count: ' . ($orderData->start_count ?? 'N/A') . ', Remains: ' . ($orderData->remains ?? 'N/A'));
+                        } else {
+                            Log::warning('Order not found for ID: ' . $orderId);
                         }
                     }
                 }
@@ -55,6 +70,7 @@ class UpdateOrderStatuses implements ShouldQueue
         } catch (\Exception $e) {
             Log::error('Error in UpdateOrderStatuses job: ' . $e->getMessage());
         }
-    }
 
+        Log::info('UpdateOrderStatuses job finished.');
+    }
 }

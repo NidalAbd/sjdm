@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name', 500); // Increase the length of the name column
             $table->string('type');
             $table->string('category');
-            $table->decimal('rate', 8, 2);
+            $table->decimal('rate', 15, 5); // Increase precision and scale
             $table->integer('min');
             $table->integer('max');
             $table->boolean('refill')->default(false);

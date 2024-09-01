@@ -50,9 +50,13 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">{{ __('adminlte.name') }}</th>
+                                <th scope="col">{{ __('adminlte.service_name') }}</th> <!-- New Column for Service Name -->
                                 <th scope="col">{{ __('adminlte.link') }}</th>
                                 <th scope="col">{{ __('adminlte.quantity') }}</th>
                                 <th scope="col">{{ __('adminlte.charge') }}</th>
+                                <th scope="col">{{ __('adminlte.start_count') }}</th> <!-- New Column for Start Count -->
+                                <th scope="col">{{ __('adminlte.remains') }}</th> <!-- New Column for Remains -->
+                                <th scope="col">{{ __('adminlte.date') }}</th> <!-- New Column for Date -->
                                 <th scope="col">{{ __('adminlte.status') }}</th>
                                 <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
@@ -63,9 +67,13 @@
                                     <tr>
                                         <th scope="row">{{ $order->id }}</th>
                                         <td>{{ $order->user->name }}</td>
+                                        <td>{{ $order->service->name }}</td> <!-- Display Service Name -->
                                         <td><a href="{{ $order->link }}" target="_blank">{{ $order->link }}</a></td>
                                         <td>{{ $order->quantity }}</td>
                                         <td>${{ number_format($order->charge, 2) }}</td>
+                                        <td>{{ $order->start_count }}</td> <!-- Display Start Count -->
+                                        <td>{{ $order->remains }}</td> <!-- Display Remains -->
+                                        <td>{{ $order->created_at->format('Y-m-d') }}</td> <!-- Display Date -->
                                         <td>{{ __('adminlte.' . strtolower($order->status)) }}</td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group" aria-label="{{ __('adminlte.order_actions') }}">
@@ -99,7 +107,6 @@
                                             </div>
                                         </td>
                                     </tr>
-
                                     <!-- Modal for creating support tickets for Orders -->
                                     <div class="modal fade" id="createTicketModal{{ $order->id }}" tabindex="-1" role="dialog" aria-labelledby="createTicketModalLabel{{ $order->id }}" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
@@ -114,8 +121,8 @@
                                                     <form action="{{ route('support.store') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="ticketable_id" value="{{ $order->id }}">
-                                                        <input type="hidden" name="ticketable_type" value="{{ \App\Models\Order::class }}"> <!-- Automatically set the type to 'order' -->
-                                                        <input type="hidden" name="type" value="order"> <!-- Ensure the type is set to 'order' -->
+                                                        <input type="hidden" name="ticketable_type" value="{{ \App\Models\Order::class }}">
+                                                        <input type="hidden" name="type" value="order">
                                                         <div class="mb-3">
                                                             <label for="subject" class="form-label">{{ __('adminlte.subject') }}</label>
                                                             <input type="text" class="form-control" id="subject" name="subject" required>
@@ -136,17 +143,22 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted">{{ __('adminlte.no_orders_found') }}</td>
+                                    <td colspan="11" class="text-center text-muted">{{ __('adminlte.no_orders_found') }}</td>
                                 </tr>
                             @endif
                             </tbody>
+
                             <tfoot class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">{{ __('adminlte.name') }}</th>
+                                <th scope="col">{{ __('adminlte.service_name') }}</th> <!-- New Column for Service Name -->
                                 <th scope="col">{{ __('adminlte.link') }}</th>
                                 <th scope="col">{{ __('adminlte.quantity') }}</th>
                                 <th scope="col">{{ __('adminlte.charge') }}</th>
+                                <th scope="col">{{ __('adminlte.start_count') }}</th> <!-- New Column for Start Count -->
+                                <th scope="col">{{ __('adminlte.remains') }}</th> <!-- New Column for Remains -->
+                                <th scope="col">{{ __('adminlte.date') }}</th> <!-- New Column for Date -->
                                 <th scope="col">{{ __('adminlte.status') }}</th>
                                 <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>

@@ -103,13 +103,34 @@ class ServiceController extends Controller
         foreach ($servicesFromApi as $service) {
             // Only process services where type is 'Default'
             if ($service->type === 'Default') {
+                $adjustedRate = $service->rate;
+
+                // Adjust the rate based on the criteria
+                if ($adjustedRate < 0.00001) {
+                    $adjustedRate *= 6; // Increase by 500%
+                } elseif ($adjustedRate < 0.0001) {
+                    $adjustedRate *= 5; // Increase by 400%
+                } elseif ($adjustedRate < 0.001) {
+                    $adjustedRate *= 4; // Increase by 300%
+                } elseif ($adjustedRate < 0.01) {
+                    $adjustedRate *= 3; // Increase by 200%
+                } elseif ($adjustedRate > 100) {
+                    $adjustedRate *= 1.05; // Increase by 5%
+                } elseif ($adjustedRate > 50) {
+                    $adjustedRate *= 1.10; // Increase by 10%
+                } elseif ($adjustedRate > 10) {
+                    $adjustedRate *= 1.20; // Increase by 20%
+                } elseif ($adjustedRate > 1) {
+                    $adjustedRate *= 1.30; // Increase by 30%
+                }
+
                 $storedService = Service::updateOrCreate(
                     ['service_id' => $service->service], // Use 'service_id' from the API
                     [
                         'name' => $service->name,
                         'type' => $service->type,
                         'category' => $service->category,
-                        'rate' => $service->rate,
+                        'rate' => $adjustedRate, // Use the adjusted rate
                         'min' => $service->min,
                         'max' => $service->max,
                         'refill' => $service->refill,
@@ -128,6 +149,7 @@ class ServiceController extends Controller
         return redirect()->route('services.index')
             ->with('success', "Services have been updated from the API. $storedServices out of $totalServices services were stored. ($percentageStored%)");
     }
+
 
 
     public function show(Service $service)
