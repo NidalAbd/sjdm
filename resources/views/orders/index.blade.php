@@ -14,13 +14,13 @@
                 <div class="card-body">
                     <form id="filterForm" action="{{ route('orders.index') }}" method="GET">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="input-group input-group-sm">
                                     <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_orders') }}"
                                            value="{{ request()->get('search') }}">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" onchange="this.form.submit()">
                                         <option value="all">{{ __('adminlte.select_platform') }}</option>
@@ -35,6 +35,12 @@
                             <div class="col-md-2">
                                 <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button>
                             </div>
+                            <div class="col-md-2">
+                                <a href="{{ route('orders.updateStatuses') }}" class="btn btn-sm btn-block btn-info mb-3">
+                                    {{ __('adminlte.update_order_statuses') }}
+                                </a>
+                            </div>
+
                         </div>
                     </form>
 
@@ -43,7 +49,7 @@
                             <thead class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">{{ __('adminlte.service') }}</th>
+                                <th scope="col">{{ __('adminlte.name') }}</th>
                                 <th scope="col">{{ __('adminlte.link') }}</th>
                                 <th scope="col">{{ __('adminlte.quantity') }}</th>
                                 <th scope="col">{{ __('adminlte.charge') }}</th>
@@ -56,31 +62,77 @@
                                 @foreach($orders as $order)
                                     <tr>
                                         <th scope="row">{{ $order->id }}</th>
-                                        <td>{{ $order->service->name }}</td>
+                                        <td>{{ $order->user->name }}</td>
                                         <td><a href="{{ $order->link }}" target="_blank">{{ $order->link }}</a></td>
                                         <td>{{ $order->quantity }}</td>
                                         <td>${{ number_format($order->charge, 2) }}</td>
                                         <td>{{ __('adminlte.' . strtolower($order->status)) }}</td>
                                         <td class="text-center">
                                             <div class="btn-group" role="group" aria-label="{{ __('adminlte.order_actions') }}">
-                                                <a href="{{ route('orders.show', $order->id) }}"
-                                                   class="btn btn-secondary btn-sm"
-                                                   data-bs-toggle="tooltip" data-bs-placement="top"
-                                                   title="{{ __('adminlte.view_order') }}">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-danger btn-sm" type="submit"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="{{ __('adminlte.delete_order') }}">
-                                                        <i class="fas fa-trash-alt"></i>
+                                                @can('view_order', $order)
+                                                    <a href="{{ route('orders.show', $order->id) }}"
+                                                       class="btn btn-secondary btn-sm"
+                                                       data-bs-toggle="tooltip" data-bs-placement="top"
+                                                       title="{{ __('adminlte.view_order') }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                @endcan
+                                                @can('delete_order', $order)
+                                                    <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="{{ __('adminlte.delete_order') }}">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                @endcan
+                                                <!-- Add button for creating support ticket -->
+                                                @can('create_ticket')
+                                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                            data-bs-target="#createTicketModal{{ $order->id }}"
+                                                            title="{{ __('adminlte.create_support_ticket') }}">
+                                                        <i class="fas fa-headset"></i>
                                                     </button>
-                                                </form>
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>
+
+                                    <!-- Modal for creating support tickets for Orders -->
+                                    <div class="modal fade" id="createTicketModal{{ $order->id }}" tabindex="-1" role="dialog" aria-labelledby="createTicketModalLabel{{ $order->id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="createTicketModalLabel{{ $order->id }}">{{ __('adminlte.create_support_ticket') }}</h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="{{ __('adminlte.close') }}">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{{ route('support.store') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="ticketable_id" value="{{ $order->id }}">
+                                                        <input type="hidden" name="ticketable_type" value="{{ \App\Models\Order::class }}"> <!-- Automatically set the type to 'order' -->
+                                                        <input type="hidden" name="type" value="order"> <!-- Ensure the type is set to 'order' -->
+                                                        <div class="mb-3">
+                                                            <label for="subject" class="form-label">{{ __('adminlte.subject') }}</label>
+                                                            <input type="text" class="form-control" id="subject" name="subject" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="message" class="form-label">{{ __('adminlte.message') }}</label>
+                                                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('adminlte.close') }}</button>
+                                                            <button type="submit" class="btn btn-primary">{{ __('adminlte.submit_ticket') }}</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             @else
                                 <tr>
@@ -91,7 +143,7 @@
                             <tfoot class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">{{ __('adminlte.service') }}</th>
+                                <th scope="col">{{ __('adminlte.name') }}</th>
                                 <th scope="col">{{ __('adminlte.link') }}</th>
                                 <th scope="col">{{ __('adminlte.quantity') }}</th>
                                 <th scope="col">{{ __('adminlte.charge') }}</th>

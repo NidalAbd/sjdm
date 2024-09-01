@@ -34,11 +34,8 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button>
-                            </div>
-                            <div class="col-md-2">
-                                <a href="{{ route('support.create') }}" class="btn btn-success btn-sm btn-block col-md-12">{{ __('adminlte.create_ticket') }}</a>
                             </div>
                         </div>
                     </form>
@@ -50,6 +47,9 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">{{ __('adminlte.subject') }}</th>
+                                <th scope="col">{{ __('adminlte.name') }}</th>
+                                <th scope="col">{{ __('adminlte.type') }}</th>
+                                <th scope="col">{{ __('adminlte.id') }}</th>
                                 <th scope="col">{{ __('adminlte.status') }}</th>
                                 <th scope="col">{{ __('adminlte.created_at') }}</th>
                                 <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
@@ -61,6 +61,9 @@
                                     <tr>
                                         <th scope="row">{{ $ticket->id }}</th>
                                         <td>{{ $ticket->subject }}</td>
+                                        <td>{{ $ticket->user->name }}</td> <!-- User Name Column -->
+                                        <td>{{ $ticket->ticketable_type }}</td> <!-- Ticket Type Column -->
+                                        <td>{{ $ticket->ticketable_id }}</td> <!-- Ticketable ID Column -->
                                         <td>
                                             <span class="badge bg-{{ $ticket->status->name == 'Open' ? 'warning' : ($ticket->status->name == 'Closed' ? 'danger' : 'success') }}">
                                                 {{ $ticket->status->name }}
@@ -99,7 +102,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted">{{ __('adminlte.no_tickets_found') }}</td>
+                                    <td colspan="8" class="text-center text-muted">{{ __('adminlte.no_tickets_found') }}</td>
                                 </tr>
                             @endif
                             </tbody>
@@ -107,6 +110,9 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">{{ __('adminlte.subject') }}</th>
+                                <th scope="col">{{ __('adminlte.name') }}</th>
+                                <th scope="col">{{ __('adminlte.type') }}</th>
+                                <th scope="col">{{ __('adminlte.ticketable_id') }}</th>
                                 <th scope="col">{{ __('adminlte.status') }}</th>
                                 <th scope="col">{{ __('adminlte.created_at') }}</th>
                                 <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>

@@ -118,15 +118,6 @@ return array(
             'id'           => 'dark-mode-toggle',
             'icon_color'   => 'secondary', // Set predefined color
         ),
-        array(
-            'type'          => 'navbar-notification',
-            'id'            => 'notifications',
-            'icon'          => 'far fa-bell',
-            'label'         => 3,
-            'label_color'   => 'danger',
-            'topnav_right'  => true, // Left alignment
-            'url'           => 'notifications',
-        ),
 
         array(
             'text' =>'home', // Use translation key with __() function
@@ -142,7 +133,7 @@ return array(
             'text'    => 'admin', // Just use the translation key
             'icon'    => 'fas fa-fw fa-user-shield',
             'topnav_center' => true,
-            'can' => 'view_dashboard',
+            'can' => 'add_balance',
             'icon_color'   => 'primary', // Set predefined color
             'submenu' => array(
                 array(
@@ -198,7 +189,7 @@ return array(
             'url'  => 'services',
             'icon' => 'fas fa-tools',
             'topnav_center' => true,
-            'can'  => 'view_services',
+            'can'  => 'view_anyServices_services',
             'icon_color'   => 'info', // Set predefined color
         ),
         array(
@@ -206,7 +197,7 @@ return array(
             'url'  => 'transactions/create', // Just the relative URL
             'icon' => 'fab fa-stripe',
             'topnav_center' => true,
-            'can'  => 'addBalance',
+            'can'  => 'view_balance',
             'icon_color'   => 'purple', // Set predefined color
         ),
         array(

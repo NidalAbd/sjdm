@@ -25,5 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TicketStatusSeeder::class);
 
         $this->call(SupportTicketSeeder::class);
+        $this->call(MessageSeeder::class);
+
     }
 }

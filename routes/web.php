@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BonusController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -25,12 +27,12 @@ Route::get('lang/{lang}', function ($lang) {
 })->name('changeLang');
 
 
-Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 
 Auth::routes(['verify' => true]);
 
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
@@ -54,6 +56,17 @@ Route::middleware(['auth'])->group(function () {
     // Permission Routes
     Route::resource('permissions', PermissionController::class);
 
+    Route::get('/', [WelcomeController::class, 'index'])->name('home');
+//    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+//    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+//    Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
+//    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+//    Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+//    Route::get('orders/search', [OrderController::class, 'search'])->name('orders.search');
+//    Route::get('orders/searchServices', [OrderController::class, 'searchServices'])->name('orders.searchServices');
+//    Route::get('orders/getCategories', [OrderController::class, 'getCategories'])->name('orders.getCategories');
+//    Route::get('orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
+
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
@@ -61,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::get('/orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
     Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
+    Route::get('/orders/getCategories', [OrderController::class, 'getCategories'])->name('orders.getCategories');
 
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('services/create', [ServiceController::class, 'create'])->name('services.create');
@@ -77,8 +91,21 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('transactions', TransactionController::class);
 
 
-    Route::resource('support', SupportTicketController::class);
+    // Support Ticket Routes
+    Route::prefix('support')->middleware(['auth'])->group(function () {
+        Route::get('/', [SupportTicketController::class, 'index'])->name('support.index');
+        Route::get('/create', [SupportTicketController::class, 'create'])->name('support.create');
+        Route::post('/', [SupportTicketController::class, 'store'])->name('support.store');
+        Route::get('/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
+        Route::get('/{ticket}/edit', [SupportTicketController::class, 'edit'])->name('support.edit');
+        Route::put('/{ticket}', [SupportTicketController::class, 'update'])->name('support.update');
+        Route::delete('/{ticket}', [SupportTicketController::class, 'destroy'])->name('support.destroy');
+        Route::post('/{ticket}/messages', [MessageController::class, 'store'])->name('messages.store');
+    });
 
+    Route::get('notifications/latest', [NotificationController::class, 'fetchLatest'])->name('notifications.latest');
+    Route::get('notifications/{id}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');

@@ -28,27 +28,35 @@
                 <td>{{ $service->cancel ? __('adminlte.yes') : __('adminlte.no') }}</td>
                 <td class="text-center">
                     <div class="btn-group" role="group" aria-label="{{ __('adminlte.service_actions') }}">
-                        <a href="{{ route('services.show', $service->service_id) }}"
-                           class="btn btn-secondary btn-sm"
-                           data-bs-toggle="tooltip" data-bs-placement="top"
-                           title="{{ __('adminlte.view_service') }}">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="{{ route('services.edit', $service->service_id) }}"
-                           class="btn btn-primary btn-sm"
-                           data-bs-toggle="tooltip" data-bs-placement="top"
-                           title="{{ __('adminlte.edit_service') }}">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form action="{{ route('services.destroy', $service->service_id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm" type="submit"
-                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ __('adminlte.delete_service') }}">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </form>
+                        @can('view_service', $service)
+                            <a href="{{ route('services.show', $service->service_id) }}"
+                               class="btn btn-secondary btn-sm"
+                               data-bs-toggle="tooltip" data-bs-placement="top"
+                               title="{{ __('adminlte.view_service') }}">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        @endcan
+
+                        @can('update_service', $service)
+                            <a href="{{ route('services.edit', $service->service_id) }}"
+                               class="btn btn-primary btn-sm"
+                               data-bs-toggle="tooltip" data-bs-placement="top"
+                               title="{{ __('adminlte.edit_service') }}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        @endcan
+
+                        @can('delete_service', $service)
+                            <form action="{{ route('services.destroy', $service->service_id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" type="submit"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="{{ __('adminlte.delete_service') }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        @endcan
                     </div>
                 </td>
             </tr>

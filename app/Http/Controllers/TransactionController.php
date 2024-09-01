@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
-use App\Models\User;
+use App\Notifications\TransactionNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Stripe\Charge;
 use Stripe\Stripe;
 
@@ -85,25 +86,39 @@ class TransactionController extends Controller
                 'description' => 'Add Balance',
             ]);
 
+            $status = 'failed';
+            $transaction = new Transaction([
+                'type' => 'credit',
+                'amount' => $amount,
+                'status' => $status,
+            ]);
+
             if ($charge->status === 'succeeded') {
-                $transaction = new Transaction([
-                    'type' => 'credit',
-                    'amount' => $amount,
-                    'status' => 'completed',
-                ]);
-
+                $transaction->status = 'completed';
                 $user->balance += $amount;
-                $user->transactions()->save($transaction);
-                $user->save();
-
-                return redirect()->route('transactions.index')->with('success', 'Balance added successfully.');
+                $message = 'Balance added successfully.';
+            } else {
+                $message = 'Payment failed.';
             }
 
-            return redirect()->back()->with('error', 'Payment failed.');
+            $user->transactions()->save($transaction);
+            $user->save();
+            Notification::send($user, new TransactionNotification($transaction));
+            return redirect()->route('transactions.index')->with('success', $message);
+
         } catch (\Exception $e) {
+            // Handle exception and create a failed transaction
+            $transaction = new Transaction([
+                'type' => 'credit',
+                'amount' => $amount,
+                'status' => 'failed',
+            ]);
+            $user->transactions()->save($transaction);
+
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
 
 
 }

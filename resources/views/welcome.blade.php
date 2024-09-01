@@ -21,18 +21,6 @@
 <!-- Include Header -->
 @include('layouts.header')
 
-<!-- Email Verification Alert -->
-@if (auth()->check() && !auth()->user()->hasVerifiedEmail())
-    <div class="alert alert-warning alert-dismissible fade show my-4" role="alert">
-        {{ __('Your email address is not verified. Please check your email for a verification link.') }}
-        <form method="POST" action="{{ route('verification.resend') }}" class="d-inline">
-            @csrf
-            <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('Click here to request another') }}</button>.
-        </form>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
 <main class="container my-5">
     <div class="mb-4">
         @include('widgets.platforms')

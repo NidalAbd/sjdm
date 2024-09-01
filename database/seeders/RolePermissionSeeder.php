@@ -18,19 +18,17 @@ class RolePermissionSeeder extends Seeder
         $roles = [
             'admin' => Permission::all(),
 
-            'moderator' => Permission::whereIn('name', [
-                'view_any_role', 'view_role', 'create_role', 'update_role', 'delete_role',
-                'view_any_permission', 'view_permission', 'create_permission', 'update_permission', 'delete_permission',
-                'assign_role',
-            ])->pluck('id'),
-
             'client' => Permission::whereNotIn('name', [
+                // Exclude all admin-related permissions
                 'view_any_user', 'view_user', 'create_user', 'update_user', 'delete_user',
                 'restore_user', 'force_delete_user', 'assign_role', 'assign_permission',
                 'view_any_role', 'view_role', 'create_role', 'update_role', 'delete_role',
                 'restore_role', 'force_delete_role', 'view_any_permission', 'view_permission',
                 'create_permission', 'update_permission', 'delete_permission', 'restore_permission',
-                'force_delete_permission'
+                'force_delete_permission', 'fetch_services',
+                // Exclude edit/delete permissions for orders, services, transactions, and support
+                'update_order','edit_order', 'delete_order', 'update_service', 'delete_service', 'edit_service',
+                'update_transaction','edit_transaction', 'delete_transaction', 'update_ticket', 'delete_ticket'
             ])->pluck('id'),
 
             'guest' => Permission::whereIn('name', [

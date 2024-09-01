@@ -56,6 +56,7 @@ class UserSeeder extends Seeder
             'name' => 'Nidal.Abd',
             'email' => 'kol.eljra7.90@gmail.com',
             'password' => Hash::make('nedal135'), // Hash the password for security
+            'email_verified_at' => now(),
             'status' => 'active',
             'balance' => 10000.00, // Initial balance for the admin
             'currency' => 'USD', // Default currency for the admin

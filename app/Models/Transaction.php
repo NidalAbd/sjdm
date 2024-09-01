@@ -16,9 +16,13 @@ class Transaction extends Model
         'currency',
         'status',
     ];
-
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class);
     }
 }

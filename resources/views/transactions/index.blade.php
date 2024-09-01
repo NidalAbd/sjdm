@@ -3,19 +3,19 @@
 @section('title', __('adminlte.manage_transactions'))
 
 @section('content_header')
-    @include('partials.breadcrumbs')  <!-- Automatically include breadcrumbs -->
+    @include('partials.breadcrumbs')
     <h1>{{ __('adminlte.manage_transactions') }}</h1>
 @stop
 
 @section('content')
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <!-- Filter form for search and filter functionality -->
                     <form id="filterForm" action="{{ route('transactions.index') }}" method="GET">
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="input-group input-group-sm">
                                     <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_transactions') }}..."
                                            value="{{ request()->get('search') }}">
@@ -40,7 +40,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button>
                             </div>
                         </div>
@@ -52,6 +52,8 @@
                             <thead class="table-dark">
                             <tr>
                                 <th scope="col">ID</th>
+                                <th scope="col">{{ __('adminlte.name') }}</th>
+                                <th scope="col">{{ __('adminlte.email') }}</th>
                                 <th scope="col">{{ __('adminlte.type') }}</th>
                                 <th scope="col">{{ __('adminlte.amount') }}</th>
                                 <th scope="col">{{ __('adminlte.status') }}</th>
@@ -61,43 +63,82 @@
                             <tbody>
                             @if($transactions->count() > 0)
                                 @foreach($transactions as $transaction)
-                                    <tr class="m-1">
+                                    <tr>
                                         <th scope="row">{{ $transaction->id }}</th>
+                                        <td>{{ $transaction->user->name }}</td> <!-- Display the user's name -->
+                                        <td>{{ $transaction->user->email }}</td> <!-- Display the user's email -->
                                         <td>{{ ucfirst($transaction->type) }}</td>
                                         <td>${{ number_format($transaction->amount, 2) }}</td>
                                         <td>
-                                            <span class="badge bg-{{ $transaction->status == 'completed' ? 'success' : ($transaction->status == 'pending' ? 'warning' : 'secondary') }}">
+                                            <span class="badge bg-{{ $transaction->status == 'completed' ? 'success' : ($transaction->status == 'pending' ? 'warning' : 'danger') }}">
                                                 {{ ucfirst($transaction->status) }}
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ route('transactions.show', $transaction->id) }}"
-                                               class="btn btn-info btn-sm"
-                                               data-bs-toggle="tooltip" data-bs-placement="top"
-                                               title="{{ __('adminlte.view_transaction') }}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <!-- Conditionally show "Create Support Ticket" button -->
-                                            @if($transaction->status != 'completed')
-                                                <a href="{{ route('support.create', ['order' => $transaction->id]) }}"
-                                                   class="btn btn-warning btn-sm"
+                                            <div class="btn-group" role="group" aria-label="{{ __('adminlte.transaction_actions') }}">
+                                                <a href="{{ route('transactions.show', $transaction->id) }}"
+                                                   class="btn btn-info btn-sm"
                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                   title="{{ __('adminlte.create_support_ticket') }}">
-                                                    <i class="fas fa-ticket-alt"></i>
+                                                   title="{{ __('adminlte.view_transaction') }}">
+                                                    <i class="fas fa-eye"></i>
                                                 </a>
-                                            @endif
+                                                <!-- Conditionally show "Create Support Ticket" button -->
+                                                @if($transaction->status != 'completed')
+                                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                            data-bs-target="#createTicketModal{{ $transaction->id }}"
+                                                            title="{{ __('adminlte.create_support_ticket') }}">
+                                                        <i class="fas fa-ticket-alt"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
+
+                                    <!-- Modal for creating support tickets for Transactions -->
+                                    <div class="modal fade" id="createTicketModal{{ $transaction->id }}" tabindex="-1" role="dialog" aria-labelledby="createTicketModalLabel{{ $transaction->id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="createTicketModalLabel{{ $transaction->id }}">{{ __('adminlte.create_support_ticket') }}</h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="{{ __('adminlte.close') }}">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{{ route('support.store') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="ticketable_id" value="{{ $transaction->id }}">
+                                                        <input type="hidden" name="ticketable_type" value="{{ \App\Models\Transaction::class }}"> <!-- Automatically set the type to 'payment' -->
+                                                        <input type="hidden" name="type" value="transaction"> <!-- Ensure the type is set to 'payment' -->
+                                                        <div class="mb-3">
+                                                            <label for="subject" class="form-label">{{ __('adminlte.subject') }}</label>
+                                                            <input type="text" class="form-control" id="subject" name="subject" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="message" class="form-label">{{ __('adminlte.message') }}</label>
+                                                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('adminlte.close') }}</button>
+                                                            <button type="submit" class="btn btn-primary">{{ __('adminlte.submit_ticket') }}</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted">{{ __('adminlte.no_transactions_found') }}</td>
+                                    <td colspan="7" class="text-center text-muted">{{ __('adminlte.no_transactions_found') }}</td>
                                 </tr>
                             @endif
                             </tbody>
                             <tfoot class="table-dark">
                             <tr>
                                 <th scope="col">ID</th>
+                                <th scope="col">{{ __('adminlte.name') }}</th>
+                                <th scope="col">{{ __('adminlte.email') }}</th>
                                 <th scope="col">{{ __('adminlte.type') }}</th>
                                 <th scope="col">{{ __('adminlte.amount') }}</th>
                                 <th scope="col">{{ __('adminlte.status') }}</th>

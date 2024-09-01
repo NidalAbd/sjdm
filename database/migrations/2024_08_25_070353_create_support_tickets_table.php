@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('support_tickets', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('order_id');
+            $table->morphs('ticketable'); // Adds ticketable_id and ticketable_type columns
             $table->string('subject');
             $table->text('message');
             $table->unsignedBigInteger('status_id'); // Reference to ticket_statuses table
-            $table->enum('type', ['order', 'payment']); // Enum type for ticket type
+            $table->enum('type', ['order', 'transaction']); // Enum type for ticket type
             $table->enum('subtype', [
                 'refund',
                 'acceleration',
@@ -34,7 +34,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('status_id')->references('id')->on('ticket_statuses')->onDelete('cascade');
         });
     }

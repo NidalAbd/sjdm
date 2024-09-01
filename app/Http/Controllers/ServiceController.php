@@ -30,7 +30,7 @@ class ServiceController extends Controller
             $query->where('category', $request->category);
         }
 
-        $services = $query->paginate(10);
+        $services = $query->paginate(5);
 
         // Available categories for the platform filter dropdown
         $platforms = [
@@ -132,13 +132,10 @@ class ServiceController extends Controller
 
     public function show(Service $service)
     {
-        return response()->json([
-            'description' => $service->name, // or any other relevant fields
-            'rate' => $service->rate,
-            'min' => $service->min,
-            'max' => $service->max
-        ]);
+        return view('services.show', compact('service'));
     }
+
+
 
     public function edit(Service $service)
     {

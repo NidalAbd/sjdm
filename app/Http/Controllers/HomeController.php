@@ -42,7 +42,7 @@ class HomeController extends Controller
             ->whereNotNull('email_verified_at')
             ->get();
 
-        return view('profile.settings', compact('user', 'orders', 'transactions', 'totalReferrals', 'verifiedActiveReferrals'));
+        return view('dashboard', compact('user', 'orders', 'transactions', 'totalReferrals', 'verifiedActiveReferrals'));
     }
 
     public function updateSettings(Request $request)
