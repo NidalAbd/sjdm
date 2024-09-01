@@ -267,6 +267,7 @@ class OrderController extends Controller
 
         $services = Service::where('name', 'LIKE', "%$query%")
             ->orWhere('category', 'LIKE', "%$query%")
+            ->orWhere('service_id', 'LIKE', "%$query%")
             ->get();
 
         return response()->json($services);
