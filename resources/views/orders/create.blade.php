@@ -31,7 +31,7 @@
                             @foreach($platforms as $platform)
                                 <div class="col-md-3 mb-3">
                                     <button type="button" class="btn btn-block btn-primary platform-btn" data-platform="{{ $platform }}">
-                                        <i class="{{ $platformIconMap[$platform] }} mr-2"></i> {{ ucfirst($platform) }}
+                                        <i class="{{ $platformIconMap[$platform] }} mr-2"></i> {{ __('adminlte.' . $platform) }}
                                     </button>
                                 </div>
                             @endforeach
@@ -41,7 +41,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <div class="input-group input-group-sm position-relative">
-                                    <input type="text" id="search" class="form-control" placeholder="Search for a service">
+                                    <input type="text" id="search" class="form-control" placeholder="{{ __('adminlte.search_services') }}">
                                     <!-- Dropdown menu for search results -->
                                     <ul class="dropdown-menu w-100" id="searchResultsDropdown" style="display: none;"></ul>
                                 </div>
@@ -87,37 +87,37 @@
                         <!-- Additional Fields -->
                         <div class="mt-4">
                             <div class="form-group">
-                                <label for="description">Description</label>
+                                <label for="description">{{ __('adminlte.description') }}</label>
                                 <textarea id="description" class="form-control" style="height: 150px;" readonly>
-- Link = please put your VIDEO link
+- {{ __('adminlte.link') }} = {{ __('adminlte.video_link_note') }}
 
-- PLEASE do NOT put more than 1 order for the same link at the same time to avoid overlap, and we CAN'T CANCEL the order in this case.
+- {{ __('adminlte.order_overlap_note') }}
 
-{{ $selectedService ? $selectedService->name : '' }}
-                            </textarea>
+                                    {{ $selectedService ? $selectedService->name : '' }}
+                                </textarea>
                             </div>
 
                             <div class="form-group">
-                                <label for="link">Link</label>
-                                <input type="url" name="link" id="link" class="form-control" placeholder="Enter link">
+                                <label for="link">{{ __('adminlte.link') }}</label>
+                                <input type="url" name="link" id="link" class="form-control" placeholder="{{ __('adminlte.enter_link') }}">
                             </div>
 
                             <div class="form-group">
-                                <label for="quantity">Quantity</label>
-                                <input type="number" name="quantity" id="quantity" class="form-control" placeholder="Enter quantity">
+                                <label for="quantity">{{ __('adminlte.quantity') }}</label>
+                                <input type="number" name="quantity" id="quantity" class="form-control" placeholder="{{ __('adminlte.enter_quantity') }}">
                             </div>
 
                             <div class="form-group">
-                                <label for="charge">Charge</label>
+                                <label for="charge">{{ __('adminlte.charge') }}</label>
                                 <input type="text" id="charge" class="form-control" readonly>
                             </div>
 
                             <div class="form-group">
-                                <label for="average_time">Average Time</label>
-                                <input type="text" id="average_time" class="form-control" readonly placeholder="Service will start within [Start time] and speed up to [Speed]">
+                                <label for="average_time">{{ __('adminlte.average_time') }}</label>
+                                <input type="text" id="average_time" class="form-control" readonly placeholder="{{ __('adminlte.service_start_speed') }}">
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">{{ __('adminlte.submit') }}</button>
                         </div>
                     </form>
                 </div>
@@ -175,187 +175,197 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function () {
             console.log("Page loaded, initializing...");
+
+            // Get translations from Blade to JavaScript
+            const translations = @json([
+            'link_note' => __('adminlte.video_link_note'),
+            'order_overlap_note' => __('adminlte.order_overlap_note'),
+        ]);
 
             // Get the base URL for the API endpoint
             const apiUrl = '{{ url('/api') }}';
+
+            // Initialize default value for average time
+            document.getElementById('average_time').value = 'Service will start within N/A and speed up to N/A';
 
             // Load all categories and services initially
             loadCategories('all');
             loadServices('all');
 
             document.querySelectorAll('.platform-btn').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    let platform = this.getAttribute('data-platform');
-                    console.log(`Platform selected: ${platform}`); // Debug log
-                    document.getElementById('selectedPlatform').value = platform;
-                    loadCategories(platform);  // Load categories based on selected platform
-                    loadServices(platform);    // Load services based on selected platform
-                });
-            });
+            btn.addEventListener('click', function () {
+            let platform = this.getAttribute('data-platform');
+            console.log(`Platform selected: ${platform}`); // Debug log
+            document.getElementById('selectedPlatform').value = platform;
+            loadCategories(platform);  // Load categories based on selected platform
+            loadServices(platform);    // Load services based on selected platform
+        });
+        });
 
             document.getElementById('category').addEventListener('change', function () {
-                let category = this.value;
-                let platform = document.getElementById('selectedPlatform').value;
-                console.log(`Category changed: ${category} for platform: ${platform}`); // Debug log
-                loadServices(platform, category);  // Load services based on selected platform and category
-            });
+            let category = this.value;
+            let platform = document.getElementById('selectedPlatform').value;
+            console.log(`Category changed: ${category} for platform: ${platform}`); // Debug log
+            loadServices(platform, category);  // Load services based on selected platform and category
+        });
 
             document.getElementById('service').addEventListener('change', function () {
-                let serviceId = this.value;
-                fetchServiceInfo(serviceId);
-            });
+            let serviceId = this.value;
+            fetchServiceInfo(serviceId);
+        });
 
             document.getElementById('quantity').addEventListener('input', function () {
-                calculateCharge();
-            });
+            calculateCharge();
+        });
 
             document.getElementById('search').addEventListener('input', function () {
-                let query = this.value;
-                if (query.length > 2) {
-                    searchServices(query);  // Search services based on input query
-                } else {
-                    let platform = document.getElementById('selectedPlatform').value;
-                    let category = document.getElementById('category').value;
-                    loadServices(platform, category);  // Load services normally when search input is cleared
-                }
-            });
-
-            function loadCategories(platform) {
-                fetch(`${apiUrl}/orders/getCategories?platform=${platform}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            console.error(`HTTP error! status: ${response.status}`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Categories received:', data); // Debugging log
-
-                        let categorySelect = document.getElementById('category');
-                        categorySelect.innerHTML = ''; // Clear existing categories
-
-                        if (data.length === 0) {
-                            let option = document.createElement('option');
-                            option.text = 'No categories available';
-                            categorySelect.appendChild(option);
-                        } else {
-                            data.forEach(category => {
-                                let option = document.createElement('option');
-                                option.value = category;
-                                option.text = category;
-                                categorySelect.appendChild(option);
-                            });
-                        }
-
-                        // Automatically load services for the first category
-                        if (data.length > 0) {
-                            loadServices(platform, data[0]);  // Load services for the first category
-                        }
-                    })
-                    .catch(error => console.error('Error loading categories:', error)); // Error log
-            }
-
-            function loadServices(platform, category = '') {
-                console.log(`Loading services for platform: ${platform}, category: ${category}`); // Debugging log
-
-                fetch(`${apiUrl}/orders/getServices?platform=${platform}&category=${category}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            console.error(`HTTP error! status: ${response.status}`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Services received:', data); // Debugging log
-
-                        let serviceSelect = document.getElementById('service');
-                        serviceSelect.innerHTML = ''; // Clear existing services
-
-                        data.forEach(service => {
-                            let option = document.createElement('option');
-                            option.value = service.service_id;
-                            option.text = service.name;
-                            option.setAttribute('data-rate', service.rate);
-                            option.setAttribute('data-start-time', extractStartTime(service.name));
-                            option.setAttribute('data-speed', extractSpeed(service.name));
-                            serviceSelect.appendChild(option);
-                        });
-
-                        // Automatically select the first service and fetch its info
-                        if (data.length > 0) {
-                            serviceSelect.value = data[0].service_id;
-                            fetchServiceInfo(data[0].service_id);
-                        }
-                    })
-                    .catch(error => console.error('Error loading services:', error));
-            }
+            let query = this.value;
+            if (query.length > 2) {
+            searchServices(query);  // Search services based on input query
+        } else {
+            let platform = document.getElementById('selectedPlatform').value;
+            let category = document.getElementById('category').value;
+            loadServices(platform, category);  // Load services normally when search input is cleared
+        }
+        });
 
             function fetchServiceInfo(serviceId) {
-                let serviceSelect = document.getElementById('service');
-                let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-                let startTime = selectedOption.getAttribute('data-start-time');
-                let speed = selectedOption.getAttribute('data-speed');
-                let serviceName = selectedOption.text;
+            let serviceSelect = document.getElementById('service');
+            let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            let startTime = selectedOption.getAttribute('data-start-time') || 'N/A'; // Default to 'N/A' if not provided
+            let speed = selectedOption.getAttribute('data-speed') || 'N/A'; // Default to 'N/A' if not provided
+            let serviceName = selectedOption.text;
 
-                document.getElementById('average_time').value = `Service will start within ${startTime} and speed up to ${speed}`;
+            // Set the average time text with defaults if needed
+            document.getElementById('average_time').value = `Service will start within ${startTime} and speed up to ${speed}`;
 
-                // Update the description with the service name
-                document.getElementById('description').value = `- Link = please put your VIDEO link\n\n` +
-                    `- PLEASE do NOT put more than 1 order for the same link at the same time to avoid overlap, and we CAN'T CANCEL the order in this case.\n\n` +
-                    `${serviceName}`;
+            // Update the description with translated text and dynamic data
+            document.getElementById('description').value = `- Link = ${translations.link_note}\n\n` +
+            `- ${translations.order_overlap_note}\n\n` +
+            `${serviceName}`;
 
-                calculateCharge();
-            }
+            calculateCharge();
+        }
 
             function calculateCharge() {
-                let serviceSelect = document.getElementById('service');
-                let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-                let rate = parseFloat(selectedOption.getAttribute('data-rate'));
-                let quantity = parseInt(document.getElementById('quantity').value);
-                if (!isNaN(rate) && !isNaN(quantity)) {
-                    document.getElementById('charge').value = (rate * quantity).toFixed(2);
-                } else {
-                    document.getElementById('charge').value = '';
-                }
-            }
+            let serviceSelect = document.getElementById('service');
+            let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            let rate = parseFloat(selectedOption.getAttribute('data-rate'));
+            let quantity = parseInt(document.getElementById('quantity').value);
+            if (!isNaN(rate) && !isNaN(quantity)) {
+            document.getElementById('charge').value = (rate * quantity).toFixed(2);
+        } else {
+            document.getElementById('charge').value = '';
+        }
+        }
+
+            function loadCategories(platform) {
+            fetch(`${apiUrl}/orders/getCategories?platform=${platform}`)
+            .then(response => {
+            if (!response.ok) {
+            console.error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+            return response.json();
+        })
+            .then(data => {
+            console.log('Categories received:', data); // Debugging log
+
+            let categorySelect = document.getElementById('category');
+            categorySelect.innerHTML = ''; // Clear existing categories
+
+            if (data.length === 0) {
+            let option = document.createElement('option');
+            option.text = '{{ __('adminlte.no_categories_available') }}';
+            categorySelect.appendChild(option);
+        } else {
+            data.forEach(category => {
+            let option = document.createElement('option');
+            option.value = category;
+            option.text = category;
+            categorySelect.appendChild(option);
+        });
+        }
+
+            // Automatically load services for the first category
+            if (data.length > 0) {
+            loadServices(platform, data[0]);  // Load services for the first category
+        }
+        })
+            .catch(error => console.error('Error loading categories:', error)); // Error log
+        }
+
+            function loadServices(platform, category = '') {
+            console.log(`Loading services for platform: ${platform}, category: ${category}`); // Debugging log
+
+            fetch(`${apiUrl}/orders/getServices?platform=${platform}&category=${category}`)
+            .then(response => {
+            if (!response.ok) {
+            console.error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+            return response.json();
+        })
+            .then(data => {
+            console.log('Services received:', data); // Debugging log
+
+            let serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = ''; // Clear existing services
+
+            data.forEach(service => {
+            let option = document.createElement('option');
+            option.value = service.service_id;
+            option.text = service.name;
+            option.setAttribute('data-rate', service.rate);
+            option.setAttribute('data-start-time', extractStartTime(service.name));
+            option.setAttribute('data-speed', extractSpeed(service.name));
+            serviceSelect.appendChild(option);
+        });
+
+            // Automatically select the first service and fetch its info
+            if (data.length > 0) {
+            serviceSelect.value = data[0].service_id;
+            fetchServiceInfo(data[0].service_id);
+        }
+        })
+            .catch(error => console.error('Error loading services:', error));
+        }
 
             function searchServices(query) {
-                fetch(`${apiUrl}/orders/searchServices?query=${query}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let serviceSelect = document.getElementById('service');
-                        serviceSelect.innerHTML = '';
+            fetch(`${apiUrl}/orders/searchServices?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+            let serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = '';
 
-                        data.forEach(service => {
-                            let option = document.createElement('option');
-                            option.value = service.service_id;
-                            option.text = service.name;
-                            option.setAttribute('data-rate', service.rate);
-                            option.setAttribute('data-start-time', extractStartTime(service.name));
-                            option.setAttribute('data-speed', extractSpeed(service.name));
-                            serviceSelect.appendChild(option);
-                        });
+            data.forEach(service => {
+            let option = document.createElement('option');
+            option.value = service.service_id;
+            option.text = service.name;
+            option.setAttribute('data-rate', service.rate);
+            option.setAttribute('data-start-time', extractStartTime(service.name));
+            option.setAttribute('data-speed', extractSpeed(service.name));
+            serviceSelect.appendChild(option);
+        });
 
-                        if (data.length > 0) {
-                            serviceSelect.value = data[0].service_id;
-                            fetchServiceInfo(data[0].service_id);
-                        }
-                    });
-            }
+            if (data.length > 0) {
+            serviceSelect.value = data[0].service_id;
+            fetchServiceInfo(data[0].service_id);
+        }
+        });
+        }
 
             function extractStartTime(serviceName) {
-                let matches = serviceName.match(/\[Start time: ([^\]]+)\]/);
-                return matches ? matches[1] : 'N/A';
-            }
+            let matches = serviceName.match(/\[Start time: ([^\]]+)\]/);
+            return matches ? matches[1] : 'N/A';
+        }
 
             function extractSpeed(serviceName) {
-                let matches = serviceName.match(/\[Speed: ([^\]]+)\]/);
-                return matches ? matches[1] : 'N/A';
-            }
+            let matches = serviceName.match(/\[Speed: ([^\]]+)\]/);
+            return matches ? matches[1] : 'N/A';
+        }
         });
     </script>
 @endsection

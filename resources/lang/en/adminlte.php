@@ -145,6 +145,7 @@ return [
     'our_achievements' => 'Our Achievements',
     'services' => 'Services',
     'services_value' => '1000+',
+    'services_start_speed' => 'services start speed',
     'users_value' => '500+',
     'transactions' => 'Transactions',
     'transactions_value' => '1500+',
@@ -205,6 +206,8 @@ return [
     'delete_order' => 'Delete Order',
     'order_actions' => 'Order Actions',
     'no_orders_found' => 'No orders found',
+    'video_link_note' => 'please put your VIDEO link',
+    'order_overlap_note' => 'PLEASE do NOT put more than 1 order for the same link at the same time to avoid overlap, and we CAN\'T CANCEL the order in this case.',
 
     // Services Management
     'manage_services' => 'Manage Services',
