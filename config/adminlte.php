@@ -216,6 +216,23 @@ return array(
             'can'  => 'view_support',
             'icon_color'   => 'danger', // Set predefined color
         ),
+        array(
+            'text' => 'referral', // Use translation key for referral
+            'url'  => 'referral', // URL for referral
+            'icon' => 'fas fa-user-friends', // Icon for referral
+            'topnav_center' => true, // Display in top navigation center
+            'can'  => 'view_support', // Permission for viewing referral
+            'icon_color' => 'success', // Set predefined color
+        ),
+        array(
+            'text' => 'points', // Use translation key for points
+            'url'  => 'points', // URL for points page
+            'icon' => 'fas fa-coins', // Icon for points
+            'topnav_center' => true, // Display in top navigation center
+            'can'  => 'view_support', // Permission for viewing points
+            'icon_color' => 'warning', // Set predefined color
+        ),
+
 
     ),
 

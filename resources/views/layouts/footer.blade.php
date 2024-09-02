@@ -1,4 +1,4 @@
-<!-- resources/views/layouts/footer.blade.php -->
+<!-- resources/views/layouts/footer/footer.blade.php -->
 <footer class="bg-dark text-white py-5">
     <div class="container">
         <div class="row">
@@ -27,17 +27,17 @@
             <div class="col-md-3 aos-init aos-animate" data-aos="fade-up" data-aos-duration="1000">
                 <h5 class="mb-4">Company</h5>
                 <ul class="list-unstyled">
-                    <li><a href="#" class="text-white text-decoration-none">About Us</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Careers</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Contact Us</a></li>
+                    <li><a href="{{ url('/about-us') }}" class="text-white text-decoration-none">About Us</a></li>
+                    <li><a href="{{ url('/careers') }}" class="text-white text-decoration-none">Careers</a></li>
+                    <li><a href="{{ url('/privacy-policy') }}" class="text-white text-decoration-none">Privacy Policy</a></li>
+                    <li><a href="{{ url('/contact-us') }}" class="text-white text-decoration-none">Contact Us</a></li>
                 </ul>
             </div>
             <!-- Column 4: Contact -->
             <div class="col-md-3 aos-init aos-animate" data-aos="fade-up" data-aos-duration="1000">
                 <h5 class="mb-4">Contact</h5>
-                <p>Email: info@smmcpan.com</p>
-                <p>Phone: +123 456 7890</p>
+                <p>Email: <a href="mailto:info@smmcpan.com" class="text-white text-decoration-none">info@smmcpan.com</a></p>
+                <p>Phone: <a href="tel:+1234567890" class="text-white text-decoration-none">+123 456 7890</a></p>
                 <div class="social-icons">
                     <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
                     <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>

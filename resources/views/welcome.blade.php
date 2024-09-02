@@ -47,6 +47,25 @@
     <div class="mb-4">
         @include('widgets.features')
     </div>
+    <div class="row mb-5">
+        <div class="col-12">
+            @include('widgets.about_us')
+        </div>
+    </div>
+
+    <!-- Include Careers Widget -->
+    <div class="row mb-5">
+        <div class="col-12">
+            @include('widgets.careers')
+        </div>
+    </div>
+
+    <!-- Include Contact Us Widget -->
+    <div class="row mb-5">
+        <div class="col-12">
+            @include('widgets.contact_us')
+        </div>
+    </div>
 </main>
 
 @include('layouts.footer')

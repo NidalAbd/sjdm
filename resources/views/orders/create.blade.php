@@ -26,17 +26,15 @@
                 <div class="card-body">
                     <form id="orderForm" action="{{ route('orders.store') }}" method="POST">
                         @csrf
-                        <!-- 4x4 Grid of Platforms -->
-                        <div class="row text-center">
+                        <!-- 4x4 Grid of Platforms --><div class="row text-center">
                             @foreach($platforms as $platform)
-                                <div class="col-md-3 mb-3">
+                                <div class="col-4 mb-3">
                                     <button type="button" class="btn btn-block btn-primary platform-btn" data-platform="{{ $platform }}">
                                         <i class="{{ $platformIconMap[$platform] }} mr-2"></i> {{ __('adminlte.' . $platform) }}
                                     </button>
                                 </div>
                             @endforeach
                         </div>
-
                         <!-- Search Field -->
                         <div class="row mb-3">
                             <div class="col-md-12">

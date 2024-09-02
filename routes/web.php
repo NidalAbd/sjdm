@@ -114,3 +114,21 @@ Route::middleware(['auth'])->group(function () {
 
 
 });
+// Quick Links
+Route::view('/api', 'api')->name('api');
+Route::view('/how-it-works', 'how_it_works')->name('how.it.works');
+Route::view('/faq', 'faq')->name('faq');
+Route::view('/terms-and-conditions', 'terms_and_conditions')->name('terms.and.conditions');
+Route::view('/blog', 'blog')->name('blog');
+
+// Company Pages
+Route::view('/about-us', 'layouts.footer.about_us')->name('about.us');
+Route::view('/careers', 'layouts.footer.careers')->name('careers');
+Route::view('/privacy-policy', 'layouts.footer.privacy_policy')->name('privacy.policy');
+Route::view('/contact-us', 'layouts.footer.contact_us')->name('contact.us');
+
+// Resources Pages
+Route::view('/documentation', 'documentation')->name('documentation');
+Route::view('/developer-api', 'developer_api')->name('developer.api');
+Route::view('/affiliate-program', 'affiliate_program')->name('affiliate.program');
+Route::view('/support', 'support')->name('support');
