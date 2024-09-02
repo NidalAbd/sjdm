@@ -33,6 +33,7 @@ Auth::routes(['verify' => true]);
 
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
+Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
@@ -56,7 +57,6 @@ Route::middleware(['auth'])->group(function () {
     // Permission Routes
     Route::resource('permissions', PermissionController::class);
 
-    Route::get('/', [WelcomeController::class, 'index'])->name('home');
 //    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
 //    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
 //    Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
