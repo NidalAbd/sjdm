@@ -142,10 +142,58 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-
+                <!-- Frequently Used Links -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">{{ __('adminlte.faq') }}</a>
+                    <a class="nav-link text-white" href="{{ url('/about-us') }}">{{ __('adminlte.about_us') }}</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url('/contact-us') }}">{{ __('adminlte.contact_us') }}</a>
+                </li>
+
+                <!-- Additional Links -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url('/faq') }}">{{ __('adminlte.faq') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url('/careers') }}">{{ __('adminlte.careers') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url('/privacy-policy') }}">{{ __('adminlte.privacy_policy') }}</a>
+                </li>
+
+                <!-- User-Specific Links -->
+                @guest
+                    <!-- Links for Guests -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('login') }}">{{ __('adminlte.sign_in') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
+                    </li>
+                @else
+                    <!-- Links for Authenticated Users -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i> {{ Auth::user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                            <li><a class="dropdown-item" href="{{ route('dashboard') }}">{{ __('adminlte.dashboard') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}">{{ __('adminlte.profile') }}</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    {{ __('adminlte.sign_out') }}
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                @endguest
+
+                <!-- Utility Links -->
+                <!-- Language Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-globe"></i> {{ __('adminlte.language') }}
@@ -155,35 +203,12 @@
                         <li><a class="dropdown-item" href="{{ route('changeLang', 'ar') }}">{{ __('adminlte.arabic') }}</a></li>
                     </ul>
                 </li>
+                <!-- Dark Mode Toggle -->
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#" id="darkModeToggle">
                         <i class="fas fa-moon"></i>
                     </a>
                 </li>
-                @guest
-                    <!-- Show these links only if the user is not authenticated -->
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('login') }}">{{ __('adminlte.sign_in') }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
-                    </li>
-                @else
-                    <!-- Show these links only if the user is authenticated -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user"></i> {{ Auth::user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
-                            <li><a class="dropdown-item" href="{{ route('dashboard') }}">{{ __('adminlte.dashboard') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}">{{ __('adminlte.profile') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    {{ __('adminlte.sign_out') }}
-                                </a></li>
-                        </ul>
-                    </li>
-                @endguest
             </ul>
         </div>
     </div>

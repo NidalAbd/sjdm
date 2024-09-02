@@ -363,5 +363,8 @@ return [
 
     // Miscellaneous
     'faq' => 'FAQ',
-
+    'about_us' => 'About Us',
+    'careers' => 'Careers',
+    'privacy_policy' => 'Privacy Policy',
+    'contact_us' => 'Contact Us',
 ];
