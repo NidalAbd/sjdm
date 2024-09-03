@@ -30,7 +30,7 @@
         </div>
 
         <div class="mb-4">
-            @include('widgets.Affiliate')
+            @include('widgets.affiliate')
         </div>
 
         <div class="row mb-5">
