@@ -7,6 +7,7 @@ use App\Models\Media;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
@@ -58,9 +59,9 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $referrer = null;
+        $referrer = null; // Initialize referrer as null
 
-        if (isset($data['referral_code'])) {
+        if (!empty($data['referral_code'])) {
             $referrer = User::where('referral_code', $data['referral_code'])->first();
         }
 
@@ -87,7 +88,7 @@ class RegisterController extends Controller
             'images/avatar5.png',
         ];
 
-        $selectedAvatar = $this->faker->randomElement($avatars);
+        $selectedAvatar = Arr::random($avatars); // Use Arr::random for better randomness
 
         $media = new Media([
             'file_name' => basename($selectedAvatar),
@@ -102,4 +103,5 @@ class RegisterController extends Controller
 
         return $user;
     }
+
 }

@@ -218,7 +218,7 @@ return array(
         ),
         array(
             'text' => 'referral', // Use translation key for referral
-            'url'  => 'referral', // URL for referral
+            'url'  => '/referrals', // URL for referral
             'icon' => 'fas fa-user-friends', // Icon for referral
             'topnav_center' => true, // Display in top navigation center
             'can'  => 'view_support', // Permission for viewing referral

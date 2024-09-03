@@ -22,18 +22,6 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="input-group input-group-sm">
-                                    <select name="role" class="form-control" onchange="this.form.submit()">
-                                        <option value="">{{ __('adminlte.select_role') }}</option>
-                                        @foreach($roles as $role)
-                                            <option value="{{ $role->name }}" {{ request()->get('role') == $role->name ? 'selected' : '' }}>
-                                                {{ $role->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="input-group input-group-sm">
                                     <select name="status" class="form-control" onchange="this.form.submit()">
                                         <option value="">{{ __('adminlte.select_status') }}</option>
                                         <option value="active" {{ request()->get('status') == 'active' ? 'selected' : '' }}>

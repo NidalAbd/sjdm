@@ -10,6 +10,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Notifications\ProfileUpdatedNotification;
 use App\Notifications\UserStatusChangedNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission;
@@ -302,5 +303,16 @@ class UserController extends Controller
         $user->increment('balance', $amount);
 
         return redirect()->route('transactions.index')->with('success', 'Balance added successfully for user.');
+    }
+
+
+    public function referalIndex()
+    {
+        $user = Auth::user(); // Get the currently authenticated user
+
+        // Fetch referrals related to the authenticated user
+        $referrals = $user->referrals()->paginate(10);
+
+        return view('referral.index', compact('user', 'referrals'));
     }
 }

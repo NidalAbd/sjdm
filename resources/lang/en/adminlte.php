@@ -468,4 +468,19 @@ return [
     'contact_details' => 'Contact Details',
     'phone' => 'Phone',
     'address' => 'Address',
+
+
+    'manage_referrals' => 'Manage Referrals',
+    'search_referrals' => 'Search Referrals',
+    'date_joined' => 'Date Joined',
+    'no_categories_available' => 'No Categories Available',
+    'toggle_navigation' => 'Toggle navigation',
+    'change_language' => 'Change Language',
+    'your_referral_code' => 'Your Referral Code',
+    'your_referral_link' => 'Your Referral Link',
+    'share_to_invite_friends' => 'Share this link to invite friends and earn rewards!',
+    'copy_referral_link' => 'Copy Referral Link',
+    'referral_link_copied' => 'Referral link copied to clipboard!',
+    'user_actions' => 'User Actions',
+    'manage_referrals_page_loaded' => 'Manage referrals page loaded',
 ];

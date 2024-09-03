@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::post('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
     Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
+    Route::get('/referrals', [UserController::class, 'referalIndex'])->name('referrals.index');
 
     // Role and permission routes
     Route::resource('roles', RoleController::class);
