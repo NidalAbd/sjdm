@@ -3,100 +3,71 @@
 @section('title', __('adminlte.transaction_details'))
 
 @section('content_header')
-    <h1 class="text-center display-4">{{ config('app.name') }} - {{ __('adminlte.transaction_details') }}</h1>
     @include('partials.breadcrumbs')
-@stop
 
+    <h1>{{ __('adminlte.transaction_details') }}</h1>
+@stop
 @section('content')
-    <div class="container my-5">
         <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="card shadow border-0 rounded-lg">
-                    <div class="card-header bg-primary text-white py-4 d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">{{ __('adminlte.transaction') }} #{{ $transaction->id }}</h3>
-                        <span class="badge bg-{{ $transaction->status == 'completed' ? 'success' : 'danger' }} text-uppercase">
-                            {{ ucfirst($transaction->status) }}
-                        </span>
+            <div class="col-md-12">
+                <div class="card">
+                    <!-- Card Header -->
+                    <div class="card-header  text-white">
+                        <h3 class="card-title">{{ __('adminlte.transaction') }} #{{ $transaction->id }}</h3>
                     </div>
-                    <div class="card-body p-5">
-                        <div class="row mb-5">
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="row mb-3">
                             <div class="col-md-6">
-                                <img src="{{ asset('images/MaxPeak.png') }}" alt="{{ config('app.name') }} Logo" class="img-fluid mb-3" style="max-width: 50px; border-radius: 50%;">
-                                <h5 class="text-secondary">{{ __('adminlte.transaction_type') }}</h5>
-                                <p class="lead">{{ ucfirst($transaction->type) }}</p>
+                                <strong>{{ __('adminlte.user') }}:</strong> {{ $transaction->user->name }}
                             </div>
-                            <div class="col-md-6 text-end">
-                                <h5 class="text-secondary">{{ __('adminlte.amount') }}</h5>
-                                <p class="lead fw-bold text-success">${{ number_format($transaction->amount, 2) }}</p>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row mb-4">
                             <div class="col-md-6">
-                                <h5 class="text-secondary">{{ __('adminlte.date') }}</h5>
-                                <p>{{ $transaction->created_at->format('d M Y, H:i A') }}</p>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <h5 class="text-secondary">{{ __('adminlte.payment_method') }}</h5>
-                                <p>{{ $transaction->payment_method ?? __('adminlte.not_specified') }}</p>
+                                <strong>{{ __('adminlte.email') }}:</strong> {{ $transaction->user->email }}
                             </div>
                         </div>
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <h5 class="text-secondary">{{ __('adminlte.description') }}</h5>
-                                <p>
-                                    {{ $transaction->description ?? __('adminlte.no_description_provided') }}
-                                    @if($transaction->payment_method == 'admin')
-                                        ({{ __('adminlte.added_by_admin') }})
-                                    @elseif($transaction->payment_method == 'stripe')
-                                        ({{ __('adminlte.processed_via_stripe') }})
-                                    @endif
-                                </p>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>{{ __('adminlte.transaction_id') }}:</strong> {{ $transaction->id }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>{{ __('adminlte.status') }}:</strong>
+                                <span class="badge badge-{{ $transaction->status == 'completed' ? 'success' : 'danger' }}">
+                                    {{ ucfirst($transaction->status) }}
+                                </span>
                             </div>
                         </div>
-                        <div class="row mb-4">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>{{ __('adminlte.transaction_type') }}:</strong> {{ ucfirst($transaction->type) }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>{{ __('adminlte.amount') }}:</strong> ${{ number_format($transaction->amount, 2) }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>{{ __('adminlte.payment_method') }}:</strong> {{ $transaction->payment_method ?? __('adminlte.not_specified') }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>{{ __('adminlte.date') }}:</strong> {{ $transaction->created_at->format('d M Y, H:i A') }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <div class="col-md-12">
-                                <h5 class="text-secondary">{{ __('adminlte.details') }}</h5>
-                                <table class="table table-striped table-bordered">
-                                    <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">{{ __('adminlte.detail') }}</th>
-                                        <th scope="col">{{ __('adminlte.value') }}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>{{ __('adminlte.transaction_id') }}</td>
-                                        <td>{{ $transaction->id }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{{ __('adminlte.user') }}</td>
-                                        <td>{{ $transaction->user->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{{ __('adminlte.status') }}</td>
-                                        <td>{{ ucfirst($transaction->status) }}</td>
-                                    </tr>
-                                    <!-- Add more rows as needed -->
-                                    </tbody>
-                                </table>
+                                <strong>{{ __('adminlte.description') }}:</strong>
+                                <p>{{ $transaction->description ?? __('adminlte.no_description_provided') }}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-white py-4">
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('transactions.index') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>{{ __('adminlte.back_to_transactions') }}
-                            </a>
-                            <button class="btn btn-primary" onclick="window.print()">
-                                <i class="fas fa-print me-2"></i>{{ __('adminlte.print_receipt') }}
-                            </button>
-                        </div>
+                    <!-- Card Footer -->
+                    <div class="card-footer text-left">
+                        <a href="{{ route('transactions.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> {{ __('adminlte.back_to_transactions') }}
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 @stop
 
 @section('js')

@@ -26,15 +26,17 @@
                 <div class="card-body">
                     <form id="orderForm" action="{{ route('orders.store') }}" method="POST">
                         @csrf
-                        <!-- 4x4 Grid of Platforms --><div class="row text-center">
+                        <!-- 4x4 Grid of Platforms -->
+                        <div class="row text-center">
                             @foreach($platforms as $platform)
-                                <div class="col-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <button type="button" class="btn btn-block btn-primary platform-btn" data-platform="{{ $platform }}">
                                         <i class="{{ $platformIconMap[$platform] }} mr-2"></i> {{ __('adminlte.' . $platform) }}
                                     </button>
                                 </div>
                             @endforeach
                         </div>
+
                         <!-- Search Field -->
                         <div class="row mb-3">
                             <div class="col-md-12">
@@ -194,37 +196,40 @@
             // Initialize default value for average time
             document.getElementById('average_time').value = 'Service will start within N/A and speed up to N/A';
 
-            // Load all categories and services initially
+            // Load all categories initially for the default platform 'all'
             loadCategories('all');
-            loadServices('all');
 
+            // Platform selection
             document.querySelectorAll('.platform-btn').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     let platform = this.getAttribute('data-platform');
-                    console.log(`Platform selected: ${platform}`); // Debug log
+                    console.log(`Platform selected: ${platform}`);
                     document.getElementById('selectedPlatform').value = platform;
                     loadCategories(platform);  // Load categories based on selected platform
-                    loadServices(platform);    // Load services based on selected platform
                 });
             });
 
+            // Category selection
             document.getElementById('category').addEventListener('change', function () {
                 let category = this.value;
                 let platform = document.getElementById('selectedPlatform').value;
-                console.log(`Category changed: ${category} for platform: ${platform}`); // Debug log
+                console.log(`Category changed: ${category} for platform: ${platform}`);
                 loadServices(platform, category);  // Load services based on selected platform and category
             });
 
+            // Service selection
             document.getElementById('service').addEventListener('change', function () {
                 let serviceId = this.value;
                 document.getElementById('serviceIdSelect').value = serviceId; // Update the hidden input field
                 fetchServiceInfo(serviceId);
             });
 
+            // Quantity input change
             document.getElementById('quantity').addEventListener('input', function () {
                 calculateCharge();
             });
 
+            // Search services
             document.getElementById('search').addEventListener('input', function () {
                 let query = this.value;
                 if (query.length > 2) {
@@ -236,6 +241,7 @@
                 }
             });
 
+            // Fetch service info based on the selected service ID
             function fetchServiceInfo(serviceId) {
                 let serviceSelect = document.getElementById('service');
                 let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
@@ -251,8 +257,6 @@
                 quantityInput.setAttribute('min', min);
                 quantityInput.setAttribute('max', max);
                 quantityInput.setAttribute('placeholder', `Enter quantity (Min: ${min}, Max: ${max})`);
-
-                // Clear the quantity input value
                 quantityInput.value = '';
 
                 // Set the average time text with defaults if needed
@@ -272,8 +276,7 @@
                 calculateCharge();
             }
 
-
-
+            // Calculate the charge based on rate and quantity
             function calculateCharge() {
                 let serviceSelect = document.getElementById('service');
                 let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
@@ -281,7 +284,6 @@
                 let quantity = parseInt(document.getElementById('quantity').value);
 
                 if (!isNaN(rate) && !isNaN(quantity)) {
-                    // Calculate the charge directly based on the entered quantity and rate
                     let charge = (rate / 1000) * quantity; // Dividing rate by 1000 to get the rate per unit if rate is per 1k units
                     document.getElementById('charge').value = charge.toFixed(2);
                 } else {
@@ -289,19 +291,12 @@
                 }
             }
 
-
-
+            // Load categories for the selected platform
             function loadCategories(platform) {
                 fetch(`${apiUrl}/orders/getCategories?platform=${platform}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            console.error(`HTTP error! status: ${response.status}`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        console.log('Categories received:', data); // Debugging log
+                        console.log('Categories received:', data);
 
                         let categorySelect = document.getElementById('category');
                         categorySelect.innerHTML = ''; // Clear existing categories
@@ -317,88 +312,80 @@
                                 option.text = category;
                                 categorySelect.appendChild(option);
                             });
-                        }
 
-                        // Automatically load services for the first category
-                        if (data.length > 0) {
-                            loadServices(platform, data[0]);  // Load services for the first category
+                            // Automatically load services for the first category
+                            loadServices(platform, data[0]);
                         }
                     })
-                    .catch(error => console.error('Error loading categories:', error)); // Error log
+                    .catch(error => console.error('Error loading categories:', error));
             }
 
+            // Load services for the selected platform and category
             function loadServices(platform, category = '') {
-                console.log(`Loading services for platform: ${platform}, category: ${category}`); // Debugging log
+                console.log(`Loading services for platform: ${platform}, category: ${category}`);
 
-                fetch(`${apiUrl}/orders/getServices?platform=${platform}&category=${category}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            console.error(`HTTP error! status: ${response.status}`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
+                fetch(`${apiUrl}/orders/getServices?platform=${platform}&category=${encodeURIComponent(category)}`)
+                    .then(response => response.json())
                     .then(data => {
-                        console.log('Services received:', data); // Debugging log
+                        console.log('Services received:', data);
 
                         let serviceSelect = document.getElementById('service');
                         serviceSelect.innerHTML = ''; // Clear existing services
 
-                        data.forEach(service => {
+                        if (data.length === 0) {
                             let option = document.createElement('option');
-                            option.value = service.service_id;
-                            option.text = service.name;
-                            option.setAttribute('data-rate', service.rate);
-                            option.setAttribute('data-min', service.min); // Set min from database
-                            option.setAttribute('data-max', service.max); // Set max from database
-                            option.setAttribute('data-start-time', service.start_time || 'N/A'); // Default to 'N/A' if not provided
-                            option.setAttribute('data-speed', service.average_time || 'N/A'); // Default to 'N/A' if not provided
+                            option.text = '{{ __('adminlte.no_services_available') }}';
                             serviceSelect.appendChild(option);
-                        });
+                        } else {
+                            data.forEach(service => {
+                                let option = document.createElement('option');
+                                option.value = service.service_id;
+                                option.text = service.name;
+                                option.setAttribute('data-rate', service.rate);
+                                option.setAttribute('data-min', service.min); // Set min from database
+                                option.setAttribute('data-max', service.max); // Set max from database
+                                option.setAttribute('data-start-time', service.start_time || 'N/A'); // Default to 'N/A' if not provided
+                                option.setAttribute('data-speed', service.average_time || 'N/A'); // Default to 'N/A' if not provided
+                                serviceSelect.appendChild(option);
+                            });
 
-                        // Automatically select the first service and fetch its info
-                        if (data.length > 0) {
-                            serviceSelect.value = data[0].service_id;
+                            // Automatically select the first service and fetch its info
                             fetchServiceInfo(data[0].service_id);
                         }
                     })
                     .catch(error => console.error('Error loading services:', error));
             }
 
+            // Search services based on user input
             function searchServices(query) {
-                fetch(`${apiUrl}/orders/searchServices?query=${query}`)
+                fetch(`${apiUrl}/orders/searchServices?query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
                     .then(data => {
                         let serviceSelect = document.getElementById('service');
                         serviceSelect.innerHTML = '';
 
-                        data.forEach(service => {
+                        if (data.length === 0) {
                             let option = document.createElement('option');
-                            option.value = service.service_id;
-                            option.text = service.name;
-                            option.setAttribute('data-rate', service.rate);
-                            option.setAttribute('data-min', service.min); // Set min from database
-                            option.setAttribute('data-max', service.max); // Set max from database
-                            option.setAttribute('data-start-time', service.start_time || 'N/A'); // Default to 'N/A' if not provided
-                            option.setAttribute('data-speed', service.average_time || 'N/A'); // Default to 'N/A' if not provided
+                            option.text = '{{ __('adminlte.no_services_available') }}';
                             serviceSelect.appendChild(option);
-                        });
+                        } else {
+                            data.forEach(service => {
+                                let option = document.createElement('option');
+                                option.value = service.service_id;
+                                option.text = service.name;
+                                option.setAttribute('data-rate', service.rate);
+                                option.setAttribute('data-min', service.min);
+                                option.setAttribute('data-max', service.max);
+                                option.setAttribute('data-start-time', service.start_time || 'N/A');
+                                option.setAttribute('data-speed', service.average_time || 'N/A');
+                                serviceSelect.appendChild(option);
+                            });
 
-                        if (data.length > 0) {
-                            serviceSelect.value = data[0].service_id;
-                            fetchServiceInfo(data[0].service_id);
+                            if (data.length > 0) {
+                                fetchServiceInfo(data[0].service_id);
+                            }
                         }
                     });
-            }
-
-            function extractStartTime(serviceName) {
-                let matches = serviceName.match(/\[Start time: ([^\]]+)\]/);
-                return matches ? matches[1] : 'N/A';
-            }
-
-            function extractSpeed(serviceName) {
-                let matches = serviceName.match(/\[Speed: ([^\]]+)\]/);
-                return matches ? matches[1] : 'N/A';
             }
         });
     </script>

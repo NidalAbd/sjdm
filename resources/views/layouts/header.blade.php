@@ -40,6 +40,58 @@
         outline: none;
     }
 
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        background-color: #ffffff; /* Light mode dropdown background */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item {
+        color: #000; /* Light mode dropdown text */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa; /* Light mode hover background */
+        color: #000; /* Light mode hover text color */
+    }
+
+    /* Dark mode styles */
+    .dark-mode {
+        background-color: #365352; /* Dark mode background */
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+    }
+
+    .dark-mode .navbar .nav-link {
+        color: #fff;
+    }
+
+    .dark-mode .navbar .nav-link:hover {
+        color: #ff6347;
+    }
+
+    .dark-mode .navbar-brand .text-white {
+        color: #fff;
+    }
+
+    /* Dark mode dropdown menu styles */
+    .dark-mode .dropdown-menu {
+        background-color: #333; /* Dark mode dropdown background */
+        color: #fff; /* Dark mode dropdown text */
+    }
+
+    .dark-mode .dropdown-item {
+        color: #fff; /* Dark mode dropdown text */
+    }
+
+    .dark-mode .dropdown-item:hover {
+        background-color: #444; /* Dark mode hover background */
+        color: #fff; /* Dark mode hover text color */
+    }
+
+    /* Other Styles */
     .hero-section {
         background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
         background-repeat: repeat; /* Repeat the pattern */
@@ -67,8 +119,6 @@
         z-index: 1;
         transition: background 0.3s ease; /* Transition for background change */
     }
-
-
 
     .hero-section .container {
         position: relative;
@@ -108,33 +158,7 @@
             transform: translateY(-10px);
         }
     }
-
-    /* Dark mode styles */
-    .dark-mode {
-        background-color: #365352; /* Dark mode background */
-        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
-        background-size: auto; /* Adjust the size of the pattern if needed */
-    }
-
-
-    .dark-mode .btn-primary {
-        background-image: linear-gradient(90deg, #0056b3, #007bff);
-    }
-
-    .dark-mode .navbar .nav-link {
-        color: #fff;
-    }
-
-    .dark-mode .navbar .nav-link:hover {
-        color: #ff6347;
-    }
-
-    .dark-mode .navbar-brand .text-white {
-        color: #fff;
-    }
 </style>
-
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
@@ -148,21 +172,18 @@
             <ul class="navbar-nav ms-auto align-items-center">
                 <!-- Frequently Used Links -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url('/about-us') }}">{{ __('adminlte.about_us') }}</a>
+                    <a class="nav-link text-white" href="{{ route('about') }}">{{ __('adminlte.about_us') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url('/contact-us') }}">{{ __('adminlte.contact_us') }}</a>
+                    <a class="nav-link text-white" href="{{ route('contact') }}">{{ __('adminlte.contact_us') }}</a>
                 </li>
 
                 <!-- Additional Links -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url('/faq') }}">{{ __('adminlte.faq') }}</a>
+                    <a class="nav-link text-white" href="{{ route('faq') }}">{{ __('adminlte.faq') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url('/careers') }}">{{ __('adminlte.careers') }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ url('/privacy-policy') }}">{{ __('adminlte.privacy_policy') }}</a>
+                    <a class="nav-link text-white" href="{{ route('privacy-policy') }}">{{ __('adminlte.privacy_policy') }}</a>
                 </li>
 
                 <!-- User-Specific Links -->
@@ -177,8 +198,10 @@
                 @else
                     <!-- Links for Authenticated Users -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user"></i> {{ Auth::user()->name }}
+                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Profile Image -->
+                            <img src="{{ Auth::user()->adminlte_image() }}" alt="Profile Image" class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                            {{ Auth::user()->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
                             <li><a class="dropdown-item" href="{{ route('dashboard') }}">{{ __('adminlte.dashboard') }}</a></li>
@@ -186,7 +209,7 @@
                             <li>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    {{ __('adminlte.sign_out') }}
+                                    {{ __('adminlte.log_out') }}
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf

@@ -347,7 +347,7 @@ return [
     'refund_policy' => 'Refund Policy',
     'refund_policy_detail' => 'Once the transaction is complete, the added balance is non-refundable. Please ensure you enter the correct amount before proceeding.',
     'support' => 'Support',
-    'support_detail' => 'If you encounter any issues during the payment process, please contact our support team at support@sjdm.store. We are here to assist you.',
+    'support_detail' => 'If you encounter any issues during the payment process, please contact our support team at info@sjdm.store. We are here to assist you.',
     'agree_terms' => 'By proceeding with the payment, you agree to our Terms of Service and Privacy Policy.',
 
     // Dashboard

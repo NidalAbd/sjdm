@@ -1,12 +1,19 @@
 @extends('layouts.app')
 
+@section('content_header')
+    @include('partials.breadcrumbs')
+
+    <h1>{{ __('adminlte.add_balance') }}</h1>
+@stop
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
+        <div class="col-md-11 row justify-content-center">
             <!-- Payment Form Section -->
             <div class="col-lg-6 mb-4">
                 <div class="card border-0 shadow-sm rounded">
                     <div class="card-body">
+                        <div class=" alert-info text-center mb-4 mt-2" role="alert">
+                            <i class="fas fa-shield-alt"></i> {{ __('adminlte.redirect_stripe') }}
+                        </div>
                         <h2 class="text-center mb-4 text-dark">{{ __('adminlte.add_balance') }}</h2>
                         <p class="text-center text-muted mb-5">{{ __('adminlte.securely_add_funds') }}</p>
 
@@ -37,11 +44,10 @@
                                 </div>
                             </div>
 
-                            <div class="alert alert-info text-center mb-4" role="alert">
-                                <i class="fas fa-shield-alt"></i> {{ __('adminlte.redirect_stripe') }}
-                            </div>
+
 
                             <button type="submit" class="btn btn-primary btn-lg w-100">{{ __('adminlte.proceed_to_payment') }}</button>
+
                         </form>
                     </div>
                 </div>
@@ -66,8 +72,46 @@
                 </div>
             </div>
         </div>
-    </div>
 @endsection
+@push('styles')
+    <style>
+        /* Light mode styles */
+        .form-control {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ced4da;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark mode styles */
+        .dark-mode .form-control {
+            background-color: #343a40;
+            color: #ffffff;
+            border: 1px solid #454d55;
+        }
+
+        /* Placeholder styles */
+        .form-control::placeholder {
+            color: #6c757d;
+        }
+
+        .dark-mode .form-control::placeholder {
+            color: #adb5bd;
+        }
+
+        /* Focus styles */
+        .form-control:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .dark-mode .form-control:focus {
+            border-color: #5a9bd4;
+            box-shadow: 0 0 0 0.2rem rgba(90, 155, 212, 0.25);
+        }
+    </style>
+@endpush
 
 @section('scripts')
     <script>
