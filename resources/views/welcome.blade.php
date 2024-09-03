@@ -6,7 +6,9 @@
         <div class="mb-4">
             @include('widgets.platforms')
         </div>
-
+        <div class="mb-4">
+            @include('widgets.affiliate')
+        </div>
         @guest
             <div class="mb-4">
                 @include('widgets.fast-login')
@@ -29,9 +31,7 @@
             @include('widgets.features')
         </div>
 
-        <div class="mb-4">
-            @include('widgets.affiliate')
-        </div>
+
 
         <div class="row mb-5">
             <div class="col-12">
