@@ -13,11 +13,17 @@
                     <div class="contact-info-box p-4 rounded">
                         <h3 class="contact-title">{{ __('adminlte.get_in_touch') }}</h3>
                         <p class="contact-text">
-                            We would love to hear from you! If you have any questions, suggestions, or feedback, please feel free to reach out to us through the contact details below.
+                            {{ __('adminlte.contact_us_text') }}
                         </p>
                         <div class="contact-details">
                             <p class="contact-text">
                                 <i class="fas fa-envelope fa-lg me-2 contact-icon"></i><strong>Email:</strong> <a href="mailto:info@sjdm.store" class="contact-link">info@sjdm.store</a>
+                            </p>
+                            <p class="contact-text">
+                                <i class="fas fa-id-badge fa-lg me-2 contact-icon"></i><strong>License Company Number:</strong> 1241225
+                            </p>
+                            <p class="contact-text">
+                                <i class="fab fa-whatsapp fa-lg me-2 contact-icon"></i><strong>WhatsApp:</strong> <a href="https://wa.me/971557830054" target="_blank" class="contact-link">+971 55 783 0054</a>
                             </p>
                             <p class="contact-text">
                                 <i class="fas fa-phone-alt fa-lg me-2 contact-icon"></i><strong>Phone:</strong> <a href="tel:+971557830054" class="contact-link">+971 55 783 0054</a>
