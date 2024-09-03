@@ -45,81 +45,12 @@
 </div>
 
 
+
 <!-- Include Font Awesome and AOS for animations -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
-<style>
-    .platform-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-        letter-spacing: 1.2px;
-        color: var(--bs-body-color); /* Dynamic color based on theme */
-    }
-
-    .stats-box {
-        background-color: var(--bs-light-bg-color); /* Dynamic background color */
-        border-radius: 15px;
-        text-align: center;
-        padding: 30px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .stats-box:hover {
-        transform: translateY(-10px);
-        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .stat-pic {
-        height: 30px; /* Set a fixed height for icons */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .widget-icon {
-        color: var(--bs-body-color); /* Dynamic color based on theme */
-        transition: transform 0.3s ease;
-    }
-
-    .widget-icon:hover {
-        transform: rotate(10deg) scale(1.1);
-    }
-
-    .widget-heading {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-        color: var(--bs-body-color); /* Dynamic color based on theme */
-    }
-
-    .stats-box p {
-        font-size: 1rem;
-        font-weight: 200;
-        color: var(--bs-secondary-color); /* Dynamic text color */
-    }
-
-    /* Dark mode styles */
-    .dark-mode .platform-title,
-    .dark-mode .widget-heading,
-    .dark-mode .stats-box p {
-        color: #ffffff; /* Light text in dark mode */
-    }
-
-    .dark-mode .stats-box {
-        background-color: #343a40; /* Dark mode background */
-        color: #ffffff; /* Light text in dark mode */
-    }
-
-    .dark-mode .widget-icon {
-        color: #ffffff; /* Icon color in dark mode */
-    }
-</style>
 
 <script>
     $(document).ready(function() {

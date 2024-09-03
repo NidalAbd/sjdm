@@ -2,19 +2,22 @@
 
 <style>
     body {
-        background-color: #f8f9fa; /* Light mode background */
+        background-image: url('{{ asset('images/double-bubble-outline.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
         transition: background-color 0.3s ease, color 0.3s ease;
         color: #212529; /* Light mode text color */
         padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
     }
 
     .navbar {
-        background-color: #212529 !important;
+        background-color: #111315 !important;
         transition: background-color 0.3s ease;
     }
 
     .dark-mode .navbar {
-        background-color: #1f2123 !important;
+        background-color: #111315 !important;
     }
 
     .navbar .nav-link {
@@ -38,10 +41,10 @@
     }
 
     .hero-section {
-        background-image: url('{{ asset('images/payement/4826101.jpg') }}'); /* Background image for hero section */
-        background-size: cover;
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
         background-position: center;
-        background-repeat: no-repeat;
         height: 50vh; /* Adjust height to ensure full display */
         color: #fff;
         position: relative;
@@ -65,9 +68,7 @@
         transition: background 0.3s ease; /* Transition for background change */
     }
 
-    .dark-mode .hero-bg {
-        background: rgba(0, 0, 0, 0.7); /* Dark mode gradient overlay */
-    }
+
 
     .hero-section .container {
         position: relative;
@@ -110,9 +111,12 @@
 
     /* Dark mode styles */
     .dark-mode {
-        background-color: #2e2e2e; /* Dark mode background */
-        color: #ffffff; /* Dark mode text color */
+        background-color: #365352; /* Dark mode background */
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
     }
+
 
     .dark-mode .btn-primary {
         background-image: linear-gradient(90deg, #0056b3, #007bff);
@@ -134,7 +138,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-            <img src="{{ asset('images/MaxPeak.png') }}" alt="{{ config('app.name') }} Logo" class="img-fluid circular-logo me-2">
+            <img src="{{ asset('images/sjdm_logo.jpg') }}" alt="{{ config('app.name') }} Logo" class="img-fluid circular-logo me-2">
             <span class="fw-bold text-uppercase text-white">{{ config('app.name') }}</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ __('adminlte.toggle_navigation') }}">
@@ -267,4 +271,186 @@
         }
     });
 </script>
+<style>
+    /* General Section Title Styling */
+    .platform-title, .achievements-title {
+        font-size: 2.5rem; /* Increased font size for better visibility */
+        font-weight: 700;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        letter-spacing: 1.2px;
+        color: var(--bs-body-color); /* Dynamic color based on theme */
+    }
+
+    .platform-title::after, .achievements-title::after {
+        content: '';
+        display: block;
+        margin: 0 auto;
+        width: 60px;
+        height: 3px;
+        background-color: var(--bs-primary); /* Primary color */
+        margin-top: 10px;
+    }
+
+    /* Stats Box Styling */
+    .stats-box {
+        background-color: var(--bs-body-bg); /* Dynamic background for light/dark mode */
+        border-radius: 15px;
+        text-align: center;
+        padding: 30px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        color: var(--bs-body-color); /* Dynamic text color */
+    }
+
+    .stats-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .stats-title {
+        font-size: 1.8rem; /* Increased font size for titles */
+        font-weight: 700; /* Increased font weight for emphasis */
+        color: var(--bs-body-color); /* Dynamic text color */
+        margin-bottom: 15px;
+    }
+
+    .stats-value {
+        font-size: 2.8rem; /* Increased font size for values */
+        font-weight: 800;
+        color: var(--bs-primary); /* Primary color for values */
+        margin-bottom: 15px;
+    }
+
+    .metric-description {
+        font-size: 1.2rem; /* Increased font size for better readability */
+        font-weight: 600;
+        color: var(--bs-secondary-color); /* Secondary text color */
+        margin-bottom: 10px;
+    }
+
+    /* Icon and Image Styling */
+    .icon-circle, .stat-pic {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+    }
+
+    .icon-circle {
+        width: 100px;
+        height: 100px;
+        font-size: 3.5rem;
+        color: #ffffff; /* Ensure icons are white for contrast */
+    }
+
+    .stat-pic {
+        height: 100px; /* Increased icon size */
+        font-size: 5rem;
+        color: var(--bs-primary); /* Primary color for icons */
+        margin-bottom: 10px;
+    }
+
+    .widget-icon {
+        max-height: 80px; /* Increased icon size */
+        color: var(--bs-body-color); /* Dynamic color based on theme */
+        transition: transform 0.3s ease;
+    }
+
+    .widget-icon:hover {
+        transform: rotate(10deg) scale(1.1);
+    }
+
+    /* Form and Button Styling */
+    .form-floating .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: none;
+    }
+
+    .form-floating label {
+        color: var(--bs-secondary-color);
+    }
+
+    .position-relative .form-control {
+        padding-right: 3rem; /* Ensure there's space for the icon */
+    }
+
+    .position-absolute i.material-icons {
+        font-size: 1.5rem;
+        color: var(--bs-secondary-color);
+    }
+
+    .btn-primary {
+        transition: background-color 0.3s ease;
+        background-image: linear-gradient(90deg, rgba(0, 123, 255, 1) 0%, rgba(0, 70, 178, 1) 100%);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-image: linear-gradient(90deg, rgba(0, 70, 178, 1) 0%, rgba(0, 123, 255, 1) 100%);
+    }
+
+    /* Card Styling */
+    .card {
+        border-radius: 1rem;
+    }
+
+    .card-body {
+        background-color: var(--bs-body-bg); /* Dynamic background for dark/light mode */
+        color: var(--bs-body-color); /* Dynamic text color for dark/light mode */
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Dark Mode Styles */
+    .dark-mode .stats-box, .dark-mode .card-body {
+        background-color: #343a40; /* Dark mode background */
+        color: #ffffff; /* Light text in dark mode */
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); /* Slightly darker shadow for dark mode */
+    }
+
+    .dark-mode .achievements-title,
+    .dark-mode .platform-title,
+    .dark-mode .stats-title,
+    .dark-mode .stats-value,
+    .dark-mode .stats-box h3,
+    .dark-mode .metric-description {
+        color: #ffffff; /* White text for contrast in dark mode */
+    }
+
+    .dark-mode .stat-pic, .dark-mode .icon-circle {
+        color: var(--bs-primary); /* Primary color for icons in dark mode */
+    }
+
+    .dark-mode .icon-circle {
+        background-color: #495057; /* Dark mode icon circle background */
+        color: #ffffff; /* White color for icons */
+    }
+
+    .dark-mode .widget-icon {
+        filter: brightness(0) invert(1); /* Invert colors to make icons white in dark mode */
+    }
+
+    .dark-mode .form-floating .form-control {
+        background-color: #495057;
+        color: #ffffff;
+    }
+
+    .dark-mode .form-floating label,
+    .dark-mode .form-check-label {
+        color: #ffffff;
+    }
+
+    .dark-mode .form-check-input {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .dark-mode .position-absolute i.material-icons {
+        color: #ffffff; /* Adjust icon color for dark mode */
+    }
+</style>
 

@@ -15,26 +15,33 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
-
-// routes/web.php
+// Language change route
 Route::get('lang/{lang}', function ($lang) {
     session(['applocale' => $lang]);
-    app()->setLocale($lang); // Set locale immediately
+    app()->setLocale($lang);
     return redirect()->back();
 })->name('changeLang');
 
+// Static content routes
+Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms');
+Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq');
+Route::get('/about', [WelcomeController::class, 'about'])->name('about');
+Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works');
+Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
+Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
+Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
 
-
-
+// Auth routes
 Auth::routes(['verify' => true]);
 
+// Home and dashboard routes
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
+// Protected routes
 Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
@@ -51,22 +58,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
     Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
 
-
-    // Role Routes
+    // Role and permission routes
     Route::resource('roles', RoleController::class);
-    // Permission Routes
     Route::resource('permissions', PermissionController::class);
 
-//    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
-//    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-//    Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
-//    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-//    Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
-//    Route::get('orders/search', [OrderController::class, 'search'])->name('orders.search');
-//    Route::get('orders/searchServices', [OrderController::class, 'searchServices'])->name('orders.searchServices');
-//    Route::get('orders/getCategories', [OrderController::class, 'getCategories'])->name('orders.getCategories');
-//    Route::get('orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
-
+    // Order routes
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
@@ -76,6 +72,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
     Route::get('/orders/getCategories', [OrderController::class, 'getCategories'])->name('orders.getCategories');
 
+    // Service routes
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('services/create', [ServiceController::class, 'create'])->name('services.create');
     Route::post('services', [ServiceController::class, 'store'])->name('services.store');
@@ -86,10 +83,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
     Route::get('/services/filter', [ServiceController::class, 'filter'])->name('services.filter');
     Route::get('/services/getCategories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
-    Route::get('/services/categories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
 
     Route::resource('transactions', TransactionController::class);
-
 
     // Support Ticket Routes
     Route::prefix('support')->middleware(['auth'])->group(function () {
@@ -110,25 +105,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
-    // Routes for admin to add balance manually
-
-
 });
-// Quick Links
-Route::view('/api', 'api')->name('api');
-Route::view('/how-it-works', 'how_it_works')->name('how.it.works');
-Route::view('/faq', 'faq')->name('faq');
-Route::view('/terms-and-conditions', 'terms_and_conditions')->name('terms.and.conditions');
-Route::view('/blog', 'blog')->name('blog');
 
-// Company Pages
-Route::view('/about-us', 'layouts.footer.about_us')->name('about.us');
-Route::view('/careers', 'layouts.footer.careers')->name('careers');
-Route::view('/privacy-policy', 'layouts.footer.privacy_policy')->name('privacy.policy');
-Route::view('/contact-us', 'layouts.footer.contact_us')->name('contact.us');
-
-// Resources Pages
-Route::view('/documentation', 'documentation')->name('documentation');
-Route::view('/developer-api', 'developer_api')->name('developer.api');
-Route::view('/affiliate-program', 'affiliate_program')->name('affiliate.program');
-Route::view('/support', 'support')->name('support');
+// The remaining routes, if any, can stay below this line

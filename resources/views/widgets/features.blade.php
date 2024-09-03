@@ -64,60 +64,13 @@
             </div>
         </div>
     </div>
+    <!-- Optional: Call to Action -->
+    <div class="text-center mt-4">
+        <a href="{{ url('/home') }}" class="btn btn-primary">{{ __('adminlte.learn_more') }}</a>
+    </div>
 </div>
 
 
-<style>
-    .stats-box {
-        background-color: var(--bs-light-bg-color); /* Dynamic background color */
-        border-radius: 15px;
-        text-align: center;
-        padding: 30px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .stats-box:hover {
-        transform: translateY(-10px);
-        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .stat-pic {
-        height: 100px; /* Increased icon size */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .widget-icon {
-        max-height: 80px; /* Increased icon size */
-        transition: transform 0.3s ease;
-    }
-
-    .widget-icon:hover {
-        transform: rotate(10deg) scale(1.1);
-    }
-
-    .stats-box h4 {
-        font-size: 1.2rem; /* Adjusted font size for titles */
-        font-weight: 600;
-        color: var(--bs-body-color); /* Dynamic color based on theme */
-    }
-
-    /* Dark mode styles */
-    .dark-mode .stats-box {
-        background-color: #343a40; /* Dark mode background */
-        color: #ffffff; /* Light text in dark mode */
-    }
-
-    .dark-mode .widget-icon {
-        filter: brightness(0) invert(1); /* Invert colors to make icons white in dark mode */
-    }
-
-    .dark-mode .stats-box h4 {
-        color: #ffffff; /* Light text for headings in dark mode */
-    }
-</style>
 
 <script>
     $(document).ready(function() {

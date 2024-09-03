@@ -2,6 +2,7 @@
 
 @section('title', __('adminlte.dashboard')) <!-- Use translation key -->
 
+
 @section('content_header')
     @include('partials.breadcrumbs')  <!-- Include the breadcrumbs partial -->
 @stop
