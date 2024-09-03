@@ -30,9 +30,6 @@
         <div class="mb-4">
             @include('widgets.features')
         </div>
-
-
-
         <div class="row mb-5">
             <div class="col-12">
                 @include('widgets.review')
