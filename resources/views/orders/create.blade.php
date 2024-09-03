@@ -29,7 +29,7 @@
                         <!-- 4x4 Grid of Platforms -->
                         <div class="row text-center">
                             @foreach($platforms as $platform)
-                                <div class="col-6 col-sm-4 col-md-3 mb-3">
+                                <div class="col-4 col-sm-4 col-md-3 mb-3">
                                     <button type="button" class="btn btn-block btn-primary platform-btn" data-platform="{{ $platform }}">
                                         <i class="{{ $platformIconMap[$platform] }} me-2"></i> {{ __('adminlte.' . $platform) }}
                                     </button>
