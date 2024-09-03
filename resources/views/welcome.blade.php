@@ -35,11 +35,5 @@
                 @include('widgets.review')
             </div>
         </div>
-
-        <div class="row mb-5">
-            <div class="col-12">
-                @include('widgets.contact_us')
-            </div>
-        </div>
     </div>
 @endsection
