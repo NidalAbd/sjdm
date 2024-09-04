@@ -4,7 +4,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to {{ config('app.name') }}</title>
+    <title>{{ __('title') }}</title>
+    <meta name="keywords" content="{{ __('keywords') }}">
+    <meta name="description" content="{{ __('description') }}">
+    <meta property="og:title" content="{{ __('keywords') }}" />
+    <meta property="og:description" content="{{ __('description') }}" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="{{ app()->getLocale() == 'ar' ? 'ar_AR' : 'en_US' }}" />
+    <meta property="og:site_name" content="SJDM" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
