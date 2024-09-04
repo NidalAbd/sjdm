@@ -2,6 +2,7 @@
 
 @section('title', __('adminlte.dashboard')) <!-- Use translation key -->
 
+<link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
 
 @section('content_header')
     @include('partials.breadcrumbs')  <!-- Include the breadcrumbs partial -->

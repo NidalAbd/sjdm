@@ -14,7 +14,7 @@ return array(
     ),
 
     'logo' => '<b>SJDM</b>',
-    'logo_img' => 'images/MaxPeak.png',
+    'logo_img' => 'images/favicon-96x96.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -23,7 +23,7 @@ return array(
     'auth_logo' => array(
         'enabled' => true,
         'img' => array(
-            'path' => 'images/MaxPeak.png',
+            'path' => 'images/favicon-96x96.png',
             'alt' => 'SJDM Logo',
             'class' => 'brand-image img-circle elevation-3',
             'width' => 50,
