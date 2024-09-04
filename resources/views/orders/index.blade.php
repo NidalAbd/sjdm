@@ -14,13 +14,13 @@
                 <div class="card-body">
                     <form id="filterForm" action="{{ route('orders.index') }}" method="GET">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="input-group input-group-sm">
                                     <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_orders') }}"
                                            value="{{ request()->get('search') }}">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" onchange="this.form.submit()">
                                         <option value="all">{{ __('adminlte.select_platform') }}</option>
@@ -40,7 +40,11 @@
                                     {{ __('adminlte.update_order_statuses') }}
                                 </a>
                             </div>
-
+                            <div class="col-md-2">
+                                <a href="{{ route('orders.create') }}" class="btn btn-sm btn-block btn-info mb-3">
+                                    {{ __('adminlte.create_order') }}
+                                </a>
+                            </div>
                         </div>
                     </form>
 
@@ -96,7 +100,23 @@
                                                         </button>
                                                     </form>
                                                 @endcan
-                                                <!-- Add button for creating support ticket -->
+
+                                                <!-- Conditionally render Refill button with icon -->
+                                                @if($order->can_refill)
+                                                    <button type="button" class="btn btn-info btn-sm" onclick="checkAndRefill({{ $order->id }})"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('adminlte.refill') }}">
+                                                        <i class="fas fa-sync"></i>
+                                                    </button>
+                                                @endif
+
+                                                <!-- Conditionally render Cancel button with icon -->
+                                                @if($order->can_cancel)
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="checkAndCancel({{ $order->id }})"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('adminlte.cancel') }}">
+                                                        <i class="fas fa-ban"></i>
+                                                    </button>
+                                                @endif
+
                                                 @can('create_ticket')
                                                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                             data-bs-target="#createTicketModal{{ $order->id }}"
@@ -169,9 +189,10 @@
 
                 <div class="card-footer">
                     <div class="pagination justify-content-center">
-                        {{ $orders->links() }}
+                        {{ $orders->appends(request()->except('page'))->links() }}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -179,4 +200,44 @@
 
 @section('js')
     <script> console.log('Manage Orders page loaded'); </script>
+
+    <script>
+        function checkAndRefill(orderId) {
+            $.ajax({
+                url: '{{ route('orders.checkRefill', ':id') }}'.replace(':id', orderId),
+                method: 'GET',
+                success: function(response) {
+                    if (response.can_refill) {
+                        alert('Order can be refilled');
+                        // You can add further logic to actually perform the refill here
+                    } else {
+                        alert('Order cannot be refilled');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error checking refill status: ' + xhr.responseJSON.message);
+                }
+            });
+        }
+
+        function checkAndCancel(orderId) {
+            $.ajax({
+                url: '{{ route('orders.checkCancel', ':id') }}'.replace(':id', orderId),
+                method: 'GET',
+                success: function(response) {
+                    if (response.can_cancel) {
+                        alert('Order can be canceled');
+                        // You can add further logic to actually perform the cancel here
+                    } else {
+                        alert('Order cannot be canceled');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error checking cancel status: ' + xhr.responseJSON.message);
+                }
+            });
+        }
+
+
+    </script>
 @stop

@@ -124,7 +124,7 @@
 
                 <div class="card-footer">
                     <div class="pagination justify-content-center">
-                        {{ $referrals->links() }}
+                        {{ $referrals->appends(request()->except('page'))->links() }}
                     </div>
                 </div>
             </div>

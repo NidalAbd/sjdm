@@ -24,3 +24,5 @@ Route::get('orders/getCategories', [OrderController::class, 'getCategories'])->n
 Route::get('orders/getServices', [OrderController::class, 'getServices'])->name('api.orders.getServices');
 Route::get('orders/search', [OrderController::class, 'search'])->name('api.orders.search');
 Route::get('orders/searchServices', [OrderController::class, 'searchServices'])->name('api.orders.searchServices');
+Route::get('/orders/{order}/refill', [OrderController::class, 'checkRefill'])->name('orders.checkRefill');
+Route::get('/orders/{order}/cancel', [OrderController::class, 'checkCancel'])->name('orders.checkCancel');

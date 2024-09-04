@@ -1,65 +1,203 @@
 @extends('layouts.app')
 
-@section('title', __('adminlte.manage_services')) <!-- Use translation for the title -->
+@section('title', __('adminlte.manage_services'))
 
 @section('content_header')
     @include('partials.breadcrumbs')
-    <h1>{{ __('adminlte.manage_services') }}</h1> <!-- Use translation for the header -->
+    <h1 class="text-primary">{{ __('adminlte.manage_services') }}</h1>
 @stop
 
 @section('content')
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3 class="card-title">{{ __('adminlte.service_list') }}</h3>
+                </div>
                 <div class="card-body">
+                    <!-- Search and Filters Form -->
                     <form id="filterForm" action="{{ route('services.index') }}" method="GET">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4 mb-3">
                                 <div class="input-group input-group-sm">
                                     <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_services') }}"
-                                           value="{{ request()->get('search') }}"> <!-- Use translation for placeholder -->
+                                           value="{{ request()->get('search') }}">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" id="platformSelect">
-                                        <option value="all">{{ __('adminlte.select_platform') }}</option> <!-- Use translation for default option -->
+                                        <option value="all">{{ __('adminlte.select_platform') }}</option>
                                         @foreach($platforms as $platform)
                                             <option value="{{ $platform }}" {{ request()->get('platform') == $platform ? 'selected' : '' }}>
                                                 {{ ucfirst($platform) }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-filter"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="input-group input-group-sm">
                                     <select name="category" class="form-control" id="categorySelect">
-                                        <option value="all">{{ __('adminlte.select_category') }}</option> <!-- Use translation for default option -->
+                                        <option value="all">{{ __('adminlte.select_category') }}</option>
                                         @foreach($uniqueCategories as $category)
                                             <option value="{{ $category }}" {{ request()->get('category') == $category ? 'selected' : '' }}>
                                                 {{ ucfirst($category) }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-filter"></i>
+                                    </button>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button> <!-- Use translation for button -->
                             </div>
                         </div>
                     </form>
 
+                    <!-- Services Table -->
                     <div class="table-responsive mt-4">
-                        @include('services.partials.services_table')
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-primary text-white">
+                            <tr>
+                                <th>{{ __('adminlte.name') }}</th>
+                                <th>{{ __('adminlte.category') }}</th>
+                                <th class="text-center">{{ __('adminlte.actions') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if($services->count() > 0)
+                                @foreach($services as $service)
+                                    <tr>
+                                        <td>{{ $service->name }}</td>
+                                        <td>{{ $service->category }}</td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#serviceModal{{ $service->id }}">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Service Details Modal -->
+                                    <div class="modal fade" id="serviceModal{{ $service->id }}" tabindex="-1" aria-labelledby="serviceModalLabel{{ $service->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-info text-white">
+                                                    <h5 class="modal-title" id="serviceModalLabel{{ $service->id }}">{{ __('adminlte.service_details') }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12 mb-3">
+                                                            <div class="card border-0 shadow-sm">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">
+                                                                        <i class="fas fa-tags text-info" style="margin-right: 10px;"></i>{{ __('adminlte.category') }}
+                                                                    </h5>
+                                                                    <p class="card-text"><strong>{{ $service->category }}</strong></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12 mb-3">
+                                                            <div class="card border-0 shadow-sm">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">
+                                                                        <i class="fas fa-info-circle text-info" style="margin-right: 10px;"></i>{{ __('adminlte.name') }}
+                                                                    </h5>
+                                                                    <p class="card-text"><strong>{{ $service->name }}</strong></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-4 mb-3">
+                                                            <div class="card border-0 shadow-sm">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">
+                                                                        <i class="fas fa-dollar-sign text-info" style="margin-right: 10px;"></i>{{ __('adminlte.rate') }}
+                                                                    </h5>
+                                                                    <p class="card-text"><strong>${{ number_format($service->rate, 2) }} {{ __('adminlte.per_1000') }}</strong></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <div class="card border-0 shadow-sm">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">
+                                                                        <i class="fas fa-sort-numeric-up text-info" style="margin-right: 10px;"></i>{{ __('adminlte.min') }}
+                                                                    </h5>
+                                                                    <p class="card-text"><strong>{{ $service->min }}</strong></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <div class="card border-0 shadow-sm">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">
+                                                                        <i class="fas fa-sort-numeric-down text-info" style="margin-right: 10px;"></i>{{ __('adminlte.max') }}
+                                                                    </h5>
+                                                                    <p class="card-text"><strong>{{ $service->max }}</strong></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card border-0 shadow-sm">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">
+                                                                        <i class="fas fa-redo-alt text-info" style="margin-right: 10px;"></i>{{ __('adminlte.refill') }}
+                                                                    </h5>
+                                                                    <p class="card-text">
+                                                                        <span class="badge bg-{{ $service->refill ? 'success' : 'danger' }}">{{ $service->refill ? __('adminlte.yes') : __('adminlte.no') }}</span>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="card border-0 shadow-sm">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title mb-3">
+                                                                        <i class="fas fa-times-circle text-info" style="margin-right: 10px;"></i>{{ __('adminlte.cancel') }}
+                                                                    </h5>
+                                                                    <p class="card-text">
+                                                                        <span class="badge bg-{{ $service->cancel ? 'success' : 'danger' }}">{{ $service->cancel ? __('adminlte.yes') : __('adminlte.no') }}</span>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('adminlte.close') }}</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">{{ __('adminlte.no_records_found') }}</td>
+                                </tr>
+                            @endif
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
                 <div class="card-footer">
                     <div class="pagination justify-content-center">
-                        {{ $services->links() }}
+                        {{ $services->appends(request()->except('page'))->links() }}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -67,12 +205,14 @@
 
 @section('js')
     <script>
-        document.getElementById('platformSelect').addEventListener('change', function () {
-            document.getElementById('filterForm').submit();
-        });
+        $(document).ready(function() {
+            $('#platformSelect').on('change', function () {
+                $('#filterForm').submit();
+            });
 
-        document.getElementById('categorySelect').addEventListener('change', function () {
-            document.getElementById('filterForm').submit();
+            $('#categorySelect').on('change', function () {
+                $('#filterForm').submit();
+            });
         });
     </script>
 @stop

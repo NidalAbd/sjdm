@@ -12,7 +12,10 @@ class Order extends Model
     protected $fillable = [
         'service_id', 'link', 'quantity', 'runs', 'interval',
     ];
-
+    protected $attributes = [
+        'start_count' => null,
+        'remains' => null,
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);

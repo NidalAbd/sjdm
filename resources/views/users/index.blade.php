@@ -164,10 +164,9 @@
                         </table>
                     </div>
                 </div>
-
                 <div class="card-footer">
                     <div class="pagination justify-content-center">
-                        {{ $users->links() }}
+                        {{ $users->appends(request()->except('page'))->links() }}
                     </div>
                 </div>
             </div>

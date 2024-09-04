@@ -38,28 +38,12 @@ class OrderController extends Controller
 
         // Apply platform filter
         if ($request->filled('platform') && $request->platform !== 'all') {
-            $query->whereHas('service', function($q) use ($request) {
+            $query->whereHas('service', function ($q) use ($request) {
                 $q->where('category', 'like', '%' . $request->platform . '%');
             });
         }
 
         $orders = $query->paginate(5); // Paginate the results
-
-        // Fetch additional order details from the API using your Api service
-        $orderIds = $orders->pluck('id')->toArray();
-        $apiResponse = $this->api->multiStatus($orderIds);
-
-        // Update orders with the fetched data
-        foreach ($orders as $order) {
-            if (isset($apiResponse->{$order->id})) {
-                $orderData = $apiResponse->{$order->id};
-                $order->start_count = $orderData->start_count ?? null;
-                $order->remains = $orderData->remains ?? null;
-                $order->status = $orderData->status ?? $order->status; // Update status if available
-                $order->charge = $orderData->charge ?? $order->charge; // Update charge if needed
-                $order->save(); // Save changes to the database
-            }
-        }
 
         // Retrieve the list of services for the filter dropdown
         $services = Service::all();
@@ -166,7 +150,10 @@ class OrderController extends Controller
             $order->link = $validated['link'];
             $order->quantity = $validated['quantity'];
             $order->charge = $charge;
-            $order->status = 'Pending'; // Set the default status to Pending
+
+            // Set the order status from API response or default to 'Pending' if not provided
+            $order->status = isset($apiResponse->status) ? $apiResponse->status : 'Pending';
+
             $order->api_order_id = $apiResponse->order; // Store the API order ID for reference
             $order->save();
 
@@ -274,21 +261,39 @@ class OrderController extends Controller
     }
 
 
-    /**
-     * Helper function to extract start time from the service name.
-     */
-    private function extractStartTime($serviceName)
+    public function checkRefill($id)
     {
-        preg_match('/\[Start time: ([^\]]+)\]/', $serviceName, $matches);
-        return $matches[1] ?? null;
+        $order = Order::findOrFail($id);
+        $apiOrderId = $order->api_order_id; // Use the API order ID
+
+        if (!$apiOrderId) {
+            return response()->json(['can_refill' => false, 'message' => 'Invalid API order ID.'], 400);
+        }
+
+        $apiResponse = $this->api->refillStatus($apiOrderId);
+
+        // Assuming the API response contains a 'can_refill' key
+        return response()->json([
+            'can_refill' => $apiResponse->can_refill ?? false
+        ]);
     }
 
-    /**
-     * Helper function to extract speed from the service name.
-     */
-    private function extractSpeed($serviceName)
+    public function checkCancel($id)
     {
-        preg_match('/\[Speed: ([^\]]+)\]/', $serviceName, $matches);
-        return $matches[1] ?? null;
+        $order = Order::findOrFail($id);
+        $apiOrderId = $order->api_order_id; // Use the API order ID
+
+        if (!$apiOrderId) {
+            return response()->json(['can_cancel' => false, 'message' => 'Invalid API order ID.'], 400);
+        }
+
+        $apiResponse = $this->api->cancel([$apiOrderId]);
+
+        // Assuming the API response contains a 'can_cancel' key
+        return response()->json([
+            'can_cancel' => $apiResponse->can_cancel ?? false
+        ]);
     }
+
+
 }

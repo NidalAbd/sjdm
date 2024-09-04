@@ -24,53 +24,93 @@ class UpdateOrderStatuses implements ShouldQueue
             $orders = Order::where('status', 'Pending')->get();
             Log::info('Found ' . $orders->count() . ' pending orders.');
 
-            $orderIds = [];
-            foreach ($orders as $order) {
-                $orderIds[] = $order->api_order_id;
-            }
-
+            $orderIds = $orders->pluck('api_order_id')->filter()->toArray(); // Ensure we only get non-null api_order_ids
             Log::info('Order IDs to check: ' . implode(', ', $orderIds));
 
             if (!empty($orderIds)) {
-                $apiResponse = $api->multiStatus($orderIds);
-                Log::info('API Response: ', (array) $apiResponse);
+                // Fetch order statuses from the API
+                $apiResponse = $this->fetchOrderStatuses($api, $orderIds);
 
-                if ($apiResponse && is_object($apiResponse)) {
+                Log::info('API Response Type: ' . gettype($apiResponse));
+                Log::info('API Response: ' . json_encode($apiResponse));
+
+                // Check if the API response is an object and contains order data
+                if (is_object($apiResponse) && property_exists($apiResponse, 'order')) {
+                    // Single order response
+                    $this->updateOrderFromApiResponse($apiResponse->order, $apiResponse);
+                } elseif (is_object($apiResponse) || is_array($apiResponse)) {
+                    // Multiple orders response
                     foreach ($apiResponse as $orderId => $orderData) {
-                        // Check if order exists in the response
-                        if (isset($orderData->error)) {
-                            Log::warning('Error for order ID ' . $orderId . ': ' . $orderData->error);
-                            continue;
-                        }
-
-                        // Find the order in the database
-                        $order = Order::where('api_order_id', $orderId)->first();
-                        if ($order) {
-                            // Update order status
-                            $order->status = $orderData->status ?? $order->status;
-
-                            // Update start count if available
-                            if (isset($orderData->start_count)) {
-                                $order->start_count = $orderData->start_count;
-                            }
-
-                            // Update remains if available
-                            if (isset($orderData->remains)) {
-                                $order->remains = $orderData->remains;
-                            }
-
-                            $order->save();
-                            Log::info('Order ' . $orderId . ' updated. Status: ' . $order->status . ', Start Count: ' . ($orderData->start_count ?? 'N/A') . ', Remains: ' . ($orderData->remains ?? 'N/A'));
+                        if (is_object($orderData) || is_array($orderData)) {
+                            $this->updateOrderFromApiResponse($orderId, $orderData);
                         } else {
-                            Log::warning('Order not found for ID: ' . $orderId);
+                            Log::warning('Invalid order data structure in API response.');
                         }
                     }
+                } else {
+                    Log::error('API Response is not an array or object.');
                 }
+            } else {
+                Log::info('No order IDs to check.');
             }
         } catch (\Exception $e) {
             Log::error('Error in UpdateOrderStatuses job: ' . $e->getMessage());
         }
 
         Log::info('UpdateOrderStatuses job finished.');
+    }
+
+    /**
+     * Fetch order statuses from the API.
+     *
+     * @param Api $api
+     * @param array $orderIds
+     * @return mixed
+     */
+    protected function fetchOrderStatuses(Api $api, array $orderIds)
+    {
+        if (count($orderIds) === 1) {
+            // Single order status request
+            return $api->status($orderIds[0]);
+        } else {
+            // Multiple orders status request
+            return $api->multiStatus($orderIds);
+        }
+    }
+
+    /**
+     * Update order in the database from API response.
+     *
+     * @param int|string $orderId
+     * @param object|array $orderData
+     * @return void
+     */
+    protected function updateOrderFromApiResponse($orderId, $orderData)
+    {
+        $order = Order::where('api_order_id', $orderId)->first();
+
+        if ($order) {
+            Log::info('Current order status: ' . $order->status . ', Start Count: ' . $order->start_count . ', Remains: ' . $order->remains);
+
+            // Extract API response data with proper checks
+            $status = $orderData->status ?? $order->status;
+            $startCount = isset($orderData->start_count) && $orderData->start_count !== null ? (string)$orderData->start_count : $order->start_count;
+            $remains = isset($orderData->remains) && $orderData->remains !== null ? (string)$orderData->remains : $order->remains;
+
+            Log::info('API Data for Order ' . $orderId . ': Start Count Type: ' . gettype($startCount) . ', Start Count: ' . $startCount . ', Remains Type: ' . gettype($remains) . ', Remains: ' . $remains);
+
+            // Update order status and other fields
+            $order->status = $status;
+            $order->start_count = $startCount;
+            $order->remains = $remains;
+            $order->save();
+
+            Log::info('Order ' . $orderId . ' updated. New Status: ' . $order->status . ', New Start Count: ' . $order->start_count . ', New Remains: ' . $order->remains);
+
+            // Log the order update
+            Log::info('Order Update Logged: Order ID: ' . $order->id . ', Status: ' . $order->status . ', Start Count: ' . $order->start_count . ', Remains: ' . $order->remains);
+        } else {
+            Log::warning('Order not found for ID: ' . $orderId);
+        }
     }
 }

@@ -116,7 +116,6 @@
                                 <input type="text" id="charge" class="form-control" readonly>
                             </div>
 
-
                             <div class="form-group">
                                 <label for="average_time">{{ __('adminlte.average_time') }}</label>
                                 <input type="text" id="average_time" class="form-control" readonly placeholder="{{ __('adminlte.service_start_speed') }}">
@@ -185,9 +184,9 @@
 
             // Get translations from Blade to JavaScript
             const translations = @json([
-        'link_note' => __('adminlte.video_link_note'),
-        'order_overlap_note' => __('adminlte.order_overlap_note'),
-    ]);
+                'link_note' => __('adminlte.video_link_note'),
+                'order_overlap_note' => __('adminlte.order_overlap_note'),
+            ]);
 
             // Get the base URL for the API endpoint
             const apiUrl = '{{ url('/api') }}';
@@ -219,8 +218,12 @@
             // Service selection
             document.getElementById('service').addEventListener('change', function () {
                 let serviceId = this.value;
-                document.getElementById('serviceIdSelect').value = serviceId; // Update the hidden input field
+                document.getElementById('serviceIdSelect').value = serviceId; // Set the hidden input field
                 fetchServiceInfo(serviceId);
+            });
+
+            document.getElementById('orderForm').addEventListener('submit', function (event) {
+                document.getElementById('serviceIdSelect').value = document.getElementById('service').value; // Ensure it's set before submission
             });
 
             // Quantity input change
@@ -244,12 +247,20 @@
             function fetchServiceInfo(serviceId) {
                 let serviceSelect = document.getElementById('service');
                 let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-                let startTime = selectedOption.getAttribute('data-start-time') || 'N/A'; // Default to 'N/A' if not provided
-                let speed = selectedOption.getAttribute('data-speed') || 'N/A'; // Default to 'N/A' if not provided
+
+                // Get the service name to extract the details
+                let serviceName = selectedOption.text;
+
+                // Regular expressions to extract "Start time" and "Speed" from the service name
+                let startTimeMatch = serviceName.match(/\[Start time: ([^\]]+)]/);
+                let speedMatch = serviceName.match(/\[Speed: ([^\]]+)]/);
+
+                let startTime = startTimeMatch ? startTimeMatch[1] : 'N/A'; // Extract start time or default to 'N/A'
+                let speed = speedMatch ? speedMatch[1] : 'N/A'; // Extract speed or default to 'N/A'
+
                 let min = selectedOption.getAttribute('data-min') || 1; // Default to 1 if not provided
                 let max = selectedOption.getAttribute('data-max') || 1000; // Default to 1000 if not provided
                 let rate = selectedOption.getAttribute('data-rate') || 'N/A'; // Default to 'N/A' if not provided
-                let serviceName = selectedOption.text;
 
                 // Set the min, max, and placeholder for quantity input
                 let quantityInput = document.getElementById('quantity');
@@ -258,7 +269,7 @@
                 quantityInput.setAttribute('placeholder', `Enter quantity (Min: ${min}, Max: ${max})`);
                 quantityInput.value = '';
 
-                // Set the average time text with defaults if needed
+                // Set the average time text with extracted values
                 document.getElementById('average_time').value = `Service will start within ${startTime} and speed up to ${speed}`;
 
                 // Update the description with translated text and dynamic data

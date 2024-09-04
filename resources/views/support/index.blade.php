@@ -121,12 +121,12 @@
                         </table>
                     </div>
                 </div>
-
                 <div class="card-footer">
                     <div class="pagination justify-content-center">
-                        {{ $tickets->links() }}
+                        {{ $tickets->appends(request()->except('page'))->links() }}
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

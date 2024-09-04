@@ -154,6 +154,8 @@
                         {{ $transactions->appends(request()->except('page'))->links() }}
                     </div>
                 </div>
+
+
             </div>
         </div>
     </div>
