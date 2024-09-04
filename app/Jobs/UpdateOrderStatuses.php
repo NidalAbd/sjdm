@@ -15,24 +15,7 @@ class UpdateOrderStatuses implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $api;
-
-    /**
-     * Create a new job instance.
-     *
-     * @param Api $api
-     */
-    public function __construct(Api $api)
-    {
-        $this->api = $api;
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(Api $api)
     {
         Log::info('UpdateOrderStatuses job started.');
 
@@ -46,7 +29,7 @@ class UpdateOrderStatuses implements ShouldQueue
 
             if (!empty($orderIds)) {
                 // Fetch order statuses from the API
-                $apiResponse = $this->fetchOrderStatuses($orderIds);
+                $apiResponse = $this->fetchOrderStatuses($api, $orderIds);
 
                 Log::info('API Response Type: ' . gettype($apiResponse));
                 Log::info('API Response: ' . json_encode($apiResponse));
@@ -80,17 +63,18 @@ class UpdateOrderStatuses implements ShouldQueue
     /**
      * Fetch order statuses from the API.
      *
+     * @param Api $api
      * @param array $orderIds
      * @return mixed
      */
-    protected function fetchOrderStatuses(array $orderIds)
+    protected function fetchOrderStatuses(Api $api, array $orderIds)
     {
         if (count($orderIds) === 1) {
             // Single order status request
-            return $this->api->status($orderIds[0]);
+            return $api->status($orderIds[0]);
         } else {
             // Multiple orders status request
-            return $this->api->multiStatus($orderIds);
+            return $api->multiStatus($orderIds);
         }
     }
 

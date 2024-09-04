@@ -2,12 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\OrderController;
+use App\Jobs\UpdateOrderStatuses as UpdateOrderStatusesJob; // Import the job with an alias
 use App\Services\Api;
 use Illuminate\Console\Command;
 
-class UpdateOrderStatuses extends Command
+class UpdateOrderStatuses extends Command // Rename the command class to avoid conflict
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'orders:update-statuses';
 
     /**
@@ -28,7 +33,7 @@ class UpdateOrderStatuses extends Command
         $api = app(Api::class);
 
         // Dispatch the UpdateOrderStatuses job with the Api service
-        UpdateOrderStatuses::dispatch($api);
+        UpdateOrderStatusesJob::dispatch($api);
 
         $this->info('Order statuses update job dispatched.');
 
