@@ -101,7 +101,7 @@
         background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
         background-position: center;
-        height: 50vh; /* Adjust height to ensure full display */
+        height: 35vh; /* Adjust height to ensure full display */
         color: #fff;
         position: relative;
         padding-top: 0;
