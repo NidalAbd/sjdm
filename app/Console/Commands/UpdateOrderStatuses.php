@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\OrderController;
+use App\Services\Api;
 use Illuminate\Console\Command;
 
 class UpdateOrderStatuses extends Command
@@ -28,8 +29,16 @@ class UpdateOrderStatuses extends Command
      */
     public function handle()
     {
-        $controller = new OrderController();
+        // Resolve the Api service from the container
+        $api = app(Api::class);
+
+        // Create an instance of OrderController with the required dependency
+        $controller = new OrderController($api);
+
+        // Call the method that handles updating order statuses
         $controller->updateOrderStatuses();
-        $this->info('Order statuses have been updated.');
+
+        $this->info('Order statuses updated.');
     }
+
 }
