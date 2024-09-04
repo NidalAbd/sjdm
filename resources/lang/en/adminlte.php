@@ -113,7 +113,7 @@ return [
 
     // Hero Section
     'empower_social_influence' => 'S J for Digital Marketing',
-    'social_media_growth_tools' => 'All Social Media Growth Tools in One Platform. Elevate Your Brand\'s Presence.',
+    'social_media_growth_tools' => 'SJDM || SMM Panel increasing followers',
     'get_started_free' => 'Get Started for Free',
     'our_community' => 'our community',
 
@@ -483,4 +483,10 @@ return [
     'referral_link_copied' => 'Referral link copied to clipboard!',
     'user_actions' => 'User Actions',
     'manage_referrals_page_loaded' => 'Manage referrals page loaded',
+
+    'quick_links' => 'Quick Links',
+    'resources' => 'Resources',
+    'company' => 'Company',
+    'contact' => 'Contact',
+    'all_rights_reserved' => 'All rights reserved.',
 ];

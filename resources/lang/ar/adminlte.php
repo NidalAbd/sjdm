@@ -335,6 +335,16 @@ return [
     'create_now' => 'أنشئ الآن',
 
     // Miscellaneous
+    'quick_links' => 'روابط سريعة',
+    'about_us' => 'من نحن',
     'faq' => 'الأسئلة الشائعة',
-
+    'terms' => 'الشروط والأحكام',
+    'resources' => 'الموارد',
+    'how_it_works' => 'كيف يعمل',
+    'company' => 'الشركة',
+    'privacy_policy' => 'سياسة الخصوصية',
+    'contact_us' => 'اتصل بنا',
+    'contact' => 'تواصل معنا',
+    'phone' => 'الهاتف',
+    'all_rights_reserved' => 'جميع الحقوق محفوظة.',
 ];
