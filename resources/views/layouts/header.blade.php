@@ -11,6 +11,10 @@
         padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
     }
 
+    .dark-mode .navbar {
+        background-color: #111315 !important;
+    }
+
     .navbar {
         background-color: #111315 !important;
         transition: background-color 0.3s ease;
@@ -109,7 +113,8 @@
     }
 
     .hero-bg {
-        background: rgba(0, 0, 0, 0.5); /* Darker overlay for better contrast */
+        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
+
         opacity: 0.2;
         position: absolute;
         top: 0;
@@ -120,6 +125,17 @@
         transition: background 0.3s ease; /* Transition for background change */
     }
 
+    .dark-mode .hero-bg {
+        background: rgba(0, 0, 0, 0.5); /* Darker overlay for better contrast */
+        opacity: 0.2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
+    }
     .hero-section .container {
         position: relative;
         z-index: 2; /* Ensure text container is above the overlay */

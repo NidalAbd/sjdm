@@ -37,7 +37,7 @@ return [
     'balance' => 'Balance',
 
     // User Management
-    'manage_users' => 'Manage Users',
+    'manage_users' => 'Users',
     'search_users' => 'Search users...',
     'select_role' => 'Select Role',
     'view_user' => 'View User',
@@ -195,7 +195,7 @@ return [
     'traffic' => 'Traffic',
 
     // Orders Management
-    'manage_orders' => 'Manage Orders',
+    'manage_orders' => 'Orders',
     'search_orders' => 'Search orders...',
     'select_platform' => 'Select Platform',
     'service' => 'Service',
@@ -214,7 +214,7 @@ return [
     'order_overlap_note' => 'PLEASE do NOT put more than 1 order for the same link at the same time to avoid overlap, and we CAN\'T CANCEL the order in this case.',
 
     // Services Management
-    'manage_services' => 'Manage Services',
+    'manage_services' => 'Services',
     'search_services' => 'Search services...',
     'select_category' => 'Select Category',
     'back_to_services' => 'Back to Services',
@@ -263,7 +263,7 @@ return [
     'select_service_warning' => 'Please select a service before submitting the form.',
 
     // Support Tickets Management
-    'manage_support_tickets' => 'Manage Support Tickets',
+    'manage_support_tickets' => 'Support Tickets',
     'create_ticket' => 'Create Ticket',
     'search_tickets' => 'Search tickets',
     'select_status' => 'Select Status',
@@ -299,7 +299,7 @@ return [
 
 
     // Transactions Management
-    'manage_transactions' => 'Manage Transactions',
+    'manage_transactions' => 'Transactions',
     'search_transactions' => 'Search transactions',
     'select_type' => 'Select Type',
     'completed' => 'Completed',
@@ -357,7 +357,7 @@ return [
     'available_routes' => 'Available Routes',
     'view_orders' => 'View Orders',
     'view_transactions' => 'View Transactions',
-    'manage_prices' => 'Manage Prices',
+    'manage_prices' => 'Prices',
     'more_info' => 'More info',
     'create_now' => 'Create now',
 
@@ -470,7 +470,7 @@ return [
     'address' => 'Address',
 
 
-    'manage_referrals' => 'Manage Referrals',
+    'manage_referrals' => 'Referrals',
     'search_referrals' => 'Search Referrals',
     'date_joined' => 'Date Joined',
     'no_categories_available' => 'No Categories Available',

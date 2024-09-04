@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('orders:update-statuses')->everyFiveMinutes();
+        $schedule->command('orders:update-statuses')->hourly(); // Adjust frequency as needed
 
     }
 
