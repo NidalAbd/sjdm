@@ -5,34 +5,39 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Services\Api;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ServiceController extends Controller
 {
     public function index(Request $request)
     {
         $query = Service::query();
+        $currentLanguage = app()->getLocale();
 
         // Apply search filter
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $searchField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
+            $query->where($searchField, 'like', '%' . $request->search . '%');
         }
 
-        // Apply platform filter
+        // Apply platform filter (assuming platform matches category in this context)
         if ($request->filled('platform') && $request->platform !== 'all') {
-            $query->where('category', 'like', '%' . $request->platform . '%');
+            $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+            $query->where($categoryField, 'like', '%' . $request->platform . '%');
         }
 
         // Get unique categories after platform filter
-        $uniqueCategories = $query->distinct()->pluck('category')->toArray();
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+        $uniqueCategories = $query->distinct()->pluck($categoryField)->toArray();
 
         // Apply category filter
         if ($request->filled('category') && $request->category !== 'all') {
-            $query->where('category', $request->category);
+            $query->where($categoryField, $request->category);
         }
 
         $services = $query->paginate(5);
 
-        // Available categories for the platform filter dropdown
+        // Available platforms for the platform filter dropdown
         $platforms = [
             'all', 'facebook', 'instagram', 'tiktok', 'google', 'twitter',
             'youtube', 'spotify', 'snapchat', 'linkedin', 'telegram',
@@ -95,60 +100,99 @@ class ServiceController extends Controller
     public function fetchFromApi()
     {
         $api = new Api();
-        $servicesFromApi = $api->services();
 
+        // Fetch services in English
+        $servicesFromApiEn = $api->services('en');
+        $this->storeServices($servicesFromApiEn, 'en');
+
+        // Fetch services in Arabic
+        $servicesFromApiAr = $api->services('ar');
+        $this->storeServices($servicesFromApiAr, 'ar');
+
+        return redirect()->route('services.index')
+            ->with('success', "Services have been updated from the API in both English and Arabic.");
+    }
+
+    private function storeServices($servicesFromApi, $language)
+    {
         $totalServices = count($servicesFromApi);
         $storedServices = 0;
 
-        foreach ($servicesFromApi as $service) {
-            // Only process services where type is 'Default'
-            if ($service->type === 'Default') {
-                $adjustedRate = $service->rate;
+        // Define batch size
+        $batchSize = 500; // Adjust this size based on your server's capacity
+        $chunks = array_chunk($servicesFromApi, $batchSize);
 
-                // Adjust the rate based on the criteria
-                if ($adjustedRate < 0.00001) {
-                    $adjustedRate *= 6; // Increase by 500%
-                } elseif ($adjustedRate < 0.0001) {
-                    $adjustedRate *= 5; // Increase by 400%
-                } elseif ($adjustedRate < 0.001) {
-                    $adjustedRate *= 4; // Increase by 300%
-                } elseif ($adjustedRate < 0.01) {
-                    $adjustedRate *= 3; // Increase by 200%
-                } elseif ($adjustedRate > 100) {
-                    $adjustedRate *= 1.05; // Increase by 5%
-                } elseif ($adjustedRate > 50) {
-                    $adjustedRate *= 1.10; // Increase by 10%
-                } elseif ($adjustedRate > 10) {
-                    $adjustedRate *= 1.20; // Increase by 20%
-                } elseif ($adjustedRate > 1) {
-                    $adjustedRate *= 1.30; // Increase by 30%
-                }
+        foreach ($chunks as $chunk) {
+            foreach ($chunk as $service) {
+                // Only process services where type is 'Default'
+                if ($service->type === 'Default') {
+                    $adjustedRate = $service->rate;
 
-                $storedService = Service::updateOrCreate(
-                    ['service_id' => $service->service], // Use 'service_id' from the API
-                    [
-                        'name' => $service->name,
-                        'type' => $service->type,
-                        'category' => $service->category,
-                        'rate' => $adjustedRate, // Use the adjusted rate
-                        'min' => $service->min,
-                        'max' => $service->max,
-                        'refill' => $service->refill,
-                        'cancel' => $service->cancel,
-                    ]
-                );
+                    // Adjust the rate based on the criteria
+                    if ($adjustedRate < 0.00001) {
+                        $adjustedRate *= 6; // Increase by 500%
+                    } elseif ($adjustedRate < 0.0001) {
+                        $adjustedRate *= 5; // Increase by 400%
+                    } elseif ($adjustedRate < 0.001) {
+                        $adjustedRate *= 4; // Increase by 300%
+                    } elseif ($adjustedRate < 0.01) {
+                        $adjustedRate *= 3; // Increase by 200%
+                    } elseif ($adjustedRate > 100) {
+                        $adjustedRate *= 1.05; // Increase by 5%
+                    } elseif ($adjustedRate > 50) {
+                        $adjustedRate *= 1.10; // Increase by 10%
+                    } elseif ($adjustedRate > 10) {
+                        $adjustedRate *= 1.20; // Increase by 20%
+                    } elseif ($adjustedRate > 1) {
+                        $adjustedRate *= 1.30; // Increase by 30%
+                    }
 
-                if ($storedService->wasRecentlyCreated || $storedService->wasChanged()) {
-                    $storedServices++;
+                    // Check if 'service_id' exists in the response
+                    if (isset($service->service_id)) {
+                        // Determine the data to update based on the language
+                        $data = [
+                            'type' => $service->type,
+                            'rate' => $adjustedRate, // Use the adjusted rate
+                            'min' => $service->min,
+                            'max' => $service->max,
+                            'refill' => $service->refill,
+                            'cancel' => $service->cancel,
+                        ];
+
+                        // Update only the relevant language fields
+                        if ($language === 'en') {
+                            $data['name_en'] = $service->name;
+                            $data['category_en'] = $service->category;
+                        } elseif ($language === 'ar') {
+                            $data['name_ar'] = $service->name;
+                            $data['category_ar'] = $service->category;
+                        }
+
+                        // Update or create the service with the provided data
+                        $storedService = Service::updateOrCreate(
+                            ['service_id' => $service->service_id], // Use 'service_id' from the API
+                            $data
+                        );
+
+                        if ($storedService->wasRecentlyCreated || $storedService->wasChanged()) {
+                            $storedServices++;
+                        }
+                    } else {
+                        Log::warning("Service ID not found in API response:", ['service' => $service]);
+                    }
                 }
             }
+
+            // Free up memory after processing each chunk
+            unset($chunk);
         }
 
         $percentageStored = ($totalServices > 0) ? round(($storedServices / $totalServices) * 100, 2) : 0;
 
-        return redirect()->route('services.index')
-            ->with('success', "Services have been updated from the API. $storedServices out of $totalServices services were stored. ($percentageStored%)");
+        // Log or output the result for this language
+        Log::info("Services have been updated from the API in $language. $storedServices out of $totalServices services were stored. ($percentageStored%)");
     }
+
 
 
 

@@ -1,5 +1,10 @@
 @extends('layouts.app')
+@section('title', __('adminlte.create_order'))
 
+@section('content_header')
+    @include('partials.breadcrumbs')
+    <h1>{{ __('adminlte.create_order') }}</h1>
+@stop
 @section('content')
     @php
         $platformIconMap = [

@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->unsignedBigInteger('service_id')->primary();
-            $table->string('name', 500); // Increase the length of the name column
+            $table->string('name_en', 500)->default(''); // Default empty string
+            $table->string('name_ar', 500)->default(''); // Default empty string
             $table->string('type');
-            $table->string('category');
+            $table->string('category_en')->default(''); // Default empty string
+            $table->string('category_ar')->default(''); // Default empty string
             $table->decimal('rate', 15, 5); // Increase precision and scale
             $table->integer('min');
             $table->integer('max');

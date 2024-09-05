@@ -1,5 +1,6 @@
 <!-- resources/views/widgets/how_it_works.blade.php -->
 @extends('layouts.welcome')
+@section('title', __('adminlte.how_it_works'))
 
 @section('content')
     <div class="content-section active" id="how-it-works-section">

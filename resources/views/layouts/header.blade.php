@@ -114,7 +114,6 @@
 
     .hero-bg {
         background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
-
         opacity: 0.2;
         position: absolute;
         top: 0;
@@ -126,8 +125,8 @@
     }
 
     .dark-mode .hero-bg {
-        background: rgba(0, 0, 0, 0.5); /* Darker overlay for better contrast */
-        opacity: 0.2;
+        background: rgba(0, 0, 0, 0.89); /* Darker overlay for better contrast */
+        opacity: 0.5;
         position: absolute;
         top: 0;
         left: 0;

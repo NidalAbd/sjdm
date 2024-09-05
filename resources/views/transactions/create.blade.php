@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', __('adminlte.add_balance'))
 
 @section('content_header')
     @include('partials.breadcrumbs')

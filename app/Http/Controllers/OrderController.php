@@ -33,7 +33,14 @@ class OrderController extends Controller
 
         // Apply search filter
         if ($request->filled('search')) {
-            $query->where('link', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('link', 'like', '%' . $search . '%')
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%');
+                    });
+            });
         }
 
         // Apply platform filter
@@ -43,7 +50,8 @@ class OrderController extends Controller
             });
         }
 
-        $orders = $query->paginate(5); // Paginate the results
+        // Paginate the results
+        $orders = $query->paginate(5);
 
         // Retrieve the list of services for the filter dropdown
         $services = Service::all();
@@ -57,6 +65,7 @@ class OrderController extends Controller
 
         return view('orders.index', compact('orders', 'services', 'platforms'));
     }
+
 
 
     /**

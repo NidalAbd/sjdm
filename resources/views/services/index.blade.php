@@ -1,3 +1,6 @@
+@php
+    $currentLanguage = app()->getLocale();
+@endphp
 @extends('layouts.app')
 
 @section('title', __('adminlte.manage_services'))
@@ -74,8 +77,9 @@
                             @if($services->count() > 0)
                                 @foreach($services as $service)
                                     <tr>
-                                        <td>{{ $service->name }}</td>
-                                        <td>{{ $service->category }}</td>
+                                        <td>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</td>
+                                        <td>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</td>
+
                                         <td class="text-center">
                                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#serviceModal{{ $service->id }}">
                                                 <i class="fas fa-eye"></i>
