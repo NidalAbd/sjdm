@@ -329,7 +329,7 @@ return [
     'back_to_transactions' => 'Back to Transactions',
     'print_receipt' => 'Print Receipt',
     'transaction_details_page_loaded' => 'Transaction Details page loaded',
-
+    'service_id'=>'Service ID',
     // Add Balance
     'add_balance' => 'Add Balance',
     'securely_add_funds' => 'Securely add funds to your account via Stripe.',

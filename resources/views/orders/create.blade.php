@@ -33,10 +33,11 @@
                         @csrf
                         <!-- 4x4 Grid of Platforms -->
                         <div class="row text-center">
-                            @foreach($platforms as $platform)
+                            <!-- Update platform button generation -->
+                            @foreach($translatedPlatforms as $key => $platform)
                                 <div class="col-4 col-sm-4 col-md-3 mb-3 d-flex justify-content-center align-items-stretch">
-                                    <button type="button" class="btn btn-block btn-primary platform-btn w-100 h-100 d-flex align-items-center justify-content-center" data-platform="{{ $platform }}">
-                                        <i class="{{ $platformIconMap[$platform] }} me-2"></i> {{ __('adminlte.' . $platform) }}
+                                    <button type="button" class="btn btn-block btn-primary platform-btn w-100 h-100 d-flex align-items-center justify-content-center" data-platform="{{ $key }}">
+                                        <i class="{{ $platformIconMap[$key] }} me-2"></i> {{ $platform }}
                                     </button>
                                 </div>
                             @endforeach
@@ -59,6 +60,7 @@
                         <input type="hidden" name="service_id" id="serviceIdSelect" value="">
 
                         <!-- Category and Service Selection -->
+                        <!-- Category and Service Selection -->
                         <div class="row mt-4">
                             <div class="col-md-6">
                                 <div class="input-group input-group-sm">
@@ -80,14 +82,13 @@
                                                     data-max="{{ $service->max }}"
                                                     data-speed="{{ $service->average_time }}"
                                                     data-start-time="{{ $service->start_time }}">
-                                                {{ $service->name }}
+                                                {{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
-
                         <!-- Additional Fields -->
                         <div class="mt-4">
                             <div class="form-group">
@@ -100,8 +101,8 @@
 
 - {{ __('adminlte.order_overlap_note') }}
 
-                                    {{ $selectedService ? $selectedService->name : '' }}
-        </textarea>
+                                    {{ $selectedService ? ($currentLanguage === 'ar' ? $selectedService->name_ar : $selectedService->name_en) : '' }}
+                                </textarea>
                             </div>
 
                             <div class="form-group">
@@ -260,33 +261,40 @@
                 let startTimeMatch = serviceName.match(/\[Start time: ([^\]]+)]/);
                 let speedMatch = serviceName.match(/\[Speed: ([^\]]+)]/);
 
-                let startTime = startTimeMatch ? startTimeMatch[1] : 'N/A'; // Extract start time or default to 'N/A'
-                let speed = speedMatch ? speedMatch[1] : 'N/A'; // Extract speed or default to 'N/A'
+                // Extract start time and speed or default to 'N/A'
+                let startTime = startTimeMatch ? startTimeMatch[1] : 'N/A';
+                let speed = speedMatch ? speedMatch[1] : 'N/A';
 
+                // Retrieve additional service details from data attributes
                 let min = selectedOption.getAttribute('data-min') || 1; // Default to 1 if not provided
                 let max = selectedOption.getAttribute('data-max') || 1000; // Default to 1000 if not provided
                 let rate = selectedOption.getAttribute('data-rate') || 'N/A'; // Default to 'N/A' if not provided
+
+                // Get translations for placeholders and labels
+                const minLabel = '{{ __('adminlte.min') }}';
+                const maxLabel = '{{ __('adminlte.max') }}';
+                const enterQuantityPlaceholder = `{{ __('adminlte.enter_quantity') }}`;
 
                 // Set the min, max, and placeholder for quantity input
                 let quantityInput = document.getElementById('quantity');
                 quantityInput.setAttribute('min', min);
                 quantityInput.setAttribute('max', max);
-                quantityInput.setAttribute('placeholder', `Enter quantity (Min: ${min}, Max: ${max})`);
+                quantityInput.setAttribute('placeholder', `${enterQuantityPlaceholder} (${minLabel}: ${min}, ${maxLabel}: ${max})`);
                 quantityInput.value = '';
 
                 // Set the average time text with extracted values
-                document.getElementById('average_time').value = `Service will start within ${startTime} and speed up to ${speed}`;
+                document.getElementById('average_time').value = `{{ __('adminlte.service_start_time') }} ${startTime}, {{ __('adminlte.speed') }} ${speed}`;
 
                 // Update the description with translated text and dynamic data
-                document.getElementById('description').value = `- Link = ${translations.link_note}\n\n` +
+                document.getElementById('description').value = `- {{ __('adminlte.link') }} = ${translations.link_note}\n\n` +
                     `- ${translations.order_overlap_note}\n\n` +
                     `${serviceName}`;
 
                 // Display the service ID tag under the description label
-                document.getElementById('serviceIdTag').innerText = `ID: ${serviceId}`;
+                document.getElementById('serviceIdTag').innerText = `{{ __('adminlte.service_id') }}: ${serviceId}`;
 
                 // Display the service rate tag
-                document.getElementById('serviceRateTag').innerText = `Rate: ${rate} per 1000`;
+                document.getElementById('serviceRateTag').innerText = `{{ __('adminlte.rate') }}: ${rate} {{ __('adminlte.per_1000') }}`;
 
                 calculateCharge();
             }
@@ -306,7 +314,6 @@
                 }
             }
 
-            // Load categories for the selected platform
             function loadCategories(platform) {
                 fetch(`${apiUrl}/orders/getCategories?platform=${platform}`)
                     .then(response => response.json())
@@ -324,7 +331,7 @@
                             data.forEach(category => {
                                 let option = document.createElement('option');
                                 option.value = category;
-                                option.text = category;
+                                option.text = category;  // Category names are fetched directly from the controller
                                 categorySelect.appendChild(option);
                             });
 
@@ -335,7 +342,7 @@
                     .catch(error => console.error('Error loading categories:', error));
             }
 
-            // Load services for the selected platform and category
+
             function loadServices(platform, category = '') {
                 console.log(`Loading services for platform: ${platform}, category: ${category}`);
 
@@ -356,11 +363,19 @@
                                 let option = document.createElement('option');
                                 option.value = service.service_id;
                                 option.text = service.name;
+
+                                // Extract start time and speed from the name text
+                                const startTimeMatch = service.name.match(/\[Start time: ([^\]]+)]/) || service.name.match(/\[وقت البدا: ([^\]]+)]/);
+                                const speedMatch = service.name.match(/\[Speed: ([^\]]+)]/) || service.name.match(/\[السرعة: ([^\]]+)]/);
+
+                                const startTime = startTimeMatch ? startTimeMatch[1] : 'N/A';
+                                const speed = speedMatch ? speedMatch[1] : 'N/A';
+
                                 option.setAttribute('data-rate', service.rate);
                                 option.setAttribute('data-min', service.min); // Set min from database
                                 option.setAttribute('data-max', service.max); // Set max from database
-                                option.setAttribute('data-start-time', service.start_time || 'N/A'); // Default to 'N/A' if not provided
-                                option.setAttribute('data-speed', service.average_time || 'N/A'); // Default to 'N/A' if not provided
+                                option.setAttribute('data-start-time', startTime); // Extracted start time
+                                option.setAttribute('data-speed', speed); // Extracted speed
                                 serviceSelect.appendChild(option);
                             });
 
@@ -370,6 +385,7 @@
                     })
                     .catch(error => console.error('Error loading services:', error));
             }
+
 
             // Search services based on user input
             function searchServices(query) {

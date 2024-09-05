@@ -15,6 +15,24 @@ class OrderController extends Controller
 {
     protected $api;
 
+    private $platforms = [
+        'all' => ['en' => 'all', 'ar' => 'الكل'],
+        'facebook' => ['en' => 'facebook', 'ar' => 'فيسبوك'],
+        'instagram' => ['en' => 'instagram', 'ar' => 'إنستغرام'],
+        'tiktok' => ['en' => 'tiktok', 'ar' => 'تيك توك'],
+        'google' => ['en' => 'google', 'ar' => 'جوجل'],
+        'twitter' => ['en' => 'twitter', 'ar' => 'تويتر'],
+        'youtube' => ['en' => 'youtube', 'ar' => 'يوتيوب'],
+        'spotify' => ['en' => 'spotify', 'ar' => 'سبوتيفاي'],
+        'snapchat' => ['en' => 'snapchat', 'ar' => 'سناب شات'],
+        'linkedin' => ['en' => 'linkedin', 'ar' => 'لينكدإن'],
+        'telegram' => ['en' => 'telegram', 'ar' => 'تليجرام'],
+        'discord' => ['en' => 'discord', 'ar' => 'ديسكورد'],
+        'reviews' => ['en' => 'reviews', 'ar' => 'التقييمات'],
+        'twitch' => ['en' => 'twitch', 'ar' => 'تويتش'],
+        'traffic' => ['en' => 'traffic', 'ar' => 'مرور']
+    ];
+
     public function __construct(Api $api)
     {
         $this->api = $api;
@@ -24,6 +42,7 @@ class OrderController extends Controller
     {
         $user = Auth::user(); // Get the authenticated user
         $query = Order::query(); // Start with a base query for all orders
+        $currentLanguage = app()->getLocale();
 
         // Check if the user is an admin
         if (!$user->hasRole('admin')) {
@@ -45,8 +64,11 @@ class OrderController extends Controller
 
         // Apply platform filter
         if ($request->filled('platform') && $request->platform !== 'all') {
-            $query->whereHas('service', function ($q) use ($request) {
-                $q->where('category', 'like', '%' . $request->platform . '%');
+            $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+            $platformName = $this->platforms[$request->platform][$currentLanguage] ?? $request->platform;
+
+            $query->whereHas('service', function ($q) use ($platformName, $categoryField) {
+                $q->where($categoryField, 'like', '%' . $platformName . '%');
             });
         }
 
@@ -56,44 +78,33 @@ class OrderController extends Controller
         // Retrieve the list of services for the filter dropdown
         $services = Service::all();
 
-        // Available platforms for the platform filter dropdown
-        $platforms = [
-            'all', 'facebook', 'instagram', 'tiktok', 'google', 'twitter',
-            'youtube', 'spotify', 'snapchat', 'linkedin', 'telegram',
-            'discord', 'reviews', 'twitch', 'traffic'
-        ];
+        // Available platforms translated based on the current language
+        $translatedPlatforms = array_map(fn($platform) => $platform[$currentLanguage], $this->platforms);
 
-        return view('orders.index', compact('orders', 'services', 'platforms'));
+        return view('orders.index', compact('orders', 'services', 'translatedPlatforms'));
     }
-
-
 
     /**
      * Show the form for creating a new order.
      */
     public function create()
     {
-        Log::info('getCategories method called'); // Debugging log
-
+        $currentLanguage = app()->getLocale();
         // List of platforms (categories)
-        $platforms = [
-            'all', 'facebook', 'instagram', 'tiktok', 'google', 'twitter',
-            'youtube', 'spotify', 'snapchat', 'linkedin', 'telegram',
-            'discord', 'reviews', 'twitch', 'traffic'
-        ];
+        $translatedPlatforms = array_map(fn($platform) => $platform[$currentLanguage], $this->platforms);
 
         // Fetch unique categories from the services table
-        $uniqueCategories = Service::select('category')->distinct()->pluck('category');
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+        $uniqueCategories = Service::select($categoryField)->distinct()->pluck($categoryField);
 
         // Fetch services to prepopulate for the initial platform/category
-        $services = Service::where('category', 'LIKE', "%all%")->get();
+        $services = Service::where($categoryField, 'LIKE', "%all%")->get();
 
         // Select the first service as the default selected service, if available
         $selectedService = $services->first();
 
-        return view('orders.create', compact('platforms', 'uniqueCategories', 'services', 'selectedService'));
+        return view('orders.create', compact('translatedPlatforms', 'uniqueCategories', 'services', 'selectedService', 'currentLanguage'));
     }
-
 
     /**
      * Store a newly created order in storage.
@@ -177,7 +188,6 @@ class OrderController extends Controller
         }
     }
 
-
     public function show(Order $order)
     {
         // Load the associated service model
@@ -186,7 +196,6 @@ class OrderController extends Controller
         // Pass both the order and service to the view
         return view('orders.show', compact('order', 'service'));
     }
-
 
     public function destroy(Order $order)
     {
@@ -197,49 +206,64 @@ class OrderController extends Controller
     /**
      * Get services based on the selected platform/category.
      */
-
     public function getCategories(Request $request)
     {
-//        Log::info('getCategories method called'); // Debugging log
+        $currentLanguage = app()->getLocale();
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+        $platform = $request->query('platform', '');
 
-        $platform = $request->query('platform', ''); // Using query method to get the parameter
+        Log::info("Fetching categories for platform: $platform in language: $currentLanguage");
 
         if ($platform === 'all' || empty($platform)) {
-            // Fetch all categories
-            $categories = Service::select('category')->distinct()->pluck('category');
+            $categories = Service::select($categoryField)->distinct()->pluck($categoryField);
         } else {
-            // Fetch categories based on the selected platform
-            $categories = Service::where('category', 'LIKE', "%$platform%")->distinct()->pluck('category');
+            $platformName = $this->platforms[$platform][$currentLanguage] ?? $platform;
+            $categories = Service::where($categoryField, 'LIKE', "%$platformName%")->distinct()->pluck($categoryField);
         }
 
-//        Log::info('Categories fetched', ['categories' => $categories]); // Debugging log
+        // Log the categories fetched from the database
+        Log::info("Categories fetched: ", $categories->toArray());
 
         return response()->json($categories);
     }
 
-
-
     public function getServices(Request $request)
     {
-//        Log::info('getServices method called'); // Debugging log
+        $currentLanguage = app()->getLocale();
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+        $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
+        $platform = $request->query('platform', '');
+        $category = $request->query('category', '');
 
-        $platform = $request->query('platform', ''); // Using query method to get the parameter
-        $category = $request->query('category', ''); // Using query method to get the parameter
+        Log::info("Fetching services for platform: $platform and category: $category in language: $currentLanguage");
 
-        // Fetch services based on platform and category
-        $services = Service::when($platform !== 'all' && !empty($platform), function ($query) use ($platform) {
-            return $query->where('category', 'LIKE', "%$platform%");
+        $services = Service::when($platform !== 'all' && !empty($platform), function ($query) use ($platform, $categoryField, $currentLanguage) {
+            $platformName = $this->platforms[$platform][$currentLanguage] ?? $platform;
+            return $query->where($categoryField, 'LIKE', "%$platformName%");
         })
-            ->when(!empty($category), function ($query) use ($category) {
-                return $query->where('category', 'LIKE', "%$category%");
+            ->when(!empty($category), function ($query) use ($category, $categoryField) {
+                return $query->where($categoryField, 'LIKE', "%$category%");
             })
-            ->get();
+            ->get(['service_id', 'rate', 'min', 'max', $nameField]);
 
-//        Log::info('Services fetched', ['services' => $services]); // Debugging log
+        // Log the services fetched from the database
+        Log::info("Services fetched: ", $services->toArray());
 
-        return response()->json($services);
+        $response = $services->map(function ($service) use ($nameField) {
+            return [
+                'service_id' => $service->service_id,
+                'name' => $service->$nameField,
+                'rate' => $service->rate,
+                'min' => $service->min,
+                'max' => $service->max,
+            ];
+        });
+
+        // Log the response data that will be sent to the frontend
+        Log::info("Services response data: ", $response->toArray());
+
+        return response()->json($response);
     }
-
 
     public function updateOrderStatuses()
     {
@@ -253,22 +277,23 @@ class OrderController extends Controller
         return redirect()->back()->with('success', 'Order statuses are being updated.');
     }
 
-
     /**
      * Search for services dynamically based on user input.
      */
     public function searchServices(Request $request)
     {
+        $currentLanguage = app()->getLocale();
+        $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
         $query = $request->get('query', '');
 
-        $services = Service::where('name', 'LIKE', "%$query%")
-            ->orWhere('category', 'LIKE', "%$query%")
+        $services = Service::where($nameField, 'LIKE', "%$query%")
+            ->orWhere($categoryField, 'LIKE', "%$query%")
             ->orWhere('service_id', 'LIKE', "%$query%")
             ->get();
 
         return response()->json($services);
     }
-
 
     public function checkRefill($id)
     {
@@ -303,6 +328,4 @@ class OrderController extends Controller
             'can_cancel' => $apiResponse->can_cancel ?? false
         ]);
     }
-
-
 }

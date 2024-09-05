@@ -33,9 +33,8 @@
                             <div class="col-md-3 mb-3">
                                 <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" id="platformSelect">
-                                        <option value="all">{{ __('adminlte.select_platform') }}</option>
-                                        @foreach($platforms as $platform)
-                                            <option value="{{ $platform }}" {{ request()->get('platform') == $platform ? 'selected' : '' }}>
+                                        @foreach($translatedPlatforms as $key => $platform)
+                                            <option value="{{ $key }}" {{ request()->get('platform') == $key ? 'selected' : '' }}>
                                                 {{ ucfirst($platform) }}
                                             </option>
                                         @endforeach
@@ -77,6 +76,7 @@
                             @if($services->count() > 0)
                                 @foreach($services as $service)
                                     <tr>
+
                                         <td>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</td>
                                         <td>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</td>
 
@@ -103,7 +103,7 @@
                                                                     <h5 class="card-title mb-3">
                                                                         <i class="fas fa-tags text-info" style="margin-right: 10px;"></i>{{ __('adminlte.category') }}
                                                                     </h5>
-                                                                    <p class="card-text"><strong>{{ $service->category }}</strong></p>
+                                                                    <p class="card-text"><strong>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</strong></p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -115,7 +115,7 @@
                                                                     <h5 class="card-title mb-3">
                                                                         <i class="fas fa-info-circle text-info" style="margin-right: 10px;"></i>{{ __('adminlte.name') }}
                                                                     </h5>
-                                                                    <p class="card-text"><strong>{{ $service->name }}</strong></p>
+                                                                    <p class="card-text"><strong>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</strong></p>
                                                                 </div>
                                                             </div>
                                                         </div>

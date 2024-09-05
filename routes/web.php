@@ -43,6 +43,7 @@ Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 // Protected routes
 Route::middleware(['auth'])->group(function () {
+
     Route::resource('users', UserController::class);
     Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
     Route::post('users/{user}/assign-role', [UserController::class, 'storeAssignRole'])->name('users.storeAssignRole');
@@ -69,9 +70,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
-    Route::get('/orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
-    Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
-    Route::get('/orders/getCategories', [OrderController::class, 'getCategories'])->name('orders.getCategories');
+//    Route::get('/orders/getServices', [OrderController::class, 'getServices'])->name('orders.getServices');
+//    Route::get('/orders/search', [OrderController::class, 'search'])->name('orders.search');
+//    Route::get('/orders/getCategories', [OrderController::class, 'getCategories'])->name('orders.getCategories');
+
 
     // Service routes
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');

@@ -9,6 +9,25 @@ use Illuminate\Support\Facades\Log;
 
 class ServiceController extends Controller
 {
+    // Define the platforms with translations
+    private $platforms = [
+        'all' => ['en' => 'all', 'ar' => 'الكل'],
+        'facebook' => ['en' => 'facebook', 'ar' => 'فيسبوك'],
+        'instagram' => ['en' => 'instagram', 'ar' => 'انستقرام'],
+        'tiktok' => ['en' => 'tiktok', 'ar' => 'تيك توك'],
+        'google' => ['en' => 'google', 'ar' => 'جوجل'],
+        'twitter' => ['en' => 'twitter', 'ar' => 'تويتر'],
+        'youtube' => ['en' => 'youtube', 'ar' => 'يوتيوب'],
+        'spotify' => ['en' => 'spotify', 'ar' => 'سبوتيفاي'],
+        'snapchat' => ['en' => 'snapchat', 'ar' => 'سناب شات'],
+        'linkedin' => ['en' => 'linkedin', 'ar' => 'لينكد ان'],
+        'telegram' => ['en' => 'telegram', 'ar' => 'تيليجرام'],
+        'discord' => ['en' => 'discord', 'ar' => 'ديسكورد'],
+        'reviews' => ['en' => 'reviews', 'ar' => 'تقييمات'],
+        'twitch' => ['en' => 'twitch', 'ar' => 'تويتش'],
+        'traffic' => ['en' => 'traffic', 'ar' => 'مرور']
+    ];
+
     public function index(Request $request)
     {
         $query = Service::query();
@@ -20,10 +39,14 @@ class ServiceController extends Controller
             $query->where($searchField, 'like', '%' . $request->search . '%');
         }
 
-        // Apply platform filter (assuming platform matches category in this context)
+        // Apply platform filter
         if ($request->filled('platform') && $request->platform !== 'all') {
             $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
-            $query->where($categoryField, 'like', '%' . $request->platform . '%');
+
+            // Get the platform name based on the current language
+            $platformName = $this->platforms[$request->platform][$currentLanguage] ?? $request->platform;
+
+            $query->where($categoryField, 'like', '%' . $platformName . '%');
         }
 
         // Get unique categories after platform filter
@@ -35,31 +58,30 @@ class ServiceController extends Controller
             $query->where($categoryField, $request->category);
         }
 
-        $services = $query->paginate(5);
+        $services = $query->paginate(10);
 
-        // Available platforms for the platform filter dropdown
-        $platforms = [
-            'all', 'facebook', 'instagram', 'tiktok', 'google', 'twitter',
-            'youtube', 'spotify', 'snapchat', 'linkedin', 'telegram',
-            'discord', 'reviews', 'twitch', 'traffic'
-        ];
+        // Available platforms translated based on the current language
+        $translatedPlatforms = array_map(fn($platform) => $platform[$currentLanguage], $this->platforms);
 
-        return view('services.index', compact('services', 'platforms', 'uniqueCategories'));
+        return view('services.index', compact('services', 'translatedPlatforms', 'uniqueCategories'));
     }
-
 
     public function getCategories(Request $request)
     {
+        $currentLanguage = app()->getLocale();
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+
         if ($request->platform && $request->platform !== 'all') {
-            $categories = Service::where('category', 'like', '%' . $request->platform . '%')
-                ->select('category')
+            $platformName = $this->platforms[$request->platform][$currentLanguage] ?? $request->platform;
+            $categories = Service::where($categoryField, 'like', '%' . $platformName . '%')
+                ->select($categoryField)
                 ->distinct()
-                ->pluck('category');
+                ->pluck($categoryField);
         } else {
-            $categories = Service::select('category')->distinct()->pluck('category');
+            $categories = Service::select($categoryField)->distinct()->pluck($categoryField);
         }
 
-        $html = '<option value="all">Select Category</option>';
+        $html = '<option value="all">' . __('adminlte.select_category') . '</option>';
         foreach ($categories as $category) {
             $html .= '<option value="' . $category . '">' . ucfirst($category) . '</option>';
         }
@@ -70,27 +92,28 @@ class ServiceController extends Controller
     public function filter(Request $request)
     {
         $query = Service::query();
+        $currentLanguage = app()->getLocale();
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
 
         if ($request->filled('platform') && $request->platform !== 'all') {
-            $query->where('category', 'like', '%' . $request->platform . '%');
+            $platformName = $this->platforms[$request->platform][$currentLanguage] ?? $request->platform;
+            $query->where($categoryField, 'like', '%' . $platformName . '%');
         }
 
         if ($request->filled('category') && $request->category !== 'all') {
-            $query->where('category', 'like', '%' . $request->category . '%');
+            $query->where($categoryField, $request->category);
         }
 
         $services = $query->get();
 
-        $html = '<option value="">Select Service</option>';
+        $html = '<option value="">' . __('adminlte.select_service') . '</option>';
         foreach ($services as $service) {
-            $html .= '<option value="' . $service->id . '" data-rate="' . $service->rate . '">' . $service->name . '</option>';
+            $nameField = $currentLanguage === 'ar' ? $service->name_ar : $service->name_en;
+            $html .= '<option value="' . $service->id . '" data-rate="' . $service->rate . '">' . $nameField . '</option>';
         }
 
         return response()->json(['html' => $html]);
     }
-
-
-
 
     public function create()
     {
@@ -101,7 +124,7 @@ class ServiceController extends Controller
     {
         $api = new Api();
 
-        // Fetch services - assuming the API returns the correct language data based on some internal configuration
+        // Fetch services in English
         $servicesFromApi = $api->services();
 
         // Store services with the language set to English
@@ -115,7 +138,7 @@ class ServiceController extends Controller
     {
         $api = new Api();
 
-        // Fetch services - assuming the API returns the correct language data based on some internal configuration
+        // Fetch services in Arabic
         $servicesFromApi = $api->services();
 
         // Store services with the language set to Arabic
@@ -199,14 +222,10 @@ class ServiceController extends Controller
         Log::info("Services have been updated from the API in $language. $storedServices out of $totalServices services were stored. ($percentageStored%)");
     }
 
-
-
     public function show(Service $service)
     {
         return view('services.show', compact('service'));
     }
-
-
 
     public function edit(Service $service)
     {
