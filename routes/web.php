@@ -77,7 +77,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('services/create', [ServiceController::class, 'create'])->name('services.create');
     Route::post('services', [ServiceController::class, 'store'])->name('services.store');
-    Route::get('services/fetch', [ServiceController::class, 'fetchFromApi'])->name('services.fetch');
+// In routes/web.php or routes/api.php
+
+    Route::get('services/fetch-en', [ServiceController::class, 'fetchFromApiEn'])->name('services.fetchEn');
+    Route::get('services/fetch-ar', [ServiceController::class, 'fetchFromApiAr'])->name('services.fetchAr');
+
     Route::get('services/{service}', [ServiceController::class, 'show'])->name('services.show');
     Route::get('services/{service}/edit', [ServiceController::class, 'edit'])->name('services.edit');
     Route::put('services/{service}', [ServiceController::class, 'update'])->name('services.update');

@@ -97,20 +97,32 @@ class ServiceController extends Controller
         return view('services.create');
     }
 
-    public function fetchFromApi()
+    public function fetchFromApiEn()
     {
         $api = new Api();
 
-        // Fetch services in English
-        $servicesFromApiEn = $api->services('en');
-        $this->storeServices($servicesFromApiEn, 'en');
+        // Fetch services - assuming the API returns the correct language data based on some internal configuration
+        $servicesFromApi = $api->services();
 
-        // Fetch services in Arabic
-        $servicesFromApiAr = $api->services('ar');
-        $this->storeServices($servicesFromApiAr, 'ar');
+        // Store services with the language set to English
+        $this->storeServices($servicesFromApi, 'en');
 
         return redirect()->route('services.index')
-            ->with('success', "Services have been updated from the API in both English and Arabic.");
+            ->with('success', "Services have been updated from the API in English.");
+    }
+
+    public function fetchFromApiAr()
+    {
+        $api = new Api();
+
+        // Fetch services - assuming the API returns the correct language data based on some internal configuration
+        $servicesFromApi = $api->services();
+
+        // Store services with the language set to Arabic
+        $this->storeServices($servicesFromApi, 'ar');
+
+        return redirect()->route('services.index')
+            ->with('success', "Services have been updated from the API in Arabic.");
     }
 
     private function storeServices($servicesFromApi, $language)
@@ -118,12 +130,9 @@ class ServiceController extends Controller
         $totalServices = count($servicesFromApi);
         $storedServices = 0;
 
-        // Define batch size
-        $batchSize = 500; // Adjust this size based on your server's capacity
-        $chunks = array_chunk($servicesFromApi, $batchSize);
-
-        foreach ($chunks as $chunk) {
-            foreach ($chunk as $service) {
+        foreach ($servicesFromApi as $service) {
+            // Check if service is an object
+            if (is_object($service)) {
                 // Only process services where type is 'Default'
                 if ($service->type === 'Default') {
                     $adjustedRate = $service->rate;
@@ -147,44 +156,41 @@ class ServiceController extends Controller
                         $adjustedRate *= 1.30; // Increase by 30%
                     }
 
-                    // Check if 'service_id' exists in the response
-                    if (isset($service->service_id)) {
-                        // Determine the data to update based on the language
-                        $data = [
-                            'type' => $service->type,
-                            'rate' => $adjustedRate, // Use the adjusted rate
-                            'min' => $service->min,
-                            'max' => $service->max,
-                            'refill' => $service->refill,
-                            'cancel' => $service->cancel,
-                        ];
+                    // Prepare the data to update based on the language
+                    $data = [
+                        'type' => $service->type,
+                        'rate' => $adjustedRate, // Use the adjusted rate
+                        'min' => $service->min,
+                        'max' => $service->max,
+                        'refill' => $service->refill,
+                        'cancel' => $service->cancel,
+                    ];
 
-                        // Update only the relevant language fields
-                        if ($language === 'en') {
-                            $data['name_en'] = $service->name;
-                            $data['category_en'] = $service->category;
-                        } elseif ($language === 'ar') {
-                            $data['name_ar'] = $service->name;
-                            $data['category_ar'] = $service->category;
-                        }
+                    // Update only the relevant language fields
+                    if ($language === 'en') {
+                        $data['name_en'] = $service->name ?? null;
+                        $data['category_en'] = $service->category ?? null;
+                    } elseif ($language === 'ar') {
+                        $data['name_ar'] = $service->name ?? null;
+                        $data['category_ar'] = $service->category ?? null;
+                    }
 
-                        // Update or create the service with the provided data
-                        $storedService = Service::updateOrCreate(
-                            ['service_id' => $service->service_id], // Use 'service_id' from the API
-                            $data
-                        );
+                    // Debug logging
+                    Log::debug('Data prepared for insertion:', ['data' => $data]);
 
-                        if ($storedService->wasRecentlyCreated || $storedService->wasChanged()) {
-                            $storedServices++;
-                        }
-                    } else {
-                        Log::warning("Service ID not found in API response:", ['service' => $service]);
+                    // Update or create the service with the provided data
+                    $storedService = Service::updateOrCreate(
+                        ['service_id' => $service->service], // Use 'service_id' from the API
+                        $data
+                    );
+
+                    if ($storedService->wasRecentlyCreated || $storedService->wasChanged()) {
+                        $storedServices++;
                     }
                 }
+            } else {
+                Log::warning("Invalid service structure in API response (not an object):", ['service' => $service]);
             }
-
-            // Free up memory after processing each chunk
-            unset($chunk);
         }
 
         $percentageStored = ($totalServices > 0) ? round(($storedServices / $totalServices) * 100, 2) : 0;
@@ -192,7 +198,6 @@ class ServiceController extends Controller
         // Log or output the result for this language
         Log::info("Services have been updated from the API in $language. $storedServices out of $totalServices services were stored. ($percentageStored%)");
     }
-
 
 
 

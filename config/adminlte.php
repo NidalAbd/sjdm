@@ -158,8 +158,15 @@ return array(
                     'icon_color'   => 'warning', // Set predefined color
                 ),
                 array(
-                    'text' => 'fetch_services', // Use translation key
-                    'url'  => 'services/fetch',
+                    'text' => 'fetch services ar', // Use translation key
+                    'url'  => 'services/fetch-ar',
+                    'icon' => 'fas fa-sync-alt',
+                    'can'  => 'fetch_services',
+                    'icon_color'   => 'info', // Set predefined color
+                ),
+                array(
+                    'text' => 'fetch_ services en', // Use translation key
+                    'url'  => 'services/fetch-en',
                     'icon' => 'fas fa-sync-alt',
                     'can'  => 'fetch_services',
                     'icon_color'   => 'info', // Set predefined color
