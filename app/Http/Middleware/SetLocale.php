@@ -3,9 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 
@@ -20,12 +18,17 @@ class SetLocale
      */
     public function handle($request, Closure $next)
     {
-        if (Session::has('applocale')) {
-            App::setLocale(Session::get('applocale'));
+        // Check if the request is from API
+        if ($request->is('api/*')) {
+            // Look for the 'Accept-Language' header or 'lang' query parameter
+            $locale = $request->header('Accept-Language') ?? $request->query('lang', config('app.locale'));
         } else {
-            // Default locale if not set
-            App::setLocale(config('app.locale'));
+            // Web request - use session
+            $locale = Session::get('applocale', config('app.locale'));
         }
+
+        // Set the application locale
+        App::setLocale($locale);
 
         return $next($request);
     }
