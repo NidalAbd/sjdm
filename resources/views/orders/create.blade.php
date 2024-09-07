@@ -259,12 +259,13 @@
                 let serviceName = selectedOption.text;
 
                 // Regular expressions to extract "Start time" and "Speed" from the service name
-                let startTimeMatch = serviceName.match(/\[Start time: ([^\]]+)]/);
-                let speedMatch = serviceName.match(/\[Speed: ([^\]]+)]/);
+                // For both English and Arabic formats
+                let startTimeMatch = serviceName.match(/\[Start time: ([^\]]+)]|\[وقت البدا: ([^\]]+)]/);
+                let speedMatch = serviceName.match(/\[Speed: ([^\]]+)]|\[السرعة: ([^\]]+)]/);
 
-                // Extract start time and speed or default to 'N/A'
-                let startTime = startTimeMatch ? startTimeMatch[1] : 'N/A';
-                let speed = speedMatch ? speedMatch[1] : 'N/A';
+                // Extract start time and speed for both languages or default to 'N/A'
+                let startTime = startTimeMatch ? (startTimeMatch[1] || startTimeMatch[2]) : 'N/A';
+                let speed = speedMatch ? (speedMatch[1] || speedMatch[2]) : 'N/A';
 
                 // Retrieve additional service details from data attributes
                 let min = selectedOption.getAttribute('data-min') || 1; // Default to 1 if not provided
@@ -297,10 +298,10 @@
                 // Display the service rate tag
                 document.getElementById('serviceRateTag').innerText = `{{ __('adminlte.rate') }}: ${rate} {{ __('adminlte.per_1000') }}`;
 
+                // Call function to calculate the charge based on the selected service
                 calculateCharge();
             }
 
-            // Calculate the charge based on rate and quantity
             function calculateCharge() {
                 let serviceSelect = document.getElementById('service');
                 let selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
@@ -308,12 +309,14 @@
                 let quantity = parseInt(document.getElementById('quantity').value);
 
                 if (!isNaN(rate) && !isNaN(quantity)) {
-                    let charge = (rate / 1000) * quantity; // Dividing rate by 1000 to get the rate per unit if rate is per 1k units
-                    document.getElementById('charge').value = charge.toFixed(2);
+                    let charge = (rate / 1000) * quantity; // Calculate the charge based on rate and quantity
+                    document.getElementById('charge').value = charge.toFixed(2); // Set the calculated charge
                 } else {
-                    document.getElementById('charge').value = '';
+                    document.getElementById('charge').value = ''; // Clear charge field if values are not valid
                 }
             }
+
+            // Calculate the charge based on rate and quantity
 
             // Load categories dynamically based on the selected platform
             function loadCategories(platform) {

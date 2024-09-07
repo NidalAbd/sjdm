@@ -330,6 +330,8 @@ return [
     'print_receipt' => 'Print Receipt',
     'transaction_details_page_loaded' => 'Transaction Details page loaded',
     'service_id'=>'Service ID',
+    'service_start_time'=>'Service Start Time',
+    'speed'=>'Speed',
     // Add Balance
     'add_balance' => 'Add Balance',
     'securely_add_funds' => 'Securely add funds to your account via Stripe.',
