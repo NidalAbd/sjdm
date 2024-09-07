@@ -77,7 +77,9 @@ class OrderController extends Controller
         $services = Service::all();
         $translatedPlatforms = array_map(fn($platform) => $platform[$currentLanguage], $this->platforms);
 
-        return view('orders.index', compact('orders', 'services', 'translatedPlatforms'));
+        // Pass $platforms to the view
+        return view('orders.index', compact('orders', 'services', 'translatedPlatforms'))
+            ->with('platforms', array_keys($this->platforms));
     }
 
     public function create()
