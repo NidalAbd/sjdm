@@ -190,15 +190,19 @@
 
             // Get translations from Blade to JavaScript
             const translations = @json([
-                'link_note' => __('adminlte.video_link_note'),
-                'order_overlap_note' => __('adminlte.order_overlap_note'),
-            ]);
+            'link_note' => __('adminlte.video_link_note'),
+            'order_overlap_note' => __('adminlte.order_overlap_note'),
+        ]);
 
             // Get the base URL for the API endpoint
-            const apiUrl = '{{ url('/api') }}';
+            const apiUrl = '{{ url('/api') }}'; // Base API URL
+            const locale = '{{ app()->getLocale() }}'; // Current locale
+            const initialPlatform = 'all'; // Default platform
+            let currentPlatform = initialPlatform; // Track the selected platform
+            loadCategories(initialPlatform);
 
             // Initialize default value for average time
-            document.getElementById('average_time').value = 'Service will start within N/A and speed up to N/A';
+            document.getElementById('average_time').value = '{{ __("adminlte.service_start_time") }} N/A, {{ __("adminlte.speed") }} N/A';
 
             // Load all categories initially for the default platform 'all'
             loadCategories('all');
@@ -206,30 +210,27 @@
             // Platform selection
             document.querySelectorAll('.platform-btn').forEach(function (btn) {
                 btn.addEventListener('click', function () {
-                    let platform = this.getAttribute('data-platform');
-                    console.log(`Platform selected: ${platform}`);
-                    document.getElementById('selectedPlatform').value = platform;
-                    loadCategories(platform);  // Load categories based on selected platform
+                    currentPlatform = this.getAttribute('data-platform'); // Get selected platform
+                    document.getElementById('selectedPlatform').value = currentPlatform; // Update hidden input
+                    loadCategories(currentPlatform); // Load categories based on selected platform
                 });
             });
 
-            // Category selection
             document.getElementById('category').addEventListener('change', function () {
-                let category = this.value;
-                let platform = document.getElementById('selectedPlatform').value;
-                console.log(`Category changed: ${category} for platform: ${platform}`);
-                loadServices(platform, category);  // Load services based on selected platform and category
+                const category = this.value;
+                loadServices(currentPlatform, category); // Load services based on platform and category
             });
 
             // Service selection
             document.getElementById('service').addEventListener('change', function () {
-                let serviceId = this.value;
-                document.getElementById('serviceIdSelect').value = serviceId; // Set the hidden input field
-                fetchServiceInfo(serviceId);
+                const serviceId = this.value;
+                document.getElementById('serviceIdSelect').value = serviceId; // Update hidden service input
+                fetchServiceInfo(serviceId); // Fetch service details
             });
 
+            // Ensure the service is selected on form submit
             document.getElementById('orderForm').addEventListener('submit', function (event) {
-                document.getElementById('serviceIdSelect').value = document.getElementById('service').value; // Ensure it's set before submission
+                document.getElementById('serviceIdSelect').value = document.getElementById('service').value;
             });
 
             // Quantity input change
@@ -314,80 +315,64 @@
                 }
             }
 
+            // Load categories dynamically based on the selected platform
             function loadCategories(platform) {
-                fetch(`${apiUrl}/orders/getCategories?platform=${platform}`)
+                fetchWithLocale(`${apiUrl}/orders/getCategories?platform=${platform}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Categories received:', data);
-
-                        let categorySelect = document.getElementById('category');
+                        const categorySelect = document.getElementById('category');
                         categorySelect.innerHTML = ''; // Clear existing categories
 
                         if (data.length === 0) {
-                            let option = document.createElement('option');
-                            option.text = '{{ __('adminlte.no_categories_available') }}';
+                            const option = document.createElement('option');
+                            option.text = '{{ __("adminlte.no_categories_available") }}';
                             categorySelect.appendChild(option);
                         } else {
                             data.forEach(category => {
-                                let option = document.createElement('option');
+                                const option = document.createElement('option');
                                 option.value = category;
-                                option.text = category;  // Category names are fetched directly from the controller
+                                option.text = category;
                                 categorySelect.appendChild(option);
                             });
 
-                            // Automatically load services for the first category
+                            // Load services for the first category automatically
                             loadServices(platform, data[0]);
                         }
                     })
                     .catch(error => console.error('Error loading categories:', error));
             }
 
-
-            function loadServices(platform, category = '') {
-                console.log(`Loading services for platform: ${platform}, category: ${category}`);
-
-                fetch(`${apiUrl}/orders/getServices?platform=${platform}&category=${encodeURIComponent(category)}`)
+            function loadServices(platform, category) {
+                fetchWithLocale(`${apiUrl}/orders/getServices?platform=${platform}&category=${encodeURIComponent(category)}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Services received:', data);
-
-                        let serviceSelect = document.getElementById('service');
+                        const serviceSelect = document.getElementById('service');
                         serviceSelect.innerHTML = ''; // Clear existing services
 
                         if (data.length === 0) {
-                            let option = document.createElement('option');
-                            option.text = '{{ __('adminlte.no_services_available') }}';
+                            const option = document.createElement('option');
+                            option.text = '{{ __("adminlte.no_services_available") }}';
                             serviceSelect.appendChild(option);
                         } else {
                             data.forEach(service => {
-                                let option = document.createElement('option');
+                                const option = document.createElement('option');
                                 option.value = service.service_id;
-                                option.text = service.name;
-
-                                // Extract start time and speed from the name text
-                                const startTimeMatch = service.name.match(/\[Start time: ([^\]]+)]/) || service.name.match(/\[وقت البدا: ([^\]]+)]/);
-                                const speedMatch = service.name.match(/\[Speed: ([^\]]+)]/) || service.name.match(/\[السرعة: ([^\]]+)]/);
-
-                                const startTime = startTimeMatch ? startTimeMatch[1] : 'N/A';
-                                const speed = speedMatch ? speedMatch[1] : 'N/A';
-
+                                option.text = service.name;  // Ensure the correct 'name' field is used
                                 option.setAttribute('data-rate', service.rate);
-                                option.setAttribute('data-min', service.min); // Set min from database
-                                option.setAttribute('data-max', service.max); // Set max from database
-                                option.setAttribute('data-start-time', startTime); // Extracted start time
-                                option.setAttribute('data-speed', speed); // Extracted speed
+                                option.setAttribute('data-min', service.min);
+                                option.setAttribute('data-max', service.max);
                                 serviceSelect.appendChild(option);
                             });
 
-                            // Automatically select the first service and fetch its info
-                            fetchServiceInfo(data[0].service_id);
+                            // Automatically select the first service and fetch its details
+                            if (data.length > 0) {
+                                fetchServiceInfo(data[0].service_id);
+                            }
                         }
                     })
                     .catch(error => console.error('Error loading services:', error));
             }
 
-
-            // Search services based on user input
             function searchServices(query) {
                 fetch(`${apiUrl}/orders/searchServices?query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
@@ -417,6 +402,15 @@
                             }
                         }
                     });
+            }
+
+
+            function fetchWithLocale(url) {
+                return fetch(url, {
+                    headers: {
+                        'Accept-Language': locale, // Ensure the request uses the correct language
+                    }
+                });
             }
         });
     </script>

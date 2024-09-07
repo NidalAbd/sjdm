@@ -44,12 +44,6 @@ class OrderController extends Controller
      * @param string $field
      * @return string
      */
-    private function getLocalizedField($field)
-    {
-        $currentLanguage = app()->getLocale();
-        return substr($currentLanguage, 0, 2) === 'ar' ? "{$field}_ar" : "{$field}_en";
-    }
-
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -88,11 +82,19 @@ class OrderController extends Controller
 
     public function create()
     {
+        // Determine the current language ('ar' or 'en')
         $currentLanguage = substr(app()->getLocale(), 0, 2);
+
+        // Translate platform names based on the current language
         $translatedPlatforms = array_map(fn($platform) => $platform[$currentLanguage], $this->platforms);
 
+        // Get the localized category field (either category_ar or category_en)
         $categoryField = $this->getLocalizedField('category');
+
+        // Fetch unique categories based on the localized category field
         $uniqueCategories = Service::select($categoryField)->distinct()->pluck($categoryField);
+
+        // Fetch services where category matches 'all', using the localized category field
         $services = Service::where($categoryField, 'LIKE', "%all%")->get();
         $selectedService = $services->first();
 
@@ -159,69 +161,85 @@ class OrderController extends Controller
 
     public function getCategories(Request $request)
     {
-        $currentLanguage = substr(app()->getLocale(), 0, 2);
-        $categoryField = $this->getLocalizedField('category');
-        $platform = $request->query('platform', '');
+        $currentLanguage = app()->getLocale();  // Get the current language ('en' or 'ar')
+        $categoryField = $this->getLocalizedField('category');  // Get localized field for categories
+        $platform = $request->query('platform', '');  // Get the platform parameter
 
-        Log::info("Step 1: Current locale - $currentLanguage");
-        Log::info("Step 2: Category field selected - $categoryField");
-        Log::info("Step 3: Platform parameter - $platform");
+        Log::info("Current locale: $currentLanguage");
+        Log::info("Category field: $categoryField");
+        Log::info("Platform parameter: $platform");
 
         if ($platform === 'all' || empty($platform)) {
-            Log::info("Step 4: Fetching all categories");
+            // If platform is 'all' or not specified, fetch all categories
+            Log::info("Fetching all categories");
             $categories = Service::select($categoryField)->distinct()->pluck($categoryField);
         } else {
+            // Get the platform name in the current language
             $platformName = $this->platforms[$platform][$currentLanguage] ?? $platform;
-            Log::info("Step 4: Fetching categories for specific platform - $platform");
-            Log::info("Step 5: Platform name used for query - $platformName");
-            $categories = Service::where($categoryField, 'LIKE', "%$platformName%")->distinct()->pluck($categoryField);
+            Log::info("Fetching categories for platform: $platformName");
+
+            // Fetch categories that match the platform name
+            $categories = Service::where($categoryField, 'LIKE', "%$platformName%")
+                ->distinct()
+                ->pluck($categoryField);
         }
 
-        Log::info("Step 6: Categories fetched: ", $categories->toArray());
+        Log::info("Categories fetched: ", $categories->toArray());
 
-        return response()->json($categories);
+        return response()->json($categories);  // Return categories as JSON
     }
 
     public function getServices(Request $request)
     {
-        $currentLanguage = substr(app()->getLocale(), 0, 2);
-        $categoryField = $this->getLocalizedField('category');
-        $nameField = $this->getLocalizedField('name');
-        $platform = $request->query('platform', '');
-        $category = $request->query('category', '');
+        $currentLanguage = app()->getLocale();  // Get the current language ('en' or 'ar')
+        $categoryField = $this->getLocalizedField('category');  // Get localized field for categories
+        $nameField = $this->getLocalizedField('name');  // Get localized field for service names
+        $platform = $request->query('platform', '');  // Get the platform parameter
+        $category = $request->query('category', '');  // Get the category parameter
 
-        Log::info("Step 1: Current locale - $currentLanguage");
-        Log::info("Step 2: Category field selected - $categoryField");
-        Log::info("Step 3: Name field selected - $nameField");
-        Log::info("Step 4: Platform parameter - $platform");
-        Log::info("Step 5: Category parameter - $category");
+        Log::info("Current locale: $currentLanguage");
+        Log::info("Category field: $categoryField");
+        Log::info("Name field: $nameField");
+        Log::info("Platform parameter: $platform");
+        Log::info("Category parameter: $category");
 
+        // Fetch services based on platform and category
         $services = Service::when($platform !== 'all' && !empty($platform), function ($query) use ($platform, $categoryField, $currentLanguage) {
             $platformName = $this->platforms[$platform][$currentLanguage] ?? $platform;
-            Log::info("Step 6: Platform name used for query - $platformName");
+            Log::info("Filtering services by platform: $platformName");
             return $query->where($categoryField, 'LIKE', "%$platformName%");
         })
             ->when(!empty($category), function ($query) use ($category, $categoryField) {
-                Log::info("Step 7: Applying category filter - $category");
+                Log::info("Filtering services by category: $category");
                 return $query->where($categoryField, 'LIKE', "%$category%");
             })
             ->get(['service_id', 'rate', 'min', 'max', $nameField]);
 
-        Log::info("Step 8: Services fetched: ", $services->toArray());
+        Log::info("Services fetched: ", $services->toArray());
 
+        // Prepare the response with the necessary fields
         $response = $services->map(function ($service) use ($nameField) {
             return [
                 'service_id' => $service->service_id,
-                'name' => $service->$nameField,
+                'name' => $service->{$nameField},  // Dynamically access the localized name field
                 'rate' => $service->rate,
                 'min' => $service->min,
                 'max' => $service->max,
             ];
         });
 
-        Log::info("Step 9: Services response data: ", $response->toArray());
+        Log::info("Services response data: ", $response->toArray());
 
-        return response()->json($response);
+        return response()->json($response);  // Return services as JSON
+    }
+
+    private function getLocalizedField($field)
+    {
+        // Get the locale from the app instance
+        $currentLanguage = substr(app()->getLocale(), 0, 2);
+        Log::info("Current Language in getLocalizedField: " . $currentLanguage);
+
+        return $currentLanguage === 'ar' ? "{$field}_ar" : "{$field}_en";
     }
 
     public function show(Order $order)
