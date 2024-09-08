@@ -310,7 +310,7 @@
 
                 if (!isNaN(rate) && !isNaN(quantity)) {
                     let charge = (rate / 1000) * quantity; // Calculate the charge based on rate and quantity
-                    document.getElementById('charge').value = charge.toFixed(2); // Set the calculated charge
+                    document.getElementById('charge').value = charge.toFixed(5); // Set the calculated charge
                 } else {
                     document.getElementById('charge').value = ''; // Clear charge field if values are not valid
                 }

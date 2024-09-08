@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('start_count')->nullable();
             $table->string('remains')->nullable();
             $table->string('runs')->nullable();
-            $table->decimal('charge', 10, 2)->nullable();
+            $table->decimal('charge', 10, 7)->nullable();
             $table->string('status')->nullable();
             $table->unsignedBigInteger('api_order_id')->nullable();
             $table->integer('interval')->nullable();

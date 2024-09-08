@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('type'); // 'credit' or 'debit'
-            $table->decimal('amount', 15, 2);
+            $table->decimal('amount', 15, 7);
             $table->string('currency', 3)->default('USD');
+            $table->decimal('api_cost', 15, 7)->default(0); // Original cost from the API
+            $table->decimal('profit', 15, 7)->default(0); // Profit (amount - api_cost)
             $table->string('status')->default('pending');
             $table->timestamps();
         });

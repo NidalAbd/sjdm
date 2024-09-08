@@ -16,14 +16,49 @@ class NotificationController extends Controller
 
     public function markAsRead($id)
     {
-        $notification = Auth::user()->notifications()->find($id);
+        $notification = auth()->user()->notifications()->find($id);
 
         if ($notification) {
-            $notification->markAsRead();
+            $notification->markAsRead(); // Mark the notification as read
         }
 
-        return redirect()->back();
+        return response()->json(['status' => 'success']);
     }
+
+    // In app/Http/Controllers/NotificationController.php
+    // NotificationController.php
+    public function loadMore(Request $request)
+    {
+        $offset = $request->input('offset', 0); // Get the offset from the request
+        $notifications = Auth::user()->unreadNotifications()->skip($offset)->take(5)->get(); // Fetch the next 5 notifications
+
+        $response = [];
+
+        foreach ($notifications as $notification) {
+            $url = '#';
+            if (isset($notification->data['transaction_id'])) {
+                $url = route('transactions.show', $notification->data['transaction_id']);
+            } elseif (isset($notification->data['ticket_id'])) {
+                $url = route('support.show', $notification->data['ticket_id']);
+            } elseif (isset($notification->data['order_id'])) {
+                $url = route('orders.show', $notification->data['order_id']);
+            }
+
+            $response[] = [
+                'id' => $notification->id,
+                'message' => $notification->data['message'] ?? 'New Notification',
+                'created_at' => $notification->created_at->diffForHumans(),
+                'url' => $url
+            ];
+        }
+
+        return response()->json([
+            'notifications' => $response,
+            'count' => $notifications->count(),
+        ]);
+    }
+
+
 
     public function index()
     {

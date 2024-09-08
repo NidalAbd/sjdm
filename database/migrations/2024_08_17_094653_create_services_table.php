@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('type');
             $table->string('category_en')->default(''); // Default empty string
             $table->string('category_ar')->default(''); // Default empty string
-            $table->decimal('rate', 15, 5); // Increase precision and scale
+            $table->decimal('cost', 15, 7); // Increase precision and scale
+            $table->decimal('rate', 15, 7); // Increase precision and scale
             $table->integer('min');
             $table->integer('max');
             $table->boolean('refill')->default(false);

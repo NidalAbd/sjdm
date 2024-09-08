@@ -67,47 +67,60 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
+        // Authorize the user to create a transaction
         $this->authorize('create', Transaction::class);
 
+        // Validate the request input
         $request->validate([
             'amount' => 'required|numeric|min:1',
         ]);
 
+        // Retrieve authenticated user and amount
         $user = Auth::user();
         $amount = $request->amount;
 
+        // Set the Stripe API key
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         try {
+            // Attempt to charge the user via Stripe
             $charge = Charge::create([
-                'amount' => $amount * 100,
+                'amount' => $amount * 100,  // Convert to cents for Stripe
                 'currency' => 'usd',
                 'source' => $request->stripeToken,
                 'description' => 'Add Balance',
             ]);
 
+            // Default to failed status
             $status = 'failed';
+            $message = 'Payment failed.';
+
+            // Create a new transaction record
             $transaction = new Transaction([
                 'type' => 'credit',
                 'amount' => $amount,
                 'status' => $status,
             ]);
 
+            // If the charge succeeded, update the transaction status and user balance
             if ($charge->status === 'succeeded') {
                 $transaction->status = 'completed';
                 $user->balance += $amount;
                 $message = 'Balance added successfully.';
-            } else {
-                $message = 'Payment failed.';
             }
 
+            // Save the transaction and update user balance
             $user->transactions()->save($transaction);
             $user->save();
-            Notification::send($user, new TransactionNotification($transaction));
+
+            // Send notification to the user about the transaction status
+            $user->notify(new TransactionNotification($transaction));  // Using notify() method
+
+            // Redirect back to the transactions page with a success message
             return redirect()->route('transactions.index')->with('success', $message);
 
         } catch (\Exception $e) {
-            // Handle exception and create a failed transaction
+            // Handle exception, create a failed transaction and notify user
             $transaction = new Transaction([
                 'type' => 'credit',
                 'amount' => $amount,
@@ -115,6 +128,10 @@ class TransactionController extends Controller
             ]);
             $user->transactions()->save($transaction);
 
+            // Send notification to the user about the failed transaction
+            $user->notify(new TransactionNotification($transaction));  // Using notify() method
+
+            // Redirect back with the error message
             return redirect()->back()->with('error', $e->getMessage());
         }
     }

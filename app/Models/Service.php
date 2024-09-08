@@ -24,6 +24,7 @@ class Service extends Model
         'category_ar', // Added for Arabic category
         'type',
         'rate',
+        'cost',
         'min',
         'max',
         'refill',

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Jobs\UpdateOrderStatuses;
 use App\Models\Transaction;
+use App\Notifications\OrderNotification;
+use App\Notifications\TransactionNotification;
 use App\Services\Api;
 use Illuminate\Http\Request;
 use App\Models\Service;
@@ -105,45 +107,33 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        Log::info('Incoming request data:', $request->all());
-
+        // Validate the request
         $validated = $request->validate([
             'service_id' => 'required|exists:services,service_id',
             'link' => 'required|url',
             'quantity' => 'required|integer|min:1',
         ]);
 
+        // Fetch the service and calculate the charge
         $service = Service::find($validated['service_id']);
         $charge = ($validated['quantity'] * $service->rate) / 1000;
         $user = auth()->user();
 
-        if ($user->balance < $charge) {
-            return redirect()->back()->with('error', 'Insufficient balance to place the order.');
-        }
-
-        $user->balance -= $charge;
-        $user->save();
-
-        $transaction = new Transaction();
-        $transaction->user_id = $user->id;
-        $transaction->type = 'debit';
-        $transaction->amount = $charge;
-        $transaction->currency = 'USD';
-        $transaction->status = 'completed';
-        $transaction->save();
-
+        // Prepare data for the API request
         $data = [
             'service' => $validated['service_id'],
             'link' => $validated['link'],
             'quantity' => $validated['quantity'],
         ];
 
+        // Call the API to create the order
         $apiResponse = $this->api->order($data);
-        Log::info('API Response:', (array) $apiResponse);
 
+        // Check if the API response contains the order ID
         if (isset($apiResponse->order)) {
             Log::info('Saving order to database:', $data);
 
+            // Save the order in the database
             $order = new Order();
             $order->user_id = $user->id;
             $order->service_id = $validated['service_id'];
@@ -154,7 +144,38 @@ class OrderController extends Controller
             $order->api_order_id = $apiResponse->order;
             $order->save();
 
-            return redirect()->route('orders.index')->with('success', 'Order created successfully. Order ID: ' . $apiResponse->order);
+            // Send notification for the order
+            $user->notify(new OrderNotification($order));
+
+            // Assume API cost is returned in the response (you may need to modify this based on the actual API response)
+            $apiCost = $apiResponse->cost ?? $charge;
+
+            // Deduct the charge from the user's balance after successful API order creation
+            if ($user->balance >= $charge) {
+                $user->balance -= $charge;
+                $user->save();
+
+                // Calculate profit (amount - api_cost)
+                $profit = $charge - $apiCost;
+
+                // Create a transaction record
+                $transaction = new Transaction();
+                $transaction->user_id = $user->id;
+                $transaction->type = 'debit';
+                $transaction->amount = $charge;
+                $transaction->currency = 'USD';
+                $transaction->api_cost = $apiCost;
+                $transaction->profit = $profit;
+                $transaction->status = 'completed';
+                $transaction->save();
+
+                // Send notification for the transaction
+                $user->notify(new TransactionNotification($transaction));
+
+                return redirect()->route('orders.index')->with('success', 'Order created successfully. Order ID: ' . $apiResponse->order);
+            } else {
+                return redirect()->back()->with('error', 'Insufficient balance to place the order.');
+            }
         } else {
             Log::error('Failed to create order. API Response:', (array) $apiResponse);
             return redirect()->back()->with('error', 'Failed to create order. Please try again.');
@@ -249,6 +270,7 @@ class OrderController extends Controller
         $service = $order->service;
         return view('orders.show', compact('order', 'service'));
     }
+
 
     public function destroy(Order $order)
     {

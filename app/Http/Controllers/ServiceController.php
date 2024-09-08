@@ -158,31 +158,35 @@ class ServiceController extends Controller
             if (is_object($service)) {
                 // Only process services where type is 'Default'
                 if ($service->type === 'Default') {
-                    $adjustedRate = $service->rate;
+                    // Store the original rate as the cost
+                    $originalRate = $service->rate;
 
                     // Adjust the rate based on the criteria
-                    if ($adjustedRate < 0.00001) {
-                        $adjustedRate *= 6; // Increase by 500%
-                    } elseif ($adjustedRate < 0.0001) {
-                        $adjustedRate *= 5; // Increase by 400%
-                    } elseif ($adjustedRate < 0.001) {
-                        $adjustedRate *= 4; // Increase by 300%
-                    } elseif ($adjustedRate < 0.01) {
-                        $adjustedRate *= 3; // Increase by 200%
-                    } elseif ($adjustedRate > 100) {
-                        $adjustedRate *= 1.05; // Increase by 5%
-                    } elseif ($adjustedRate > 50) {
-                        $adjustedRate *= 1.10; // Increase by 10%
-                    } elseif ($adjustedRate > 10) {
-                        $adjustedRate *= 1.20; // Increase by 20%
-                    } elseif ($adjustedRate > 1) {
+                    $adjustedRate = $originalRate;
+
+                    if ($adjustedRate < 0.0001) {
+                        $adjustedRate *= 5; // Multiply by 5
+                    } elseif ($adjustedRate >= 0.0001 && $adjustedRate < 0.001) {
+                        $adjustedRate *= 4; // Multiply by 4
+                    } elseif ($adjustedRate >= 0.001 && $adjustedRate < 0.01) {
+                        $adjustedRate *= 3; // Multiply by 3
+                    } elseif ($adjustedRate >= 0.01 && $adjustedRate < 0.1) {
+                        $adjustedRate *= 2; // Multiply by 2
+                    } elseif ($adjustedRate >= 0.1 && $adjustedRate < 0.9) {
+                        $adjustedRate *= 1.70; // Increase by 70%
+                    } elseif ($adjustedRate >= 0.9 && $adjustedRate < 2) {
+                        $adjustedRate *= 1.50; // Increase by 50%
+                    } elseif ($adjustedRate >= 2 && $adjustedRate < 10) {
                         $adjustedRate *= 1.30; // Increase by 30%
+                    } elseif ($adjustedRate >= 10) {
+                        $adjustedRate *= 1.20; // Increase by 20%
                     }
 
                     // Prepare the data to update based on the language
                     $data = [
                         'type' => $service->type,
                         'rate' => $adjustedRate, // Use the adjusted rate
+                        'cost' => $originalRate, // Store the original rate as the cost
                         'min' => $service->min,
                         'max' => $service->max,
                         'refill' => $service->refill,

@@ -21,10 +21,7 @@ class MessageController extends Controller
 
         // Check if the validation fails
         if ($validator->fails()) {
-            // Log the error details for debugging
             Log::error('Validation Error:', $validator->errors()->toArray());
-
-            // Return a JSON response with detailed error messages
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors()
@@ -39,8 +36,15 @@ class MessageController extends Controller
                 'message' => $request->message,
             ]);
 
-            // Notify the user
-            $ticket->user->notify(new NewMessageNotification($message));
+            // Check if there's already an unread notification for this ticket
+            $unreadNotificationExists = $ticket->user->unreadNotifications
+                    ->where('data.support_ticket_id', $ticket->id)
+                    ->count() > 0;
+
+            // If there's no unread notification for this ticket, send a new notification
+            if (!$unreadNotificationExists) {
+                $ticket->user->notify(new NewMessageNotification($message));
+            }
 
             // Mark all notifications related to this support ticket as read
             Auth::user()->unreadNotifications
@@ -53,17 +57,12 @@ class MessageController extends Controller
                 'html' => view('support.partials.message', compact('message'))->render()
             ]);
         } catch (\Exception $e) {
-            // Log the exception details for debugging
             Log::error('Exception in MessageController@store:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-
-            // Return a JSON response with the exception message
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while sending the message. Please try again.',
-                'error_detail' => $e->getMessage(), // Include the exception message for debugging
+                'error_detail' => $e->getMessage(),
             ], 500);
         }
     }
-
-
 }

@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\TicketStatus;
 use App\Models\User;
+use App\Notifications\TicketNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -45,6 +46,7 @@ class SupportTicketController extends Controller
 
     public function store(Request $request)
     {
+        // Custom validation messages
         $messages = [
             'ticketable_id.required' => 'The ticketable ID field is required and cannot be empty.',
             'ticketable_type.required' => 'The ticketable type field is required and cannot be empty.',
@@ -56,6 +58,7 @@ class SupportTicketController extends Controller
             'subtype.in' => 'The subtype must be one of the following: refund, acceleration, cancel, failed_payment, refund_request, payment_dispute, chargeback, invoice_request.',
         ];
 
+        // Validation logic
         $validator = Validator::make($request->all(), [
             'ticketable_id' => 'required|integer',
             'ticketable_type' => 'required|string|in:App\Models\Order,App\Models\Transaction',
@@ -65,12 +68,13 @@ class SupportTicketController extends Controller
             'subtype' => 'nullable|string|in:refund,acceleration,cancel,failed_payment,refund_request,payment_dispute,chargeback,invoice_request'
         ], $messages);
 
+        // If validation fails, redirect back with errors
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         // Create the support ticket
-        SupportTicket::create([
+        $ticket = SupportTicket::create([
             'user_id' => Auth::id(),
             'ticketable_id' => $request->ticketable_id,
             'ticketable_type' => $request->ticketable_type,
@@ -81,6 +85,10 @@ class SupportTicketController extends Controller
             'subtype' => $request->subtype,
         ]);
 
+        // Notify the user about the new ticket
+        auth()->user()->notify(new TicketNotification($ticket));
+
+        // Redirect the user to the support page with success message
         return redirect()->route('support.index')->with('success', 'Ticket created successfully!');
     }
 

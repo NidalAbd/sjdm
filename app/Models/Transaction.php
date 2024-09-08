@@ -15,6 +15,8 @@ class Transaction extends Model
         'amount',
         'currency',
         'status',
+        'api_cost',
+        'profit'
     ];
     public function user()
     {

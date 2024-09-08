@@ -108,10 +108,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('notifications/latest', [NotificationController::class, 'fetchLatest'])->name('notifications.latest');
     Route::get('notifications/{id}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+// web.php
+    Route::get('notifications/loadMore', [NotificationController::class, 'loadMore'])->name('notifications.loadMore');
 
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
 });
-
-// The remaining routes, if any, can stay below this line

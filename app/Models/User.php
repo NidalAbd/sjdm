@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Notifications\ProfileUpdatedNotification;
+use App\Notifications\TicketNotification;
+use App\Notifications\TransactionNotification;
 use App\Notifications\UserStatusChangedNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -104,16 +107,36 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get all transactions for the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
     }
 
+    public function createTransactionAndNotify($transactionData): Model
+    {
+        $transaction = $this->transactions()->create($transactionData);
+        $this->notify(new TransactionNotification($transaction));
+
+        return $transaction;
+    }
+
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+
+    public function createTicket($ticketData)
+    {
+        $ticket = $this->tickets()->create($ticketData);
+
+        // Send notification after creating the ticket
+        $this->notify(new TicketNotification($ticket));
+
+        return $ticket;
     }
 
     /**
@@ -133,7 +156,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get all of the media for the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function media(): MorphMany
     {
