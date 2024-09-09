@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __('adminlte.edit_user'))
+@section('title', __('adminlte.dashboard'))
 
 @section('content_header')
-    @include('partials.breadcrumbs')  <!-- Automatically include breadcrumbs -->
+    @include('partials.breadcrumbs')
     <h1>{{ __('adminlte.dashboard') }}</h1>
 @stop
 
@@ -11,10 +11,74 @@
     <!-- Dashboard header -->
     <h1>{{ __('adminlte.welcome_dashboard') }}</h1>
 
-    <!-- Metric widgets row -->
-    <div class="row mt-4">
-        @if(auth()->user()->isAdmin())
-            <!-- Admin-specific Widgets -->
+    <!-- Admin-specific widgets and content -->
+    @if(auth()->user()->isAdmin())
+
+        <!-- Total Cost and Profit Widgets -->
+        <div class="row mt-4">
+            <!-- Last 24 Hours -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ number_format($totals['24h']['cost'], 2) }}</h3>
+                        <p>{{ __('Total Cost (24h)') }}</p>
+                        <h4>{{ number_format($totals['24h']['profit'], 2) }}</h4>
+                        <p>{{ __('Total Profit (24h)') }}</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last 7 Days -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ number_format($totals['7d']['cost'], 2) }}</h3>
+                        <p>{{ __('Total Cost (7d)') }}</p>
+                        <h4>{{ number_format($totals['7d']['profit'], 2) }}</h4>
+                        <p>{{ __('Total Profit (7d)') }}</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last 30 Days -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ number_format($totals['30d']['cost'], 2) }}</h3>
+                        <p>{{ __('Total Cost (30d)') }}</p>
+                        <h4>{{ number_format($totals['30d']['profit'], 2) }}</h4>
+                        <p>{{ __('Total Profit (30d)') }}</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lifetime -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ number_format($totals['lifetime']['cost'], 2) }}</h3>
+                        <p>{{ __('Total Cost (Lifetime)') }}</p>
+                        <h4>{{ number_format($totals['lifetime']['profit'], 2) }}</h4>
+                        <p>{{ __('Total Profit (Lifetime)') }}</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Admin Widgets -->
+        <div class="row mt-4">
             <!-- Users widget -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
@@ -70,9 +134,11 @@
                     <a href="#" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
-        @else
-            <!-- User-specific Widgets -->
-            <!-- Referrals widget -->
+        </div>
+
+    @else
+        <!-- User-specific widgets -->
+        <div class="row mt-4">
             <!-- Referrals widget -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
@@ -86,7 +152,6 @@
                     <a href="{{ route('profile.settings') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
-
 
             <!-- Orders widget -->
             <div class="col-lg-3 col-6">
@@ -115,6 +180,6 @@
                     <a href="{{ route('transactions.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
-        @endif
-    </div>
+        </div>
+    @endif
 @endsection

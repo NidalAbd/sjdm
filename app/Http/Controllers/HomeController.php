@@ -6,9 +6,9 @@ use App\Models\Order;
 use App\Models\Service;
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Renderable;
-use Stripe\Price;
-
 class HomeController extends Controller
 {
     /**
@@ -27,23 +27,42 @@ class HomeController extends Controller
      *
      * @return Renderable
      */
+
+
     public function index()
     {
         $user = auth()->user();
-        $orders = Order::where('user_id', $user->id)->get();
-        $transactions = Transaction::where('user_id', $user->id)->get();
 
-        // Fetch all referrals
-        $totalReferrals = User::where('referred_by', $user->id)->get();
+        // Define time ranges
+        $timeRanges = [
+            '24h' => Carbon::now()->subDay(),
+            '7d' => Carbon::now()->subDays(7),
+            '30d' => Carbon::now()->subDays(30),
+            'lifetime' => null, // For lifetime, no date filter
+        ];
 
-        // Fetch only active and verified referrals
-        $verifiedActiveReferrals = User::where('referred_by', $user->id)
-            ->where('status', 'active')
-            ->whereNotNull('email_verified_at')
-            ->get();
+        // Fetch transactions and calculate total cost and profit for each period
+        $totals = [];
+        foreach ($timeRanges as $key => $startDate) {
+            $transactions = Transaction::where('user_id', $user->id);
+            if ($startDate) {
+                $transactions->where('created_at', '>=', $startDate);
+            }
+            $totals[$key] = [
+                'cost' => $transactions->sum('api_cost'),
+                'profit' => $transactions->sum('profit'),
+            ];
+        }
 
-        return view('dashboard', compact('user', 'orders', 'transactions', 'totalReferrals', 'verifiedActiveReferrals'));
+        // Other widgets data
+        $userCount = User::count();
+        $serviceCount = Service::count();
+        $orderCount = Order::count();
+        $startingPrice = Service::min('rate');
+
+        return view('dashboard', compact('totals', 'userCount', 'serviceCount', 'orderCount', 'startingPrice'));
     }
+
 
     public function updateSettings(Request $request)
     {

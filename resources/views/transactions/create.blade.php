@@ -3,130 +3,133 @@
 
 @section('content_header')
     @include('partials.breadcrumbs')
+
     <h1>{{ __('adminlte.add_balance') }}</h1>
 @stop
-
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-lg-8 mb-4">
-            <div class="card shadow-lg">
-                <div class="card-body">
-                    <!-- Payment Method Header -->
-                    <div class=" alert-info text-center mb-4 mt-2">
-                        <i class="fas fa-shield-alt"></i> {{ __('adminlte.select_payment_method') }}
-                    </div>
-                    <h2 class="text-center mb-4 text-dark">{{ __('adminlte.add_balance') }}</h2>
-                    <p class="text-center text-muted">{{ __('adminlte.securely_add_funds') }}</p>
-
-                    <!-- Display error messages -->
-                    @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show">
-                            <strong>{{ __('adminlte.error') }}:</strong> {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    @endif
-
-                    <!-- Display success message -->
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show">
-                            <strong>{{ __('adminlte.success') }}:</strong> {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    @endif
-
-                    <!-- Tabs for Payment Options -->
-                    <ul class="nav nav-tabs" id="paymentTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="stripe-tab" data-bs-toggle="tab" href="#stripe" role="tab">
-                                <i class="fas fa-credit-card"></i> {{ __('adminlte.payment_stripe') }}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="crypto-tab" data-bs-toggle="tab" href="#crypto" role="tab">
-                                <i class="fas fa-coins"></i> {{ __('adminlte.payment_crypto') }}
-                            </a>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content mt-4">
-                        <!-- Stripe Payment Form -->
-                        <div class="tab-pane fade show active" id="stripe" role="tabpanel">
-                            <h4 class="text-center mb-4">{{ __('adminlte.add_balance_via_stripe') }}</h4>
-
-                            <!-- Stripe Payment Form -->
-                            <form action="{{ route('checkout') }}" method="POST" class="needs-validation" novalidate>
-                                @csrf
-                                <div class="form-floating mb-4">
-                                    <input type="number" name="amount" class="form-control" id="amount-stripe" required min="1" placeholder="{{ __('adminlte.enter_amount') }}">
-                                    <label for="amount-stripe">{{ __('adminlte.amount') }}</label>
-                                    <div class="invalid-feedback">
-                                        {{ __('adminlte.enter_valid_amount') }}
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-lg w-100">{{ __('adminlte.proceed_to_payment') }}</button>
-                            </form>
-
-                            <!-- Stripe Instructions -->
-                            <div class="mt-4">
-                                <h5 class="text-center">{{ __('adminlte.payment_instructions_policy') }}</h5>
-                                <p>{{ __('adminlte.payment_process_detail_stripe') }}</p>
-                                <p>{{ __('adminlte.security_detail_stripe') }}</p>
-                                <p>{{ __('adminlte.refund_policy_stripe') }}</p>
-                            </div>
-                        </div>
-
-                        <!-- Crypto Payment Instructions -->
-                        <div class="tab-pane fade" id="crypto" role="tabpanel">
-                            <h4 class="text-center mb-4">{{ __('Pay via Cryptocurrency') }}</h4>
-
-                            <div class=" alert-warning text-center">
-                                <p>{{ __('You can pay using USDT (TRC20). Please contact our admin on WhatsApp for payment instructions and verification.') }}</p>
-                                <a href="https://wa.me/971557830054?text=I%20want%20to%20pay%20via%20USDT" target="_blank" class="btn btn-success mt-3">
-                                    <i class="fab fa-whatsapp"></i> {{ __('Contact Admin on WhatsApp') }}
-                                </a>
-                            </div>
-
-                            <!-- Crypto Payment Instructions -->
-                            <div class="mt-4">
-                                <h5 class="text-center">{{ __('adminlte.payment_instructions_policy') }}</h5>
-                                <p>{{ __('After sending the payment via USDT, contact the admin on WhatsApp with your payment details.') }}</p>
-                                <p>{{ __('Make sure you send the correct amount to avoid delays in processing.') }}</p>
-                                <p>{{ __('Refunds are only available for failed transactions. Contact support for more information.') }}</p>
-                            </div>
-                        </div>
-                    </div>
+    <div class="col-md-12 row justify-content-center">
+        <div class="col-md-12 mb-4 p-2 alert-info d-flex justify-content-between align-items-center rounded shadow-sm m-2" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-shield-alt fa-2x m-2"></i>
+                <div>
+                    <p class="m-2" style="font-size: 1.0rem;">
+                        {{ __('adminlte.payment_crypto_info') }}
+                    </p>
                 </div>
             </div>
-        </div>
-    </div>
-@endsection
 
+            <!-- WhatsApp Button to Contact Admin -->
+            <a href="https://wa.me/971557830054?text=I%20want%20to%20pay%20via%20USDT" target="_blank" class="m-2 btn btn-lg btn-success px-4 py-2">
+                <i class="fab fa-whatsapp me-2"></i> {{ __('adminlte.contact_admin_whatsapp') }}
+            </a>
+        </div>
+            <!-- Payment Form Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm rounded">
+                    <div class="card-body">
+                        <div class=" alert-info text-center mb-4 mt-2" role="alert">
+                            <i class="fas fa-shield-alt"></i> {{ __('adminlte.redirect_stripe') }}
+                        </div>
+                        <h2 class="text-center mb-4 text-dark">{{ __('adminlte.add_balance') }}</h2>
+                        <p class="text-center text-muted mb-5">{{ __('adminlte.securely_add_funds') }}</p>
+
+                        <!-- Display error messages -->
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>{{ __('adminlte.error') }}:</strong> {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('adminlte.close') }}"></button>
+                            </div>
+                        @endif
+
+                        <!-- Display success message -->
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>{{ __('adminlte.success') }}:</strong> {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('adminlte.close') }}"></button>
+                            </div>
+                        @endif
+
+                        <!-- Payment Form -->
+                        <form action="{{ route('checkout') }}" method="POST" class="needs-validation" novalidate>
+                            @csrf
+                            <div class="form-floating mb-4">
+                                <input type="number" name="amount" class="form-control" id="amount" required min="1" placeholder="{{ __('adminlte.enter_amount') }}">
+                                <label for="amount">{{ __('adminlte.amount') }}</label>
+                                <div class="invalid-feedback">
+                                    {{ __('adminlte.enter_valid_amount') }}
+                                </div>
+                            </div>
+
+
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100">{{ __('adminlte.proceed_to_payment') }}</button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Instructions and Policy Section -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded">
+                    <div class="card-body p-5">
+                        <h3 class="text-center mb-4 text-dark">{{ __('adminlte.payment_instructions_policy') }}</h3>
+
+                        <p class="mb-3"><strong>{{ __('adminlte.payment_process') }}:</strong> {{ __('adminlte.payment_process_detail') }}</p>
+
+                        <p class="mb-3"><strong>{{ __('adminlte.security') }}:</strong> {{ __('adminlte.security_detail') }}</p>
+
+                        <p class="mb-3"><strong>{{ __('adminlte.refund_policy') }}:</strong> {{ __('adminlte.refund_policy_detail') }}</p>
+
+                        <p class="mb-3"><strong>{{ __('adminlte.support') }}:</strong> {{ __('adminlte.support_detail') }}</p>
+
+                        <p class="text-center text-muted mt-5"><small>{{ __('adminlte.agree_terms') }}</small></p>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+@endsection
 @push('styles')
     <style>
-        /* General form control styles using AdminLTE */
+        /* Light mode styles */
         .form-control {
-            font-size: 1.25rem;
-            padding: 0.75rem;
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ced4da;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* WhatsApp button styles */
-        .btn-success {
-            font-size: 1.2rem;
+        /* Dark mode styles */
+        .dark-mode .form-control {
+            background-color: #343a40;
+            color: #ffffff;
+            border: 1px solid #454d55;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 576px) {
-            .form-control {
-                font-size: 1rem;
-            }
+        /* Placeholder styles */
+        .form-control::placeholder {
+            color: #6c757d;
+        }
 
-            .btn-lg {
-                font-size: 1rem;
-            }
+        .dark-mode .form-control::placeholder {
+            color: #adb5bd;
+        }
 
-            .btn-success {
-                font-size: 1rem;
-            }
+        /* Focus styles */
+        .form-control:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .dark-mode .form-control:focus {
+            border-color: #5a9bd4;
+            box-shadow: 0 0 0 0.2rem rgba(90, 155, 212, 0.25);
         }
     </style>
 @endpush
@@ -152,4 +155,21 @@
                 });
         })();
     </script>
+
+    <style>
+        /* Adjust input styles for dark mode */
+        body.dark-mode .form-control {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            border-color: #444;
+        }
+        body.dark-mode .form-control:focus {
+            background-color: #3a3a3a;
+            color: #f1f1f1;
+            border-color: #555;
+        }
+        body.dark-mode .form-floating label {
+            color: #bbb;
+        }
+    </style>
 @endsection

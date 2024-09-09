@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class WelcomeController extends Controller
 {
@@ -16,10 +17,18 @@ class WelcomeController extends Controller
         // Define the date for the last 24 hours
         $last24Hours = Carbon::now()->subDay();
 
-        // Fetch data from the last 24 hours (excluding services)
-        $usersCountLast24h = $this->getLast24HoursCount(User::class, $last24Hours);
-        $transactionsCountLast24h = $this->getLast24HoursCount(Transaction::class, $last24Hours);
-        $ordersCountLast24h = $this->getLast24HoursCount(Order::class, $last24Hours);
+        // Fetch the 6-hour window cache or generate new numbers if expired
+        $usersCountLast24h = Cache::remember('users_count_last_24h', 6 * 3600, function () use ($last24Hours) {
+            return $this->getLast24HoursCount(User::class, $last24Hours) + rand(5000, 9500);
+        });
+
+        $transactionsCountLast24h = Cache::remember('transactions_count_last_24h', 6 * 3600, function () use ($last24Hours) {
+            return $this->getLast24HoursCount(Transaction::class, $last24Hours) + rand(12000, 25000);
+        });
+
+        $ordersCountLast24h = Cache::remember('orders_count_last_24h', 6 * 3600, function () use ($last24Hours) {
+            return $this->getLast24HoursCount(Order::class, $last24Hours) + rand(12000, 20000);
+        });
 
         // Fetch total counts from the database
         $totalUsersCount = $this->getTotalCountWithStartingPoint(User::class, 79778);
@@ -38,7 +47,6 @@ class WelcomeController extends Controller
             'completedOrdersCount'
         ));
     }
-
     // Method to get the count of records created in the last 24 hours
     private function getLast24HoursCount($model, $last24Hours)
     {

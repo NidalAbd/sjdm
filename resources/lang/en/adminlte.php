@@ -358,7 +358,8 @@ return [
     'refund_policy_stripe' => 'Refunds are available for failed transactions or disputes.',
     'refund_policy_crypto' => 'Refunds are only available for failed transactions. Contact support for more information.',
     'contact_admin_via_whatsapp' => 'Contact Admin on WhatsApp',
-
+    'payment_crypto_info' => 'You can securely pay using USDT (TRC20) Crypto Currency . Please contact our admin on WhatsApp for payment instructions and verification.',
+    'contact_admin_whatsapp' => 'Contact Admin on WhatsApp',
     // Payment Instructions and Policy
     'payment_instructions_policy' => 'Payment Instructions & Policy',
     'payment_process' => 'Payment Process',
