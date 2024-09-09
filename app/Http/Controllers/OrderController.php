@@ -131,7 +131,6 @@ class OrderController extends Controller
 
         // Check if the API response contains the order ID
         if (isset($apiResponse->order)) {
-            Log::info('Saving order to database:', $data);
 
             // Save the order in the database
             $order = new Order();
@@ -147,25 +146,25 @@ class OrderController extends Controller
             // Send notification for the order
             $user->notify(new OrderNotification($order));
 
-            // Assume API cost is returned in the response (you may need to modify this based on the actual API response)
-            $apiCost = $apiResponse->cost ?? $charge;
+            // Assume API cost is returned in the response
+            $apiCost = $apiResponse->charge ?? $charge;  // Use the API cost if available, fallback to user charge
 
             // Deduct the charge from the user's balance after successful API order creation
             if ($user->balance >= $charge) {
                 $user->balance -= $charge;
                 $user->save();
 
-                // Calculate profit (amount - api_cost)
+                // Calculate profit (user charge - api cost)
                 $profit = $charge - $apiCost;
 
                 // Create a transaction record
                 $transaction = new Transaction();
                 $transaction->user_id = $user->id;
                 $transaction->type = 'debit';
-                $transaction->amount = $charge;
+                $transaction->amount = $charge;  // The amount charged to the user
+                $transaction->api_cost = $apiCost;  // The cost from the API
+                $transaction->profit = $profit;  // The profit (charge - api cost)
                 $transaction->currency = 'USD';
-                $transaction->api_cost = $apiCost;
-                $transaction->profit = $profit;
                 $transaction->status = 'completed';
                 $transaction->save();
 
@@ -177,10 +176,10 @@ class OrderController extends Controller
                 return redirect()->back()->with('error', 'Insufficient balance to place the order.');
             }
         } else {
-            Log::error('Failed to create order. API Response:', (array) $apiResponse);
             return redirect()->back()->with('error', 'Failed to create order. Please try again.');
         }
     }
+
 
     public function getCategories(Request $request)
     {

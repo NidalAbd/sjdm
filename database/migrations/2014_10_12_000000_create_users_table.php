@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('password');
 
             // Additional Fields
-            $table->decimal('balance', 15, 2)->default(0.00);
+            $table->decimal('balance', 15, 7)->default(0.00);
             $table->string('currency', 3)->default('USD');
             $table->string('language', 5)->default('en');
             $table->enum('status', ['active', 'inactive', 'suspended', 'banned'])->default('active');

@@ -18,14 +18,14 @@ class DatabaseSeeder extends Seeder
 //            RoleSeeder::class,
 //            RolePermissionSeeder::class,
 //        ]);
-//        $this->call(UserSeeder::class);
+        $this->call(UserSeeder::class);
 
-
-        $this->call(OrderSeeder::class);
-        $this->call(TicketStatusSeeder::class);
-
-        $this->call(SupportTicketSeeder::class);
-        $this->call(MessageSeeder::class);
+//
+//        $this->call(OrderSeeder::class);
+//        $this->call(TicketStatusSeeder::class);
+//
+//        $this->call(SupportTicketSeeder::class);
+//        $this->call(MessageSeeder::class);
 
     }
 }

@@ -330,7 +330,7 @@ return [
     'can_refill'=>'Can refill',
     'can_cancel'=>'Can cancel',
     'not_available'=>'Not available',
-
+    'service_list'=>'Service List',
     'type_message'=>'Type Message',
     'back_to_transactions' => 'Back to Transactions',
     'print_receipt' => 'Print Receipt',
