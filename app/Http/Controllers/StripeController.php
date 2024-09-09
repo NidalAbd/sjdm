@@ -70,16 +70,16 @@ class StripeController extends Controller
         $user->balance += $amount;
         $user->save();
 
-        // Create a new transaction record
-        $transaction = $user->transactions()->create([
+        // Prepare transaction data
+        $transactionData = [
             'type' => 'credit',
             'amount' => $amount,
             'currency' => 'USD',
             'status' => 'completed',
-        ]);
+        ];
 
-        // Send a notification to the user about the successful transaction
-        $user->notify(new TransactionNotification($transaction));
+        // Create transaction and notify using the method in the User model
+        $user->createTransactionAndNotify($transactionData);
 
         // Clear the amount from the session to avoid reuse
         session()->forget('amount');

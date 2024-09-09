@@ -23,6 +23,18 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="input-group input-group-sm">
+                                    <select name="status" class="form-control" onchange="this.form.submit()">
+                                        <option value="all">{{ __('adminlte.select_status') }}</option>
+                                        @foreach($statuses as $status)
+                                            <option value="{{ $status }}" {{ request()->get('status') == $status ? 'selected' : '' }}>
+                                                {{ ucfirst($status) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" onchange="this.form.submit()">
                                         <option value="all">{{ __('adminlte.select_platform') }}</option>
                                         @foreach($platforms as $platform)
@@ -33,15 +45,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-2 mb-2">
                                 <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button>
                             </div>
-                            <div class="col-md-2 mb-3">
-                                <a href="{{ route('orders.updateStatuses') }}" class="btn btn-sm btn-block btn-info">
-                                    {{ __('adminlte.update_order_statuses') }}
-                                </a>
-                            </div>
-                            <div class="col-md-2 mb-3">
+                            <div class="col-md-2 mb-2">
                                 <a href="{{ route('orders.create') }}" class="btn btn-sm btn-block btn-info">
                                     {{ __('adminlte.create_order') }}
                                 </a>

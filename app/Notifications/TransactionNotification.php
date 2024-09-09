@@ -59,13 +59,31 @@ class TransactionNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => $this->transaction->status === 'completed'
-                ? 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been completed successfully.'
-                : 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has failed.',
+            'message' => $this->getStatusMessage(),
             'transaction_id' => $this->transaction->id,
             'amount' => $this->transaction->amount,
             'status' => $this->transaction->status,
         ];
+
+    }
+    private function getStatusMessage(): string
+    {
+        switch ($this->transaction->status) {
+            case 'completed':
+                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been completed successfully.';
+            case 'refunded':
+                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been refunded successfully. If you have any issues, please contact support.';
+            case 'pending':
+                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' is currently pending. We will notify you once it is processed.';
+            case 'failed':
+                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has failed. Please verify your payment method or try again.';
+            case 'canceled':
+                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been canceled. No funds were deducted.';
+            case 'processing':
+                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' is being processed. You will be notified once it is completed.';
+            default:
+                return 'Your transaction status is currently unknown. Please contact support for further assistance.';
+        }
     }
 
 }

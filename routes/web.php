@@ -19,8 +19,17 @@ use Illuminate\Support\Facades\Route;
 
 // Language change route
 Route::get('lang/{lang}', function ($lang) {
+    // Set the language in session and app locale
     session(['applocale' => $lang]);
     app()->setLocale($lang);
+
+    // If the user is authenticated, save the language to the user profile
+    if (auth()->check()) {
+        $user = auth()->user();
+        $user->language = $lang;
+        $user->save();
+    }
+
     return redirect()->back();
 })->name('changeLang');
 
@@ -110,6 +119,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
 // web.php
     Route::get('notifications/loadMore', [NotificationController::class, 'loadMore'])->name('notifications.loadMore');
+    Route::post('/notifications/markAllAsRead', function () {
+        Auth::user()->unreadNotifications->markAsRead();
+        return response()->json(['success' => true]);
+    })->name('notifications.markAllAsRead');
 
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');

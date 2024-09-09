@@ -56,6 +56,8 @@ class PermissionSeeder extends Seeder
             'create_order',        // Create a new order
             'view_orders',         // View all orders
             'view_order',
+            'delete_order',
+
             // Balance Permissions (CRUD)
             'view_balance',        // View balance
             'view_transactions',   // View transactions

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -25,18 +25,24 @@ class SetLocale
         if ($request->is('api/*')) {
             $locale = $request->header('Accept-Language') ?? config('app.locale');
         } else {
-            // For web requests, use session
-            $locale = Session::get('applocale', config('app.locale'));
+            // Check if the user is authenticated
+            if (Auth::check()) {
+                // If authenticated, use the user's language from the database
+                $locale = Auth::user()->language ?? config('app.locale');
+            } else {
+                // For guests, use session or fallback to default locale
+                $locale = Session::get('applocale', config('app.locale'));
+            }
         }
 
-        // Set the locale
+        // Set the application locale
         App::setLocale($locale);
+
+        // Update the session locale for future requests
+        Session::put('applocale', $locale);
 
         return $next($request);
     }
-
-
-
     /**
      * Extracts the primary locale from the Accept-Language header.
      *
@@ -51,5 +57,4 @@ class SetLocale
 
         return $primaryLocale;
     }
-
 }

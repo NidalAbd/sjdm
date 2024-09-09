@@ -72,11 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
         parent::boot();
 
         static::updated(function ($user) {
-            if ($user->isDirty('status')) {
-                $user->notify(new UserStatusChangedNotification($user->status));
-            }
-
-            $profileFields = ['name', 'email', 'balance', 'currency', 'language', 'gender', 'marital_status', 'date_of_birth'];
+            $profileFields = ['name', 'email'];
             if ($user->isDirty($profileFields)) {
                 $user->notify(new ProfileUpdatedNotification($user));
             }
@@ -117,6 +113,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function createTransactionAndNotify($transactionData): Model
     {
         $transaction = $this->transactions()->create($transactionData);
+
+        // If the transaction is a credit, the amount is $20 or more, and the user is not already active
+        if ($transaction->type === 'credit' && $transaction->amount >= 20 && $this->status !== 'active') {
+            $this->status = 'active';
+            $this->save();
+
+            // Notify the user that their status has changed
+            $this->notify(new UserStatusChangedNotification($this->status));
+        }
+
         $this->notify(new TransactionNotification($transaction));
 
         return $transaction;

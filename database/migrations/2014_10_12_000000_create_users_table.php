@@ -25,8 +25,7 @@ return new class extends Migration
             $table->decimal('balance', 15, 7)->default(0.00);
             $table->string('currency', 3)->default('USD');
             $table->string('language', 5)->default('en');
-            $table->enum('status', ['active', 'inactive', 'suspended', 'banned'])->default('active');
-
+            $table->enum('status', ['active', 'inactive', 'suspended', 'banned'])->default('inactive');
             // Personal Fields
             $table->enum('gender', ['male', 'female', 'other'])->nullable(); // Gender
             $table->enum('marital_status', ['single', 'married', 'divorced', 'widowed'])->nullable(); // Marital Status

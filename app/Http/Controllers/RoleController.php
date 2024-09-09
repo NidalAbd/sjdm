@@ -80,13 +80,18 @@ class RoleController extends Controller
     {
         $role->update($request->validated());
 
-        // Get permission names from their IDs
-        $permissionNames = Permission::whereIn('id', $request->input('permissions', []))->pluck('name');
+        // Get the permission names based on selected IDs
+        $permissionIds = $request->input('permissions', []);
+        $permissionNames = Permission::whereIn('id', $permissionIds)->pluck('name')->toArray();
 
+        // Sync permissions with the role using the permission names
         $role->syncPermissions($permissionNames);
 
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
+
+
+
 
     public function destroy(Role $role)
     {

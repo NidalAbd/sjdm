@@ -19,7 +19,7 @@ class ProfileUpdatedNotification extends Notification
 
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database']; // Add 'database' to store in database
     }
 
     public function toMail($notifiable)
@@ -30,4 +30,13 @@ class ProfileUpdatedNotification extends Notification
             ->line('Thank you for using our application!');
     }
 
+    public function toArray($notifiable)
+    {
+        return [
+            'title' => 'Profile Updated',
+            'message' => 'Your profile has been successfully updated.',
+            'action_url' => url('/profile'),
+            'icon' => 'fas fa-user-edit', // Add an icon for consistency
+        ];
+    }
 }

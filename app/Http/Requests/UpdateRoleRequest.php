@@ -11,13 +11,14 @@ class UpdateRoleRequest extends FormRequest
         return true;
     }
 
-
     public function rules()
     {
         return [
             'name' => 'sometimes|required|string|max:255|unique:roles,name,' . $this->role->id,
             'permissions' => 'array',
-            'permissions.*' => 'string|exists:permissions,name',
+            'permissions.*' => 'integer|exists:permissions,id', // Validate permission IDs
         ];
     }
+
+
 }

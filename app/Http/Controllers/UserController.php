@@ -278,7 +278,6 @@ class UserController extends Controller
      */
     public function processAddBalance(Request $request)
     {
-        Log::info('Process Add Balance: Start', ['request_data' => $request->all()]);
 
         $this->authorize('add_balance', Transaction::class);
 
@@ -290,20 +289,24 @@ class UserController extends Controller
         $user = User::findOrFail($request->user_id);
         $amount = $request->amount;
 
-        Log::info('Adding balance to user:', ['user_id' => $user->id, 'amount' => $amount]);
-
-        $transaction = $user->transactions()->create([
+        // Create the transaction and send notifications using the existing method
+        $transactionData = [
             'type' => 'credit',
             'amount' => $amount,
             'status' => 'completed',
-        ]);
+            'currency' => 'USD', // assuming USD as the default currency
+        ];
 
-        Log::info('Created transaction:', ['transaction' => $transaction]);
+        // Use the createTransactionAndNotify method
+        $transaction = $user->createTransactionAndNotify($transactionData);
 
+        // Increment user's balance
         $user->increment('balance', $amount);
+
 
         return redirect()->route('transactions.index')->with('success', 'Balance added successfully for user.');
     }
+
 
 
     public function referalIndex()
