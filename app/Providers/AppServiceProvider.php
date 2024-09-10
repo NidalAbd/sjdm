@@ -28,9 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bind('path.public', function() {
-            return base_path('public_html');
-        });
+
         // Set default string length for older MySQL versions
         Schema::defaultStringLength(191);
 
