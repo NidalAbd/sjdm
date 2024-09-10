@@ -140,7 +140,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Order::class);
     }
 
-
+    public function unreadMessages()
+    {
+        return $this->hasMany(Message::class, 'user_id')
+            ->whereNull('read_at');
+    }
     public function createTicket($ticketData)
     {
         $ticket = $this->tickets()->create($ticketData);
@@ -161,9 +165,10 @@ class User extends Authenticatable implements MustVerifyEmail
         $profileMedia = $this->media()->where('file_type', 'like', 'image%')->first();
 
         return $profileMedia
-            ? asset($profileMedia->path)
+            ? asset('storage/' . $profileMedia->path) // Use storage path for public access
             : 'https://example.com/default-profile.png'; // Default profile image if none is found
     }
+
 
     /**
      * Get all of the media for the user.

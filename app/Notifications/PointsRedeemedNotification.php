@@ -5,23 +5,24 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\Message;
 
-class NewMessageNotification extends Notification
+class PointsRedeemedNotification extends Notification
 {
     use Queueable;
 
-    public $message;
+    protected $points;
+    protected $amount;
 
     /**
      * Create a new notification instance.
      *
-     * @param  \App\Models\Message  $message
-     * @return void
+     * @param int $points
+     * @param float $amount
      */
-    public function __construct(Message $message)
+    public function __construct($points, $amount)
     {
-        $this->message = $message;
+        $this->points = $points;
+        $this->amount = $amount;
     }
 
     /**
@@ -32,7 +33,7 @@ class NewMessageNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['database']; // Adding 'database' to store in the database
+        return ['mail', 'database']; // Sends notification via both mail and database
     }
 
     /**
@@ -44,8 +45,11 @@ class NewMessageNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('You have a new message in your support ticket.')
-            ->action('View Message', url(route('support.show', $this->message->support_ticket_id)))
+            ->subject('Points Redeemed Successfully')
+            ->greeting('Hello ' . $notifiable->name . ',')
+            ->line('You have successfully redeemed ' . $this->points . ' points.')
+            ->line('This equals $' . number_format($this->amount, 2) . ' added to your balance.')
+            ->action('View Balance', url('/balance'))
             ->line('Thank you for using our application!');
     }
 
@@ -58,10 +62,9 @@ class NewMessageNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'support_ticket_id' => $this->message->support_ticket_id,
-            'message_content' => $this->message->message,
-            'user_avatar' => $this->message->user->avatar ?? 'default-avatar.png', // Ensure a default avatar if none is set
-            'user_name' => $this->message->user->name,
+            'points' => $this->points,
+            'amount' => $this->amount,
+            'message' => 'You have successfully redeemed ' . $this->points . ' points for $' . number_format($this->amount, 2),
         ];
     }
 }

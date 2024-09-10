@@ -260,6 +260,53 @@ class UserController extends Controller
         }
     }
 
+    public function updateImage(Request $request)
+    {
+        $request->validate([
+            'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = auth()->user();
+
+        try {
+            // Handle file upload
+            if ($request->hasFile('profile_image')) {
+                $file = $request->file('profile_image');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+
+                // Store the file in the 'public/profile_images' directory
+                $path = $file->storeAs('profile_images', $fileName, 'public');
+
+                // Check if the user already has a media record
+                $existingMedia = $user->media()->first();
+
+                // If there is an existing image, delete it from storage
+                if ($existingMedia) {
+                    Storage::disk('public')->delete($existingMedia->path);
+                }
+
+                // Save or update the user's media record
+                $user->media()->updateOrCreate(
+                    ['mediable_id' => $user->id, 'mediable_type' => get_class($user)], // Conditions to check for the existing record
+                    [
+                        'file_name' => $fileName,
+                        'file_type' => $file->getMimeType(),
+                        'file_size' => $file->getSize(),
+                        'path' => $path,
+                    ]
+                );
+
+                // If upload and save succeed, redirect with success message
+                return redirect()->back()->with('success', 'Profile image updated successfully!');
+            }
+
+            // Fallback in case the file wasn't uploaded
+            return redirect()->back()->with('error', 'No image file uploaded.');
+        } catch (\Exception $e) {
+            // Catch any errors and return an error message
+            return redirect()->back()->with('error', 'Failed to upload image. ' . $e->getMessage());
+        }
+    }
     public function addBalance(User $user)
     {
         // Check and log if the policy is being invoked

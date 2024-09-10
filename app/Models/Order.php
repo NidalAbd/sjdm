@@ -26,9 +26,11 @@ class Order extends Model
         return $this->belongsTo(Service::class, 'service_id', 'service_id');
     }
 
-    public function supportTickets()
+    // In your Order model
+    public function supportTicket()
     {
-        return $this->morphMany(SupportTicket::class, 'ticketable');
+        return $this->hasOne(SupportTicket::class, 'ticketable_id')->where('ticketable_type', 'App\Models\Order');
     }
+
 
 }

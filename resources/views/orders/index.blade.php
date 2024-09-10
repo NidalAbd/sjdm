@@ -120,13 +120,24 @@
                                                         <i class="fas fa-ban"></i>
                                                     </button>
                                                 @endif
-                                                @can('create_ticket')
-                                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#createTicketModal{{ $order->id }}"
-                                                            title="{{ __('adminlte.create_support_ticket') }}">
-                                                        <i class="fas fa-headset"></i>
-                                                    </button>
-                                                @endcan
+                                                    <!-- Inside the orders table rows, where support ticket button exists -->
+                                                    <!-- Inside the orders table rows, where support ticket button exists -->
+                                                    @if(!$order->supportTicket) <!-- Check if there's no support ticket for this order -->
+                                                    @can('create_ticket')
+                                                        <!-- Display the Create Ticket Button -->
+                                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                                data-bs-target="#createTicketModal{{ $order->id }}"
+                                                                title="{{ __('adminlte.create_support_ticket') }}">
+                                                            <i class="fas fa-headset"></i>
+                                                        </button>
+                                                    @endcan
+                                                    @else
+                                                        <!-- Display View Ticket Button when a support ticket exists -->
+                                                        <a href="{{ route('support.show', $order->supportTicket->id) }}" class="btn btn-info btn-sm"
+                                                           title="{{ __('adminlte.view_ticket') }}">
+                                                            <i class="fas fa-ticket-alt"></i>
+                                                        </a>
+                                                    @endif
                                             </div>
                                         </td>
                                     </tr>

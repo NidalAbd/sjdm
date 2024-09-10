@@ -3,37 +3,45 @@
 @section('title', 'Profile Settings')
 
 @section('content_header')
-    @include('partials.breadcrumbs')  <!-- Automatically include breadcrumbs -->
-    <h1>{{ __('adminlte.profile') }}</h1>
+    @include('partials.breadcrumbs')
+    <h1 class="display-4">{{ __('adminlte.profile') }}</h1>
 @stop
 
 @section('content')
+
     <div class="container mt-5">
-
-
         <div class="row">
+            <!-- Profile Sidebar -->
+            <!-- Profile Sidebar -->
             <div class="col-lg-4">
-                <!-- Sidebar for Profile Picture and Basic Info -->
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <!-- Dynamically load user's profile image -->
-                        <img src="{{ $user->adminlte_image() }}" alt="User Avatar" class="img-fluid rounded-circle mb-3" style="width: 250px; height: 250px;">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body text-center position-relative">
+                        <!-- Profile Image with Edit Icon -->
+                        <img src="{{ asset($user->adminlte_image()) }}" alt="Profile Image" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+
+                        <!-- Upload Image Icon Overlay -->
+                        <label for="profile_image" class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer;">
+                            <i class="fas fa-camera fa-2x text-muted"></i>
+                        </label>
+                        <input type="file" id="profile_image" name="profile_image" class="d-none" accept="image/*">
+
+                        <!-- Username and Email -->
                         <h4>{{ $user->name }}</h4>
                         <p class="text-muted">{{ $user->email }}</p>
 
-                        <!-- Status badge with dynamic styling based on user status -->
-                        <span class="badge {{ $user->status_badge_class }} mt-2">
-                {{ ucfirst($user->status) }}
-            </span>
+                        <!-- Status Badge -->
+                        <span class="badge {{ $user->status_badge_class }} p-2">
+                            {{ ucfirst($user->status) }}
+                        </span>
                     </div>
                 </div>
             </div>
 
+            <!-- Profile Settings Content -->
             <div class="col-lg-8">
-                <!-- Main Content for Profile Settings -->
-                <div class="card shadow-sm">
+                <div class="card shadow-sm border-0">
                     <div class="card-body">
-                        <ul class="nav nav-tabs mb-4" id="profile-tabs" role="tablist">
+                        <ul class="nav nav-pills mb-4" id="profile-tabs" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="settings-tab" data-bs-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="true">{{ __('Profile Settings') }}</a>
                             </li>
@@ -47,6 +55,7 @@
                                 <a class="nav-link" id="referrals-tab" data-bs-toggle="tab" href="#referrals" role="tab" aria-controls="referrals" aria-selected="false">{{ __('Referrals') }}</a>
                             </li>
                         </ul>
+
                         <div class="tab-content" id="profile-tabs-content">
                             <!-- Profile Settings Tab -->
                             <div class="tab-pane fade show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
@@ -62,6 +71,7 @@
                                             <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" required>
                                         </div>
                                     </div>
+
                                     <!-- Referral Code and Link -->
                                     <div class="mb-3">
                                         <label for="referral-code">{{ __('Your Referral Code') }}</label>
@@ -72,8 +82,9 @@
                                         <input type="text" id="referral-link" class="form-control" value="{{ route('register', ['ref' => $user->referral_code]) }}" readonly>
                                         <small class="form-text text-muted">{{ __('Share this link to invite friends and earn rewards!') }}</small>
                                     </div>
+
                                     <div class="d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-primary" onclick="return confirmChanges()">{{ __('Save Changes') }}</button>
+                                        <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                                     </div>
                                 </form>
                             </div>
@@ -92,7 +103,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse ($orders as $order)
+                                        @forelse ($orders->take(5) as $order)
                                             <tr>
                                                 <td>{{ $order->id }}</td>
                                                 <td>{{ $order->created_at->format('d/m/Y') }}</td>
@@ -124,7 +135,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse ($transactions as $transaction)
+                                        @forelse ($transactions->take(5) as $transaction)
                                             <tr>
                                                 <td>{{ $transaction->id }}</td>
                                                 <td>{{ $transaction->created_at->format('d/m/Y') }}</td>
@@ -150,11 +161,10 @@
                                     <ul>
                                         <li>{{ __('A verified user is someone who has confirmed their email address.') }}</li>
                                         <li>{{ __('An active user is someone who has added at least $20 to their account.') }}</li>
-                                        <li>{{ __('Once you refer 50 users who meet these criteria, you can request your $100 bonus!') }}</li>
                                     </ul>
                                     <p>{{ __('Total referrals: ') }} {{ $totalReferrals->count() }}</p>
                                     <p>{{ __('Verified and active referrals: ') }} {{ $verifiedActiveReferrals->count() }}</p>
-                                    <a href="{{ route('bonus.request') }}" class="btn btn-primary text-decoration-none mt-2">{{ __('Request Your Bonus') }}</a>
+                                    <a href="{{ route('bonus.request') }}" class="btn btn-primary mt-2">{{ __('Request Your Bonus') }}</a>
                                 </div>
 
                                 <div class="table-responsive">
@@ -170,7 +180,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse ($totalReferrals as $referral)
+                                        @forelse ($totalReferrals->take(5) as $referral)
                                             <tr>
                                                 <td>{{ $referral->id }}</td>
                                                 <td>{{ $referral->name }}</td>
@@ -188,40 +198,39 @@
                                     </table>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Custom Scripts -->
-        @section('scripts')
-            <script>
-                // Function to confirm changes for name and email
-                function confirmChanges() {
-                    const nameChanged = document.getElementById('name').value !== '{{ $user->name }}';
-                    const emailChanged = document.getElementById('email').value !== '{{ $user->email }}';
+        <!-- Hidden Form for Image Upload -->
+        <form id="upload-form" action="{{ route('profile.update.image') }}" method="POST" enctype="multipart/form-data" class="d-none">
+            @csrf
+            <div class="form-group">
+                <input type="file" name="profile_image" id="hidden-profile-image" class="form-control" required>
+            </div>
+        </form>
 
-                    if (nameChanged || emailChanged) {
-                        return confirm('{{ __('Are you sure you want to save these changes?') }}');
-                    }
+        <script>
+            document.getElementById('profile_image').addEventListener('change', function(event) {
+                const fileInput = document.getElementById('profile_image');
+                const hiddenInput = document.getElementById('hidden-profile-image');
+                hiddenInput.files = fileInput.files; // Transfer files to hidden form
+                document.getElementById('upload-form').submit();
+            });
 
-                    return true;
-                }
-
-                // Initialize Bootstrap tabs
-                document.addEventListener('DOMContentLoaded', function () {
-                    var triggerTabList = [].slice.call(document.querySelectorAll('#profile-tabs a'))
-                    triggerTabList.forEach(function (triggerEl) {
-                        var tabTrigger = new bootstrap.Tab(triggerEl)
-                        triggerEl.addEventListener('click', function (event) {
-                            event.preventDefault()
-                            tabTrigger.show()
-                        })
+            // Initialize Bootstrap tabs
+            document.addEventListener('DOMContentLoaded', function () {
+                var triggerTabList = [].slice.call(document.querySelectorAll('#profile-tabs a'))
+                triggerTabList.forEach(function (triggerEl) {
+                    var tabTrigger = new bootstrap.Tab(triggerEl)
+                    triggerEl.addEventListener('click', function (event) {
+                        event.preventDefault()
+                        tabTrigger.show()
                     })
-                });
-            </script>
-        @endsection
+                })
+            });
+        </script>
     </div>
 @endsection

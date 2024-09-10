@@ -20,6 +20,9 @@ return new class extends Migration
             $table->text('message');
             $table->timestamp('read_at')->nullable();
 
+            // New Field: Sender role or type
+            $table->string('sender_role')->nullable();  // 'admin', 'user'
+
             $table->timestamps();
 
             // Foreign keys
@@ -27,6 +30,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.

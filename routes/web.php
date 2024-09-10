@@ -6,6 +6,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PointsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
@@ -68,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/settings', [ProfileController::class, 'updateSettings'])->name('profile.settings.update');
     Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
     Route::get('/referrals', [UserController::class, 'referalIndex'])->name('referrals.index');
+    Route::post('/profile/update-image', [UserController::class, 'updateImage'])->name('profile.update.image');
 
     // Role and permission routes
     Route::resource('roles', RoleController::class);
@@ -112,6 +114,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{ticket}', [SupportTicketController::class, 'update'])->name('support.update');
         Route::delete('/{ticket}', [SupportTicketController::class, 'destroy'])->name('support.destroy');
         Route::post('/{ticket}/messages', [MessageController::class, 'store'])->name('messages.store');
+        Route::post('/{ticket}/close', [SupportTicketController::class, 'closeTicket'])->name('support.close');
+
     });
 
     Route::get('notifications/latest', [NotificationController::class, 'fetchLatest'])->name('notifications.latest');
@@ -127,4 +131,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
     Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
+    Route::get('/points', [PointsController::class, 'index'])->name('points.index');
+    Route::post('/points/redeem', [PointsController::class, 'redeem'])->name('points.redeem');
 });

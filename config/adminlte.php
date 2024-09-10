@@ -232,13 +232,14 @@ return array(
             'icon_color' => 'success', // Set predefined color
         ),
         array(
-            'text' => 'points', // Use translation key for points
-            'url'  => 'points', // URL for points page
-            'icon' => 'fas fa-coins', // Icon for points
-            'topnav_center' => true, // Display in top navigation center
-            'can'  => 'view_support', // Permission for viewing points
-            'icon_color' => 'warning', // Set predefined color
+            'text' => 'Points', // Label for the menu item (can be translated using a translation key)
+            'url'  => 'points', // URL for the points page (route name or actual URL)
+            'icon' => 'fas fa-coins', // FontAwesome icon for the points menu
+            'topnav_center' => true, // Display in the center of the top navigation
+            'can'  => 'view_support', // Permission required to see the menu item (you'll need a policy or gate for this)
+            'icon_color' => 'warning', // Set color for the icon (Bootstrap predefined colors)
         ),
+
 
 
     ),

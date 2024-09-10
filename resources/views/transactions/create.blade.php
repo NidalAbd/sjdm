@@ -9,7 +9,7 @@
 
 @section('content')
     <div class="col-md-12 row justify-content-center">
-        <div class="col-md-12 mb-4 p-2 alert-info d-flex justify-content-between align-items-center rounded shadow-sm m-2" role="alert">
+        <div class="col-md-12 mb-4 p-0 alert-info d-flex justify-content-between align-items-center rounded shadow-sm " role="alert">
             <div class="d-flex align-items-center">
                 <i class="fas fa-shield-alt fa-2x m-2"></i>
                 <div>
@@ -20,7 +20,7 @@
             </div>
 
             <!-- WhatsApp Button to Contact Admin -->
-            <a href="https://wa.me/971557830054?text=I%20want%20to%20pay%20via%20USDT" target="_blank" class="m-2 btn btn-lg btn-success px-4 py-2">
+            <a href="https://wa.me/971557830054?text=I%20want%20to%20pay%20via%20USDT" target="_blank" class="btn btn-lg btn-success btn-sm px-4 py-2">
                 <i class="fab fa-whatsapp me-2"></i> {{ __('adminlte.contact_admin_whatsapp') }}
             </a>
         </div>

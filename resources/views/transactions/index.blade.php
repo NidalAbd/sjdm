@@ -83,12 +83,27 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <!-- Conditionally show "Create Support Ticket" button -->
-                                                @if($transaction->status != 'completed')
-                                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#createTicketModal{{ $transaction->id }}"
-                                                            title="{{ __('adminlte.create_support_ticket') }}">
+                                                <!-- Inside the transactions table rows, where support ticket button exists -->
+                                                <!-- Inside the transactions table rows, where support ticket button exists -->
+                                                <!-- Inside the transactions table rows, where support ticket button exists -->
+                                                @if(!$transaction->supportTicket && $transaction->status !== 'completed')
+                                                    <!-- Check if there's no support ticket and the transaction is not completed -->
+                                                    @can('create_ticket')
+                                                        <!-- Display the Create Ticket Button -->
+                                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                                data-bs-target="#createTicketModal{{ $transaction->id }}"
+                                                                title="{{ __('adminlte.create_support_ticket') }}">
+                                                            <i class="fas fa-headset"></i>
+                                                        </button>
+                                                    @endcan
+                                                @else
+                                                    @if($transaction->supportTicket) <!-- Check if supportTicket exists -->
+                                                    <!-- Display View Ticket Button when a support ticket exists -->
+                                                    <a href="{{ route('support.show', $transaction->supportTicket->id) }}" class="btn btn-info btn-sm"
+                                                       title="{{ __('adminlte.view_ticket') }}">
                                                         <i class="fas fa-ticket-alt"></i>
-                                                    </button>
+                                                    </a>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>

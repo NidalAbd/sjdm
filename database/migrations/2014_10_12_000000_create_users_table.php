@@ -24,6 +24,8 @@ return new class extends Migration
             // Additional Fields
             $table->decimal('balance', 15, 7)->default(0.00);
             $table->string('currency', 3)->default('USD');
+            $table->integer('points')->default(0); // Add points field to users
+
             $table->string('language', 5)->default('en');
             $table->enum('status', ['active', 'inactive', 'suspended', 'banned'])->default('inactive');
             // Personal Fields

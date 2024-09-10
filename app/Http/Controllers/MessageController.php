@@ -29,21 +29,31 @@ class MessageController extends Controller
         }
 
         try {
+            // Determine the sender's role
+            $senderRole = Auth::user()->hasRole('admin') ? 'admin' : 'user';
+
             // Create the message
             $message = Message::create([
                 'support_ticket_id' => $ticket->id,
                 'user_id' => Auth::id(),
                 'message' => $request->message,
+                'sender_role' => $senderRole,  // Save the sender's role
             ]);
 
-            // Check if there's already an unread notification for this ticket
-            $unreadNotificationExists = $ticket->user->unreadNotifications
-                    ->where('data.support_ticket_id', $ticket->id)
-                    ->count() > 0;
+            // Determine the recipient (if the sender is the user, notify the admin; otherwise, notify the user)
+            if ($senderRole === 'admin') {
+                // If the admin sends the message, notify the user
+                $recipient = $ticket->user;
+            } else {
+                // If the user sends the message, notify the admin (make sure you have an admin relation or field)
+                $recipient = $ticket->admin;  // Make sure that $ticket->admin returns the correct admin user
+            }
 
-            // If there's no unread notification for this ticket, send a new notification
-            if (!$unreadNotificationExists) {
-                $ticket->user->notify(new NewMessageNotification($message));
+            // Ensure the recipient is not null before sending the notification
+            if ($recipient) {
+                $recipient->notify(new NewMessageNotification($message));
+            } else {
+                Log::error('Recipient is null. Unable to send notification.');
             }
 
             // Mark all notifications related to this support ticket as read

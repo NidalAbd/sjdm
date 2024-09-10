@@ -54,7 +54,7 @@ class SupportTicketController extends Controller
             'subject.required' => 'The subject field is required and cannot be empty.',
             'message.required' => 'The message field is required and cannot be empty.',
             'type.required' => 'The type field is required and cannot be empty.',
-            'type.in' => 'The type must be either order or payment.',
+            'type.in' => 'The type must be either order or transaction.',
             'subtype.in' => 'The subtype must be one of the following: refund, acceleration, cancel, failed_payment, refund_request, payment_dispute, chargeback, invoice_request.',
         ];
 
@@ -73,6 +73,16 @@ class SupportTicketController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        // Check if a ticket already exists for the same Order or Transaction
+        $existingTicket = SupportTicket::where('ticketable_id', $request->ticketable_id)
+            ->where('ticketable_type', $request->ticketable_type)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($existingTicket) {
+            return redirect()->back()->with('error', 'A support ticket already exists for this order/transaction.');
+        }
+
         // Create the support ticket
         $ticket = SupportTicket::create([
             'user_id' => Auth::id(),
@@ -85,7 +95,7 @@ class SupportTicketController extends Controller
             'subtype' => $request->subtype,
         ]);
 
-        // Notify the user about the new ticket
+        // Notify the user about the new ticket via email and database notification
         auth()->user()->notify(new TicketNotification($ticket));
 
         // Redirect the user to the support page with success message
@@ -104,15 +114,23 @@ class SupportTicketController extends Controller
         if ($user->cannot('view', $ticket)) {
             abort(403);
         }
+
         Log::info('Ticket Details:', $ticket->toArray());
 
-        // Mark all notifications as read when the ticket is viewed
-        $user->unreadNotifications
-            ->where('data.support_ticket_id', $ticket->id)
-            ->markAsRead();
+        // Mark unread notifications related to this specific ticket as read
+        $user->unreadNotifications->each(function ($notification) use ($ticket) {
+            if (isset($notification->data['support_ticket_id']) && $notification->data['support_ticket_id'] == $ticket->id) {
+                $notification->markAsRead();
+            }
+        });
+
+        // Mark the messages as read for the current user (admin or client)
+        $ticket->messages()->whereNull('read_at')->where('user_id', '!=', $user->id)->update(['read_at' => now()]);
 
         return view('support.show', compact('ticket'));
     }
+
+
 
     public function edit(SupportTicket $ticket)
     {
@@ -145,5 +163,19 @@ class SupportTicketController extends Controller
         $ticket->delete();
 
         return redirect()->route('support.index')->with('success', 'Ticket deleted successfully!');
+    }
+
+    public function closeTicket(SupportTicket $ticket)
+    {
+        // Ensure only admins can close tickets
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
+        }
+
+        // Set the ticket status to "Closed"
+        $closedStatus = TicketStatus::where('name', 'Closed')->firstOrFail();
+        $ticket->update(['status_id' => $closedStatus->id]);
+
+        return response()->json(['status' => 'success', 'message' => 'Ticket closed successfully.']);
     }
 }

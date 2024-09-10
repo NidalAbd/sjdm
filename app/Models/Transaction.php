@@ -23,8 +23,8 @@ class Transaction extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function supportTickets()
+    public function supportTicket()
     {
-        return $this->hasMany(SupportTicket::class);
+        return $this->hasOne(SupportTicket::class, 'ticketable_id')->where('ticketable_type', 'App\Models\Transaction');
     }
 }
