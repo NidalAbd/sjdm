@@ -165,7 +165,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $profileMedia = $this->media()->where('file_type', 'like', 'image%')->first();
 
         return $profileMedia
-            ? asset( $profileMedia->path) // Use storage path for public access
+            ? asset('storage/' . $profileMedia->path) // Use storage path for public access
             : 'https://example.com/default-profile.png'; // Default profile image if none is found
     }
 
