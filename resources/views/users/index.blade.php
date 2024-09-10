@@ -124,20 +124,26 @@
                                                 <form action="{{ route('users.processAddBalance', $user->id) }}" method="POST">
                                                     @csrf
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="addBalanceModalLabel{{ $user->id }}">{{ __('adminlte.add_balance_to') }} {{ $user->name }}</h5>
+                                                        <h5 class="modal-title" id="addBalanceModalLabel{{ $user->id }}">{{ __('adminlte.add_or_debit_balance_to') }} {{ $user->name }}</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('adminlte.close') }}"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
+                                                            <label for="transaction_type">{{ __('adminlte.transaction_type') }}</label>
+                                                            <select class="form-control" id="transaction_type" name="transaction_type" required>
+                                                                <option value="credit">{{ __('adminlte.credit') }}</option>
+                                                                <option value="debit">{{ __('adminlte.debit') }}</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group mt-3">
                                                             <label for="amount">{{ __('adminlte.amount') }}</label>
                                                             <input type="number" class="form-control" id="amount" name="amount" min="1" required>
                                                         </div>
-                                                        <!-- Add the hidden user_id field -->
                                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('adminlte.close') }}</button>
-                                                        <button type="submit" class="btn btn-primary">{{ __('adminlte.add_balance') }}</button>
+                                                        <button type="submit" class="btn btn-primary">{{ __('adminlte.add_or_debit_balance') }}</button>
                                                     </div>
                                                 </form>
                                             </div>

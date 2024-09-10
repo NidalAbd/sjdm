@@ -110,6 +110,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Transaction::class);
     }
 
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
+
     public function createTransactionAndNotify($transactionData): Model
     {
         $transaction = $this->transactions()->create($transactionData);

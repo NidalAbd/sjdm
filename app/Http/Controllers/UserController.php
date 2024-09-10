@@ -278,20 +278,34 @@ class UserController extends Controller
      */
     public function processAddBalance(Request $request)
     {
-
         $this->authorize('add_balance', Transaction::class);
 
+        // Validate the request
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:1',
+            'transaction_type' => 'required|in:credit,debit',
         ]);
 
         $user = User::findOrFail($request->user_id);
         $amount = $request->amount;
+        $transactionType = $request->transaction_type;
+
+        // If it's a debit transaction, decrease the user's balance by the amount
+        if ($transactionType === 'debit') {
+            // Decrease the balance even if it results in a negative balance
+            $user->decrement('balance', $amount);
+        }
+
+        // If it's a credit transaction, increase the user's balance
+        if ($transactionType === 'credit') {
+            // Increment user's balance
+            $user->increment('balance', $amount);
+        }
 
         // Create the transaction and send notifications using the existing method
         $transactionData = [
-            'type' => 'credit',
+            'type' => $transactionType,
             'amount' => $amount,
             'status' => 'completed',
             'currency' => 'USD', // assuming USD as the default currency
@@ -300,11 +314,7 @@ class UserController extends Controller
         // Use the createTransactionAndNotify method
         $transaction = $user->createTransactionAndNotify($transactionData);
 
-        // Increment user's balance
-        $user->increment('balance', $amount);
-
-
-        return redirect()->route('transactions.index')->with('success', 'Balance added successfully for user.');
+        return redirect()->route('transactions.index')->with('success', ucfirst($transactionType) . ' transaction processed successfully.');
     }
 
 

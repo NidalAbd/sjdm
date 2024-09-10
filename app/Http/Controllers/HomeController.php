@@ -4,44 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Service;
+use App\Models\SupportTicket;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Ticket; // Import the Ticket model if you have it for support tickets
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Support\Renderable;
+
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
         $this->middleware('verified');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return Renderable
-     */
-
-
     public function index()
     {
         $user = auth()->user();
 
-        // Define time ranges
+        // Time ranges for total cost and profit
         $timeRanges = [
             '24h' => Carbon::now()->subDay(),
             '7d' => Carbon::now()->subDays(7),
             '30d' => Carbon::now()->subDays(30),
-            'lifetime' => null, // For lifetime, no date filter
+            'lifetime' => null,
         ];
 
-        // Fetch transactions and calculate total cost and profit for each period
+        // Fetch transactions and calculate total cost and profit
         $totals = [];
         foreach ($timeRanges as $key => $startDate) {
             $transactions = Transaction::where('user_id', $user->id);
@@ -60,9 +50,35 @@ class HomeController extends Controller
         $orderCount = Order::count();
         $startingPrice = Service::min('rate');
 
-        return view('dashboard', compact('totals', 'userCount', 'serviceCount', 'orderCount', 'startingPrice'));
-    }
+        // Referrals for current user
+        $verifiedActiveReferrals = User::where('referred_by', $user->id)
+            ->where('status', 'active')
+            ->whereNotNull('email_verified_at')
+            ->get();
 
+        // Support tickets for current user
+        $ticketsCount = SupportTicket::where('user_id', $user->id)->count();
+
+        // Unique orders by status for current user
+        $ordersByStatus = Order::where('user_id', $user->id)
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        // Define colors for statuses
+        $statusColors = [
+            'pending' => 'warning',
+            'processing' => 'info',
+            'completed' => 'success',
+            'canceled' => 'danger',
+        ];
+
+        return view('dashboard', compact(
+            'totals', 'userCount', 'serviceCount',
+            'orderCount', 'startingPrice', 'verifiedActiveReferrals',
+            'ticketsCount', 'ordersByStatus', 'statusColors'
+        ));
+    }
 
     public function updateSettings(Request $request)
     {
@@ -76,5 +92,4 @@ class HomeController extends Controller
 
         return redirect()->route('profile.settings')->with('success', 'Profile settings updated successfully.');
     }
-
 }

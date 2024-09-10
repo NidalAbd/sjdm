@@ -139,7 +139,12 @@ class OrderController extends Controller
 
         $user = auth()->user();
 
-        // Save the order in the database with a "Pending API" status
+        // Check if the user has enough balance
+        if ($user->balance < $userCharge) {
+            return redirect()->back()->with('error', 'Insufficient balance to place this order.');
+        }
+
+        // If the user has enough balance, proceed to create the order
         $order = new Order();
         $order->user_id = $user->id;
         $order->service_id = $validated['service_id'];
@@ -150,28 +155,24 @@ class OrderController extends Controller
         $order->save();
 
         // Deduct the charge from the user's balance
-        if ($user->balance >= $userCharge) {
-            $user->balance -= $userCharge;
-            $user->save();
+        $user->balance -= $userCharge;
+        $user->save();
 
-            // Create a transaction record
-            $transaction = new Transaction();
-            $transaction->user_id = $user->id;
-            $transaction->type = 'debit';
-            $transaction->amount = $userCharge;
-            $transaction->api_cost = $actualCost;  // Store the actual cost
-            $transaction->profit = $userCharge - $actualCost;  // Calculate the profit
-            $transaction->currency = 'USD';
-            $transaction->status = 'pending';  // Mark as pending since the order hasn't been sent to the API yet
-            $transaction->save();
+        // Create a transaction record
+        $transaction = new Transaction();
+        $transaction->user_id = $user->id;
+        $transaction->type = 'debit';
+        $transaction->amount = $userCharge;
+        $transaction->api_cost = $actualCost;  // Store the actual cost
+        $transaction->profit = $userCharge - $actualCost;  // Calculate the profit
+        $transaction->currency = 'USD';
+        $transaction->status = 'pending';  // Mark as pending since the order hasn't been sent to the API yet
+        $transaction->save();
 
-            // Send notification for the transaction
-            $user->notify(new TransactionNotification($transaction));
+        // Send notification for the transaction
+        $user->notify(new TransactionNotification($transaction));
 
-            return redirect()->route('orders.index')->with('success', 'Order placed successfully and will be processed once API balance is sufficient.');
-        } else {
-            return redirect()->back()->with('error', 'Insufficient balance.');
-        }
+        return redirect()->route('orders.index')->with('success', 'Order placed successfully and will be processed once API balance is sufficient.');
     }
 
 

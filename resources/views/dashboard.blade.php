@@ -139,11 +139,13 @@
     @else
         <!-- User-specific widgets -->
         <div class="row mt-4">
+            <!-- Unique Orders by Status Widgets -->
+
             <!-- Referrals widget -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
-                        <h3>{{ $verifiedActiveReferrals->count() }}</h3>
+                        <h3>{{ $verifiedActiveReferrals->count() ?? 0 }}</h3>
                         <p>{{ __('adminlte.referrals') }}</p>
                     </div>
                     <div class="icon">
@@ -167,6 +169,20 @@
                 </div>
             </div>
 
+            <!-- Support Tickets widget -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>{{ auth()->user()->supportTickets()->count() }}</h3>
+                        <p>{{ __('Support Tickets') }}</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <a href="{{ route('support.index') }}" class="small-box-footer">{{ __('View Tickets') }} <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
             <!-- Transactions widget -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-primary">
@@ -180,6 +196,20 @@
                     <a href="{{ route('transactions.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
+
+            @foreach($ordersByStatus as $status => $count)
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-{{ $statusColors[$status] ?? 'danger' }}">
+                        <div class="inner">
+                            <h3>{{ $count }}</h3>
+                            <p>{{ ucfirst($status) }} {{ __('Orders') }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     @endif
 @endsection
