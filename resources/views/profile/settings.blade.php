@@ -12,7 +12,7 @@
     <div class="container mt-5">
         <div class="row">
             <!-- Profile Sidebar -->
-            <!-- Profile Sidebar -->
+            <!-- Profilsse Sidebar -->
             <div class="col-lg-4">
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-body text-center position-relative">
