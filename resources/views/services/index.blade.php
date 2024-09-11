@@ -80,7 +80,9 @@
 
                                         <td>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</td>
                                         <td>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</td>
-                                        @role('admin')<td>{{ $service->cost }}</td>@endrole
+                                        @can('assign_role')
+                                            <td>{{ $service->cost }}</td>
+                                        @endcan
                                         <td>{{ $service->rate }}</td>
                                         <td>{{ $service->min }}</td>
                                         <td>{{ $service->max }}</td>
