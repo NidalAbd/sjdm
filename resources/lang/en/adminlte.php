@@ -96,7 +96,7 @@ return [
     // ========================= Language =========================
     'language' => 'Language',
     'english' => 'English',
-    'arabic' => 'Arabic',
+    'arabic' => 'العربية',
 
     // ========================= Verification & Error Messages =========================
     'verify_message' => 'Your account needs verification',
