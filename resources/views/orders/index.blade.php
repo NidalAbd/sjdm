@@ -80,7 +80,13 @@
                                     <tr>
                                         <td>{{ $order->id }}</td>
                                         <td>{{ $order->user->name }}</td>
-                                        <td>{{ $order->service->name }}</td>
+                                        <td>
+                                            @if(app()->getLocale() === 'ar')
+                                                {{ $order->service->name_ar }}
+                                            @else
+                                                {{ $order->service->name_en }}
+                                            @endif
+                                        </td>
                                         <td><a href="{{ $order->link }}" target="_blank">{{ $order->link }}</a></td>
                                         <td>{{ $order->quantity }}</td>
                                         <td>${{ number_format($order->charge, 2) }}</td>
