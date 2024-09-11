@@ -148,13 +148,28 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User has been soft deleted successfully.');
     }
 
-    public function restore($id)
+    public function restore(Request $request, $id)
     {
+        // Find the user with trashed (soft deleted) status
         $user = User::withTrashed()->findOrFail($id);
+
+        // Check if user is already restored
+        if (!$user->trashed()) {
+            return redirect()->route('users.index')->with('error', 'User is already active.');
+        }
+
+        // Restore the user
         $user->restore();
 
-        return redirect()->route('users.index')->with('success', 'User restored successfully.');
+        // Generate a token for password reset
+        $token = app('auth.password.broker')->createToken($user);
+
+        // Send a notification to the user to welcome them back and reset their password
+        $user->notify(new \App\Notifications\UserRestoredNotification($token));
+
+        return redirect()->route('users.index')->with('success', 'User restored successfully. A password reset link has been sent.');
     }
+
 
     public function assignRole(User $user)
     {

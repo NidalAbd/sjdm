@@ -55,7 +55,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Models\User
+     * @return \Illuminate\Http\RedirectResponse
      */
     protected function create(array $data)
     {
@@ -63,6 +63,13 @@ class RegisterController extends Controller
 
         if (!empty($data['referral_code'])) {
             $referrer = User::where('referral_code', $data['referral_code'])->first();
+        }
+        // Check if the user exists but is soft-deleted
+        $user = User::withTrashed()->where('email', $data['email'])->first();
+
+        if ($user && $user->trashed()) {
+            // Return a custom message for soft-deleted users trying to register
+            return back()->withErrors(['email' => 'This email is already registered but has been deleted. Please contact support to restore your account.']);
         }
 
         $user = User::create([
