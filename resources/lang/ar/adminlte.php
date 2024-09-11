@@ -95,7 +95,7 @@ return [
 
     // ========================= Language =========================
     'language' => 'اللغة',
-    'english' => 'english',
+    'english' => 'English',
     'arabic' => 'العربية',
 
     // ========================= Verification & Error Messages =========================
