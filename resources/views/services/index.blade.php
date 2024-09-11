@@ -14,9 +14,6 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card shadow-sm">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('adminlte.service_list') }}</h3>
-                </div>
                 <div class="card-body">
                     <!-- Search and Filters Form -->
                     <form id="filterForm" action="{{ route('services.index') }}" method="GET">
@@ -69,7 +66,7 @@
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
-                                <th>{{ __('adminlte.cost') }}</th>
+                                @role('admin')<th>{{ __('adminlte.cost') }}</th>
                                 <th>{{ __('adminlte.rate') }}</th>
                                 <th>{{ __('adminlte.min') }}</th>
                                 <th>{{ __('adminlte.max') }}</th>
@@ -83,7 +80,7 @@
 
                                         <td>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</td>
                                         <td>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</td>
-                                        <td>{{ $service->cost }}</td>
+                                        @role('admin')<td>{{ $service->cost }}</td>@endrole
                                         <td>{{ $service->rate }}</td>
                                         <td>{{ $service->min }}</td>
                                         <td>{{ $service->max }}</td>
@@ -199,15 +196,17 @@
                                 </tr>
                             @endif
                             </tbody>
+                            <tfoot class="bg-primary text-white">
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
-                                <th>{{ __('adminlte.cost') }}</th>
+                                @role('admin')<th>{{ __('adminlte.cost') }}</th>
                                 <th>{{ __('adminlte.rate') }}</th>
                                 <th>{{ __('adminlte.min') }}</th>
                                 <th>{{ __('adminlte.max') }}</th>
                                 <th class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
