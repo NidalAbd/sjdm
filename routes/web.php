@@ -70,7 +70,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
     Route::get('/referrals', [UserController::class, 'referalIndex'])->name('referrals.index');
     Route::post('/profile/update-image', [UserController::class, 'updateImage'])->name('profile.update.image');
-    Route::post('users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
+    Route::post('/users/{user}/toggle-ban', [UserController::class, 'toggleBan'])->name('users.toggleBan');
 
     // Role and permission routes
     Route::resource('roles', RoleController::class);

@@ -380,21 +380,26 @@ class UserController extends Controller
     }
 
 
-    public function ban(User $user)
+    public function toggleBan(User $user)
     {
-        // Check if the user is already banned
+        // Check current user status and toggle between 'banned' and 'inactive'
         if ($user->status == 'banned') {
-            return redirect()->route('users.index')->with('error', 'User is already banned.');
+            // Unban the user by setting their status to 'inactive'
+            $user->status = 'inactive';
+            $message = 'User has been unbanned and set to inactive.';
+        } else {
+            // Ban the user if they are active, inactive, or suspended
+            $user->status = 'banned';
+            $message = 'User has been banned successfully.';
         }
 
-        // Ban the user by setting their status to 'banned'
-        $user->status = 'banned';
+        // Save the updated user status
         $user->save();
 
-        // Optionally, you can notify the user about the ban or log the action
-        // $user->notify(new UserBannedNotification($user));
+        // Optionally, you can notify the user about the status change or log the action
+        // $user->notify(new UserStatusChangedNotification($user));
 
-        return redirect()->route('users.index')->with('success', 'User has been banned successfully.');
+        return redirect()->route('users.index')->with('success', $message);
     }
 
 }
