@@ -66,7 +66,8 @@
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
-                                @role('admin')<th>{{ __('adminlte.cost') }}</th>
+                                @can('assign_role')<th>{{ __('adminlte.cost') }}</th>@endcan
+
                                 <th>{{ __('adminlte.rate') }}</th>
                                 <th>{{ __('adminlte.min') }}</th>
                                 <th>{{ __('adminlte.max') }}</th>
@@ -203,7 +204,7 @@
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
-                                @role('admin')<th>{{ __('adminlte.cost') }}</th>
+                                @can('assign_role')<th>{{ __('adminlte.cost') }}</th>@endcan
                                 <th>{{ __('adminlte.rate') }}</th>
                                 <th>{{ __('adminlte.min') }}</th>
                                 <th>{{ __('adminlte.max') }}</th>
