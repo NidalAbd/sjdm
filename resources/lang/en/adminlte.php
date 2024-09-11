@@ -407,11 +407,11 @@ return [
 
     // ========================= Customer Reviews =========================
     'title_Reviews' => 'Customer Reviews',
-    'reviewer_name1' => 'John Doe',
+    'reviewer_name1' => 'Michael Johnson',
     'review_text1' => 'Great service! The team was very helpful and the process was seamless.',
-    'reviewer_name2' => 'Jane Smith',
+    'reviewer_name2' => 'Sarah Williams',
     'review_text2' => 'I had an excellent experience with this company. Highly recommended!',
-    'reviewer_name3' => 'Alex Johnson',
+    'reviewer_name3' => 'David Smith',
     'review_text3' => 'The customer support was fantastic and the delivery was super fast.',
     'see_all_reviews' => 'See All Reviews',
 
