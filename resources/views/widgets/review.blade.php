@@ -7,7 +7,7 @@
         <div class="col-md-4">
             <div class="stats-box aos-init aos-animate" data-aos="fade-right" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="mb-3">
-                    <img src="{{ asset('images/avatar1.png') }}" alt="{{ __('adminlte.reviewer_name1') }}" class="rounded-circle">
+                    <img src="{{ asset('images/avatar1.png') }}" alt="{{ __('adminlte.reviewer_name1') }}" class="rounded-circle img-size-64">
                 </div>
                 <h4 class="mb-2">{{ __('adminlte.reviewer_name1') }}</h4>
                 <div class="review-rating text-warning mb-2">
@@ -25,7 +25,7 @@
         <div class="col-md-4">
             <div class="stats-box aos-init aos-animate" data-aos="fade-up" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="mb-3">
-                    <img src="{{ asset('images/avatar2.png') }}" alt="{{ __('adminlte.reviewer_name2') }}" class="rounded-circle">
+                    <img src="{{ asset('images/avatar2.png') }}" alt="{{ __('adminlte.reviewer_name2') }}" class="rounded-circle img-size-64">
                 </div>
                 <h4 class="mb-2">{{ __('adminlte.reviewer_name2') }}</h4>
                 <div class="review-rating text-warning mb-2">
@@ -43,7 +43,7 @@
         <div class="col-md-4">
             <div class="stats-box aos-init aos-animate" data-aos="fade-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
                 <div class="mb-3">
-                    <img src="{{ asset('images/avatar3.png') }}" alt="{{ __('adminlte.reviewer_name3') }}" class="rounded-circle">
+                    <img src="{{ asset('images/avatar3.png') }}" alt="{{ __('adminlte.reviewer_name3') }}" class="rounded-circle img-size-64">
                 </div>
                 <h4 class="mb-2">{{ __('adminlte.reviewer_name3') }}</h4>
                 <div class="review-rating text-warning mb-2">
