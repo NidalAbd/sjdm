@@ -520,4 +520,75 @@ return [
     'company' => 'Company',
     'contact' => 'Contact',
     'all_rights_reserved' => 'All rights reserved.',
+
+
+    'profile_settings' => 'Profile Settings',
+    'profile_image' => 'Profile Image',
+    'sidebar' => 'Profile Sidebar',
+    'edit_image' => 'Edit Icon',
+    'upload_image' => 'Upload Image Icon',
+    'user_name' => 'Username',
+    'user_email' => 'User Email',
+    'status_badge' => 'Status Badge',
+
+    // ========================= Tabs =========================
+    'profile_tabs' => [
+        'settings' => 'Profile Settings',
+        'orders' => 'Orders',
+        'transactions' => 'Transactions',
+        'referrals' => 'Referrals',
+    ],
+
+    // ========================= Form Labels =========================
+    'share_invite' => 'Share this link to invite friends and earn rewards!',
+    'order_id' => 'Order ID',
+    'total' => 'Total',
+    'no_orders' => 'No orders found.',
+    'no_transactions' => 'No transactions found.',
+    'no_referrals' => 'No referrals found.',
+    'bonus_offer' => 'Bonus Offer!',
+    'earn_bonus' => 'Earn a $100 bonus by referring 50 verified and active users!',
+    'request_bonus' => 'Request Your Bonus',
+
+    // ========================= Referral Information =========================
+    'referral_info' => [
+        'verified_user' => 'A verified user is someone who has confirmed their email address.',
+        'active_user' => 'An active user is someone who has added at least $20 to their account.',
+        'total_referrals' => 'Total Referrals',
+        'verified_active_referrals' => 'Verified and Active Referrals',
+    ],
+
+    // ========================= Orders Information =========================
+    'orders_info' => [
+        'order_id' => 'Order ID',
+        'date' => 'Date',
+        'status' => 'Status',
+        'total' => 'Total',
+        'actions' => 'Actions',
+        'view' => 'View',
+    ],
+
+    // ========================= Transactions Information =========================
+    'transactions_info' => [
+        'transaction_id' => 'Transaction ID',
+        'date' => 'Date',
+        'type' => 'Type',
+        'amount' => 'Amount',
+        'view' => 'View',
+    ],
+
+    // ========================= Referrals Information =========================
+    'referrals_info' => [
+        'user_id' => 'User ID',
+        'name' => 'Name',
+        'email' => 'Email',
+        'joined_date' => 'Joined Date',
+        'status' => 'Status',
+        'verified' => 'Verified',
+        'not_verified' => 'Not Verified',
+    ],
+
+    // ========================= Miscellaneous =========================
+    'bonus_request' => 'Request Your Bonus',
+    'hidden_upload_form' => 'Hidden Form for Image Upload',
 ];
