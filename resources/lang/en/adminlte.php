@@ -505,7 +505,10 @@ return [
     'referral_link_copied' => 'Referral link copied to clipboard!',
     'user_actions' => 'User Actions',
     'manage_referrals_page_loaded' => 'Manage referrals page loaded',
-
+    'close_ticket' => 'Close Ticket',
+    'ticket_closed_cannot_send_messages' => 'This ticket is closed and you cannot send messages.',
+    'read' => 'Read',
+    'unread' => 'Unread',
     'quick_links' => 'Quick Links',
     'resources' => 'Resources',
     'company' => 'Company',

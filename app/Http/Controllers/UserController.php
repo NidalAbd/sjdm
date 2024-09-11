@@ -262,10 +262,12 @@ class UserController extends Controller
 
     public function updateImage(Request $request)
     {
+        // Validate the image upload
         $request->validate([
             'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Get the authenticated user
         $user = auth()->user();
 
         try {
@@ -275,6 +277,7 @@ class UserController extends Controller
                 $fileName = time() . '_' . $file->getClientOriginalName();
 
                 // Store the file in the 'public/profile_images' directory
+                // This will save the image in storage/app/public/profile_images
                 $path = $file->storeAs('profile_images', $fileName, 'public');
 
                 // Check if the user already has a media record
@@ -292,7 +295,7 @@ class UserController extends Controller
                         'file_name' => $fileName,
                         'file_type' => $file->getMimeType(),
                         'file_size' => $file->getSize(),
-                        'path' => $path,
+                        'path' => 'profile_images/' . $fileName, // Update with the correct path
                     ]
                 );
 
