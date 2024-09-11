@@ -112,7 +112,7 @@
                                 <th scope="col">{{ __('adminlte.subject') }}</th>
                                 <th scope="col">{{ __('adminlte.name') }}</th>
                                 <th scope="col">{{ __('adminlte.type') }}</th>
-                                <th scope="col">{{ __('adminlte.ticketable_id') }}</th>
+                                <th scope="col">{{ __('adminlte.id') }}</th>
                                 <th scope="col">{{ __('adminlte.status') }}</th>
                                 <th scope="col">{{ __('adminlte.created_at') }}</th>
                                 <th scope="col" class="text-center">{{ __('adminlte.actions') }}</th>
