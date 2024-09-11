@@ -24,6 +24,7 @@ return [
     'notifications' => 'Notifications',
     'yes' => 'Yes',
     'no' => 'No',
+    'id'=>'id',
     'submit' => 'Submit',
     'back' => 'Back',
     'update' => 'Update',
