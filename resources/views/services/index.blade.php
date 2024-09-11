@@ -88,6 +88,7 @@
                                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#serviceModal{{ $service->id }}">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+
                                         </td>
                                     </tr>
 
