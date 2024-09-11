@@ -229,6 +229,7 @@ return [
     'service_details' => 'Service Details',
     'rate' => 'Rate',
     'per_1000' => 'per 1000',
+    'cost'=>'cost',
     'min' => 'Min',
     'max' => 'Max',
     'refill' => 'Refill',

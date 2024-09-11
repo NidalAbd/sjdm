@@ -69,6 +69,10 @@
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
+                                <th>{{ __('adminlte.cost') }}</th>
+                                <th>{{ __('adminlte.rate') }}</th>
+                                <th>{{ __('adminlte.min') }}</th>
+                                <th>{{ __('adminlte.max') }}</th>
                                 <th class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
                             </thead>
@@ -79,7 +83,10 @@
 
                                         <td>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</td>
                                         <td>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</td>
-
+                                        <td>{{ $service->cost }}</td>
+                                        <td>{{ $service->rate }}</td>
+                                        <td>{{ $service->min }}</td>
+                                        <td>{{ $service->max }}</td>
                                         <td class="text-center">
                                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#serviceModal{{ $service->id }}">
                                                 <i class="fas fa-eye"></i>
@@ -192,6 +199,15 @@
                                 </tr>
                             @endif
                             </tbody>
+                            <tr>
+                                <th>{{ __('adminlte.name') }}</th>
+                                <th>{{ __('adminlte.category') }}</th>
+                                <th>{{ __('adminlte.cost') }}</th>
+                                <th>{{ __('adminlte.rate') }}</th>
+                                <th>{{ __('adminlte.min') }}</th>
+                                <th>{{ __('adminlte.max') }}</th>
+                                <th class="text-center">{{ __('adminlte.actions') }}</th>
+                            </tr>
                         </table>
                     </div>
                 </div>
