@@ -60,9 +60,9 @@
                     </form>
 
                     <!-- Services Table -->
-                    <div class="table-responsive">
+                    <div class="table-responsive ">
                         <table class="table table-striped table-hover m-0 align-middle">
-                            <thead class="bg-primary text-white">
+                            <thead class="table-dark">
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
@@ -90,9 +90,11 @@
                                                 <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#serviceModal{{ $service->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
+                                                @can('assign_role')
                                                 <a href="{{ route('services.edit', $service->service_id) }}" class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>
@@ -202,8 +204,7 @@
                                 </tr>
                             @endif
                             </tbody>
-                            <tfoot class="bg-primary text-white">
-                            <tr>
+                            <tfoot class="table-dark">                            <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
                                 <th>{{ __('adminlte.rate') }}</th>
