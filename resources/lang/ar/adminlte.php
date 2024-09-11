@@ -112,9 +112,9 @@ return [
     'throttle' => 'عدد كبير جدًا من محاولات تسجيل الدخول. حاول مرة أخرى بعد :seconds ثانية.',
 
     // ========================= Hero Section =========================
-    'empower_social_influence' => 'إس جي للتسويق الرقمي',
+    'empower_social_influence' => 'SJ for Digital Marketing',
     'social_media_growth_tools' => 'SJDM || لوحة التحكم لزيادة المتابعين',
-    'get_started_free' => 'ابدأ مجانًا',
+    'get_started_free' => 'ابدأ الان',
     'our_community' => 'مجتمعنا',
 
     // ========================= Features & Services =========================
