@@ -2,7 +2,7 @@
 
 return [
 
-    // General Labels
+    // ========================= General Labels =========================
     'name' => 'Name',
     'profile' => 'Profile',
     'dashboard' => 'Dashboard',
@@ -36,7 +36,7 @@ return [
     'status' => 'Status',
     'balance' => 'Balance',
 
-    // User Management
+    // ========================= User Management =========================
     'manage_users' => 'Users',
     'search_users' => 'Search users...',
     'select_role' => 'Select Role',
@@ -54,17 +54,16 @@ return [
     'bonus_offer_message' => 'Bonus Offer! Earn a $100 bonus by referring 50 verified and active users. To get your referral code, go to your profile settings and share your unique link with friends!',
     'referrals' => 'Referrals',
 
-    // Breadcrumbs
+    // ========================= Breadcrumbs =========================
     'breadcrumbs' => [
         'users' => 'Users',
         'orders' => 'Orders',
         'edit' => 'Edit',
         'create' => 'Create',
         'manage' => 'Manage',
-        // Add more translations as needed
     ],
 
-    // Authentication and User Profile
+    // ========================= Authentication & User Profile =========================
     'full_name' => 'Full name',
     'email' => 'Email',
     'password' => 'Password',
@@ -93,12 +92,13 @@ return [
     'sign_up' => 'Sign Up',
     'forgot_password' => 'Forgot your password?',
     'reset_it' => 'Reset it',
-    // Language
+
+    // ========================= Language =========================
     'language' => 'Language',
     'english' => 'English',
     'arabic' => 'Arabic',
 
-    // Verification and Error Messages
+    // ========================= Verification & Error Messages =========================
     'verify_message' => 'Your account needs verification',
     'verify_email_sent' => 'A fresh verification link has been sent to your email address.',
     'verify_check_your_email' => 'Before proceeding, please check your email for a verification link.',
@@ -111,13 +111,13 @@ return [
     'failed' => 'These credentials do not match our records.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 
-    // Hero Section
+    // ========================= Hero Section =========================
     'empower_social_influence' => 'S J for Digital Marketing',
     'social_media_growth_tools' => 'SJDM || SMM Panel increasing followers',
     'get_started_free' => 'Get Started for Free',
-    'our_community' => 'our community',
+    'our_community' => 'Our community',
 
-    // Features and Services
+    // ========================= Features & Services =========================
     'feature' => 'Feature',
     'cheapest_fastest_services' => 'Cheapest & Fastest Services',
     'cheapest_fastest_services_icon' => 'Cheapest & Fastest Services Icon',
@@ -132,7 +132,7 @@ return [
     'updates_page' => 'Updates Page for Services',
     'updates_page_icon' => 'Updates Page Icon',
 
-    // Additional Features and Descriptions
+    // ========================= Additional Features & Descriptions =========================
     'our_exclusive_features' => 'Our Exclusive Features',
     'continuous_updates' => 'Continuous Updates',
     'continuous_updates_desc' => 'Stay ahead with our regularly updated services.',
@@ -141,7 +141,7 @@ return [
     'special_discounts' => 'Special Discounts',
     'special_discounts_desc' => 'Exclusive discounts for our loyal customers.',
 
-    // Achievements and Metrics
+    // ========================= Achievements & Metrics =========================
     'our_achievements' => 'Our Achievements',
     'services' => 'Services',
     'services_value' => '1000+',
@@ -161,7 +161,7 @@ return [
     'completed_orders' => '24,918,508',
     'price_value' => '$0.0001/1k',
 
-    // Payment Methods
+    // ========================= Payment Methods =========================
     'payment_methods_we_support' => 'Payment methods we support',
     'visa' => 'Visa',
     'visa_desc' => 'Pay securely with Visa cards',
@@ -176,7 +176,7 @@ return [
     'google_pay' => 'Google Pay',
     'google_pay_desc' => 'Fast transactions with Google Pay',
 
-    // Platforms
+    // ========================= Platforms =========================
     'platforms_we_support' => 'Platforms We Support',
     'all' => 'all',
     'facebook' => 'Facebook',
@@ -194,7 +194,7 @@ return [
     'twitch' => 'Twitch',
     'traffic' => 'Traffic',
 
-    // Orders Management
+    // ========================= Orders Management =========================
     'manage_orders' => 'Orders',
     'search_orders' => 'Search orders...',
     'select_platform' => 'Select Platform',
@@ -210,10 +210,10 @@ return [
     'start_count' => 'Start at',
     'remains' => 'Remains',
     'no_orders_found' => 'No orders found',
-    'video_link_note' => 'please put your VIDEO link',
+    'video_link_note' => 'Please put your VIDEO link',
     'order_overlap_note' => 'PLEASE do NOT put more than 1 order for the same link at the same time to avoid overlap, and we CAN\'T CANCEL the order in this case.',
 
-    // Services Management
+    // ========================= Services Management =========================
     'manage_services' => 'Services',
     'search_services' => 'Search services...',
     'select_category' => 'Select Category',
@@ -225,7 +225,7 @@ return [
     'delete_service' => 'Delete Service',
     'no_records_found' => 'No records found',
 
-    // Service Details
+    // ========================= Service Details =========================
     'service_details' => 'Service Details',
     'rate' => 'Rate',
     'per_1000' => 'per 1000',
@@ -233,9 +233,8 @@ return [
     'max' => 'Max',
     'refill' => 'Refill',
 
-    // Create Order
+    // ========================= Create Order =========================
     'create_order' => 'Create Order',
-
     'description' => 'Description',
     'enter_link' => 'Enter the link',
     'enter_quantity' => 'Enter quantity',
@@ -262,7 +261,7 @@ return [
     'funds_notice' => 'When you add funds, we can\'t reverse your payment. You can only use your funds on the website.',
     'select_service_warning' => 'Please select a service before submitting the form.',
 
-    // Support Tickets Management
+    // ========================= Support Tickets Management =========================
     'manage_support_tickets' => 'Support Tickets',
     'create_ticket' => 'Create Ticket',
     'search_tickets' => 'Search tickets',
@@ -295,10 +294,9 @@ return [
     'your_message' => 'Your Message',
     'send_message' => 'Send Message',
     'no_status' => 'No Status',
-    'messages' => 'messages',
+    'messages' => 'Messages',
 
-
-    // Transactions Management
+    // ========================= Transactions Management =========================
     'manage_transactions' => 'Transactions',
     'search_transactions' => 'Search transactions',
     'select_type' => 'Select Type',
@@ -311,7 +309,7 @@ return [
     'no_transactions_found' => 'No transactions found',
     'transactions_page_loaded' => 'Your Transactions page loaded',
 
-    // Transaction Details
+    // ========================= Transaction Details =========================
     'transaction_details' => 'Transaction Details',
     'transaction' => 'Transaction',
     'transaction_type' => 'Transaction Type',
@@ -340,8 +338,8 @@ return [
     'service_id'=>'Service ID',
     'service_start_time'=>'Service Start Time',
     'speed'=>'Speed',
-    'Notifications'=>'Notifications',
-    // Add Balance
+
+    // ========================= Add Balance =========================
     'redirect_stripe' => 'You will be redirected to Stripe\'s secure payment gateway.',
     'add_balance' => 'Add Balance',
     'select_payment_method' => 'Select Payment Method',
@@ -358,9 +356,10 @@ return [
     'refund_policy_stripe' => 'Refunds are available for failed transactions or disputes.',
     'refund_policy_crypto' => 'Refunds are only available for failed transactions. Contact support for more information.',
     'contact_admin_via_whatsapp' => 'Contact Admin on WhatsApp',
-    'payment_crypto_info' => 'You can securely pay using USDT (TRC20) Crypto Currency . Please contact our admin on WhatsApp for payment instructions and verification.',
+    'payment_crypto_info' => 'You can securely pay using USDT (TRC20) Crypto Currency. Please contact our admin on WhatsApp for payment instructions and verification.',
     'contact_admin_whatsapp' => 'Contact Admin on WhatsApp',
-    // Payment Instructions and Policy
+
+    // ========================= Payment Instructions & Policy =========================
     'payment_instructions_policy' => 'Payment Instructions & Policy',
     'payment_process' => 'Payment Process',
     'payment_process_detail' => 'After entering the amount you wish to add, click "Proceed to Payment". You will be redirected to Stripe’s secure payment gateway where you can complete your transaction using your credit or debit card.',
@@ -372,7 +371,7 @@ return [
     'support_detail' => 'If you encounter any issues during the payment process, please contact our support team at info@sjdm.store. We are here to assist you.',
     'agree_terms' => 'By proceeding with the payment, you agree to our Terms of Service and Privacy Policy.',
 
-    // Dashboard
+    // ========================= Dashboard =========================
     'welcome_dashboard' => 'Welcome to your Dashboard!',
     'prices_start' => 'Prices Start',
     'quick_access' => 'Quick Access',
@@ -383,13 +382,12 @@ return [
     'more_info' => 'More info',
     'create_now' => 'Create now',
 
-    // Miscellaneous
+    // ========================= Miscellaneous =========================
     'faq' => 'FAQ',
     'about_us' => 'About Us',
     'careers' => 'Careers',
     'privacy_policy' => 'Privacy Policy',
     'contact_us' => 'Contact Us',
-
     'title_about_us' => 'About Us',
     'intro' => 'Welcome to :app_name! We are committed to providing the best services to our customers, focusing on reliability, customer service, and innovation.',
     'founded' => 'Founded in 2022, our company has quickly grown to become a leading provider in our industry. Our passion for excellence has driven us to constantly improve and offer top-quality services that meet and exceed our customers\' expectations.',
@@ -397,6 +395,7 @@ return [
     'thank_you' => 'Thank you for choosing :app_name. We look forward to serving you!',
     'learn_more' => 'Join now',
 
+    // ========================= About Us =========================
     'about_us_title1' => 'Our Mission',
     'about_us_text1' => 'We strive to provide the best services to our customers globally, focusing on quality and innovation.',
     'about_us_title2' => 'Our Vision',
@@ -406,7 +405,7 @@ return [
     'about_us_title4' => 'Our Team',
     'about_us_text4' => 'Our team consists of experts in the field who are passionate about helping your business grow.',
 
-
+    // ========================= Customer Reviews =========================
     'title_Reviews' => 'Customer Reviews',
     'reviewer_name1' => 'John Doe',
     'review_text1' => 'Great service! The team was very helpful and the process was seamless.',
@@ -416,6 +415,7 @@ return [
     'review_text3' => 'The customer support was fantastic and the delivery was super fast.',
     'see_all_reviews' => 'See All Reviews',
 
+    // ========================= Affiliate Program =========================
     'title_Affiliate' => 'Join Our Affiliate Program!',
     'step1_title' => 'Share Your Referral Link',
     'step1_description' => 'Invite friends using your unique referral link.',
@@ -424,7 +424,7 @@ return [
     'step3_title' => 'Earn Rewards',
     'step3_description' => 'For every 50 active users you refer, earn $100!',
 
-
+    // ========================= How It Works =========================
     'how_it_works' => 'How It Works',
     'create_account' => 'Create an Account',
     'create_account_description' => 'You can register a new account at any time by clicking on the registration button on the homepage or simply click here.',
@@ -440,6 +440,7 @@ return [
     'support_contact_description' => 'If you need any assistance or face any issue with orders or the website in general, you can always contact us by clicking on the "Support" page, then filling out a new ticket. We will respond as soon as possible.',
     'support_contact_note' => 'You can click on "Open Tickets" from the support page to see the status of your ticket and view any response from our specialized team.',
 
+    // ========================= FAQs =========================
     'faq_frequently' => 'Frequently Asked Questions',
     'faq_question1' => 'What does "Partially Completed" mean?',
     'faq_answer1' => 'Partially completed means that we refund the remaining amount for the part that was not delivered. Sometimes we are unable to complete the full quantity requested for some orders, so we refund you the remaining amount that was not delivered. Example: You purchased an order of 10,000 units and the cost was $10. If we sent 9,000 and the remaining 1,000 could not be sent, we will mark the order as partially completed and refund your account for the 1,000 followers that were not sent, which is $1 in this example.',
@@ -458,6 +459,7 @@ return [
     'faq_question8' => 'What is the deficiency compensation system?',
     'faq_answer8' => 'Deficiency compensation is provided if there is a deficiency in guaranteed services for a specified period, provided that all account followers are real or all followers were requested from our site. Because you may request 1,000 followers from us and the account already has thousands or hundreds of thousands of followers, in this case, we cannot provide compensation guarantee for you.',
 
+    // ========================= Support Options =========================
     'support_intro' => 'We are here to help you! Choose one of the support options below to get in touch with our team.',
     'support_live_chat' => 'Live Chat Support',
     'support_live_chat_desc' => 'Connect with our support team in real-time through our live chat service.',
@@ -475,7 +477,7 @@ return [
     'support_ticket_desc' => 'Can’t find what you need? Submit a support ticket and our team will assist you.',
     'support_open_ticket' => 'Open Ticket',
 
-
+    // ========================= Terms & Conditions =========================
     'general_terms' => 'General Terms',
     'general_terms_desc' => 'By placing an order using the SJDM website, you automatically accept all the terms of service listed below, whether you read them or not. We reserve the right to change these terms of service without notice. You are expected to read all terms of service before placing any order to ensure you are up to date with any changes or future changes. You will only use the SJDM website in a manner that follows all agreements made with Instagram/Facebook/Twitter/Youtube or any other social media site on their individual Terms of Service page. Service prices on the website are subject to change at any time without notice. The payment/refund policy remains in effect in the event of a price change. SJDM does not guarantee delivery time for any services. We offer our best estimate of when the order will be delivered. This is just an estimate, and SJDM will not refund orders that are processing if you feel they are taking too long. The SJDM website strives to deliver exactly what is expected from our suppliers. In this case, we reserve the right to change the type of service if we deem it necessary to complete the order.',
     'responsibilities' => 'Responsibilities',
@@ -484,6 +486,8 @@ return [
     'service_use_desc' => 'The SJDM website will only be used to promote your Instagram/Twitter/Facebook account or any social account and to help boost your "appearance" only. We do not guarantee that the new followers will interact with you; we simply guarantee that you will receive the followers you pay for. We do not guarantee that 100% of our accounts will have a profile picture, bio, and uploaded photos, although we strive to make this a reality for all accounts. You will not upload anything into the SJDM website, including nudity or any material not acceptable or suitable for the Instagram/Twitter/Facebook or Social Media community. Private accounts will not receive a refund. Please ensure that your account is public before ordering.',
     'privacy_policy_section' => 'Privacy Policy',
     'privacy_policy_desc' => 'This policy covers how we use your personal information. We take your privacy seriously and will take all measures to protect your personal information. Any personal information received will only be used to fill your order. We will not sell or redistribute your information to anyone. All information is encrypted and saved on secure servers.',
+
+    // ========================= Contact Information =========================
     'contact_info' => 'Contact Information',
     'get_in_touch' => 'Get in Touch',
     'contact_us_text' => 'We would love to hear from you! If you have any questions, suggestions, or feedback, please feel free to reach out to us.',
@@ -491,7 +495,7 @@ return [
     'phone' => 'Phone',
     'address' => 'Address',
 
-
+    // ========================= Referrals Management =========================
     'manage_referrals' => 'Referrals',
     'search_referrals' => 'Search Referrals',
     'date_joined' => 'Date Joined',
@@ -509,6 +513,8 @@ return [
     'ticket_closed_cannot_send_messages' => 'This ticket is closed and you cannot send messages.',
     'read' => 'Read',
     'unread' => 'Unread',
+
+    // ========================= Quick Links & Footer =========================
     'quick_links' => 'Quick Links',
     'resources' => 'Resources',
     'company' => 'Company',
