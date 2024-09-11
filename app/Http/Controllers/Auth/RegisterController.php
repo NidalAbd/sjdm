@@ -48,8 +48,30 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'referral_code' => 'nullable|string|exists:users,referral_code',
+        ], [
+            // Custom messages for 'name'
+            'name.required' => 'Your name is required. Please provide it to proceed.',
+            'name.string' => 'Your name should be a valid string.',
+            'name.max' => 'Your name cannot be longer than 255 characters.',
+
+            // Custom messages for 'email'
+            'email.required' => 'An email address is required.',
+            'email.string' => 'The email must be a valid string.',
+            'email.email' => 'Please provide a valid email address.',
+            'email.max' => 'Your email address cannot be longer than 255 characters.',
+            'email.unique' => 'This email is already registered. If you have an account, please log in.',
+
+            // Custom messages for 'password'
+            'password.required' => 'Please provide a password to secure your account.',
+            'password.string' => 'The password must be a valid string.',
+            'password.min' => 'Your password must be at least 8 characters long.',
+            'password.confirmed' => 'The password confirmation does not match.',
+
+            // Custom messages for 'referral_code'
+            'referral_code.exists' => 'The referral code you entered is invalid. Please check and try again.',
         ]);
     }
+
 
     /**
      * Create a new user instance after a valid registration.
