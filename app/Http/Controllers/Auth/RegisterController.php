@@ -39,10 +39,16 @@ class RegisterController extends Controller
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @return \Illuminate\Validation\Validator
      */
     protected function validator(array $data)
     {
+        $user = User::withTrashed()->where('email', $data['email'])->first();
+
+        if ($user && $user->trashed()) {
+            // Return a custom message for soft-deleted users trying to register
+            return back()->withErrors(['email' => 'This email is already registered but has been deleted. Please contact support to restore your account.']);
+        }
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -87,12 +93,7 @@ class RegisterController extends Controller
             $referrer = User::where('referral_code', $data['referral_code'])->first();
         }
         // Check if the user exists but is soft-deleted
-        $user = User::withTrashed()->where('email', $data['email'])->first();
 
-        if ($user && $user->trashed()) {
-            // Return a custom message for soft-deleted users trying to register
-            return back()->withErrors(['email' => 'This email is already registered but has been deleted. Please contact support to restore your account.']);
-        }
 
         $user = User::create([
             'name' => $data['name'],
