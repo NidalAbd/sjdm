@@ -52,7 +52,7 @@ Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatus
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 // Protected routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.banned'])->group(function () {
 
     Route::resource('users', UserController::class);
     Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bonus/request', [BonusController::class, 'requestBonus'])->name('bonus.request');
     Route::get('/referrals', [UserController::class, 'referalIndex'])->name('referrals.index');
     Route::post('/profile/update-image', [UserController::class, 'updateImage'])->name('profile.update.image');
+    Route::post('users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
 
     // Role and permission routes
     Route::resource('roles', RoleController::class);

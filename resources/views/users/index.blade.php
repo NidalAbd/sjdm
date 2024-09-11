@@ -106,6 +106,16 @@
                                                     </a>
                                                 @endcan
                                                 @can('delete_user')
+                                                    @if($user->status != 'banned')
+                                                        <form action="{{ route('users.ban', $user->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-danger btn-sm">Ban</button>
+                                                        </form>
+                                                    @else
+                                                        <span class="badge bg-danger">Banned</span>
+                                                    @endif
+                                                @endcan
+                                                @can('delete_user')
                                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')

@@ -30,8 +30,14 @@
             <!-- Column 4: Contact -->
             <div class="col-md-3" data-aos="fade-up" data-aos-duration="1000">
                 <h5 class="mb-4">{{ __('adminlte.contact') }}</h5>
-                <p>{{ __('adminlte.email') }}: <a href="mailto:info@sjdm.store" class="text-white text-decoration-none">info@sjdm.store</a></p>
-                <p>{{ __('adminlte.phone') }}: <a href="tel:+971557830054" class="text-white text-decoration-none">+971 55 783 0054</a></p>
+                <!-- Email with Left-to-Right direction -->
+                <p>{{ __('adminlte.email') }}:
+                    <a href="mailto:info@sjdm.store" class="text-white text-decoration-none" dir="ltr">info@sjdm.store</a>
+                </p>
+                <!-- Phone with Left-to-Right direction -->
+                <p>{{ __('adminlte.phone') }}:
+                    <a href="tel:+971557830054" class="text-white text-decoration-none" dir="ltr">+971 55 783 0054</a>
+                </p>
                 <div class="social-icons">
                     <a href="https://www.facebook.com/S.J.Digitals.Marketing" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://www.instagram.com/s.j.digital.marketting/" class="text-white"><i class="fab fa-instagram"></i></a>
@@ -40,7 +46,8 @@
         </div>
         <div class="row mt-4">
             <div class="col-md-12 text-center">
-                <p class="mb-0">&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('adminlte.all_rights_reserved') }}</p>
+                <!-- Footer copy with Left-to-Right direction -->
+                <p class="mb-0">&copy; <span dir="ltr">{{ date('Y') }}</span> {{ config('app.name') }}. {{ __('adminlte.all_rights_reserved') }}</p>
             </div>
         </div>
     </div>

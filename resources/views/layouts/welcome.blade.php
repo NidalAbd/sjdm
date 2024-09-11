@@ -246,6 +246,10 @@
 <body>
 <!-- Include Header -->
 @include('layouts.header')
+<div class="d-flex justify-content-center">
+    @include('partials.alertWelcome')
+
+</div>
 
 <!-- Main Content -->
 <main class="container my-5">

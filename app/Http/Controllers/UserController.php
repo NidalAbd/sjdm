@@ -378,4 +378,23 @@ class UserController extends Controller
 
         return view('referral.index', compact('user', 'referrals'));
     }
+
+
+    public function ban(User $user)
+    {
+        // Check if the user is already banned
+        if ($user->status == 'banned') {
+            return redirect()->route('users.index')->with('error', 'User is already banned.');
+        }
+
+        // Ban the user by setting their status to 'banned'
+        $user->status = 'banned';
+        $user->save();
+
+        // Optionally, you can notify the user about the ban or log the action
+        // $user->notify(new UserBannedNotification($user));
+
+        return redirect()->route('users.index')->with('success', 'User has been banned successfully.');
+    }
+
 }
