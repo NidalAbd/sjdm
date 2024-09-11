@@ -18,7 +18,7 @@
                     <!-- Search and Filters Form -->
                     <form id="filterForm" action="{{ route('services.index') }}" method="GET">
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-4">
                                 <div class="input-group input-group-sm">
                                     <input type="text" name="search" class="form-control" placeholder="{{ __('adminlte.search_services') }}"
                                            value="{{ request()->get('search') }}">
@@ -27,7 +27,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-4 ">
                                 <div class="input-group input-group-sm">
                                     <select name="platform" class="form-control" id="platformSelect">
                                         @foreach($translatedPlatforms as $key => $platform)
@@ -41,7 +41,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-4">
                                 <div class="input-group input-group-sm">
                                     <select name="category" class="form-control" id="categorySelect">
                                         <option value="all">{{ __('adminlte.select_category') }}</option>
@@ -60,15 +60,14 @@
                     </form>
 
                     <!-- Services Table -->
-                    <div class="table-responsive mt-4">
-                        <table class="table table-bordered table-striped table-hover">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover m-0 align-middle">
                             <thead class="bg-primary text-white">
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
-                                @can('assign_role')<th>{{ __('adminlte.cost') }}</th>@endcan
-
                                 <th>{{ __('adminlte.rate') }}</th>
+                                @can('assign_role')<th>{{ __('adminlte.cost') }}</th>@endcan
                                 <th>{{ __('adminlte.min') }}</th>
                                 <th>{{ __('adminlte.max') }}</th>
                                 <th class="text-center">{{ __('adminlte.actions') }}</th>
@@ -78,23 +77,25 @@
                             @if($services->count() > 0)
                                 @foreach($services as $service)
                                     <tr>
-
                                         <td>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</td>
                                         <td>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</td>
+                                        <td>{{ $service->rate }}</td>
                                         @can('assign_role')
                                             <td>{{ $service->cost }}</td>
                                         @endcan
-                                        <td>{{ $service->rate }}</td>
                                         <td>{{ $service->min }}</td>
                                         <td>{{ $service->max }}</td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#serviceModal{{ $service->id }}">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-
+                                        <td class="text-center ">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#serviceModal{{ $service->id }}">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <a href="{{ route('services.edit', $service->service_id) }}" class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
-
                                     <!-- Service Details Modal -->
                                     <div class="modal fade" id="serviceModal{{ $service->id }}" tabindex="-1" aria-labelledby="serviceModalLabel{{ $service->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
@@ -196,6 +197,7 @@
                                 @endforeach
                             @else
                                 <tr>
+
                                     <td colspan="3" class="text-center text-muted">{{ __('adminlte.no_records_found') }}</td>
                                 </tr>
                             @endif
@@ -204,8 +206,9 @@
                             <tr>
                                 <th>{{ __('adminlte.name') }}</th>
                                 <th>{{ __('adminlte.category') }}</th>
-                                @can('assign_role')<th>{{ __('adminlte.cost') }}</th>@endcan
                                 <th>{{ __('adminlte.rate') }}</th>
+
+                            @can('assign_role')<th>{{ __('adminlte.cost') }}</th>@endcan
                                 <th>{{ __('adminlte.min') }}</th>
                                 <th>{{ __('adminlte.max') }}</th>
                                 <th class="text-center">{{ __('adminlte.actions') }}</th>

@@ -238,9 +238,25 @@ class ServiceController extends Controller
 
     public function update(Request $request, Service $service)
     {
-        $service->update($request->all());
+        $validatedData = $request->validate([
+            'name_en' => 'required|string|max:500',
+            'name_ar' => 'required|string|max:500',
+            'type' => 'required|string',
+            'category_en' => 'required|string|max:255',
+            'category_ar' => 'required|string|max:255',
+            'cost' => 'required|numeric',
+            'rate' => 'required|numeric',
+            'min' => 'required|integer',
+            'max' => 'required|integer',
+            'refill' => 'boolean',
+            'cancel' => 'boolean',
+        ]);
+
+        $service->update($validatedData);
+
         return redirect()->route('services.index')->with('success', 'Service updated successfully.');
     }
+
 
     public function destroy(Service $service)
     {
