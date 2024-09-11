@@ -50,8 +50,8 @@
                     <i class="fas fa-star"></i>
                     <i class="fas fa-star"></i>
                     <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                     <i class="fas fa-star-half-alt"></i>
-                    <i class="far fa-star"></i>
                 </div>
                 <p class="review-text">{{ __('adminlte.review_text3') }}</p>
             </div>
