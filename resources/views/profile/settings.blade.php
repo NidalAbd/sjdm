@@ -67,7 +67,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="email">{{ __('Email') }}</label> <!-- البريد الإلكتروني -->
-                                            <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" required>
+                                            <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" readonly>
                                         </div>
                                     </div>
 

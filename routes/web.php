@@ -71,6 +71,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/referrals', [UserController::class, 'referalIndex'])->name('referrals.index');
     Route::post('/profile/update-image', [UserController::class, 'updateImage'])->name('profile.update.image');
     Route::post('/users/{user}/toggle-ban', [UserController::class, 'toggleBan'])->name('users.toggleBan');
+    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
 
     // Role and permission routes
     Route::resource('roles', RoleController::class);

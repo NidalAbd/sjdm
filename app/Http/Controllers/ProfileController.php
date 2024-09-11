@@ -31,15 +31,19 @@ class ProfileController extends Controller
 
     public function updateSettings(Request $request)
     {
+        // Validate the input, but exclude the 'email' field from being updated
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
+            'email' => 'required|string|email|max:255', // Still validating the email to display error messages if needed
         ]);
 
         $user = auth()->user();
-        $user->update($request->only('name', 'email'));
 
-        return redirect()->route('profile.settings')->with('success', 'Profile settings updated successfully.');
+        // Update only the 'name' field, excluding the email
+        $user->update($request->only('name'));
+
+        return redirect()->route('profile.settings')->with('success', 'Profile settings updated successfully, but email cannot be changed.');
     }
+
 
 }

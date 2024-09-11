@@ -121,15 +121,26 @@
                                                         @endif
                                                     </form>
                                                 @endcan
-                                                @can('delete_user')
-                                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-danger btn-sm" type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('adminlte.delete_user') }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
-                                                @endcan
+                                                    @can('delete_user')
+                                                        @if($user->trashed())
+                                                            <!-- Restore button (for soft-deleted users) -->
+                                                            <form action="{{ route('users.restore', $user->id) }}" method="POST" style="display:inline;">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-success btn-sm" title="Restore">
+                                                                    <i class="fas fa-undo-alt"></i> <!-- Restore icon -->
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <!-- Delete button (for active users) -->
+                                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                                    <i class="fas fa-trash-alt"></i> <!-- Delete icon -->
+                                                                </button>
+                                                            </form>
+                                                        @endif
+                                                    @endcan
                                             </div>
                                         </td>
                                     </tr>

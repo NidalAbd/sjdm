@@ -144,14 +144,16 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Delete associated media files
-        foreach ($user->media as $media) {
-            Storage::delete('public/' . $media->path);
-            $media->delete();
-        }
-
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('users.index')->with('success', 'User has been soft deleted successfully.');
+    }
+
+    public function restore($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()->route('users.index')->with('success', 'User restored successfully.');
     }
 
     public function assignRole(User $user)
