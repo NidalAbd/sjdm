@@ -275,6 +275,8 @@ return [
     'created_at' => 'Created At',
     'view_ticket' => 'View Ticket',
     'edit_ticket' => 'Edit Ticket',
+    'edit_ticket_details'=>'Edit Ticket',
+    'update_ticket' => 'update Ticket',
     'delete_ticket' => 'Delete Ticket',
     'no_tickets_found' => 'No tickets found',
     'manage_support_tickets_page_loaded' => 'Manage Support Tickets page loaded',
