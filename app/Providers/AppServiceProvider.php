@@ -44,14 +44,5 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('unreadNotifications', Auth::user()->unreadNotifications);
             }
         });
-
-        View::composer('adminlte::partials.sidebar.menu-item', function ($view) {
-            // Check if the menu item is for balance
-            if ($view->item['text'] === 'balance' && Auth::check()) {
-                $user = Auth::user();
-                $view->item['label'] = number_format($user->balance, 2);
-                $view->item['label_color'] = $user->balance > 0 ? 'success' : ($user->balance < 0 ? 'danger' : 'white');
-            }
-        });
     }
 }
