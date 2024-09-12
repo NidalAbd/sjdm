@@ -127,23 +127,7 @@ return array(
             'can' => 'create_order', // Permission check for displaying the item
             'icon_color' => 'primary', // Set predefined icon color
         ),
-        array(
-            'text' => 'Language',
-            'icon' => 'fas fa-globe',
-            'topnav_right' => true,
-            'submenu' => array(
-                array(
-                    'text' => 'English',
-                    'url'  => route('language.switch', ['lang' => 'en']),
-                    'icon_color' => 'info',
-                ),
-                array(
-                    'text' => 'Arabic',
-                    'url'  => route('language.switch', ['lang' => 'ar']),
-                    'icon_color' => 'info',
-                ),
-            ),
-        ),
+
 
         // Admin category with submenu items
         array(
