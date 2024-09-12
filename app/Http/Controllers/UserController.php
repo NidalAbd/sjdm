@@ -43,7 +43,7 @@ class UserController extends Controller
             $query->where('status', $request->status);
         }
 
-        $users = $query->orderBy('created_at', 'asc')->paginate(5);
+        $users = $query->orderBy('id', 'desc')->paginate(5);
         $roles = Role::all();
 
         return view('users.index', compact('users', 'roles'));
