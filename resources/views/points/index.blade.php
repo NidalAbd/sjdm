@@ -3,8 +3,16 @@
 @section('title', __('My Points'))
 
 @section('content')
+    <div class="col-12">
+        <div class=" alert-info mb-3">
+            {{ __('You can get more points! More orders, more points! Every 1000 points equal $10.') }}
+        </div>
+    </div>
     <div class="container">
         <div class="row">
+            <!-- General Alert for Points -->
+
+
             <!-- Points Overview Section -->
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 rounded mb-4">
