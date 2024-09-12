@@ -285,6 +285,7 @@ return [
     'ticket_details' => 'Ticket Details',
     'message' => 'Message',
     'updated_at' => 'Updated At',
+    'edit_support_ticket'=>'Edit Support Ticket',
     'back_to_tickets' => 'Back to Tickets',
     'create_support_ticket_for_order' => 'Create Support Ticket for Order #:id',
     'submit_ticket' => 'Submit Ticket',

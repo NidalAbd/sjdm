@@ -275,6 +275,7 @@ return [
     'view_ticket' => 'عرض التذكرة',
     'update_ticket' => 'تحديث التذكرة',
     'edit_ticket' => 'تعديل التذكرة',
+    'edit_support_ticket'=>'تعديل التذكرة',
     'edit_ticket_details'=>'تعديل التذكرة',
     'delete_ticket' => 'حذف التذكرة',
     'no_tickets_found' => 'لم يتم العثور على تذاكر',
