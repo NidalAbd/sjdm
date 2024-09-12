@@ -9,18 +9,18 @@
 
 @section('content')
     <div class="col-md-12 row justify-content-center">
-        <div class="col-md-12 mb-4 p-0 alert-info d-flex justify-content-between align-items-center rounded shadow-sm " role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-shield-alt fa-2x m-2"></i>
+        <div class="col-12 mb-4 p-0 alert-info d-flex flex-column flex-sm-row justify-content-between align-items-center rounded shadow-sm" role="alert">
+            <div class="d-flex align-items-center mb-2 mb-sm-0">
+                <i class="fas fa-shield-alt fa-2x me-2"></i>
                 <div>
-                    <p class="m-2" style="font-size: 1.0rem;">
+                    <p class="m-2 mb-0" style="font-size: 1rem;">
                         {{ __('adminlte.payment_crypto_info') }}
                     </p>
                 </div>
             </div>
 
             <!-- WhatsApp Button to Contact Admin -->
-            <a href="https://wa.me/971557830054?text=I%20want%20to%20pay%20via%20USDT" target="_blank" class="btn btn-lg btn-success btn-sm px-4 py-2">
+            <a href="https://wa.me/971557830054?text=I%20want%20to%20pay%20via%20USDT" target="_blank" class="btn btn-success btn-sm px-4 py-2 d-block mt-2 mt-sm-0">
                 <i class="fab fa-whatsapp me-2"></i> {{ __('adminlte.contact_admin_whatsapp') }}
             </a>
         </div>
