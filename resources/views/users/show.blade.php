@@ -50,6 +50,16 @@
                                             <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" required>
                                         </div>
                                     </div>
+                                    <!-- كود ورابط الإحالة -->
+                                    <div class="mb-3">
+                                        <label for="referral-code">{{ __('Your Referral Code') }}</label> <!-- كود الإحالة الخاص بك -->
+                                        <input type="text" id="referral-code" class="form-control" value="{{ $user->referral_code }}" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="referral-link">{{ __('Your Referral Link') }}</label> <!-- رابط الإحالة الخاص بك -->
+                                        <input type="text" id="referral-link" class="form-control" value="{{ route('register', ['ref' => $user->referral_code]) }}" readonly>
+                                        <small class="form-text text-muted">{{ __('Share this link to invite friends and earn rewards!') }}</small> <!-- شارك هذا الرابط لدعوة الأصدقاء وكسب المكافآت! -->
+                                    </div>
                                     <div class="d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary" onclick="return confirmChanges()">{{ __('Save Changes') }}</button>
                                     </div>
