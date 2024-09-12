@@ -342,7 +342,8 @@ return [
     'service_id'=>'رقم الخدمة',
     'service_start_time'=>'وقت بدء الخدمة',
     'speed'=>'السرعة',
-
+    'not_verified' => 'Not verified',
+    'verified' => 'Verified',
     // ========================= Add Balance =========================
     'redirect_stripe' => 'سيتم توجيهك إلى بوابة الدفع الآمنة الخاصة بـ Stripe.',
     'add_balance' => 'إضافة رصيد',

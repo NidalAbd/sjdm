@@ -113,7 +113,8 @@ return [
     'click_here_to_request_another' => 'click here to request another',
     'failed' => 'These credentials do not match our records.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+'not_verified' => 'Not verified',
+    'verified' => 'Verified',
     // ========================= Hero Section =========================
     'empower_social_influence' => 'S J for Digital Marketing',
     'social_media_growth_tools' => 'SJDM || SMM Panel increasing followers',

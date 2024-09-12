@@ -58,7 +58,15 @@
                                     <tr class="m-1">
                                         <th scope="row">{{ $user->id }}</th>
                                         <td>{{ $user->name }}</td>
-                                        <td><span class="badge bg-{{ $user->status == 'active' ? 'success' : 'secondary' }}">{{ __('adminlte.'.strtolower($user->status)) }}</span></td>
+                                        <td>
+                                       <span class="badge bg-{{ $user->status == 'active' ? 'success' : 'secondary' }}">
+    {{ __('adminlte.'.strtolower($user->status)) }}
+</span>
+                                            <span class="badge bg-{{ $user->email_verified_at ? 'primary' : 'warning' }}">
+    {{ $user->email_verified_at ? __('adminlte.verified') : __('adminlte.not_verified') }}
+</span>
+
+                                        </td>
                                         <td>{{ $user->balance }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>
