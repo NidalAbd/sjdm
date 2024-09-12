@@ -35,8 +35,15 @@ class ServiceController extends Controller
 
         // Apply search filter
         if ($request->filled('search')) {
-            $searchField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
-            $query->where($searchField, 'like', '%' . $request->search . '%');
+            $searchTerm = $request->search;
+            // Define the fields to be searched
+            $fields = ['service_id', 'name_en', 'name_ar', 'category_en', 'category_ar', 'type', 'rate', 'cost'];
+
+            $query->where(function ($q) use ($fields, $searchTerm) {
+                foreach ($fields as $field) {
+                    $q->orWhere($field, 'like', '%' . $searchTerm . '%');
+                }
+            });
         }
 
         // Apply platform filter

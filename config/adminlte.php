@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+
 return array(
 
     'title' => 'SJDM',
@@ -183,6 +185,15 @@ return array(
             'can'  => 'create_order',
             'icon_color'   => 'primary', // Set predefined color
         ),
+        array(
+            'text'          => 'balance', // Use translation key if needed
+            'url'           => 'transactions/create', // Relative URL for adding balance
+            'icon'          => 'fas fa-dollar-sign', // Font Awesome icon for balance
+            'icon_color'    => 'success', // Icon color
+            'label'         => 'loading...', // Placeholder label
+            'label_color'   => 'white', // Default label color
+            'can'           => 'view_balance', // Permission to view balance//
+            ),
         array(
             'text' => 'orders', // Use translation key
             'url'  => 'orders', // Just the relative URL
