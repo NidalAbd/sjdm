@@ -80,7 +80,7 @@
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                 @endcan
-                                                @can('update', $ticket)
+                                                @can('assign_role', $ticket)
                                                     <a href="{{ route('support.edit', $ticket->id) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('adminlte.edit_ticket') }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
