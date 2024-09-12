@@ -186,7 +186,7 @@ return array(
             'icon_color'   => 'primary', // Set predefined color
         ),
         array(
-            'text'          => 'balance', // Use translation key if needed
+            'text'          => ' balance', // Use translation key if needed
             'url'           => 'transactions/create', // Relative URL for adding balance
             'icon'          => 'fas fa-dollar-sign', // Font Awesome icon for balance
             'icon_color'    => 'success', // Icon color
