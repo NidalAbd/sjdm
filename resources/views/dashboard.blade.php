@@ -93,6 +93,21 @@
                 </div>
             </div>
 
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <!-- Display Total User Balance -->
+                        <h3>{{ number_format($totalUserBalance, 2) }}</h3>
+                        <p>{{ __('Total User Balance') }}</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <a href="{{ route('users.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+
             <!-- Services widget -->
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-success">

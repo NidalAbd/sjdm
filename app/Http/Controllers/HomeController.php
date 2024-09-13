@@ -55,6 +55,8 @@ class HomeController extends Controller
             ->where('status', 'active')
             ->whereNotNull('email_verified_at')
             ->get();
+        $totalUserBalance = User::where('status', 'active')
+            ->sum('balance');
 
         // Support tickets for current user
         $ticketsCount = SupportTicket::where('user_id', $user->id)->count();
@@ -76,7 +78,7 @@ class HomeController extends Controller
         return view('dashboard', compact(
             'totals', 'userCount', 'serviceCount',
             'orderCount', 'startingPrice', 'verifiedActiveReferrals',
-            'ticketsCount', 'ordersByStatus', 'statusColors'
+            'ticketsCount', 'ordersByStatus', 'statusColors','totalUserBalance'
         ));
     }
 
