@@ -24,6 +24,8 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             ProcessPendingOrders::dispatch(new Api);
         })->everyMinute();
+        $schedule->command('notify:unverified-users')->daily();
+
     }
 
     /**
