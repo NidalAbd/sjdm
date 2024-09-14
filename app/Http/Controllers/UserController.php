@@ -144,8 +144,23 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // Check if the current user has permission to delete users (Optional)
+        $this->authorize('delete', $user);
+
+        // Remove roles and permissions
+        $user->syncRoles([]); // Unassign all roles
+        $user->syncPermissions([]); // Unassign all permissions
+
+        // Remove associated media if any
+        if ($user->media) {
+            $user->media()->delete();
+        }
+
+        // Finally, delete the user
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'User has been soft deleted successfully.');
+
+        // Redirect back with success message
+        return back()->with('success', 'User, along with their roles, permissions, and media, has been deleted successfully.');
     }
 
     public function restore(Request $request, $id)
