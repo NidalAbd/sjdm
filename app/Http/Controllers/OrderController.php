@@ -84,7 +84,7 @@ class OrderController extends Controller
         }
 
         // Get the paginated orders
-        $orders = $query->paginate(5);
+        $orders = $query->orderBy('id', 'desc')->paginate(5);
 
         // Get the unique statuses from orders to populate the filter dropdown
         $statuses = Order::select('status')->distinct()->pluck('status');

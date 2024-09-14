@@ -7,7 +7,6 @@ use App\Models\Service;
 use App\Models\SupportTicket;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Ticket; // Import the Ticket model if you have it for support tickets
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

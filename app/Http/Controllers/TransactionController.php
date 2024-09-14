@@ -48,7 +48,7 @@ class TransactionController extends Controller
             $query->where('type', $request->type);
         }
 
-        $transactions = $query->paginate(5);
+        $transactions = $query->orderBy('id', 'desc')->paginate(5);
 
         return view('transactions.index', compact('transactions'));
     }

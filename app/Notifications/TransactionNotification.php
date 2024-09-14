@@ -43,11 +43,10 @@ class TransactionNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Transaction Notification')
-            ->line('Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been processed.')
-            ->line('Transaction Status: ' . ucfirst($this->transaction->status))
+            ->subject($this->getSubject())
+            ->line($this->getStatusMessage())
             ->action('View Transaction', url('/transactions/' . $this->transaction->id))
-            ->line('Thank you for using our application!');
+            ->line('Thank you for using our application! If you have any questions, feel free to contact our support team.');
     }
 
     /**
@@ -64,26 +63,57 @@ class TransactionNotification extends Notification
             'amount' => $this->transaction->amount,
             'status' => $this->transaction->status,
         ];
-
     }
-    private function getStatusMessage(): string
+
+    /**
+     * Get the email subject line based on the transaction status.
+     *
+     * @return string
+     */
+    private function getSubject(): string
     {
         switch ($this->transaction->status) {
             case 'completed':
-                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been completed successfully.';
+                return 'Your Transaction was Completed Successfully';
             case 'refunded':
-                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been refunded successfully. If you have any issues, please contact support.';
+                return 'Your Transaction was Refunded';
             case 'pending':
-                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' is currently pending. We will notify you once it is processed.';
+                return 'Your Transaction is Pending';
             case 'failed':
-                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has failed. Please verify your payment method or try again.';
+                return 'Your Transaction Failed';
             case 'canceled':
-                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' has been canceled. No funds were deducted.';
+                return 'Your Transaction was Canceled';
             case 'processing':
-                return 'Your transaction of $' . number_format($this->transaction->amount, 2) . ' is being processed. You will be notified once it is completed.';
+                return 'Your Transaction is Processing';
             default:
-                return 'Your transaction status is currently unknown. Please contact support for further assistance.';
+                return 'Transaction Update';
         }
     }
 
+    /**
+     * Get the appropriate message based on the transaction status.
+     *
+     * @return string
+     */
+    private function getStatusMessage(): string
+    {
+        $amount = number_format($this->transaction->amount, 2);
+
+        switch ($this->transaction->status) {
+            case 'completed':
+                return "Your transaction of $$amount has been successfully completed. Thank you for your purchase!";
+            case 'refunded':
+                return "Your transaction of $$amount has been refunded successfully. If you need any further assistance, feel free to contact support.";
+            case 'pending':
+                return "Your transaction of $$amount is currently pending. We will notify you once it's processed.";
+            case 'failed':
+                return "Unfortunately, your transaction of $$amount has failed. Please verify your payment method and try again.";
+            case 'canceled':
+                return "Your transaction of $$amount has been canceled. No funds have been deducted. If this was unintentional, you may reattempt the transaction.";
+            case 'processing':
+                return "Your transaction of $$amount is currently being processed. We will notify you once it's completed.";
+            default:
+                return "The status of your transaction is currently unknown. Please contact support for further details.";
+        }
+    }
 }
