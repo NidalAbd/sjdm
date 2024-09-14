@@ -105,6 +105,16 @@
                                                     </a>
                                                     @endif
                                                 @endif
+                                                @if($transaction->status !== 'completed')
+                                                    <!-- Show Complete Payment button if transaction is incomplete -->
+                                                    <form action="{{ route('checkout') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="amount" value="{{ $transaction->amount }}">
+                                                        <button type="submit" class="btn btn-success btn-sm" title="{{ __('adminlte.complete_transaction') }}">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

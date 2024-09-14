@@ -302,6 +302,10 @@ return [
     'send_message' => 'إرسال الرسالة',
     'no_status' => 'لا يوجد حالة',
     'messages' => 'الرسائل',
+    'complete_transaction' => 'إكمال المعاملة',
+    'transaction_canceled' => 'تم إلغاء معاملتك بمبلغ $:amount. يمكنك إكماله أدناه.',
+    'transaction_amount' => 'مبلغ المعاملة',
+    'complete_payment' => 'إكمال الدفع',
 
     // ========================= Transactions Management =========================
     'manage_transactions' => 'إدارة المعاملات',

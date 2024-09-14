@@ -130,9 +130,15 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
         return response()->json(['success' => true]);
     })->name('notifications.markAllAsRead');
 
+    Route::get('/checkout/cancel/{transaction_id}', [StripeController::class, 'cancel'])->name('checkout.cancel');
+    Route::get('/checkout/success/{transaction_id}', [StripeController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/fail/{transaction_id}', [StripeController::class, 'fail'])->name('checkout.fail');
+    Route::post('/webhook/stripe', [StripeController::class, 'handleWebhook']);
+    Route::get('/transactions/complete/{transaction_id}', [StripeController::class, 'completeTransaction'])->name('transactions.complete');
+
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
-    Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
-    Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
+//    Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
+//    Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
     Route::get('/points', [PointsController::class, 'index'])->name('points.index');
     Route::post('/points/redeem', [PointsController::class, 'redeem'])->name('points.redeem');
 });

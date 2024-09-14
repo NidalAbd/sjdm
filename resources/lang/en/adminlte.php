@@ -303,6 +303,10 @@ return [
     'send_message' => 'Send Message',
     'no_status' => 'No Status',
     'messages' => 'Messages',
+    'complete_transaction' => 'Complete Transaction',
+    'transaction_canceled' => 'Your transaction of $:amount was canceled. You can complete it below.',
+    'transaction_amount' => 'Transaction Amount',
+    'complete_payment' => 'Complete Payment',
 
     // ========================= Transactions Management =========================
     'manage_transactions' => 'Transactions',
