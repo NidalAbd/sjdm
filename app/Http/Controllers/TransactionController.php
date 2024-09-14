@@ -137,5 +137,13 @@ class TransactionController extends Controller
     }
 
 
+    public function destroy(Transaction $transaction)
+    {
+        $this->authorize('delete', $transaction);
+
+        $transaction->delete();  // Permanently delete the transaction
+
+        return redirect()->route('transactions.index')->with('success', 'Transaction deleted successfully.');
+    }
 
 }
