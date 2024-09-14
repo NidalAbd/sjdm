@@ -82,14 +82,10 @@
                                                    title="{{ __('adminlte.view_transaction') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
+
                                                 <!-- Conditionally show "Create Support Ticket" button -->
-                                                <!-- Inside the transactions table rows, where support ticket button exists -->
-                                                <!-- Inside the transactions table rows, where support ticket button exists -->
-                                                <!-- Inside the transactions table rows, where support ticket button exists -->
                                                 @if(!$transaction->supportTicket && $transaction->status !== 'completed')
-                                                    <!-- Check if there's no support ticket and the transaction is not completed -->
                                                     @can('create_ticket')
-                                                        <!-- Display the Create Ticket Button -->
                                                         <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                                 data-bs-target="#createTicketModal{{ $transaction->id }}"
                                                                 title="{{ __('adminlte.create_support_ticket') }}">
@@ -97,25 +93,16 @@
                                                         </button>
                                                     @endcan
                                                 @else
-                                                    @if($transaction->supportTicket) <!-- Check if supportTicket exists -->
-                                                    <!-- Display View Ticket Button when a support ticket exists -->
-                                                    <a href="{{ route('support.show', $transaction->supportTicket->id) }}" class="btn btn-info btn-sm"
-                                                       title="{{ __('adminlte.view_ticket') }}">
-                                                        <i class="fas fa-ticket-alt"></i>
-                                                    </a>
+                                                    @if($transaction->supportTicket)
+                                                        <a href="{{ route('support.show', $transaction->supportTicket->id) }}" class="btn btn-info btn-sm"
+                                                           title="{{ __('adminlte.view_ticket') }}">
+                                                            <i class="fas fa-ticket-alt"></i>
+                                                        </a>
                                                     @endif
                                                 @endif
-                                                @if($transaction->status !== 'completed')
-                                                    <!-- Show Complete Payment button if transaction is incomplete -->
-                                                    @if(Auth::user()->hasRole('admin'))  <!-- Only admin sees the delete button -->
-                                                    <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this transaction?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-times"></i> <!-- Correct Font Awesome icon for delete -->
-                                                        </button>
-                                                    </form>
-                                                    @endif
+
+                                                <!-- Show Complete Payment button only for 'credit' transactions that are not completed -->
+                                                @if($transaction->type === 'credit' && $transaction->status !== 'completed')
                                                     <form action="{{ route('checkout') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="amount" value="{{ $transaction->amount }}">
@@ -125,6 +112,16 @@
                                                     </form>
                                                 @endif
 
+                                                <!-- Show Delete button only for admin -->
+                                                @if(Auth::user()->hasRole('admin'))
+                                                    <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this transaction?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-times"></i> <!-- Correct Font Awesome icon for delete -->
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
