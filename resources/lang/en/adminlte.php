@@ -304,6 +304,8 @@ return [
     'no_status' => 'No Status',
     'messages' => 'Messages',
     'complete_transaction' => 'Complete Transaction',
+    'completed_transactions_24hour' => 'Last 24h Transactions',
+
     'transaction_canceled' => 'Your transaction of $:amount was canceled. You can complete it below.',
     'transaction_amount' => 'Transaction Amount',
     'complete_payment' => 'Complete Payment',

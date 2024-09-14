@@ -3,11 +3,12 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Mail;
 
-class OrderNotification extends Notification
+class OrderNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -32,7 +33,7 @@ class OrderNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return ['database', 'mail']; // Using both database and email
     }
 
     /**
@@ -43,7 +44,7 @@ class OrderNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
+        $mailMessage = (new MailMessage)
             ->subject('Order Created Successfully')
             ->greeting('Hello ' . $notifiable->name . ',')
             ->line('Your order has been created successfully.')
@@ -54,6 +55,17 @@ class OrderNotification extends Notification
             ->line('Status: ' . $this->order->status)
             ->action('View Order', url('/orders/' . $this->order->id))
             ->line('Thank you for using our service!');
+
+        // Modify email headers via the Mail facade
+        Mail::mailer('smtp')->send($mailMessage, [], function ($message) {
+            $message->getHeaders()->addTextHeader('X-Priority', '3');
+            $message->getHeaders()->addTextHeader('X-MSMail-Priority', 'Normal');
+            $message->getHeaders()->addTextHeader('X-Mailer', 'SJDM');
+            $message->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:info@sjdm.store?subject=unsubscribe>');
+            $message->getHeaders()->addTextHeader('X-Complaints-To', 'support@sjdm.store');
+        });
+
+        return $mailMessage;
     }
 
     /**

@@ -306,6 +306,7 @@ return [
     'transaction_canceled' => 'تم إلغاء معاملتك بمبلغ $:amount. يمكنك إكماله أدناه.',
     'transaction_amount' => 'مبلغ المعاملة',
     'complete_payment' => 'إكمال الدفع',
+    'completed_transactions_24hour' => 'التحويلات اخر 24 ساعة',
 
     // ========================= Transactions Management =========================
     'manage_transactions' => 'إدارة المعاملات',
