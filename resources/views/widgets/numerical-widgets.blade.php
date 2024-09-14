@@ -69,49 +69,49 @@
         </div>
     </div>
 </div>
-<!-- Optional: Call to Action -->
-<div class="text-center mt-4">
-    <a href="{{ url('/home') }}" class="btn btn-primary">{{ __('adminlte.learn_more') }}</a>
-</div>
-<div class="row mb-5 mt-5">
-    <div class="col-md-12">
-        <h2 class="text-center mb-4 platform-title">{{ __('adminlte.key_metrics') }}</h2>
-    </div>
-    <!-- Metric 1: Orders per second -->
-    <div class="col-md-4">
-        <div class="stats-box p-4 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <div class="stat-pic mb-3">
-                <i class="fas fa-hourglass-half fa-1x widget-icon"></i>
-            </div>
-            <h3 class="stats-title">{{ __('adminlte.seconds') }}</h3>
-            <h4 class="metric-description">{{ __('adminlte.an_order_is_made_every') }}</h4>
-        </div>
-    </div>
-    <!-- Metric 2: Completed Orders -->
-    <div class="col-md-4">
-        <div class="stats-box p-4 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <div class="stat-pic mb-3">
-                <i class="fas fa-chart-line fa-1x widget-icon"></i>
-            </div>
-            <!-- Use number_format to add spaces and remove decimal places -->
-            <h3 class="stats-title">{{ number_format($totalOrdersCount, 0, '.', ' ') }}</h3>
-            <h4 class="metric-description">{{ number_format($completedOrdersCount, 0, '.', ' ') }} {{ __('adminlte.orders_completed') }}</h4>
-        </div>
-    </div>
+{{--<!-- Optional: Call to Action -->--}}
+{{--<div class="text-center mt-4">--}}
+{{--    <a href="{{ url('/home') }}" class="btn btn-primary">{{ __('adminlte.learn_more') }}</a>--}}
+{{--</div>--}}
+{{--<div class="row mb-5 mt-5">--}}
+{{--    <div class="col-md-12">--}}
+{{--        <h2 class="text-center mb-4 platform-title">{{ __('adminlte.key_metrics') }}</h2>--}}
+{{--    </div>--}}
+{{--    <!-- Metric 1: Orders per second -->--}}
+{{--    <div class="col-md-4">--}}
+{{--        <div class="stats-box p-4 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">--}}
+{{--            <div class="stat-pic mb-3">--}}
+{{--                <i class="fas fa-hourglass-half fa-1x widget-icon"></i>--}}
+{{--            </div>--}}
+{{--            <h3 class="stats-title">{{ __('adminlte.seconds') }}</h3>--}}
+{{--            <h4 class="metric-description">{{ __('adminlte.an_order_is_made_every') }}</h4>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+{{--    <!-- Metric 2: Completed Orders -->--}}
+{{--    <div class="col-md-4">--}}
+{{--        <div class="stats-box p-4 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">--}}
+{{--            <div class="stat-pic mb-3">--}}
+{{--                <i class="fas fa-chart-line fa-1x widget-icon"></i>--}}
+{{--            </div>--}}
+{{--            <!-- Use number_format to add spaces and remove decimal places -->--}}
+{{--            <h3 class="stats-title">{{ number_format($totalOrdersCount, 0, '.', ' ') }}</h3>--}}
+{{--            <h4 class="metric-description">{{ number_format($completedOrdersCount, 0, '.', ' ') }} {{ __('adminlte.orders_completed') }}</h4>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
 
 
-    <!-- Metric 3: Prices -->
-    <div class="col-md-4">
-        <div class="stats-box p-4 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
-            <div class="stat-pic mb-3">
-                <i class="fas fa-coins fa-1x widget-icon"></i>
-            </div>
-            <h3 class="stats-title">{{ __('adminlte.price_value') }}</h3>
-            <h4 class="metric-description">{{ __('adminlte.prices_starting_from') }}</h4>
-        </div>
-    </div>
-</div>
+{{--    <!-- Metric 3: Prices -->--}}
+{{--    <div class="col-md-4">--}}
+{{--        <div class="stats-box p-4 aos-init aos-animate" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">--}}
+{{--            <div class="stat-pic mb-3">--}}
+{{--                <i class="fas fa-coins fa-1x widget-icon"></i>--}}
+{{--            </div>--}}
+{{--            <h3 class="stats-title">{{ __('adminlte.price_value') }}</h3>--}}
+{{--            <h4 class="metric-description">{{ __('adminlte.prices_starting_from') }}</h4>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+{{--</div>--}}
 <!-- Optional: Call to Action -->
 <div class="text-center mt-4">
     <a href="{{ url('/home') }}" class="btn btn-primary">{{ __('adminlte.learn_more') }}</a>

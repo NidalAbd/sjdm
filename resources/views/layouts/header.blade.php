@@ -277,7 +277,7 @@
             {!! __('adminlte.empower_social_influence') !!}
         </h1>
         <p class="lead mb-4" data-aos="fade-up" data-aos-duration="2000">
-            {{ __('adminlte.social_media_growth_tools') }}
+
         </p>
         <a href="{{ route('register') }}" class="btn btn-lg btn-primary rounded-pill px-5 py-3 shadow" data-aos="zoom-in" data-aos-duration="2500">
             {{ __('adminlte.get_started_free') }}
