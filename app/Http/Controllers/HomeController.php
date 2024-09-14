@@ -73,6 +73,9 @@ class HomeController extends Controller
         // Fetch transaction status counts
         $completedTransactionsCount = Transaction::where('status', 'completed')->count();
         $canceledTransactionsCount = Transaction::where('status', 'canceled')->count();
+        $newCreditTransactionsCount = Transaction::where('type', 'credit')
+            ->where('created_at', '>=', Carbon::now()->subDay())
+            ->count();
 
         // Define colors for statuses
         $statusColors = [
@@ -88,6 +91,7 @@ class HomeController extends Controller
             'ticketsCount', 'ordersByStatus', 'statusColors','totalUserBalance',
             'verifiedUsersCount', 'nonVerifiedUsersCount',
             'completedTransactionsCount', 'canceledTransactionsCount',
+            'newCreditTransactionsCount'
 
         ));
     }
