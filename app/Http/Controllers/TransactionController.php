@@ -143,7 +143,7 @@ class TransactionController extends Controller
 
         $transaction->delete();  // Permanently delete the transaction
 
-        return redirect()->route('transactions.index')->with('success', 'Transaction deleted successfully.');
+        return back()->with('success', 'Transaction deleted successfully.');
     }
 
 }
