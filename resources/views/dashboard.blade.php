@@ -14,6 +14,7 @@
     <!-- Admin-specific widgets and content -->
     @if(auth()->user()->isAdmin())
 
+        <!-- Total Cost/Profit Widgets Section -->
         <div class="row mt-4">
             @php
                 $timePeriods = [
@@ -41,35 +42,49 @@
             @endforeach
         </div>
 
-        <!-- Admin-specific metrics -->
+        <!-- Admin Metrics Widgets Section -->
         <div class="row mt-4">
             <!-- User Count -->
             <x-adminlte-widget color="info" title="{{ __('adminlte.users') }}" count="{{ $userCount }}" icon="fas fa-users" link="{{ route('users.index') }}" />
 
             <!-- Total User Balance -->
             <x-adminlte-widget color="info" title="{{ __('Total User Balance') }}" count="{{ number_format($totalUserBalance, 2) }}" icon="fas fa-dollar-sign" link="{{ route('users.index') }}" />
+        </div>
 
+        <!-- User Verification Metrics Section -->
+        <div class="row mt-4">
             <!-- Verified Users -->
             <x-adminlte-widget color="success" title="{{ __('adminlte.verified_users') }}" count="{{ $verifiedUsersCount }}" icon="fas fa-user-check" link="{{ route('users.index') }}" />
 
             <!-- Non-Verified Users -->
             <x-adminlte-widget color="danger" title="{{ __('adminlte.non_verified_users') }}" count="{{ $nonVerifiedUsersCount }}" icon="fas fa-user-times" link="{{ route('users.index') }}" />
+        </div>
 
+        <!-- Transaction Metrics Section -->
+        <div class="row mt-4">
             <!-- Completed Transactions -->
             <x-adminlte-widget color="success" title="{{ __('adminlte.completed_transactions') }}" count="{{ $completedTransactionsCount }}" icon="fas fa-check-circle" link="{{ route('transactions.index') }}" />
+
+            <!-- Completed Transactions (Last 24 Hours) -->
             <x-adminlte-widget color="success" title="{{ __('adminlte.completed_transactions_24hour') }}" count="{{ $newCreditTransactionsCount }}" icon="fas fa-check-circle" link="{{ route('transactions.index') }}" />
 
             <!-- Canceled Transactions -->
             <x-adminlte-widget color="danger" title="{{ __('adminlte.canceled_transactions') }}" count="{{ $canceledTransactionsCount }}" icon="fas fa-times-circle" link="{{ route('transactions.index') }}" />
+        </div>
 
+        <!-- Services and Orders Metrics Section -->
+        <div class="row mt-4">
             <!-- Services Count -->
             <x-adminlte-widget color="success" title="{{ __('adminlte.services') }}" count="{{ $serviceCount }}" icon="fas fa-cogs" link="{{ route('services.index') }}" />
 
             <!-- Orders Count -->
             <x-adminlte-widget color="warning" title="{{ __('adminlte.orders') }}" count="{{ $orderCount }}" icon="fas fa-shopping-cart" link="{{ route('orders.index') }}" />
+        </div>
 
+        <!-- Pricing Section -->
+        <div class="row mt-4">
             <!-- Starting Price -->
-            <x-adminlte-widget color="danger" title="{{ __('adminlte.prices_start') }}" count="{{ $startingPrice }}" icon="fas fa-dollar-sign" link="{{ route('services.index') }}"/>
+            <x-adminlte-widget color="danger" title="{{ __('adminlte.prices_start') }}" count="{{ $startingPrice }}" icon="fas fa-dollar-sign" link="{{ route('services.index') }}" />
         </div>
 
     @else
