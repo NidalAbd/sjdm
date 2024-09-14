@@ -574,5 +574,40 @@ return [
 
     // ========================= JavaScript =========================
     'bootstrap_tabs_initialization' => 'تهيئة تبويبات Bootstrap',
+
+    // Users
+    'verified_users' => 'المستخدمون الذين تم التحقق منهم',
+    'non_verified_users' => 'المستخدمون الذين لم يتم التحقق منهم',
+
+    // Transactions
+    'completed_transactions' => 'المعاملات المكتملة',
+    'canceled_transactions' => 'المعاملات الملغاة',
+
+    // Orders
+    'pending_orders' => 'الطلبات المعلقة',
+    'processing_orders' => 'الطلبات قيد المعالجة',
+    'canceled_orders' => 'الطلبات الملغاة',
+
+    // Referrals
+    'referrals_info' => 'معلومات الإحالات',
+
+    // Support Tickets
+    'support_tickets' => 'تذاكر الدعم',
+
+    // Widgets
+    'total_cost_24h' => 'التكلفة الإجمالية (آخر 24 ساعة)',
+    'total_profit_24h' => 'إجمالي الربح (آخر 24 ساعة)',
+    'total_cost_7d' => 'التكلفة الإجمالية (آخر 7 أيام)',
+    'total_profit_7d' => 'إجمالي الربح (آخر 7 أيام)',
+    'total_cost_30d' => 'التكلفة الإجمالية (آخر 30 يومًا)',
+    'total_profit_30d' => 'إجمالي الربح (آخر 30 يومًا)',
+    'total_cost_lifetime' => 'التكلفة الإجمالية (مدى الحياة)',
+    'total_profit_lifetime' => 'إجمالي الربح (مدى الحياة)',
+    'total_user_balance' => 'الرصيد الإجمالي للمستخدمين',
+
+
+    // Transaction Statuses
+    'processing' => 'قيد المعالجة',
+
 ];
 

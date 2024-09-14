@@ -14,216 +14,81 @@
     <!-- Admin-specific widgets and content -->
     @if(auth()->user()->isAdmin())
 
-        <!-- Total Cost and Profit Widgets -->
         <div class="row mt-4">
-            <!-- Last 24 Hours -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>{{ number_format($totals['24h']['cost'], 2) }}</h3>
-                        <p>{{ __('Total Cost (24h)') }}</p>
-                        <h4>{{ number_format($totals['24h']['profit'], 2) }}</h4>
-                        <p>{{ __('Total Profit (24h)') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Last 7 Days -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>{{ number_format($totals['7d']['cost'], 2) }}</h3>
-                        <p>{{ __('Total Cost (7d)') }}</p>
-                        <h4>{{ number_format($totals['7d']['profit'], 2) }}</h4>
-                        <p>{{ __('Total Profit (7d)') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-calendar-week"></i>
+            @php
+                $timePeriods = [
+                    ['period' => '24h', 'color' => 'info', 'icon' => 'fas fa-clock'],
+                    ['period' => '7d', 'color' => 'success', 'icon' => 'fas fa-calendar-week'],
+                    ['period' => '30d', 'color' => 'warning', 'icon' => 'fas fa-calendar-alt'],
+                    ['period' => 'lifetime', 'color' => 'danger', 'icon' => 'fas fa-infinity'],
+                ];
+            @endphp
+                <!-- Loop through total cost/profit data -->
+            @foreach($timePeriods as $period)
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-{{ $period['color'] }}">
+                        <div class="inner">
+                            <h3>{{ number_format($totals[$period['period']]['cost'], 2) }}</h3>
+                            <p>{{ __('Total Cost (' . $period['period'] . ')') }}</p>
+                            <h4>{{ number_format($totals[$period['period']]['profit'], 2) }}</h4>
+                            <p>{{ __('Total Profit (' . $period['period'] . ')') }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="{{ $period['icon'] }}"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Last 30 Days -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>{{ number_format($totals['30d']['cost'], 2) }}</h3>
-                        <p>{{ __('Total Cost (30d)') }}</p>
-                        <h4>{{ number_format($totals['30d']['profit'], 2) }}</h4>
-                        <p>{{ __('Total Profit (30d)') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lifetime -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>{{ number_format($totals['lifetime']['cost'], 2) }}</h3>
-                        <p>{{ __('Total Cost (Lifetime)') }}</p>
-                        <h4>{{ number_format($totals['lifetime']['profit'], 2) }}</h4>
-                        <p>{{ __('Total Profit (Lifetime)') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-infinity"></i>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
 
-        <!-- Other Admin Widgets -->
+        <!-- Admin-specific metrics -->
         <div class="row mt-4">
-            <!-- Users widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>{{ $userCount ?? 0 }}</h3>
-                        <p>{{ __('adminlte.users') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <a href="{{ route('users.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- User Count -->
+            <x-adminlte-widget color="info" title="{{ __('adminlte.users') }}" count="{{ $userCount }}" icon="fas fa-users" link="{{ route('users.index') }}" />
 
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <!-- Display Total User Balance -->
-                        <h3>{{ number_format($totalUserBalance, 2) }}</h3>
-                        <p>{{ __('Total User Balance') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <a href="{{ route('users.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- Total User Balance -->
+            <x-adminlte-widget color="info" title="{{ __('Total User Balance') }}" count="{{ number_format($totalUserBalance, 2) }}" icon="fas fa-dollar-sign" link="{{ route('users.index') }}" />
 
+            <!-- Verified Users -->
+            <x-adminlte-widget color="success" title="{{ __('adminlte.verified_users') }}" count="{{ $verifiedUsersCount }}" icon="fas fa-user-check" link="{{ route('users.index') }}" />
 
-            <!-- Services widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>{{ $serviceCount ?? 0 }}</h3>
-                        <p>{{ __('adminlte.services') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <a href="{{ route('services.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- Non-Verified Users -->
+            <x-adminlte-widget color="danger" title="{{ __('adminlte.non_verified_users') }}" count="{{ $nonVerifiedUsersCount }}" icon="fas fa-user-times" link="{{ route('users.index') }}" />
 
-            <!-- Orders widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>{{ $orderCount ?? 0 }}</h3>
-                        <p>{{ __('adminlte.orders') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                    <a href="{{ route('orders.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- Completed Transactions -->
+            <x-adminlte-widget color="success" title="{{ __('adminlte.completed_transactions') }}" count="{{ $completedTransactionsCount }}" icon="fas fa-check-circle" link="{{ route('transactions.index') }}" />
 
-            <!-- Prices Start widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>{{ $startingPrice ?? 0 }}</h3>
-                        <p>{{ __('adminlte.prices_start') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <a href="#" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- Canceled Transactions -->
+            <x-adminlte-widget color="danger" title="{{ __('adminlte.canceled_transactions') }}" count="{{ $canceledTransactionsCount }}" icon="fas fa-times-circle" link="{{ route('transactions.index') }}" />
+
+            <!-- Services Count -->
+            <x-adminlte-widget color="success" title="{{ __('adminlte.services') }}" count="{{ $serviceCount }}" icon="fas fa-cogs" link="{{ route('services.index') }}" />
+
+            <!-- Orders Count -->
+            <x-adminlte-widget color="warning" title="{{ __('adminlte.orders') }}" count="{{ $orderCount }}" icon="fas fa-shopping-cart" link="{{ route('orders.index') }}" />
+
+            <!-- Starting Price -->
+            <x-adminlte-widget color="danger" title="{{ __('adminlte.prices_start') }}" count="{{ $startingPrice }}" icon="fas fa-dollar-sign" />
         </div>
 
     @else
         <!-- User-specific widgets -->
         <div class="row mt-4">
-            <!-- Unique Orders by Status Widgets -->
+            <!-- Referrals -->
+            <x-adminlte-widget color="info" title="{{ __('adminlte.referrals') }}" count="{{ $verifiedActiveReferrals->count() }}" icon="fas fa-user-friends" link="{{ route('profile.settings') }}" />
 
-            <!-- Referrals widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>{{ $verifiedActiveReferrals->count() ?? 0 }}</h3>
-                        <p>{{ __('adminlte.referrals') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-user-friends"></i>
-                    </div>
-                    <a href="{{ route('profile.settings') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- Orders -->
+            <x-adminlte-widget color="warning" title="{{ __('adminlte.orders') }}" count="{{ auth()->user()->orders()->count() }}" icon="fas fa-shopping-cart" link="{{ route('orders.index') }}" />
 
-            <!-- Orders widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>{{ auth()->user()->orders()->count() }}</h3>
-                        <p>{{ __('adminlte.orders') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                    <a href="{{ route('orders.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- Support Tickets -->
+            <x-adminlte-widget color="primary" title="{{ __('Support Tickets') }}" count="{{ auth()->user()->supportTickets()->count() }}" icon="fas fa-ticket-alt" link="{{ route('support.index') }}" />
 
-            <!-- Support Tickets widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-primary">
-                    <div class="inner">
-                        <h3>{{ auth()->user()->supportTickets()->count() }}</h3>
-                        <p>{{ __('Support Tickets') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-ticket-alt"></i>
-                    </div>
-                    <a href="{{ route('support.index') }}" class="small-box-footer">{{ __('View Tickets') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
+            <!-- Transactions -->
+            <x-adminlte-widget color="primary" title="{{ __('adminlte.transactions') }}" count="{{ auth()->user()->transactions()->count() }}" icon="fas fa-exchange-alt" link="{{ route('transactions.index') }}" />
 
-            <!-- Transactions widget -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-primary">
-                    <div class="inner">
-                        <h3>{{ auth()->user()->transactions()->count() }}</h3>
-                        <p>{{ __('adminlte.transactions') }}</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <a href="{{ route('transactions.index') }}" class="small-box-footer">{{ __('adminlte.more_info') }} <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
-
+            <!-- Loop through order statuses and create widgets -->
             @foreach($ordersByStatus as $status => $count)
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-{{ $statusColors[$status] ?? 'danger' }}">
-                        <div class="inner">
-                            <h3>{{ $count }}</h3>
-                            <p>{{ ucfirst($status) }} {{ __('Orders') }}</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                    </div>
-                </div>
+                <x-adminlte-widget color="{{ $statusColors[$status] ?? 'danger' }}" title="{{ ucfirst($status) }} {{ __('Orders') }}" count="{{ $count }}" icon="fas fa-shopping-cart" />
             @endforeach
         </div>
     @endif

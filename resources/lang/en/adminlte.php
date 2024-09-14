@@ -603,4 +603,38 @@ return [
     // ========================= Miscellaneous =========================
     'bonus_request' => 'Request Your Bonus',
     'hidden_upload_form' => 'Hidden Form for Image Upload',
+
+
+    'verified_users' => 'Verified Users',
+    'non_verified_users' => 'Non-Verified Users',
+
+    // Transactions
+    'completed_transactions' => 'Completed Transactions',
+    'canceled_transactions' => 'Canceled Transactions',
+
+    // Orders
+    'pending_orders' => 'Pending Orders',
+    'processing_orders' => 'Processing Orders',
+    'canceled_orders' => 'Canceled Orders',
+
+
+    // Support Tickets
+    'support_tickets' => 'Support Tickets',
+
+    // Widgets
+    'total_cost_24h' => 'Total Cost (Last 24 Hours)',
+    'total_profit_24h' => 'Total Profit (Last 24 Hours)',
+    'total_cost_7d' => 'Total Cost (Last 7 Days)',
+    'total_profit_7d' => 'Total Profit (Last 7 Days)',
+    'total_cost_30d' => 'Total Cost (Last 30 Days)',
+    'total_profit_30d' => 'Total Profit (Last 30 Days)',
+    'total_cost_lifetime' => 'Total Cost (Lifetime)',
+    'total_profit_lifetime' => 'Total Profit (Lifetime)',
+    'total_user_balance' => 'Total User Balance',
+
+    // Transaction Statuses
+    'processing' => 'Processing',
+
+
+
 ];

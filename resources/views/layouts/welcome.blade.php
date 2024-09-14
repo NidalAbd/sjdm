@@ -2,21 +2,47 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ __('title') }}</title>
-    <meta name="keywords" content="{{ __('keywords') }}">
-    <meta name="description" content="{{ __('description') }}">
-    <meta property="og:title" content="{{ __('keywords') }}" />
-    <meta property="og:description" content="{{ __('description') }}" />
-    <meta property="og:url" content="{{ url()->current() }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="{{ app()->getLocale() == 'ar' ? 'ar_AR' : 'en_US' }}" />
-    <meta property="og:site_name" content="SJDM" />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ __('title') }}</title>
+        <meta name="keywords" content="{{ __('keywords') }}">
+        <meta name="description" content="{{ __('description') }}">
+        <meta property="og:title" content="{{ __('keywords') }}" />
+        <meta property="og:description" content="{{ __('description') }}" />
+        <meta property="og:url" content="{{ url()->current() }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="{{ app()->getLocale() == 'ar' ? 'ar_AR' : 'en_US' }}" />
+        <meta property="og:site_name" content="SJDM" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
+
+        <!-- Schema Markup (Structured Data) -->
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "Service",
+              "serviceType": "Social Media Marketing",
+              "provider": {
+                "@type": "Organization",
+                "name": "SJDM",
+                "url": "https://sjdm.store"
+              },
+              "description": "SJDM is a leading platform for boosting followers and engagement across various social media platforms.",
+              "areaServed": {
+                "@type": "Place",
+                "name": "Arab World"
+              },
+              "offers": {
+                "@type": "Offer",
+                "priceCurrency": "USD",
+                "price": "Starting at $10",
+                "url": "https://sjdm.store/pricing"
+              }
+            }
+        </script>
 
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">

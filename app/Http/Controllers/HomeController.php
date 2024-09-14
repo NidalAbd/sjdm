@@ -67,6 +67,14 @@ class HomeController extends Controller
             ->groupBy('status')
             ->pluck('count', 'status');
 
+        // Fetch verified and non-verified users
+        $verifiedUsersCount = User::whereNotNull('email_verified_at')->count();
+        $nonVerifiedUsersCount = User::whereNull('email_verified_at')->count();
+
+        // Fetch transaction status counts
+        $completedTransactionsCount = Transaction::where('status', 'completed')->count();
+        $canceledTransactionsCount = Transaction::where('status', 'canceled')->count();
+
         // Define colors for statuses
         $statusColors = [
             'pending' => 'warning',
@@ -78,7 +86,10 @@ class HomeController extends Controller
         return view('dashboard', compact(
             'totals', 'userCount', 'serviceCount',
             'orderCount', 'startingPrice', 'verifiedActiveReferrals',
-            'ticketsCount', 'ordersByStatus', 'statusColors','totalUserBalance'
+            'ticketsCount', 'ordersByStatus', 'statusColors','totalUserBalance',
+            'verifiedUsersCount', 'nonVerifiedUsersCount',
+            'completedTransactionsCount', 'canceledTransactionsCount',
+
         ));
     }
 
