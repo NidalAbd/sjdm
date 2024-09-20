@@ -23,7 +23,7 @@
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-L001CCMV5K');
+            gtag('config', 'G-4W3CL6YLBQ');
         </script>
         <!-- Schema Markup (Structured Data) -->
         <script type="application/ld+json">
