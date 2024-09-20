@@ -35,7 +35,7 @@ return array(
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => array(
-            'path' => 'images/MaxPeak.png',
+            'path' => 'images/sjdm_logo.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
