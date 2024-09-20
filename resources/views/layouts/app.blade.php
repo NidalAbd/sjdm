@@ -3,6 +3,15 @@
 @section('title', __('adminlte.dashboard')) <!-- Use translation key -->
 
 <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L001CCMV5K"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-L001CCMV5K');
+</script>
 
 @section('content_header')
     @include('partials.breadcrumbs')  <!-- Include the breadcrumbs partial -->

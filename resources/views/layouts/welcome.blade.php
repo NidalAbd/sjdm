@@ -18,7 +18,13 @@
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
+            gtag('config', 'G-L001CCMV5K');
+        </script>
         <!-- Schema Markup (Structured Data) -->
         <script type="application/ld+json">
             {
