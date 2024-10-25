@@ -236,16 +236,19 @@
                         </ul>
                     </li>
                 @endguest
-
-                <!-- Utility Links -->
                 <!-- Language Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-globe"></i> {{ __('adminlte.language') }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
-                        <li><a class="dropdown-item" href="{{ route('changeLang', 'en') }}">{{ __('adminlte.english') }}</a></li>
-                        <li><a class="dropdown-item" href="{{ route('changeLang', 'ar') }}">{{ __('adminlte.arabic') }}</a></li>
+                        @foreach (config('app.available_locales') as $localeCode => $localeName)
+                            <li>
+                                <a class="dropdown-item" href="{{ route('changeLang', $localeCode) }}">
+                                    {{ $localeName }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </li>
                 <!-- Dark Mode Toggle -->

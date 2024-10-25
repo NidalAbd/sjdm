@@ -11,12 +11,14 @@
         <meta property="og:description" content="{{ __('description') }}" />
         <meta property="og:url" content="{{ url()->current() }}" />
         <meta property="og:type" content="website" />
-        <meta property="og:locale" content="{{ app()->getLocale() == 'ar' ? 'ar_AR' : 'en_US' }}" />
-        <meta property="og:site_name" content="SJDM" />
+    <meta property="og:locale" content="{{ getOgLocale() }}" />
+    <meta property="og:site_name" content="SJDM" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
+        <link rel="canonical" href="{{ url()->current() }}" />
+
+    <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
