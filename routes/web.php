@@ -42,7 +42,7 @@ Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how
 Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
 Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
-Route::get('/sitemap', function () {
+Route::get('/sitemap.xml', function () {
     return response()->file(public_path('sitemap.xml'));
 })->name('sitemap');
 
