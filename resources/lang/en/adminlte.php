@@ -36,6 +36,7 @@ return [
     'category' => 'Category',
     'status' => 'Status',
     'balance' => 'Balance',
+    'sitemap' => 'Sitemap',
 
     // ========================= User Management =========================
     'manage_users' => 'Users',
