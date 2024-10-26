@@ -16,6 +16,7 @@
                 <ul class="list-unstyled">
                     <li><a href="{{ route('how-it-works') }}" class="text-white text-decoration-none">{{ __('adminlte.how_it_works') }}</a></li>
                     <li><a href="{{ route('support.take') }}" class="text-white text-decoration-none">{{ __('adminlte.support') }}</a></li>
+                    <li><a href="{{ route('sitemap') }}" class="text-white text-decoration-none">{{ __('adminlte.sitemap') }}</a></li> <!-- Sitemap Link -->
                 </ul>
             </div>
             <!-- Column 3: Company -->

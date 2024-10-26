@@ -42,6 +42,9 @@ Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how
 Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
 Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
+Route::get('/sitemap', function () {
+    return response()->file(public_path('sitemap.xml'));
+})->name('sitemap');
 
 // Auth routes
 Auth::routes(['verify' => true]);

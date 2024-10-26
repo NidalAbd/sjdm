@@ -633,10 +633,7 @@ return [
     'total_cost_lifetime' => 'Total Cost (Lifetime)',
     'total_profit_lifetime' => 'Total Profit (Lifetime)',
     'total_user_balance' => 'Total User Balance',
-
     // Transaction Statuses
     'processing' => 'Processing',
-
-
 
 ];
