@@ -55,7 +55,7 @@ return [
     'inactive' => 'Inactive',
     'banned' => 'Banned',
     'suspended'=> 'Suspended',
-    'bonus_offer_message' => 'Bonus Offer! Earn a $100 bonus by referring 50 verified and active users. To get your referral code, go to your profile settings and share your unique link with friends!',
+    'bonus_offer_message' => 'SMM Panel Bonus Offer! Earn a $100 bonus by referring 50 verified and active users. To get your referral code, go to your profile settings and share your unique link with friends!',
     'referrals' => 'Referrals',
 
     // ========================= Breadcrumbs =========================
@@ -123,13 +123,13 @@ return [
     'our_community' => 'Our community',
 
     // ========================= Features & Services =========================
-    'feature' => 'Feature',
-    'cheapest_fastest_services' => 'Cheapest & Fastest Services',
-    'cheapest_fastest_services_icon' => 'Cheapest & Fastest Services Icon',
-    'super_fast_delivery' => 'Super Fast Delivery',
-    'super_fast_delivery_icon' => 'Super Fast Delivery Icon',
-    'support_24_7' => 'Support 24/7',
-    'support_24_7_icon' => 'Support 24/7 Icon',
+    'feature' => 'SMM Panel Feature',
+    'cheapest_fastest_services' => 'Cheapest & Fastest Services SMM Panel ',
+    'cheapest_fastest_services_icon' => 'Cheapest & Fastest Services Icon SMM Panel ',
+    'super_fast_delivery' => 'Super Fast Delivery SMM Panel ',
+    'super_fast_delivery_icon' => 'Super Fast Delivery Icon SMM Panel ',
+    'support_24_7' => 'Support 24/7 SMM Panel ',
+    'support_24_7_icon' => 'Support 24/7 Icon SMM Panel',
     'many_payment_methods' => 'Many Payment Methods',
     'many_payment_methods_icon' => 'Many Payment Methods Icon',
     'friendly_dashboard' => 'Friendly Dashboard',
@@ -138,7 +138,7 @@ return [
     'updates_page_icon' => 'Updates Page Icon',
 
     // ========================= Additional Features & Descriptions =========================
-    'our_exclusive_features' => 'Our Exclusive Features',
+    'our_exclusive_features' => 'Our Exclusive Features SMM Panel ',
     'continuous_updates' => 'Continuous Updates',
     'continuous_updates_desc' => 'Stay ahead with our regularly updated services.',
     'easy_control_panel' => 'Easy Control Panel',
@@ -147,8 +147,8 @@ return [
     'special_discounts_desc' => 'Exclusive discounts for our loyal customers.',
 
     // ========================= Achievements & Metrics =========================
-    'our_achievements' => 'Our Achievements',
-    'services' => 'Services',
+    'our_achievements' => 'Our Achievements SMM Panel ',
+    'services' => 'Services SMM Panel ',
     'services_value' => '1000+',
     'services_start_speed' => 'services start speed',
     'users_value' => '500+',
@@ -182,7 +182,7 @@ return [
     'google_pay_desc' => 'Fast transactions with Google Pay',
 
     // ========================= Platforms =========================
-    'platforms_we_support' => 'Platforms We Support',
+    'platforms_we_support' => 'SMM Panel Platforms We Support',
     'all' => 'all',
     'facebook' => 'Facebook',
     'instagram' => 'Instagram',
@@ -387,7 +387,7 @@ return [
     'agree_terms' => 'By proceeding with the payment, you agree to our Terms of Service and Privacy Policy.',
 
     // ========================= Dashboard =========================
-    'welcome_dashboard' => 'Welcome to your Dashboard!',
+    'welcome_dashboard' => 'Welcome to your SMM Panel Dashboard!',
     'prices_start' => 'Prices Start',
     'quick_access' => 'Quick Access',
     'available_routes' => 'Available Routes',
@@ -398,26 +398,26 @@ return [
     'create_now' => 'Create now',
 
     // ========================= Miscellaneous =========================
-    'faq' => 'FAQ',
+    'faq' => 'FAQ ',
     'about_us' => 'About Us',
     'careers' => 'Careers',
     'privacy_policy' => 'Privacy Policy',
     'contact_us' => 'Contact Us',
     'title_about_us' => 'About Us',
-    'intro' => 'Welcome to :app_name! We are committed to providing the best services to our customers, focusing on reliability, customer service, and innovation.',
+    'intro' => 'Welcome to :app_name! We are committed to providing the best services SMM Panel to our customers, focusing on reliability, customer service, and innovation.',
     'founded' => 'Founded in 2022, our company has quickly grown to become a leading provider in our industry. Our passion for excellence has driven us to constantly improve and offer top-quality services that meet and exceed our customers\' expectations.',
     'mission' => 'Our mission is to empower individuals and businesses by providing them with the tools and services they need to succeed. We believe in building long-term relationships with our customers based on trust, transparency, and mutual respect.',
     'thank_you' => 'Thank you for choosing :app_name. We look forward to serving you!',
     'learn_more' => 'Join now',
 
     // ========================= About Us =========================
-    'about_us_title1' => 'Our Mission',
+    'about_us_title1' => 'Our Mission SMM Panel ',
     'about_us_text1' => 'We strive to provide the best services to our customers globally, focusing on quality and innovation.',
-    'about_us_title2' => 'Our Vision',
+    'about_us_title2' => 'Our Vision SMM Panel ',
     'about_us_text2' => 'To be the leading platform in social media marketing services by constantly adapting to market trends and customer needs.',
-    'about_us_title3' => 'Our Values',
+    'about_us_title3' => 'Our Values SMM Panel ',
     'about_us_text3' => 'We value integrity, customer satisfaction, and excellence in all our services.',
-    'about_us_title4' => 'Our Team',
+    'about_us_title4' => 'Our Team SMM Panel ',
     'about_us_text4' => 'Our team consists of experts in the field who are passionate about helping your business grow.',
 
     // ========================= Customer Reviews =========================
@@ -440,7 +440,7 @@ return [
     'step3_description' => 'For every 50 active users you refer, earn $100!',
 
     // ========================= How It Works =========================
-    'how_it_works' => 'How It Works',
+    'how_it_works' => 'How It Works ',
     'create_account' => 'Create an Account',
     'create_account_description' => 'You can register a new account at any time by clicking on the registration button on the homepage or simply click here.',
     'create_account_note' => 'Please use your personal and active information when registering to receive all updates.',
@@ -475,7 +475,7 @@ return [
     'faq_answer8' => 'Deficiency compensation is provided if there is a deficiency in guaranteed services for a specified period, provided that all account followers are real or all followers were requested from our site. Because you may request 1,000 followers from us and the account already has thousands or hundreds of thousands of followers, in this case, we cannot provide compensation guarantee for you.',
 
     // ========================= Support Options =========================
-    'support_intro' => 'We are here to help you! Choose one of the support options below to get in touch with our team.',
+    'support_intro' => 'SMM Panel We are here to help you! Choose one of the support options below to get in touch with our team.',
     'support_live_chat' => 'Live Chat Support',
     'support_live_chat_desc' => 'Connect with our support team in real-time through our live chat service.',
     'support_start_chat' => 'Start Chat',
@@ -494,7 +494,7 @@ return [
 
     // ========================= Terms & Conditions =========================
     'general_terms' => 'General Terms',
-    'general_terms_desc' => 'By placing an order using the SJDM website, you automatically accept all the terms of service listed below, whether you read them or not. We reserve the right to change these terms of service without notice. You are expected to read all terms of service before placing any order to ensure you are up to date with any changes or future changes. You will only use the SJDM website in a manner that follows all agreements made with Instagram/Facebook/Twitter/Youtube or any other social media site on their individual Terms of Service page. Service prices on the website are subject to change at any time without notice. The payment/refund policy remains in effect in the event of a price change. SJDM does not guarantee delivery time for any services. We offer our best estimate of when the order will be delivered. This is just an estimate, and SJDM will not refund orders that are processing if you feel they are taking too long. The SJDM website strives to deliver exactly what is expected from our suppliers. In this case, we reserve the right to change the type of service if we deem it necessary to complete the order.',
+    'general_terms_desc' => 'By placing an order using the SJDM SMM Panel website, you automatically accept all the terms of service listed below, whether you read them or not. We reserve the right to change these terms of service without notice. You are expected to read all terms of service before placing any order to ensure you are up to date with any changes or future changes. You will only use the SJDM website in a manner that follows all agreements made with Instagram/Facebook/Twitter/Youtube or any other social media site on their individual Terms of Service page. Service prices on the website are subject to change at any time without notice. The payment/refund policy remains in effect in the event of a price change. SJDM does not guarantee delivery time for any services. We offer our best estimate of when the order will be delivered. This is just an estimate, and SJDM will not refund orders that are processing if you feel they are taking too long. The SJDM website strives to deliver exactly what is expected from our suppliers. In this case, we reserve the right to change the type of service if we deem it necessary to complete the order.',
     'responsibilities' => 'Responsibilities',
     'responsibilities_desc' => 'SJDM is not responsible for any damages you or your business may suffer. SJDM is not in any way responsible for any account bans or photo deletions done by Instagram, Twitter, Facebook, YouTube, or other social media platforms.',
     'service_use' => 'Service Use',
