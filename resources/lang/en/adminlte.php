@@ -117,10 +117,10 @@ return [
 'not_verified' => 'Not verified',
     'verified' => 'Verified',
     // ========================= Hero Section =========================
-    'empower_social_influence' => 'S J for Digital Marketing',
+    'empower_social_influence' => 'SJDM SMM Panel',
     'social_media_growth_tools' => 'SJDM || SMM Panel increasing followers',
     'get_started_free' => 'Get Started for Free',
-    'our_community' => 'Our community',
+    'our_community' => 'Our community SMM Panel',
 
     // ========================= Features & Services =========================
     'feature' => 'SMM Panel Feature',
