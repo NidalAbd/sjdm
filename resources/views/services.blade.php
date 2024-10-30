@@ -8,7 +8,7 @@
             <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark">
                 <tr>
-                    <th>{{ __('Service ID') }}</th>
+                    <th>{{ __('ID') }}</th>
                     <th>{{ __('Name') }}</th>
                     <th>{{ __('Category') }}</th>
                     <th>{{ __('Type') }}</th>
@@ -36,7 +36,7 @@
                 </tbody>
                 <tfoot class="table-dark">
                 <tr>
-                    <th>{{ __('Service ID') }}</th>
+                    <th>{{ __('ID') }}</th>
                     <th>{{ __('Name') }}</th>
                     <th>{{ __('Category') }}</th>
                     <th>{{ __('Type') }}</th>

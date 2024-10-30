@@ -189,7 +189,7 @@
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{ route('home') }}">{{ __('adminlte.home') }}</a>
                 </li>
-                <li><a class="nav-link text-white" href="{{ route('services.all') }}">{{ __('All Services') }}</a></li>
+                <li><a class="nav-link text-white" href="{{ route('services.all') }}">{{ __('adminlte.services') }}</a></li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{ route('about') }}">{{ __('adminlte.about_us') }}</a>
                 </li>
