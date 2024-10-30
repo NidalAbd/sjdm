@@ -7,6 +7,12 @@
         <priority>1.0</priority>
     </url>
     <url>
+        <loc>https://sjdm.store/all-services</loc>
+        <lastmod>2024-10-26</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
         <loc>https://sjdm.store/faq</loc>
         <lastmod>2024-10-26</lastmod>
         <changefreq>monthly</changefreq>
