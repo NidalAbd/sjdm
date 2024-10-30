@@ -1,6 +1,6 @@
 <!-- resources/views/widgets/faq.blade.php -->
 @extends('layouts.welcome')
-
+@section('title', __('adminlte.faq'))
 @section('content')
     <div class="content-section active" id="faq-section">
         <div class="container my-5">

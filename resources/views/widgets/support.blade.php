@@ -1,6 +1,6 @@
 <!-- resources/views/widgets/support.blade.php -->
 @extends('layouts.welcome')
-
+@section('title', __('adminlte.support'))
 @section('content')
     <div class="content-section active" id="support-section">
         <div class="container my-5">

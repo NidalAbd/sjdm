@@ -96,7 +96,7 @@ class ServiceController extends Controller
 
         $services = $query->paginate(10);
 
-        return view('services.all', compact('services'));
+        return view('services', compact('services'));
     }
 
     public function getCategories(Request $request)

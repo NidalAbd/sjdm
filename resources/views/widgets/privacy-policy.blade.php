@@ -1,5 +1,6 @@
 <!-- resources/views/widgets/privacy_policy.blade.php -->
 @extends('layouts.welcome')
+@section('title', __('adminlte.privacy_policy'))
 
 @section('content')
     <div class="content-section active" id="privacy-policy-section">

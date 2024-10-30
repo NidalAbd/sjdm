@@ -1,6 +1,6 @@
 <!-- resources/views/widgets/contact.blade.php -->
 @extends('layouts.welcome')
-
+@section('title', __('adminlte.contact_us'))
 @section('content')
     <div class="content-section active" id="contact-us-section">
         <div class="container my-5">

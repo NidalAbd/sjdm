@@ -1,6 +1,6 @@
 <!-- resources/views/widgets/about.blade.php -->
 @extends('layouts.welcome')
-
+@section('title', __('adminlte.about_us'))
 @section('content')
     <div class="content-section active" id="about-us-section">
         <div class="container my-5">
