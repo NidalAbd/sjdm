@@ -72,6 +72,32 @@ class ServiceController extends Controller
 
         return view('services.index', compact('services', 'translatedPlatforms', 'uniqueCategories'));
     }
+    public function getAllServices(Request $request)
+    {
+        $query = Service::query();
+        $currentLanguage = app()->getLocale();
+
+        // Define the fields based on language
+        $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+
+        // Apply search filter if present
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm, $nameField, $categoryField) {
+                $q->orWhere('service_id', 'like', '%' . $searchTerm . '%')
+                    ->orWhere($nameField, 'like', '%' . $searchTerm . '%')
+                    ->orWhere($categoryField, 'like', '%' . $searchTerm . '%')
+                    ->orWhere('type', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('rate', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('cost', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        $services = $query->paginate(10);
+
+        return view('services.all', compact('services'));
+    }
 
     public function getCategories(Request $request)
     {
