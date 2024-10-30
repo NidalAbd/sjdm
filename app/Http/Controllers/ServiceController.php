@@ -94,7 +94,7 @@ class ServiceController extends Controller
             });
         }
 
-        $services = $query->paginate(10);
+        $services = $query->paginate(100);
 
         return view('services', compact('services'));
     }
