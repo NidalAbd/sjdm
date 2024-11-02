@@ -3,17 +3,18 @@
 
 @section('content')
     <div id="home-section" class="content-section active">
+        @guest
+            <div class="mb-4">
+                @include('widgets.fast-login')
+            </div>
+        @endguest
         <div class="mb-4">
             @include('widgets.platforms')
         </div>
         <div class="mb-4">
             @include('widgets.affiliate')
         </div>
-        @guest
-            <div class="mb-4">
-                @include('widgets.fast-login')
-            </div>
-        @endguest
+
 
         <div class="mb-4">
             @include('widgets.numerical-widgets')
