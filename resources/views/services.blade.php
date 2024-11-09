@@ -26,7 +26,6 @@
                             <td>{{ app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en }}</td>
                             <td>{{ $service->type }}</td>
                             <td>{{ $service->rate }}</td>
-                            <td>{{ $service->cost }}</td>
                         </tr>
                     @endforeach
                 @else
@@ -51,7 +50,6 @@
                             <p class="card-text mb-1"><strong>{{ __('Category:') }}</strong> {{ app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en }}</p>
                             <p class="card-text mb-1"><strong>{{ __('Type:') }}</strong> {{ $service->type }}</p>
                             <p class="card-text mb-1"><strong>{{ __('Rate:') }}</strong> {{ $service->rate }}</p>
-                            <p class="card-text mb-1"><strong>{{ __('Cost:') }}</strong> {{ $service->cost }}</p>
                         </div>
                     </div>
                 @endforeach
