@@ -14,7 +14,6 @@
                     <th>{{ __('Category') }}</th>
                     <th>{{ __('Type') }}</th>
                     <th>{{ __('Rate') }}</th>
-                    <th>{{ __('Cost') }}</th>
                 </tr>
                 </thead>
                 <tbody>
