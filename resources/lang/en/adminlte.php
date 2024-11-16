@@ -114,7 +114,7 @@ return [
     'click_here_to_request_another' => 'click here to request another',
     'failed' => 'These credentials do not match our records.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-'not_verified' => 'Not verified',
+    'not_verified' => 'Not verified',
     'verified' => 'Verified',
     // ========================= Hero Section =========================
     'empower_social_influence' => 'SJDM SMM Panel',
@@ -357,6 +357,7 @@ return [
     // ========================= Add Balance =========================
     'redirect_stripe' => 'You will be redirected to Stripe\'s secure payment gateway.',
     'add_balance' => 'Add Balance',
+    'add_or_debit_balance'=>'Add Or Debit Balance',
     'select_payment_method' => 'Select Payment Method',
     'securely_add_funds' => 'Securely add funds using the options below.',
     'proceed_to_payment' => 'Proceed to Payment',

@@ -356,6 +356,7 @@ return [
     // ========================= Add Balance =========================
     'redirect_stripe' => 'سيتم توجيهك إلى بوابة الدفع الآمنة الخاصة بـ Stripe.',
     'add_balance' => 'إضافة رصيد',
+    'add_or_debit_balance'=> 'إضافة رصيد',
     'select_payment_method' => 'اختر طريقة الدفع',
     'securely_add_funds' => 'أضف الأموال بأمان باستخدام الخيارات أدناه.',
     'proceed_to_payment' => 'المتابعة للدفع',
