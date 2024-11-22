@@ -360,7 +360,6 @@ return [
     'add_or_debit_balance'=>'Add Or Debit Balance',
     'select_payment_method' => 'Select Payment Method',
     'securely_add_funds' => 'Securely add funds using the options below.',
-    'proceed_to_payment' => 'Proceed to Payment',
     'enter_amount' => 'Enter Amount',
     'enter_valid_amount' => 'Please enter a valid amount.',
     'payment_stripe' => 'Pay with Stripe (Credit/Debit Card)',
