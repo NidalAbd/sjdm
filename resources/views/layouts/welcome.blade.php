@@ -24,6 +24,9 @@
 <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Best Cheapest Fastest 10K follower 1$ #1 world SMM Panel |  Services for Instagram, TikTok, YouTube & More</title>
+        <meta name="keywords" content="SMM, Top SMM panel, SMM services, affordable SMM, buy Instagram followers, YouTube watch hours, TikTok views, Facebook likes, social media growth, Twitter engagement, LinkedIn followers, global SMM provider, organic SMM growth, YouTube monetization, multi-platform SMM solutions, Snapchat followers, reliable SMM provider">
+        <meta name="description" content="10K follower 1$ #1 world SMM services to increase followers and engagement across Instagram, TikTok, YouTube, Facebook, Twitter, and more. Our high-quality SMM panel provides secure, organic growth solutions for all major platforms, helping you achieve visibility with likes, views, and watch hours to meet your social media goals.">
         <title>{{ __('title') }}</title>
         <meta name="keywords" content="{{ __('keywords') }}">
         <meta name="description" content="{{ __('description') }}">
