@@ -283,9 +283,51 @@
         <p class="lead mb-4" data-aos="fade-up" data-aos-duration="2000">
 
         </p>
-        <a href="{{ route('register') }}" class="btn btn-lg btn-primary rounded-pill px-5 py-3 shadow" data-aos="zoom-in" data-aos-duration="2500">
-            {{ __('adminlte.get_started_free') }}
-        </a>
+        <div class="hero-section text-center py-5 position-relative" style="background: linear-gradient(135deg, #4e54c8, #8f94fb); color: white;">
+            <div class="container">
+                <h1 class="display-4 fw-bold mb-4" data-aos="fade-up" data-aos-duration="1500">
+                    {{ __('adminlte.get_started_free') }}
+                </h1>
+                <p class="lead mb-5" data-aos="fade-up" data-aos-duration="1800">
+                    {{ __('Get affordable social media followers and grow your online presence effortlessly!') }}
+                </p>
+                <div class="row justify-content-center g-4">
+                    <!-- Instagram Card -->
+                    <div class="col-md-4" data-aos="zoom-in" data-aos-duration="2000">
+                        <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+                            <div class="card-body">
+                                <h3 class="card-title mb-3"><i class="fab fa-instagram text-danger"></i> Instagram</h3>
+                                <p class="card-text fs-5">$2.60 <small>/ 1K Followers</small></p>
+                                <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-4 py-2">Order Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Facebook Card -->
+                    <div class="col-md-4" data-aos="zoom-in" data-aos-duration="2200">
+                        <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+                            <div class="card-body">
+                                <h3 class="card-title mb-3"><i class="fab fa-facebook text-primary"></i> Facebook</h3>
+                                <p class="card-text fs-5">$2.40 <small>/ 1K Followers</small></p>
+                                <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-4 py-2">Order Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TikTok Card -->
+                    <div class="col-md-4" data-aos="zoom-in" data-aos-duration="2400">
+                        <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+                            <div class="card-body">
+                                <h3 class="card-title mb-3"><i class="fab fa-tiktok text-dark"></i> TikTok</h3>
+                                <p class="card-text fs-5">$2.80 <small>/ 1K Followers</small></p>
+                                <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-4 py-2">Order Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#more-pricing" class="btn btn-light rounded-pill mt-5 px-5 py-3 shadow" data-aos="fade-up" data-aos-duration="2500">
+                    {{ __('See All Pricing') }}
+                </a>
+            </div>
+        </div>
     </div>
 </section>
 
