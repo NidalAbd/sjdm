@@ -42,13 +42,15 @@
         <link rel="canonical" href="{{ url()->current() }}" />
 
     <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWMQW2P5G8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-            gtag('config', 'G-4W3CL6YLBQ');
-        </script>
+        gtag('config', 'G-ZWMQW2P5G8');
+    </script>
         <!-- Schema Markup (Structured Data) -->
         <script type="application/ld+json">
             {
