@@ -283,14 +283,7 @@
         <p class="lead mb-4" data-aos="fade-up" data-aos-duration="2000">
 
         </p>
-        <div class="hero-section text-center py-5 position-relative" style="background: linear-gradient(135deg, #4e54c8, #8f94fb); color: white;">
             <div class="container">
-                <h1 class="display-4 fw-bold mb-4" data-aos="fade-up" data-aos-duration="1500">
-                    {{ __('adminlte.get_started_free') }}
-                </h1>
-                <p class="lead mb-5" data-aos="fade-up" data-aos-duration="1800">
-                    {{ __('Get affordable social media followers and grow your online presence effortlessly!') }}
-                </p>
                 <div class="row justify-content-center g-4">
                     <!-- Instagram Card -->
                     <div class="col-md-4" data-aos="zoom-in" data-aos-duration="2000">
@@ -327,7 +320,6 @@
                     {{ __('See All Pricing') }}
                 </a>
             </div>
-        </div>
     </div>
 </section>
 
