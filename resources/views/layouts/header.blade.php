@@ -290,7 +290,7 @@
                         <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                             <div class="card-body">
                                 <h3 class="card-title mb-3"><i class="fab fa-instagram text-danger"></i> Instagram</h3>
-                                <p class="card-text fs-5">$1.77 <small>/ 1K Followers</small></p>
+                                <p class="card-text fs-5">$2.60 <small>/ 1K Followers</small></p>
                                 <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-4 py-2">Order Now</a>
                             </div>
                         </div>
@@ -300,7 +300,7 @@
                         <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                             <div class="card-body">
                                 <h3 class="card-title mb-3"><i class="fab fa-facebook text-primary"></i> Facebook</h3>
-                                <p class="card-text fs-5">$6.98 <small>/ 1K Followers</small></p>
+                                <p class="card-text fs-5">$2.40 <small>/ 1K Followers</small></p>
                                 <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-4 py-2">Order Now</a>
                             </div>
                         </div>
