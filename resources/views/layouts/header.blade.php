@@ -316,9 +316,6 @@
                         </div>
                     </div>
                 </div>
-                <a href="#more-pricing" class="btn btn-light rounded-pill mt-5 px-5 py-3 shadow" data-aos="fade-up" data-aos-duration="2500">
-                    {{ __('See All Pricing') }}
-                </a>
             </div>
     </div>
 </section>
