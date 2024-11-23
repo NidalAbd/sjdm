@@ -117,8 +117,8 @@ return [
     'not_verified' => 'Not verified',
     'verified' => 'Verified',
     // ========================= Hero Section =========================
-    'empower_social_influence' => 'SJDM SMM Panel',
-    'social_media_growth_tools' => 'SJDM || SMM Panel increasing followers',
+    'empower_social_influence' => 'SMM Followers',
+    'social_media_growth_tools' => 'SMM Followers || SMM Panel increasing followers',
     'get_started_free' => 'Get Started for Free',
     'our_community' => 'Our community SMM Panel',
 
@@ -384,7 +384,7 @@ return [
     'refund_policy' => 'Refund Policy',
     'refund_policy_detail' => 'Once the transaction is complete, the added balance is non-refundable. Please ensure you enter the correct amount before proceeding.',
     'support' => 'Support',
-    'support_detail' => 'If you encounter any issues during the payment process, please contact our support team at info@sjdm.store. We are here to assist you.',
+    'support_detail' => 'If you encounter any issues during the payment process, please contact our support team at info@smm-followerss.com . We are here to assist you.',
     'agree_terms' => 'By proceeding with the payment, you agree to our Terms of Service and Privacy Policy.',
 
     // ========================= Dashboard =========================
@@ -495,11 +495,11 @@ return [
 
     // ========================= Terms & Conditions =========================
     'general_terms' => 'General Terms',
-    'general_terms_desc' => 'By placing an order using the SJDM SMM Panel website, you automatically accept all the terms of service listed below, whether you read them or not. We reserve the right to change these terms of service without notice. You are expected to read all terms of service before placing any order to ensure you are up to date with any changes or future changes. You will only use the SJDM website in a manner that follows all agreements made with Instagram/Facebook/Twitter/Youtube or any other social media site on their individual Terms of Service page. Service prices on the website are subject to change at any time without notice. The payment/refund policy remains in effect in the event of a price change. SJDM does not guarantee delivery time for any services. We offer our best estimate of when the order will be delivered. This is just an estimate, and SJDM will not refund orders that are processing if you feel they are taking too long. The SJDM website strives to deliver exactly what is expected from our suppliers. In this case, we reserve the right to change the type of service if we deem it necessary to complete the order.',
+    'general_terms_desc' => 'By placing an order using the SMM Followers Panel website, you automatically accept all the terms of service listed below, whether you read them or not. We reserve the right to change these terms of service without notice. You are expected to read all terms of service before placing any order to ensure you are up to date with any changes or future changes. You will only use the SMM Followers website in a manner that follows all agreements made with Instagram/Facebook/Twitter/Youtube or any other social media site on their individual Terms of Service page. Service prices on the website are subject to change at any time without notice. The payment/refund policy remains in effect in the event of a price change. SMM Followers does not guarantee delivery time for any services. We offer our best estimate of when the order will be delivered. This is just an estimate, and SMM Followers will not refund orders that are processing if you feel they are taking too long. The SMM Followers website strives to deliver exactly what is expected from our suppliers. In this case, we reserve the right to change the type of service if we deem it necessary to complete the order.',
     'responsibilities' => 'Responsibilities',
-    'responsibilities_desc' => 'SJDM is not responsible for any damages you or your business may suffer. SJDM is not in any way responsible for any account bans or photo deletions done by Instagram, Twitter, Facebook, YouTube, or other social media platforms.',
+    'responsibilities_desc' => 'SMM Followers is not responsible for any damages you or your business may suffer. SMM Followers is not in any way responsible for any account bans or photo deletions done by Instagram, Twitter, Facebook, YouTube, or other social media platforms.',
     'service_use' => 'Service Use',
-    'service_use_desc' => 'The SJDM website will only be used to promote your Instagram/Twitter/Facebook account or any social account and to help boost your "appearance" only. We do not guarantee that the new followers will interact with you; we simply guarantee that you will receive the followers you pay for. We do not guarantee that 100% of our accounts will have a profile picture, bio, and uploaded photos, although we strive to make this a reality for all accounts. You will not upload anything into the SJDM website, including nudity or any material not acceptable or suitable for the Instagram/Twitter/Facebook or Social Media community. Private accounts will not receive a refund. Please ensure that your account is public before ordering.',
+    'service_use_desc' => 'The SMM Followers website will only be used to promote your Instagram/Twitter/Facebook account or any social account and to help boost your "appearance" only. We do not guarantee that the new followers will interact with you; we simply guarantee that you will receive the followers you pay for. We do not guarantee that 100% of our accounts will have a profile picture, bio, and uploaded photos, although we strive to make this a reality for all accounts. You will not upload anything into the SMM Followers website, including nudity or any material not acceptable or suitable for the Instagram/Twitter/Facebook or Social Media community. Private accounts will not receive a refund. Please ensure that your account is public before ordering.',
     'privacy_policy_section' => 'Privacy Policy',
     'privacy_policy_desc' => 'This policy covers how we use your personal information. We take your privacy seriously and will take all measures to protect your personal information. Any personal information received will only be used to fill your order. We will not sell or redistribute your information to anyone. All information is encrypted and saved on secure servers.',
 
