@@ -2,8 +2,10 @@
 
 <style>
     body {
-        background: linear-gradient(135deg, #eef2f3, #ffffff); /* Light mode gradient */
+        background-image: url('{{ asset('images/double-bubble-outline.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
         transition: background-color 0.3s ease, color 0.3s ease;
         color: #212529; /* Light mode text color */
         padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
@@ -60,7 +62,9 @@
 
     /* Dark mode styles */
     .dark-mode {
-        background: linear-gradient(135deg, #0c0e0e, #1f2123); /* Dark mode gradient */
+        background-color: #365352; /* Dark mode background */
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
     }
 
@@ -93,8 +97,10 @@
 
     /* Other Styles */
     .hero-section {
-        background: linear-gradient(135deg, #f3f6f9, #e8ecef); /* Light mode gradient */
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
         height: 35vh; /* Adjust height to ensure full display */
         color: #fff;
         position: relative;
@@ -107,14 +113,15 @@
     }
 
     .hero-bg {
-        background: rgba(209, 209, 209, 0.2); /* Light mode overlay */
+        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
+        opacity: 0.2;
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         z-index: 1;
-        transition: background 0.3s ease;
+        transition: background 0.3s ease; /* Transition for background change */
     }
 
     .dark-mode .hero-bg {
