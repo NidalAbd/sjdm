@@ -1,23 +1,32 @@
 <!-- Header Blade File: header.blade.php -->
 
 <style>
-    /* Light mode styles */
     body {
-        background: linear-gradient(135deg, #f6f8fa, #ffffff); /* Light gradient background */
+        background-image: url('{{ asset('images/double-bubble-outline.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
         transition: background-color 0.3s ease, color 0.3s ease;
         color: #212529; /* Light mode text color */
         padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
     }
 
+    .dark-mode .navbar {
+        background-color: #111315 !important;
+    }
+
     .navbar {
-        background-color: #ffffff; /* Light mode navbar background */
+        background-color: #111315 !important;
         transition: background-color 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark-mode .navbar {
+        background-color: #111315 !important;
     }
 
     .navbar .nav-link {
         font-size: 1rem;
-        color: #333;
+        padding: 0.5rem 1rem;
         transition: color 0.3s ease;
     }
 
@@ -25,98 +34,145 @@
         color: #ff6347; /* Custom hover color */
     }
 
-    .hero-section {
-        background: linear-gradient(135deg, #eef2f3, #ffffff); /* Light gradient for hero section */
-        color: #333;
-        height: 35vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        transition: background 0.3s ease, color 0.3s ease;
+    .navbar-brand .circular-logo {
+        border-radius: 50%;
+        max-width: 40px;
+    }
+
+    .navbar-toggler {
+        border: none;
+        outline: none;
+    }
+
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        background-color: #ffffff; /* Light mode dropdown background */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item {
+        color: #000; /* Light mode dropdown text */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa; /* Light mode hover background */
+        color: #000; /* Light mode hover text color */
     }
 
     /* Dark mode styles */
     .dark-mode {
-        background: linear-gradient(135deg, #1e2d2f, #2f4f4f); /* Dark gradient background */
-        color: #e4e4e4; /* Dark mode text color */
-    }
-
-    .dark-mode .navbar {
-        background-color: #111315; /* Dark mode navbar background */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        background-color: #365352; /* Dark mode background */
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
     }
 
     .dark-mode .navbar .nav-link {
-        color: #e4e4e4;
+        color: #fff;
     }
 
     .dark-mode .navbar .nav-link:hover {
         color: #ff6347;
     }
 
-    .dark-mode .hero-section {
-        background: linear-gradient(135deg, #2f4f4f, #1e2d2f); /* Dark gradient for hero section */
+    .dark-mode .navbar-brand .text-white {
         color: #fff;
     }
 
-    /* Button styling */
-    button {
-        background-color: #ff6347;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    button:hover {
-        background-color: #e5533f;
-    }
-
-    /* Dropdown styles */
-    .dropdown-menu {
-        background-color: #ffffff; /* Light mode dropdown */
-        border: 1px solid #ccc;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .dropdown-item {
-        color: #333;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
-    }
-
+    /* Dark mode dropdown menu styles */
     .dark-mode .dropdown-menu {
-        background-color: #333; /* Dark mode dropdown */
-        color: #e4e4e4;
+        background-color: #333; /* Dark mode dropdown background */
+        color: #fff; /* Dark mode dropdown text */
     }
 
     .dark-mode .dropdown-item {
-        color: #e4e4e4;
+        color: #fff; /* Dark mode dropdown text */
     }
 
     .dark-mode .dropdown-item:hover {
-        background-color: #444;
+        background-color: #444; /* Dark mode hover background */
+        color: #fff; /* Dark mode hover text color */
     }
 
-    /* Footer styles */
-    footer {
-        background-color: #f1f1f1;
-        color: #333;
+    /* Other Styles */
+    .hero-section {
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
+        height: 35vh; /* Adjust height to ensure full display */
+        color: #fff;
+        position: relative;
+        padding-top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
-        padding: 20px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition: background 0.3s ease, color 0.3s ease; /* Add transition for smooth theme change */
     }
 
-    .dark-mode footer {
-        background-color: #222;
-        color: #e4e4e4;
+    .hero-bg {
+        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
+        opacity: 0.2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
     }
 
+    .dark-mode .hero-bg {
+        background: rgba(0, 0, 0, 0.89); /* Darker overlay for better contrast */
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
+    }
+    .hero-section .container {
+        position: relative;
+        z-index: 2; /* Ensure text container is above the overlay */
+    }
+
+    .text-gradient {
+        background: linear-gradient(90deg, #ff6347, #ff4757);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #0056b3, #007bff);
+        transform: translateY(-3px);
+    }
+
+    .hero-decorative-element {
+        position: absolute;
+        max-width: 50px; /* Adjust size as needed */
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
