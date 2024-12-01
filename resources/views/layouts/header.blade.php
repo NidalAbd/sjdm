@@ -2,7 +2,7 @@
 
 <style>
     body {
-        background: linear-gradient(135deg, #f3f6f9, #e8ecef); /* Light mode gradient */
+        background: linear-gradient(135deg, #eef2f3, #ffffff); /* Light mode gradient */
         background-size: auto; /* Adjust the size of the pattern if needed */
         transition: background-color 0.3s ease, color 0.3s ease;
         color: #212529; /* Light mode text color */
@@ -60,7 +60,7 @@
 
     /* Dark mode styles */
     .dark-mode {
-        background: linear-gradient(135deg, #1e2d2f, #243a3a); /* Dark mode gradient */
+        background: linear-gradient(135deg, #0c0e0e, #1f2123); /* Dark mode gradient */
         background-size: auto; /* Adjust the size of the pattern if needed */
     }
 
@@ -93,7 +93,7 @@
 
     /* Other Styles */
     .hero-section {
-        background: linear-gradient(135deg, #eef2f3, #ffffff); /* Light mode gradient */
+        background: linear-gradient(135deg, #f3f6f9, #e8ecef); /* Light mode gradient */
         background-size: auto; /* Adjust the size of the pattern if needed */
         height: 35vh; /* Adjust height to ensure full display */
         color: #fff;
