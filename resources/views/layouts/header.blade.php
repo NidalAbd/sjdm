@@ -2,10 +2,8 @@
 
 <style>
     body {
-        background-image: url('{{ asset('images/double-bubble-outline.png') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
+        background: linear-gradient(135deg, #f3f6f9, #e8ecef); /* Light mode gradient */
         background-size: auto; /* Adjust the size of the pattern if needed */
-        background-position: center;
         transition: background-color 0.3s ease, color 0.3s ease;
         color: #212529; /* Light mode text color */
         padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
@@ -62,9 +60,7 @@
 
     /* Dark mode styles */
     .dark-mode {
-        background-color: #365352; /* Dark mode background */
-        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
+        background: linear-gradient(135deg, #1e2d2f, #243a3a); /* Dark mode gradient */
         background-size: auto; /* Adjust the size of the pattern if needed */
     }
 
@@ -97,10 +93,8 @@
 
     /* Other Styles */
     .hero-section {
-        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
+        background: linear-gradient(135deg, #eef2f3, #ffffff); /* Light mode gradient */
         background-size: auto; /* Adjust the size of the pattern if needed */
-        background-position: center;
         height: 35vh; /* Adjust height to ensure full display */
         color: #fff;
         position: relative;
