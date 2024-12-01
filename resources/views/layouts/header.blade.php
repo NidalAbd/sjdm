@@ -107,15 +107,14 @@
     }
 
     .hero-bg {
-        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
-        opacity: 0.2;
+        background: rgba(209, 209, 209, 0.2); /* Light mode overlay */
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         z-index: 1;
-        transition: background 0.3s ease; /* Transition for background change */
+        transition: background 0.3s ease;
     }
 
     .dark-mode .hero-bg {
