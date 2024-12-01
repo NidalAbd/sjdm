@@ -1,150 +1,178 @@
 <!-- Header Blade File: header.blade.php -->
 
 <style>
-    /* Body Styling */
     body {
-        background: linear-gradient(135deg, #f3f6f9, #e8ecef); /* Light mode gradient */
+        background-image: url('{{ asset('images/double-bubble-outline.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
         transition: background-color 0.3s ease, color 0.3s ease;
         color: #212529; /* Light mode text color */
-        padding-top: 56px; /* For fixed navbar */
+        padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
     }
 
-    .dark-mode {
-        background: linear-gradient(135deg, #1e2d2f, #243a3a); /* Dark mode gradient */
-        color: #e4e4e4; /* Dark mode text color */
+    .dark-mode .navbar {
+        background-color: #111315 !important;
     }
 
-    /* Navbar Styling */
     .navbar {
-        background-color: #ffffff; /* Light mode */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: #111315 !important;
         transition: background-color 0.3s ease;
+    }
+
+    .dark-mode .navbar {
+        background-color: #111315 !important;
     }
 
     .navbar .nav-link {
         font-size: 1rem;
         padding: 0.5rem 1rem;
-        color: #333; /* Light mode text */
         transition: color 0.3s ease;
     }
 
     .navbar .nav-link:hover {
-        color: #ff6347; /* Accent color */
+        color: #ff6347; /* Custom hover color */
     }
 
-    .dark-mode .navbar {
-        background-color: #111315; /* Dark mode */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+    .navbar-brand .circular-logo {
+        border-radius: 50%;
+        max-width: 40px;
     }
 
-    .dark-mode .navbar .nav-link {
-        color: #e4e4e4;
+    .navbar-toggler {
+        border: none;
+        outline: none;
     }
 
-    /* Dropdown Styling */
+    /* Dropdown menu styling */
     .dropdown-menu {
-        background-color: #ffffff; /* Light mode */
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff; /* Light mode dropdown background */
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .dropdown-item {
-        color: #333;
-        padding: 0.5rem 1rem;
+        color: #000; /* Light mode dropdown text */
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .dropdown-item:hover {
-        background-color: #f8f9fa;
+        background-color: #f8f9fa; /* Light mode hover background */
+        color: #000; /* Light mode hover text color */
     }
 
+    /* Dark mode styles */
+    .dark-mode {
+        background-color: #365352; /* Dark mode background */
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+    }
+
+    .dark-mode .navbar .nav-link {
+        color: #fff;
+    }
+
+    .dark-mode .navbar .nav-link:hover {
+        color: #ff6347;
+    }
+
+    .dark-mode .navbar-brand .text-white {
+        color: #fff;
+    }
+
+    /* Dark mode dropdown menu styles */
     .dark-mode .dropdown-menu {
-        background-color: #2a2a2a; /* Dark mode */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        background-color: #333; /* Dark mode dropdown background */
+        color: #fff; /* Dark mode dropdown text */
     }
 
     .dark-mode .dropdown-item {
-        color: #e4e4e4;
+        color: #fff; /* Dark mode dropdown text */
     }
 
     .dark-mode .dropdown-item:hover {
-        background-color: #444;
+        background-color: #444; /* Dark mode hover background */
+        color: #fff; /* Dark mode hover text color */
     }
 
-    /* Hero Section */
+    /* Other Styles */
     .hero-section {
-        background: linear-gradient(135deg, #eef2f3, #ffffff); /* Light mode gradient */
-        color: #333;
-        height: 35vh;
+        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
+        height: 35vh; /* Adjust height to ensure full display */
+        color: #fff;
+        position: relative;
+        padding-top: 0;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        position: relative;
-        transition: background 0.3s ease, color 0.3s ease;
-    }
-
-    .dark-mode .hero-section {
-        background: linear-gradient(135deg, #1e2d2f, #243a3a); /* Dark mode gradient */
-        color: #fff;
+        transition: background 0.3s ease, color 0.3s ease; /* Add transition for smooth theme change */
     }
 
     .hero-bg {
-        background: rgba(209, 209, 209, 0.2); /* Light mode overlay */
+        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
+        opacity: 0.2;
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         z-index: 1;
-        transition: background 0.3s ease;
+        transition: background 0.3s ease; /* Transition for background change */
     }
 
     .dark-mode .hero-bg {
-        background: rgba(0, 0, 0, 0.5); /* Dark mode overlay */
+        background: rgba(0, 0, 0, 0.89); /* Darker overlay for better contrast */
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
+    }
+    .hero-section .container {
+        position: relative;
+        z-index: 2; /* Ensure text container is above the overlay */
     }
 
-    /* Gradient Text */
     .text-gradient {
         background: linear-gradient(90deg, #ff6347, #ff4757);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-weight: bold;
+        display: inline-block;
     }
 
-    /* Buttons */
     .btn-primary {
         background: linear-gradient(90deg, #007bff, #0056b3);
         border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        color: #fff;
-        transition: transform 0.3s ease, background 0.3s ease;
+        transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .btn-primary:hover {
         background: linear-gradient(90deg, #0056b3, #007bff);
-        transform: scale(1.05);
+        transform: translateY(-3px);
     }
 
-    /* Footer */
-    footer {
-        background-color: #f1f1f1;
-        color: #333;
-        text-align: center;
-        padding: 20px;
-        border-top: 1px solid #ddd;
-        transition: background-color 0.3s ease, color 0.3s ease;
+    .hero-decorative-element {
+        position: absolute;
+        max-width: 50px; /* Adjust size as needed */
+        animation: float 6s ease-in-out infinite;
     }
 
-    .dark-mode footer {
-        background-color: #222;
-        color: #e4e4e4;
-        border-top: 1px solid #444;
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
     }
-
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
