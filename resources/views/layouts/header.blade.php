@@ -1,178 +1,150 @@
 <!-- Header Blade File: header.blade.php -->
 
 <style>
+    /* Body Styling */
     body {
-        background-image: url('{{ asset('images/double-bubble-outline.png') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
-        background-size: auto; /* Adjust the size of the pattern if needed */
-        background-position: center;
+        background: linear-gradient(135deg, #f3f6f9, #e8ecef); /* Light mode gradient */
         transition: background-color 0.3s ease, color 0.3s ease;
         color: #212529; /* Light mode text color */
-        padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
+        padding-top: 56px; /* For fixed navbar */
     }
 
-    .dark-mode .navbar {
-        background-color: #111315 !important;
+    .dark-mode {
+        background: linear-gradient(135deg, #1e2d2f, #243a3a); /* Dark mode gradient */
+        color: #e4e4e4; /* Dark mode text color */
     }
 
+    /* Navbar Styling */
     .navbar {
-        background-color: #111315 !important;
+        background-color: #ffffff; /* Light mode */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: background-color 0.3s ease;
-    }
-
-    .dark-mode .navbar {
-        background-color: #111315 !important;
     }
 
     .navbar .nav-link {
         font-size: 1rem;
         padding: 0.5rem 1rem;
+        color: #333; /* Light mode text */
         transition: color 0.3s ease;
     }
 
     .navbar .nav-link:hover {
-        color: #ff6347; /* Custom hover color */
+        color: #ff6347; /* Accent color */
     }
 
-    .navbar-brand .circular-logo {
-        border-radius: 50%;
-        max-width: 40px;
+    .dark-mode .navbar {
+        background-color: #111315; /* Dark mode */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
     }
 
-    .navbar-toggler {
-        border: none;
-        outline: none;
+    .dark-mode .navbar .nav-link {
+        color: #e4e4e4;
     }
 
-    /* Dropdown menu styling */
+    /* Dropdown Styling */
     .dropdown-menu {
-        background-color: #ffffff; /* Light mode dropdown background */
+        background-color: #ffffff; /* Light mode */
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .dropdown-item {
-        color: #000; /* Light mode dropdown text */
+        color: #333;
+        padding: 0.5rem 1rem;
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .dropdown-item:hover {
-        background-color: #f8f9fa; /* Light mode hover background */
-        color: #000; /* Light mode hover text color */
+        background-color: #f8f9fa;
     }
 
-    /* Dark mode styles */
-    .dark-mode {
-        background-color: #365352; /* Dark mode background */
-        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
-        background-size: auto; /* Adjust the size of the pattern if needed */
-    }
-
-    .dark-mode .navbar .nav-link {
-        color: #fff;
-    }
-
-    .dark-mode .navbar .nav-link:hover {
-        color: #ff6347;
-    }
-
-    .dark-mode .navbar-brand .text-white {
-        color: #fff;
-    }
-
-    /* Dark mode dropdown menu styles */
     .dark-mode .dropdown-menu {
-        background-color: #333; /* Dark mode dropdown background */
-        color: #fff; /* Dark mode dropdown text */
+        background-color: #2a2a2a; /* Dark mode */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     }
 
     .dark-mode .dropdown-item {
-        color: #fff; /* Dark mode dropdown text */
+        color: #e4e4e4;
     }
 
     .dark-mode .dropdown-item:hover {
-        background-color: #444; /* Dark mode hover background */
-        color: #fff; /* Dark mode hover text color */
+        background-color: #444;
     }
 
-    /* Other Styles */
+    /* Hero Section */
     .hero-section {
-        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
-        background-size: auto; /* Adjust the size of the pattern if needed */
-        background-position: center;
-        height: 35vh; /* Adjust height to ensure full display */
-        color: #fff;
-        position: relative;
-        padding-top: 0;
+        background: linear-gradient(135deg, #eef2f3, #ffffff); /* Light mode gradient */
+        color: #333;
+        height: 35vh;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        transition: background 0.3s ease, color 0.3s ease; /* Add transition for smooth theme change */
+        position: relative;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .dark-mode .hero-section {
+        background: linear-gradient(135deg, #1e2d2f, #243a3a); /* Dark mode gradient */
+        color: #fff;
     }
 
     .hero-bg {
-        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
-        opacity: 0.2;
+        background: rgba(209, 209, 209, 0.2); /* Light mode overlay */
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         z-index: 1;
-        transition: background 0.3s ease; /* Transition for background change */
+        transition: background 0.3s ease;
     }
 
     .dark-mode .hero-bg {
-        background: rgba(0, 0, 0, 0.89); /* Darker overlay for better contrast */
-        opacity: 0.5;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        transition: background 0.3s ease; /* Transition for background change */
-    }
-    .hero-section .container {
-        position: relative;
-        z-index: 2; /* Ensure text container is above the overlay */
+        background: rgba(0, 0, 0, 0.5); /* Dark mode overlay */
     }
 
+    /* Gradient Text */
     .text-gradient {
         background: linear-gradient(90deg, #ff6347, #ff4757);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        display: inline-block;
+        font-weight: bold;
     }
 
+    /* Buttons */
     .btn-primary {
         background: linear-gradient(90deg, #007bff, #0056b3);
         border: none;
-        transition: all 0.3s ease;
+        border-radius: 5px;
+        padding: 10px 20px;
+        color: #fff;
+        transition: transform 0.3s ease, background 0.3s ease;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .btn-primary:hover {
         background: linear-gradient(90deg, #0056b3, #007bff);
-        transform: translateY(-3px);
+        transform: scale(1.05);
     }
 
-    .hero-decorative-element {
-        position: absolute;
-        max-width: 50px; /* Adjust size as needed */
-        animation: float 6s ease-in-out infinite;
+    /* Footer */
+    footer {
+        background-color: #f1f1f1;
+        color: #333;
+        text-align: center;
+        padding: 20px;
+        border-top: 1px solid #ddd;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-10px);
-        }
+    .dark-mode footer {
+        background-color: #222;
+        color: #e4e4e4;
+        border-top: 1px solid #444;
     }
+
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
