@@ -42,7 +42,7 @@ class ProcessPendingOrders implements ShouldQueue
             $apiBalance = $apiBalanceResponse->balance ?? 0;
 
             // Retrieve all orders that are "Pending API"
-            $pendingOrders = Order::where('status', 'Pending API')->get();
+            $pendingOrders = Order::where('status', 'waiting')->get();
 
             foreach ($pendingOrders as $order) {
                 // Calculate the cost of the order based on the service cost
