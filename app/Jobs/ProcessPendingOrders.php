@@ -66,15 +66,6 @@ class ProcessPendingOrders implements ShouldQueue
                         $order->api_order_id = $apiResponse->order;
                         $order->save();
 
-                        // Update the corresponding transaction to 'completed'
-                        $transaction = $order->transaction;  // Assuming you have a relationship between Order and Transaction
-                        $transaction->status = 'completed';
-                        $transaction->save();
-
-                        // Deduct the user charge from the user's balance
-                        $user = $order->user;
-                        $user->balance -= $transaction->amount;  // Deduct the amount from the user
-                        $user->save();
                         // Deduct the cost from the API balance
                         $apiBalance -= $apiCost;
 
