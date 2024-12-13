@@ -166,7 +166,7 @@ class OrderController extends Controller
         $transaction->api_cost = $actualCost;  // Store the actual cost
         $transaction->profit = $userCharge - $actualCost;  // Calculate the profit
         $transaction->currency = 'USD';
-        $transaction->status = 'Completed';  // Mark as pending since the order hasn't been sent to the API yet
+        $transaction->status = 'completed';  // Mark as pending since the order hasn't been sent to the API yet
         $transaction->save();
 
         // Send notification for the transaction
