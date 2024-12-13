@@ -172,7 +172,7 @@ class OrderController extends Controller
         // Send notification for the transaction
         $user->notify(new TransactionNotification($transaction));
 
-        return redirect()->route('orders.index')->with('success', 'Order placed successfully and will be processed once API balance is sufficient.');
+        return redirect()->route('orders.index')->with('success', 'Order placed successfully and will be processed.');
     }
 
 
