@@ -87,13 +87,6 @@ return [
     'available_locales' => [
         'en' => 'English',
         'ar' => 'Arabic',
-        'es' => 'Spanish',
-        'zh' => 'Chinese',
-        'hi' => 'Hindi',
-        'pt' => 'Portuguese',
-        'ru' => 'Russian',
-        'de' => 'German',
-        'fr' => 'French'
     ],
 
     /*
