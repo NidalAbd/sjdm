@@ -49,7 +49,7 @@ Route::get('/sitemap.xml', function () {
 })->name('sitemap');
 
 // Auth routes
-Auth::routes(['verify' => true]);
+Auth::routes();
 
 // Home and dashboard routes
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
