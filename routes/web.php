@@ -48,8 +48,6 @@ Route::get('/sitemap.xml', function () {
     return response()->file(public_path('sitemap.xml'));
 })->name('sitemap');
 
-// Auth routes
-Auth::routes(['verify' => false]);
 
 // Home and dashboard routes
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
