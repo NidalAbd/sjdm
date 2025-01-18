@@ -124,8 +124,6 @@ class RegisterController extends Controller
 
         $user->media()->save($media);
 
-        event(new Registered($user));
-
         return $user;
     }
 
