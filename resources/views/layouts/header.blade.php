@@ -2,7 +2,7 @@
 
 <style>
     body {
-        background-image: url('{{ asset('images/double-bubble-outline.png') }}');  /* Pattern texture */
+        background-image: url('{{ asset('images/double-bubble-outline.webp') }}');  /* Pattern texture */
         background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
         background-position: center;
@@ -63,7 +63,7 @@
     /* Dark mode styles */
     .dark-mode {
         background-color: #365352; /* Dark mode background */
-        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
         background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
     }
@@ -97,7 +97,7 @@
 
     /* Other Styles */
     .hero-section {
-        background-image: url('{{ asset('images/double-bubble-dark.png') }}');  /* Pattern texture */
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
         background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
         background-position: center;
