@@ -14,6 +14,7 @@
 </script>
 <link rel="preload" as="image" href="{{ asset('images/double-bubble-outline.webp') }}" type="image/webp">
 <link rel="preload" as="image" href="{{ asset('images/double-bubble-dark.webp') }}" type="image/webp">
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
 @section('content_header')
     @include('partials.breadcrumbs')  <!-- Include the breadcrumbs partial -->
