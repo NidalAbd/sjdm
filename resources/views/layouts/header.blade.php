@@ -100,7 +100,7 @@
 <section id="hero-sec" class="hero-section p-xxl-2 d-flex align-items-center justify-content-center text-center text-white position-relative overflow-hidden">
     <!-- Gradient Background -->
     <div class="hero-bg p-xxl-2"></div>
-
+<br>
     <!-- Content Container -->
     <div class="container">
         <h1 class="display-4  fw-bold mb-4 text-gradient" data-aos="fade-up" data-aos-duration="1500">
