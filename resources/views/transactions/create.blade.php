@@ -41,7 +41,7 @@
                     <form action="{{ route('checkout') }}" method="POST" class="needs-validation" novalidate id="paymentForm">
                         @csrf
                         <div class="form-floating mb-4">
-                            <input type="number" name="amount" class="form-control" id="amount" required min="10" placeholder="{{ __('adminlte.enter_amount') }}" oninput="validateAmount()">
+                            <input type="number" name="amount" class="form-control" id="amount" required min="1" placeholder="{{ __('adminlte.enter_amount') }}" oninput="validateAmount()">
                             <label for="amount">{{ __('adminlte.amount') }}</label>
                             <div class="invalid-feedback">
                                 {{ __('adminlte.enter_valid_amount') }}
