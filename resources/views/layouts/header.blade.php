@@ -115,7 +115,7 @@
                 <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2000">
                     <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                         <div class="card-body">
-                            <i class="fab fa-instagram text-danger"><br></i><h3 class="card-title mb-3"> Instagram</h3>
+                            <i class="fab fa-instagram text-danger"><br></i><h5 class="card-title mb-3"> Instagram</h5>
                             <p class="card-text fs-6">$2.60 <small>/ 1K Followers</small></p>
                             <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
                         </div>
@@ -125,7 +125,7 @@
                 <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2200">
                     <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                         <div class="card-body">
-                            <i class="fab fa-facebook text-primary"></i><h3 class="card-title mb-3"> Facebook</h3>
+                            <i class="fab fa-facebook text-primary"></i><h5 class="card-title mb-3"> Facebook</h5>
                             <p class="card-text fs-6">$2.40 <small>/ 1K Followers</small></p>
                             <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
                         </div>
@@ -135,7 +135,7 @@
                 <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2400">
                     <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                         <div class="card-body">
-                            <i class="fab fa-tiktok text-dark"></i><h3 class="card-title mb-3"> TikTok</h3>
+                            <i class="fab fa-tiktok text-dark"></i><h5 class="card-title mb-3"> TikTok</h5>
 
                             <p class="card-text fs-6">$3.40 <small>/ 1K Followers</small></p>
                             <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
@@ -288,7 +288,7 @@
     /* Mobile Optimization */
     @media (max-width: 768px) {
         .hero-section {
-            height: 50vh;
+            height: 60vh;
             background-size: contain;
         }
     }
