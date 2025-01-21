@@ -12,8 +12,6 @@
 
     gtag('config', 'G-L001CCMV5K');
 </script>
-<link rel="preload" as="image" href="{{ asset('images/double-bubble-outline.webp') }}" type="image/webp">
-<link rel="preload" as="image" href="{{ asset('images/double-bubble-dark.webp') }}" type="image/webp">
 
 @section('content_header')
     @include('partials.breadcrumbs')  <!-- Include the breadcrumbs partial -->
@@ -47,22 +45,6 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let bgElement = document.querySelector("body");
-        let isDarkMode = document.body.classList.contains("dark-mode");
-
-        let lightImage = "{{ asset('images/double-bubble-outline.webp') }}";
-        let darkImage = "{{ asset('images/double-bubble-dark.webp') }}";
-
-        if (isDarkMode) {
-            bgElement.style.backgroundImage = `url(${darkImage})`;
-        } else {
-            bgElement.style.backgroundImage = `url(${lightImage})`;
-        }
-    });
-
-</script>
 <style>
     /* Button group */
     .btn-group .btn {
