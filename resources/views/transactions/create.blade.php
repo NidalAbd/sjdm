@@ -136,7 +136,7 @@
             const proceedButton = document.getElementById('proceedButton');
             const amount = parseFloat(amountField.value);
 
-            if (!isNaN(amount) && amount >= 10) {
+            if (!isNaN(amount) && amount >= 1) {
                 proceedButton.disabled = false;
             } else {
                 proceedButton.disabled = true;
