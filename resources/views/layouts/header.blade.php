@@ -6,9 +6,29 @@
         background-repeat: repeat; /* Repeat the pattern */
         background-size: auto; /* Adjust the size of the pattern if needed */
         background-position: center;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        color: #212529; /* Light mode text color */
-        padding-top: 56px; /* Add padding to the top to accommodate the fixed navbar */
+    }
+
+    body {
+        background-image: url('{{ asset('images/double-bubble-outline.webp') }}'); /* Default */
+        background-repeat: repeat;
+        background-size: auto;
+        background-position: center;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            background-image: url('{{ asset('images/double-bubble-outline-small.webp') }}');
+        }
+    }
+
+    .dark-mode {
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');
+    }
+
+    @media (max-width: 768px) {
+        .dark-mode {
+            background-image: url('{{ asset('images/double-bubble-dark-small.webp') }}');
+        }
     }
 
     .dark-mode .navbar {
