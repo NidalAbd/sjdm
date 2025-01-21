@@ -1,5 +1,199 @@
 <!-- Header Blade File: header.blade.php -->
 
+<style>
+    body {
+        background-image: url('{{ asset('images/double-bubble-outline.webp') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
+    }
+
+    body {
+        background-image: url('{{ asset('images/double-bubble-outline.webp') }}'); /* Default */
+        background-repeat: repeat;
+        background-size: auto;
+        background-position: center;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            background-image: url('{{ asset('images/double-bubble-outline-small.webp') }}');
+        }
+    }
+
+    .dark-mode {
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');
+    }
+
+    @media (max-width: 768px) {
+        .dark-mode {
+            background-image: url('{{ asset('images/double-bubble-dark-small.webp') }}');
+        }
+    }
+
+    .dark-mode .navbar {
+        background-color: #111315 !important;
+    }
+
+    .navbar {
+        background-color: #111315 !important;
+        transition: background-color 0.3s ease;
+    }
+
+    .dark-mode .navbar {
+        background-color: #111315 !important;
+    }
+
+    .navbar .nav-link {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .navbar .nav-link:hover {
+        color: #ff6347; /* Custom hover color */
+    }
+
+    .navbar-brand .circular-logo {
+        border-radius: 50%;
+        max-width: 40px;
+    }
+
+    .navbar-toggler {
+        border: none;
+        outline: none;
+    }
+
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        background-color: #ffffff; /* Light mode dropdown background */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item {
+        color: #000; /* Light mode dropdown text */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa; /* Light mode hover background */
+        color: #000; /* Light mode hover text color */
+    }
+
+    /* Dark mode styles */
+    .dark-mode {
+        background-color: #365352; /* Dark mode background */
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+    }
+
+    .dark-mode .navbar .nav-link {
+        color: #fff;
+    }
+
+    .dark-mode .navbar .nav-link:hover {
+        color: #ff6347;
+    }
+
+    .dark-mode .navbar-brand .text-white {
+        color: #fff;
+    }
+
+    /* Dark mode dropdown menu styles */
+    .dark-mode .dropdown-menu {
+        background-color: #333; /* Dark mode dropdown background */
+        color: #fff; /* Dark mode dropdown text */
+    }
+
+    .dark-mode .dropdown-item {
+        color: #fff; /* Dark mode dropdown text */
+    }
+
+    .dark-mode .dropdown-item:hover {
+        background-color: #444; /* Dark mode hover background */
+        color: #fff; /* Dark mode hover text color */
+    }
+
+    /* Other Styles */
+    .hero-section {
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
+        height: 35vh; /* Adjust height to ensure full display */
+        color: #fff;
+        position: relative;
+        padding-top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transition: background 0.3s ease, color 0.3s ease; /* Add transition for smooth theme change */
+    }
+
+    .hero-bg {
+        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
+        opacity: 0.2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
+    }
+
+    .dark-mode .hero-bg {
+        background: rgba(0, 0, 0, 0.89); /* Darker overlay for better contrast */
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
+    }
+    .hero-section .container {
+        position: relative;
+        z-index: 2; /* Ensure text container is above the overlay */
+    }
+
+    .text-gradient {
+        background: linear-gradient(90deg, #ff6347, #ff4757);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #0056b3, #007bff);
+        transform: translateY(-3px);
+    }
+
+    .hero-decorative-element {
+        position: absolute;
+        max-width: 50px; /* Adjust size as needed */
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+</style>
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
@@ -97,13 +291,13 @@
 
 
 <!-- Hero Section -->
-<section id="hero-sec" class="hero-section p-xxl-2 d-flex align-items-center justify-content-center text-center text-white position-relative overflow-hidden">
+<section id="hero-sec" class="hero-section d-flex align-items-center justify-content-center text-center text-white position-relative overflow-hidden">
     <!-- Gradient Background -->
-    <div class="hero-bg p-xxl-2"></div>
-<br>
+    <div class="hero-bg"></div>
+
     <!-- Content Container -->
     <div class="container">
-        <h1 class="display-4  fw-bold mb-4 text-gradient" data-aos="fade-up" data-aos-duration="1500">
+        <h1 class="display-4 fw-bold mb-4 text-gradient" data-aos="fade-up" data-aos-duration="1500">
             {!! __('adminlte.empower_social_influence') !!}
         </h1>
         <p class="lead mb-4" data-aos="fade-up" data-aos-duration="2000">
@@ -115,7 +309,7 @@
                 <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2000">
                     <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                         <div class="card-body">
-                            <i class="fab fa-instagram text-danger"><br></i><h5 class="card-title mb-3"> Instagram</h5>
+                            <h3 class="card-title mb-3"><i class="fab fa-instagram text-danger"></i> Instagram</h3>
                             <p class="card-text fs-6">$2.60 <small>/ 1K Followers</small></p>
                             <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
                         </div>
@@ -125,7 +319,7 @@
                 <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2200">
                     <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                         <div class="card-body">
-                            <i class="fab fa-facebook text-primary"></i><h5 class="card-title mb-3"> Facebook</h5>
+                            <h3 class="card-title mb-3"><i class="fab fa-facebook text-primary"></i> Facebook</h3>
                             <p class="card-text fs-6">$2.40 <small>/ 1K Followers</small></p>
                             <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
                         </div>
@@ -135,9 +329,8 @@
                 <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2400">
                     <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
                         <div class="card-body">
-                            <i class="fab fa-tiktok text-dark"></i><h5 class="card-title mb-3"> TikTok</h5>
-
-                            <p class="card-text fs-6">$3.40 <small>/ 1K Followers</small></p>
+                            <h3 class="card-title mb-3"><i class="fab fa-tiktok text-dark"></i> TikTok</h3>
+                            <p class="card-text fs-6">$3.4 <small>/ 1K Followers</small></p>
                             <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
                         </div>
                     </div>
@@ -174,150 +367,187 @@
         }
     });
 </script>
-<!-- Header Blade File: header.blade.php -->
-
 <style>
-    /* General Body Styling */
-    body {
-        background-image: url('{{ asset('images/double-bubble-outline.webp') }}');
-        background-repeat: repeat;
-        background-size: auto;
-        background-position: center;
-        transition: background 0.3s ease-in-out;
+    >
+        /* General Section Title Styling */
+    .platform-title, .achievements-title {
+        font-size: 2.5rem; /* Increased font size for better visibility */
+        font-weight: 700;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        letter-spacing: 1.2px;
+        color: var(--bs-body-color); /* Dynamic color based on theme */
     }
 
-    /* Mobile Background Optimization */
-    @media (max-width: 768px) {
-        body {
-            background-image: url('{{ asset('images/double-bubble-outline.webp') }}');
-        }
+    .platform-title::after, .achievements-title::after {
+        content: '';
+        display: block;
+        margin: 0 auto;
+        width: 60px;
+        height: 3px;
+        background-color: var(--bs-primary); /* Primary color */
+        margin-top: 10px;
     }
 
-    /* Dark Mode Styling */
-    .dark-mode {
-        background-color: #365352;
-        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');
-        background-repeat: repeat;
-        background-size: auto;
-    }
-
-    @media (max-width: 768px) {
-        .dark-mode {
-            background-image: url('{{ asset('images/double-bubble-dark.webp') }}');
-        }
-    }
-
-    /* Navbar Styling */
-    .navbar {
-        background-color: #111315 !important;
-        transition: background-color 0.3s ease-in-out;
-    }
-
-    .dark-mode .navbar {
-        background-color: #111315 !important;
-    }
-
-    .navbar .nav-link {
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-        transition: color 0.3s ease-in-out;
-        color: #fff;
-    }
-
-    .navbar .nav-link:hover,
-    .dark-mode .navbar .nav-link:hover {
-        color: #ff6347; /* Custom hover color */
-    }
-
-    .navbar-brand .circular-logo {
-        border-radius: 50%;
-        max-width: 40px;
-    }
-
-    .navbar-toggler {
-        border: none;
-        outline: none;
-    }
-
-    /* Dropdown Styling */
-    .dropdown-menu {
-        background-color: #ffffff;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .dropdown-item {
-        color: #000;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
-        color: #000;
-    }
-
-    /* Dark Mode Dropdown */
-    .dark-mode .dropdown-menu {
-        background-color: #333;
-        color: #fff;
-    }
-
-    .dark-mode .dropdown-item {
-        color: #fff;
-    }
-
-    .dark-mode .dropdown-item:hover {
-        background-color: #444;
-        color: #fff;
-    }
-
-    /* Hero Section Optimization */
-    .hero-section {
-        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');
-        background-repeat: repeat;
-        background-size: cover;
-        background-position: center;
-        height: 45vh;
-        color: #fff;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    /* Stats Box Styling */
+    .stats-box {
+        background-color: var(--bs-body-bg); /* Dynamic background for light/dark mode */
+        border-radius: 15px;
         text-align: center;
+        padding: 30px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        color: var(--bs-body-color); /* Dynamic text color */
     }
 
-    /* Mobile Optimization */
-    @media (max-width: 768px) {
-        .hero-section {
-            height: 60vh;
-            background-size: contain;
-        }
+    .stats-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
     }
 
-    /* General Button Styling */
+
+    .stats-title {
+        font-size: 1.8rem; /* Increased font size for titles */
+        font-weight: 700; /* Increased font weight for emphasis */
+        color: var(--bs-body-color); /* Dynamic text color */
+        margin-bottom: 15px;
+    }
+
+    .stats-value {
+        font-size: 2.8rem; /* Increased font size for values */
+        font-weight: 800;
+        color: var(--bs-primary); /* Primary color for values */
+        margin-bottom: 15px;
+    }
+
+    .metric-description {
+        font-size: 1.2rem; /* Increased font size for better readability */
+        font-weight: 600;
+        color: var(--bs-secondary-color); /* Secondary text color */
+        margin-bottom: 10px;
+    }
+
+    /* Icon and Image Styling */
+    .icon-circle, .stat-pic {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+    }
+
+    .icon-circle {
+        width: 100px;
+        height: 100px;
+        font-size: 3.5rem;
+        color: #ffffff; /* Ensure icons are white for contrast */
+    }
+
+    .stat-pic {
+        height: 100px; /* Increased icon size */
+        font-size: 5rem;
+        color: var(--bs-primary); /* Primary color for icons */
+        margin-bottom: 10px;
+    }
+
+    .widget-icon {
+        max-height: 80px; /* Increased icon size */
+        color: var(--bs-body-color); /* Dynamic color based on theme */
+        transition: transform 0.3s ease;
+    }
+
+    .widget-icon:hover {
+        transform: rotate(10deg) scale(1.1);
+    }
+
+    /* Form and Button Styling */
+    .form-floating .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: none;
+    }
+
+    .form-floating label {
+        color: var(--bs-secondary-color);
+    }
+
+    .position-relative .form-control {
+        padding-right: 3rem; /* Ensure there's space for the icon */
+    }
+
+    .position-absolute i.material-icons {
+        font-size: 1.5rem;
+        color: var(--bs-secondary-color);
+    }
+
     .btn-primary {
-        background-image: linear-gradient(90deg, rgba(0, 123, 255, 1) 0%, rgba(0, 70, 200, 1) 100%);
+        transition: background-color 0.3s ease;
+        background-image: linear-gradient(90deg, rgba(0, 123, 255, 1) 0%, rgba(0, 70, 178, 1) 100%);
         border: none;
-        border-radius: 30px;
-        padding: 10px 25px;
-        transition: all 0.3s ease-in-out;
     }
 
     .btn-primary:hover {
-        background-image: linear-gradient(90deg, rgba(0, 70, 200, 1) 0%, rgba(0, 123, 255, 1) 100%);
-        transform: scale(1.05);
+        background-image: linear-gradient(90deg, rgba(0, 70, 178, 1) 0%, rgba(0, 123, 255, 1) 100%);
     }
 
-    /* Utility Classes for Responsive Layout */
-    .text-gradient {
-        background: linear-gradient(90deg, #ff7eb3 0%, #ff758c 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    /* Card Styling */
+    .card {
+        border-radius: 1rem;
     }
 
-    .rounded-pill {
-        border-radius: 50px;
+    .card-body {
+        background-color: var(--bs-body-bg); /* Dynamic background for dark/light mode */
+        color: var(--bs-body-color); /* Dynamic text color for dark/light mode */
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
+    /* Dark Mode Styles */
+    .dark-mode .stats-box, .dark-mode .card-body {
+        background-color: #343a40; /* Dark mode background */
+        color: #ffffff; /* Light text in dark mode */
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); /* Slightly darker shadow for dark mode */
+    }
+
+    .dark-mode .achievements-title,
+    .dark-mode .platform-title,
+    .dark-mode .stats-title,
+    .dark-mode .stats-value,
+    .dark-mode .stats-box h3,
+    .dark-mode .metric-description {
+        color: #ffffff; /* White text for contrast in dark mode */
+    }
+
+    .dark-mode .stat-pic, .dark-mode .icon-circle {
+        color: var(--bs-primary); /* Primary color for icons in dark mode */
+    }
+
+    .dark-mode .icon-circle {
+        background-color: #495057; /* Dark mode icon circle background */
+        color: #ffffff; /* White color for icons */
+    }
+
+    .dark-mode .widget-icon {
+        filter: brightness(0) invert(1); /* Invert colors to make icons white in dark mode */
+    }
+
+    .dark-mode .form-floating .form-control {
+        background-color: #495057;
+        color: #ffffff;
+    }
+
+    .dark-mode .form-floating label,
+    .dark-mode .form-check-label {
+        color: #ffffff;
+    }
+
+    .dark-mode .form-check-input {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .dark-mode .position-absolute i.material-icons {
+        color: #ffffff; /* Adjust icon color for dark mode */
+    }
 </style>
-
-
