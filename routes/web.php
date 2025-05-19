@@ -45,9 +45,9 @@ Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
 // Service routes
 Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
+Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Sitemap routes
-Route::get('sitemap.xml', [SitemapController::class, 'index']);
 Route::get('sitemap-main.xml', [SitemapController::class, 'main']);
 Route::get('sitemap-services.xml', [SitemapController::class, 'services']);
 Route::get('sitemap-categories.xml', [SitemapController::class, 'categories']);
