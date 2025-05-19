@@ -1,3 +1,4 @@
+<!-- resources/views/layouts/welcome.blade.php -->
 @php
     if (!function_exists('getOgLocale')) {
         function getOgLocale()
@@ -24,65 +25,147 @@
     $pageKeywords = $seoKeywords ?? __('keywords');
     $pageCanonical = $canonicalUrl ?? url()->current();
 @endphp
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SMM Panel : World's Best and Cheapest SMM Panel Services</title>
-    <meta name="keywords" content="smm reseller panel, smm reseller, cheapest smm reseller panel, smm service provider, smm provider panel, cheap smm panel, resellerpanel, reseller panel, smm panel india, smm, smmpanel, cheapest smm panel">
-    <meta name="description" content="Get the best and cheapest SMM Panel. The best reseller panel with global SMM services for all social media platforms.">
-    <title>Best Cheapest Fastest 10K follower 1$ #2 world SMM Panel |  Services for Instagram, TikTok, YouTube & More</title>
-        <meta name="keywords" content="SMM, Top SMM panel, SMM services, affordable SMM, buy Instagram followers, YouTube watch hours, TikTok views, Facebook likes, social media growth, Twitter engagement, LinkedIn followers, global SMM provider, organic SMM growth, YouTube monetization, multi-platform SMM solutions, Snapchat followers, reliable SMM provider">
-        <meta name="description" content="10K follower 1$ #1 world SMM services to increase followers and engagement across Instagram, TikTok, YouTube, Facebook, Twitter, and more. Our high-quality SMM panel provides secure, organic growth solutions for all major platforms, helping you achieve visibility with likes, views, and watch hours to meet your social media goals.">
-        <title>{{ __('title') }}</title>
-        <meta name="keywords" content="{{ __('keywords') }}">
-        <meta name="description" content="{{ __('description') }}">
-        <meta property="og:title" content="{{ __('keywords') }}" />
-        <meta property="og:description" content="{{ __('description') }}" />
-        <meta property="og:url" content="{{ url()->current() }}" />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="{{ getOgLocale() }}" />
-        <meta property="og:site_name" content="SJDM" />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <link rel="canonical" href="{{ url()->current() }}" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Primary Meta Tags -->
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageDescription }}">
+    <meta name="keywords" content="{{ $pageKeywords }}">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ $pageCanonical }}">
+
+    <!-- Alternate Language URLs -->
+    @foreach(['en', 'ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'] as $lang)
+        @if(app()->getLocale() != $lang)
+            @php
+                $langPath = $lang === 'en' ? '' : $lang;
+                $currentPath = request()->path();
+                $currentPathWithoutLang = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+                $alternateUrl = $lang === 'en'
+                    ? url($currentPathWithoutLang)
+                    : url($langPath . '/' . $currentPathWithoutLang);
+
+                // Preserve query parameters
+                if(request()->getQueryString()) {
+                    $alternateUrl .= '?' . request()->getQueryString();
+                }
+            @endphp
+            <link rel="alternate" hreflang="{{ $lang }}" href="{{ $alternateUrl }}">
+        @endif
+    @endforeach
+    <link rel="alternate" hreflang="x-default" href="{{ url(preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', request()->path())) }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ $pageCanonical }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:locale" content="{{ getOgLocale() }}">
+    <meta property="og:site_name" content="SJDM">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ $pageCanonical }}">
+    <meta property="twitter:title" content="{{ $pageTitle }}">
+    <meta property="twitter:description" content="{{ $pageDescription }}">
+    <meta property="twitter:image" content="{{ asset('images/og-image.jpg') }}">
+
+    <!-- Favicon -->
     <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
-    <!-- Google tag (gtag.js) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+
+    <!-- Structured Data - Default Organization -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "SJDM",
+            "url": "{{ url('/') }}",
+        "logo": "{{ asset('images/logo.png') }}",
+        "sameAs": [
+            "https://facebook.com/sjdmstore",
+            "https://twitter.com/sjdmstore",
+            "https://instagram.com/sjdmstore"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+971-55-783-0054",
+            "contactType": "customer service",
+            "email": "info@sjdm.store"
+        }
+    }
+    </script>
+
+    <!-- Base Structured Data for SMM Service -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "serviceType": "Social Media Marketing",
+            "provider": {
+                "@type": "Organization",
+                "name": "SJDM",
+                "url": "https://sjdm.store"
+            },
+            "description": "SJDM is a leading platform for boosting followers and engagement across various social media platforms.",
+            "areaServed": {
+                "@type": "Place",
+                "name": "Global"
+            },
+            "offers": {
+                "@type": "AggregateOffer",
+                "priceCurrency": "USD",
+                "lowPrice": "1",
+                "highPrice": "100",
+                "offerCount": "1000+"
+            }
+        }
+    </script>
+
+    <!-- Add page-specific structured data if available -->
+    @if(isset($structuredData))
+        <script type="application/ld+json">
+            {!! $structuredData !!}
+        </script>
+    @endif
+
+    <!-- Add breadcrumbs structured data if available -->
+    @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+            @foreach($breadcrumbs as $index => $breadcrumb)
+                {
+                    "@type": "ListItem",
+                    "position": {{ $index + 1 }},
+                    "name": "{{ $breadcrumb['title'] }}",
+                    "item": "{{ $breadcrumb['url'] }}"
+                }@if(!$loop->last),@endif
+            @endforeach
+            ]
+        }
+        </script>
+    @endif
+
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWMQW2P5G8"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-ZWMQW2P5G8');
     </script>
-        <!-- Schema Markup (Structured Data) -->
-        <script type="application/ld+json">
-            {
-              "@context": "https://schema.org",
-              "@type": "Service",
-              "serviceType": "Social Media Marketing",
-              "provider": {
-                "@type": "Organization",
-                "name": "SJDM",
-                "url": "https://sjdm.store"
-              },
-              "description": "SJDM is a leading platform for boosting followers and engagement across various social media platforms.",
-              "areaServed": {
-                "@type": "Place",
-                "name": "Arab World"
-              },
-              "offers": {
-                "@type": "Offer",
-                "priceCurrency": "USD",
-                "price": "Starting at $10",
-                "url": "https://sjdm.store/pricing"
-              }
-            }
-        </script>
 
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -93,229 +176,40 @@
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
+
+    <!-- Your existing styles -->
     <style>
         html {
             scroll-behavior: smooth;
         }
+        /* Your existing styles here... */
     </style>
-    <style>
-        /* Common styles */
-        .faq-answer {
-            display: none; /* Hide all answers by default */
-        }
-
-        .about-us-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .about-us-text {
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        /* Light mode styles */
-        body.light-mode .list-group-item,
-        body.light-mode .about-us-title,
-        body.light-mode .about-us-text {
-            background-color: #f8f9fa;
-            color: #000;
-        }
-
-        body.light-mode .list-group-item-action:hover,
-        body.light-mode .list-group-item-action:focus {
-            background-color: #121111;
-            color: #000;
-        }
-
-        /* Dark mode styles */
-        body.dark-mode .list-group-item,
-        body.dark-mode .platform-title,
-        body.dark-mode .about-us-title,
-        body.dark-mode .about-us-text,
-        body.dark-mode .card-body,
-        body.dark-mode .fw-bold {
-            color: #fff;
-        }
-        body.dark-mode .list-group-item
-        {
-            background-color: #333;
-            color: #fff;
-        }
-        body.dark-mode .list-group-item-action:hover,
-        body.dark-mode .list-group-item-action:focus {
-            background-color: #444;
-            color: #fff;
-        }
-
-        /* Light mode styles */
-        body.light-mode .support-title,
-        body.light-mode .support-text {
-            color: #000;
-        }
-
-        /* Dark mode styles */
-        body.dark-mode .support-title,
-        body.dark-mode .support-text {
-            color: #fff;
-        }
-
-        .support-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .support-text {
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .support-option, .support-faq, .support-ticket {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .support-option:hover, .support-faq:hover, .support-ticket:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .dark-mode .support-option, .dark-mode .support-faq, .dark-mode .support-ticket {
-            border-color: #444;
-            background-color: #333;
-        }
-
-        .dark-mode .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .dark-mode .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
-        /* Light mode styles */
-        body.light-mode .platform-title,
-        body.light-mode .privacy-title,
-        body.light-mode .privacy-text {
-            color: #000;
-        }
-
-        /* Dark mode styles */
-        body.dark-mode .platform-title,
-        body.dark-mode .privacy-title,
-        body.dark-mode .privacy-text {
-            color: #fff;
-        }
-
-        .privacy-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .privacy-text {
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .contact-details a {
-            color: inherit;
-            text-decoration: underline;
-        } /* Light mode styles */
-        body.light-mode .platform-title,
-        body.light-mode .contact-title,
-        body.light-mode .contact-text {
-            color: #000;
-        }
-
-        /* Dark mode styles */
-        body.dark-mode .platform-title,
-        body.dark-mode .contact-title,
-        body.dark-mode .contact-text {
-            color: #fff;
-        }
-
-        .contact-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .contact-text {
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .contact-details a {
-            color: inherit;
-            text-decoration: underline;
-        }
-
-        /* Light mode styles */
-        body.light-mode .platform-title,
-        body.light-mode .contact-title,
-        body.light-mode .contact-text,
-        body.light-mode .contact-link {
-            color: #000;
-        }
-        body.light-mode .contact-info-box {
-            background-color: #f8f9fa;
-            color: #000;
-        }
-        body.light-mode .contact-icon {
-            color: #000;
-        }
-
-        /* Dark mode styles */
-        body.dark-mode .platform-title,
-        body.dark-mode .contact-title,
-        body.dark-mode .contact-text,
-        body.dark-mode .contact-link {
-            color: #fff;
-        }
-        body.dark-mode .contact-info-box {
-            background-color: #333;
-            color: #fff;
-        }
-        body.dark-mode .contact-icon {
-            color: #fff;
-        }
-
-        /* Common styles */
-        .contact-title {
-            font-size: 1.75rem;
-            font-weight: bold;
-        }
-
-        .contact-text {
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .contact-link {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .contact-info-box {
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .contact-icon {
-            vertical-align: middle;
-        }
-    </style>
-
 </head>
 
-<body>
+<body class="{{ session('dark_mode', false) ? 'dark-mode' : 'light-mode' }}">
 <!-- Include Header -->
 @include('layouts.header')
+
 <div class="d-flex justify-content-center">
     @include('partials.alertWelcome')
-
 </div>
+
+<!-- Breadcrumbs (if available) -->
+@if(isset($breadcrumbs) && count($breadcrumbs) > 0)
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                @foreach($breadcrumbs as $breadcrumb)
+                    @if($loop->last)
+                        <li class="breadcrumb-item active" aria-current="page">{{ $breadcrumb['title'] }}</li>
+                    @else
+                        <li class="breadcrumb-item"><a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['title'] }}</a></li>
+                    @endif
+                @endforeach
+            </ol>
+        </nav>
+    </div>
+@endif
 
 <!-- Main Content -->
 <main class="container my-5">
@@ -333,27 +227,31 @@
 <script>
     $(document).ready(function(){
         AOS.init(); // Initialize AOS for animations
+
+        // Your existing script for FAQs
         const faqList = document.getElementById('faq-list');
-        const answers = document.querySelectorAll('.faq-answer');
+        if (faqList) {
+            const answers = document.querySelectorAll('.faq-answer');
+            faqList.addEventListener('click', function(e) {
+                if (e.target && e.target.matches('li.list-group-item')) {
+                    const answerId = e.target.getAttribute('data-answer');
+                    // Hide all answers
+                    answers.forEach(answer => answer.style.display = 'none');
+                    // Show the selected answer
+                    document.getElementById(answerId).style.display = 'block';
+                }
+            });
+        }
 
-        faqList.addEventListener('click', function(e) {
-            if (e.target && e.target.matches('li.list-group-item')) {
-                const answerId = e.target.getAttribute('data-answer');
-
-                // Hide all answers
-                answers.forEach(answer => answer.style.display = 'none');
-
-                // Show the selected answer
-                document.getElementById(answerId).style.display = 'block';
-            }
-        });
-        // Initialize Slick Carousel
-        $('.mobile-slider').slick({
-            autoplay: true,
-            autoplaySpeed: 2000,
-            arrows: false,
-            dots: false,
-        });
+        // Initialize Slick Carousel if it exists
+        if ($('.mobile-slider').length) {
+            $('.mobile-slider').slick({
+                autoplay: true,
+                autoplaySpeed: 2000,
+                arrows: false,
+                dots: false,
+            });
+        }
     });
 </script>
 </body>
