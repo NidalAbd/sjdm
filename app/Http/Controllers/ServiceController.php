@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 class ServiceController extends Controller
 {
     // Define the platforms with translations
-    private $platforms = [
+    public $platforms = [
         'all' => ['en' => 'all', 'ar' => 'الكل'],
         'facebook' => ['en' => 'facebook', 'ar' => 'فيسبوك'],
         'instagram' => ['en' => 'instagram', 'ar' => 'انستقرام'],
