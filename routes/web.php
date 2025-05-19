@@ -10,6 +10,7 @@ use App\Http\Controllers\PointsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TransactionController;
@@ -42,19 +43,16 @@ Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how
 Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
 Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
+// Service routes
 Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
-Route::get('sitemap.xml', 'SitemapController@index');
-Route::get('sitemap-main.xml', 'SitemapController@main');
-Route::get('sitemap-services.xml', 'SitemapController@services');
-Route::get('sitemap-categories.xml', 'SitemapController@categories');
-Route::get('sitemap-platforms.xml', 'SitemapController@platforms');
-Route::get('robots.txt', 'SitemapController@robots');
 
-
-Route::get('/sitemap.xml', function () {
-    return response()->file(public_path('sitemap.xml'));
-})->name('sitemap');
-
+// Sitemap routes
+Route::get('sitemap.xml', [SitemapController::class, 'index']);
+Route::get('sitemap-main.xml', [SitemapController::class, 'main']);
+Route::get('sitemap-services.xml', [SitemapController::class, 'services']);
+Route::get('sitemap-categories.xml', [SitemapController::class, 'categories']);
+Route::get('sitemap-platforms.xml', [SitemapController::class, 'platforms']);
+Route::get('robots.txt', [SitemapController::class, 'robots']);
 // Auth routes
 Auth::routes(['verify' => true]);
 
