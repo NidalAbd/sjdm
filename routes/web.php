@@ -43,6 +43,13 @@ Route::get('/support_take', [WelcomeController::class, 'support'])->name('suppor
 Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
 Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
+Route::get('sitemap.xml', 'SitemapController@index');
+Route::get('sitemap-main.xml', 'SitemapController@main');
+Route::get('sitemap-services.xml', 'SitemapController@services');
+Route::get('sitemap-categories.xml', 'SitemapController@categories');
+Route::get('sitemap-platforms.xml', 'SitemapController@platforms');
+Route::get('robots.txt', 'SitemapController@robots');
+
 
 Route::get('/sitemap.xml', function () {
     return response()->file(public_path('sitemap.xml'));

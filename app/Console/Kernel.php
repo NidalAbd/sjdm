@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
     {
         // Schedule the update-statuses command every minute
         $schedule->command('orders:update-statuses')->everyMinute();
+        $schedule->command('sitemap:refresh')->dailyAt('00:00');
 
         // Schedule the ProcessPendingOrders job every minute
         $schedule->call(function () {
