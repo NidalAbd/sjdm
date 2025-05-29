@@ -497,11 +497,11 @@ class ServiceController extends Controller
         Log::info("Services have been updated from the API in $language. $storedServices out of $totalServices services were stored. ($percentageStored%)");
     }
 
-    public function show(Service $service)
+    public function show($serviceId)
     {
+        $service = Service::where('service_id', $serviceId)->firstOrFail();
         return view('services.show', compact('service'));
     }
-
     public function showService($serviceId)
     {
         $service = Service::where('service_id', $serviceId)->firstOrFail();
