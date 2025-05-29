@@ -386,7 +386,7 @@ class ServiceController extends Controller
                 ->limit(6)
                 ->get([$nameField, 'service_id', 'rate', 'min', 'max']);
 
-            return view('services.show', compact(
+            return view('services.show_service', compact(
                 'service',
                 'seoTitle',
                 'seoDescription',
