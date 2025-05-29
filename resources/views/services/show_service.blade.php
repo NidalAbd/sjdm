@@ -196,20 +196,32 @@
 
                         <!-- Order Form -->
                         @auth
-                            <form action="{{ route('orders.create') }}" method="POST" class="order-form">
+                            <form action="{{ route('orders.store') }}" method="POST" class="order-form">
                                 @csrf
-                                <input type="hidden" name="service_id" value="{{ $service->id }}">
+                                <input type="hidden" name="service_id" value="{{ $service->service_id }}">
 
                                 <div class="mb-3">
                                     <label for="quantity" class="form-label fw-medium">Quantity</label>
                                     <input type="number" class="form-control form-control-lg" id="quantity" name="quantity"
                                            min="{{ $service->min }}" max="{{ $service->max }}" placeholder="Enter quantity" required>
+                                    <div class="form-text">Min: {{ number_format($service->min) }} - Max: {{ number_format($service->max) }}</div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="link" class="form-label fw-medium">Target URL</label>
                                     <input type="url" class="form-control form-control-lg" id="link" name="link"
-                                           placeholder="https://..." required>
+                                           placeholder="https://example.com/your-profile" required>
+                                    <div class="form-text">Enter the URL where you want the service to be delivered</div>
+                                </div>
+
+                                <!-- Display current balance -->
+                                <div class="balance-info p-3 bg-info bg-opacity-10 rounded-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-medium text-info">
+                                        <i class="fas fa-wallet me-2"></i>Your Balance:
+                                    </span>
+                                        <span class="fw-bold text-info">${{ number_format(auth()->user()->balance, 2) }}</span>
+                                    </div>
                                 </div>
 
                                 <div class="total-section p-3 bg-light rounded-3 mb-4">
@@ -219,21 +231,24 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold" id="orderButton">
                                     <i class="fas fa-shopping-cart me-2"></i>
                                     Order Now
                                 </button>
                             </form>
                         @else
                             <div class="text-center">
-                                <p class="text-muted mb-3">Please login to place an order</p>
-                                <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold">
+                                <div class="alert alert-info mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Please login to place an order
+                                </div>
+                                <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold mb-3">
                                     <i class="fas fa-sign-in-alt me-2"></i>
                                     Login to Order
                                 </a>
-                                <p class="text-muted mt-3 small">
+                                <p class="text-muted small">
                                     Don't have an account?
-                                    <a href="{{ route('register') }}" class="text-decoration-none">Sign up here</a>
+                                    <a href="{{ route('register', ['redirect' => url()->current()]) }}" class="text-decoration-none fw-medium">Create one here</a>
                                 </p>
                             </div>
                         @endauth
@@ -397,14 +412,63 @@
         document.addEventListener('DOMContentLoaded', function() {
             const quantityInput = document.getElementById('quantity');
             const totalAmount = document.querySelector('.total-amount');
+            const orderButton = document.getElementById('orderButton');
             const serviceRate = {{ $service->rate }};
+
+            @auth
+            const userBalance = {{ auth()->user()->balance }};
+            @endauth
 
             if (quantityInput && totalAmount) {
                 quantityInput.addEventListener('input', function() {
                     const quantity = parseFloat(this.value) || 0;
                     const total = (quantity / 1000) * serviceRate;
-                    totalAmount.textContent = '$' + total.toFixed(2);
+                    totalAmount.textContent = '
+                        @endsection + total.toFixed(2);
+
+                    @auth
+                    // Check if user has sufficient balance
+                    if (orderButton) {
+                        if (total > userBalance) {
+                            orderButton.disabled = true;
+                            orderButton.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Insufficient Balance';
+                            orderButton.classList.remove('btn-primary');
+                            orderButton.classList.add('btn-danger');
+                        } else {
+                            orderButton.disabled = false;
+                            orderButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Order Now';
+                            orderButton.classList.remove('btn-danger');
+                            orderButton.classList.add('btn-primary');
+                        }
+                    }
+                    @endauth
+                });
+            }
+
+            // Validate quantity on form submit
+            const orderForm = document.querySelector('.order-form');
+            if (orderForm) {
+                orderForm.addEventListener('submit', function(e) {
+                    const quantity = parseInt(quantityInput.value);
+                    const min = parseInt(quantityInput.min);
+                    const max = parseInt(quantityInput.max);
+
+                    if (quantity < min || quantity > max) {
+                        e.preventDefault();
+                        alert(`Quantity must be between ${min.toLocaleString()} and ${max.toLocaleString()}`);
+                        return false;
+                    }
+
+                    @auth
+                    const total = (quantity / 1000) * serviceRate;
+                    if (total > userBalance) {
+                        e.preventDefault();
+                        alert('Insufficient balance. Please add funds to your account.');
+                        return false;
+                    }
+                    @endauth
                 });
             }
         });
     </script>
+@endsection
