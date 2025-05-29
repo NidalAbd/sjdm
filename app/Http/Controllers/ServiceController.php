@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use App\Services\Api;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -31,7 +34,7 @@ class ServiceController extends Controller
         'traffic' => ['en' => 'traffic', 'ar' => 'مرور']
     ];
 
-    public function index(Request $request)
+    public function index(Request $request): Factory|View|Application
     {
         $query = Service::query();
         $currentLanguage = app()->getLocale();
@@ -75,7 +78,7 @@ class ServiceController extends Controller
 
         return view('services.index', compact('services', 'translatedPlatforms', 'uniqueCategories'));
     }
-    public function getAllServices(Request $request)
+    public function getAllServices(Request $request): Factory|View|Application
     {
         try {
             $query = Service::query();
@@ -243,9 +246,7 @@ class ServiceController extends Controller
         }
     }
 
-    /**
-     * Generate SEO keywords based on filters
-     */
+
     private function generateSeoKeywords($category = null, $platform = null, $language = 'en'): string
     {
         $keywords = [];
@@ -296,9 +297,6 @@ class ServiceController extends Controller
         return implode(', ', $keywords);
     }
 
-    /**
-     * Generate no results message
-     */
     private function generateNoResultsMessage($language, $category = null, $platform = null, $searchTerm = null): string
     {
         if ($language === 'en') {
@@ -341,9 +339,6 @@ class ServiceController extends Controller
         return $message;
     }
 
-    /**
-     * Show a single service with SEO optimization
-     */
     public function showService($serviceId)
     {
         try {
@@ -414,9 +409,7 @@ class ServiceController extends Controller
         }
     }
 
-    /**
-     * Generate SEO description for individual service
-     */
+
     private function generateServiceSeoDescription($service, $language = 'en'): string
     {
         $nameField = $language === 'ar' ? 'name_ar' : 'name_en';
@@ -429,9 +422,6 @@ class ServiceController extends Controller
         }
     }
 
-    /**
-     * Generate SEO keywords for individual service
-     */
     private function generateServiceSeoKeywords($service, $language = 'en'): string
     {
         $nameField = $language === 'ar' ? 'name_ar' : 'name_en';
@@ -444,9 +434,6 @@ class ServiceController extends Controller
         }
     }
 
-    /**
-     * Generate structured data for individual service
-     */
     private function generateServiceStructuredData($service, $language = 'en'): bool|string
     {
         $nameField = $language === 'ar' ? 'name_ar' : 'name_en';
@@ -485,9 +472,6 @@ class ServiceController extends Controller
         return json_encode($structuredData);
     }
 
-    /**
-     * Show platform services page
-     */
     public function showPlatform($platform)
     {
         try {
@@ -572,7 +556,7 @@ class ServiceController extends Controller
             return view('services.category', compact('services', 'categorySlug', 'categoryName', 'seoTitle', 'seoDescription', 'breadcrumbs'));
 
         } catch (\Exception $e) {
-            \Log::error('Error showing category: ' . $e->getMessage(), [
+            Log::error('Error showing category: ' . $e->getMessage(), [
                 'category_slug' => $categorySlug,
                 'user_id' => auth()->id()
             ]);
