@@ -48,8 +48,9 @@ Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name(
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/platform/{platform}', [ServiceController::class, 'showPlatform'])->name('platform.show');
 Route::get('/category/{category}', [ServiceController::class, 'showCategory'])->name('category.show');
-
+// Make sure these routes exist for the sitemap URLs to work
 Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])->name('service.show');
+
 // Sitemap routes
 Route::get('sitemap-main.xml', [SitemapController::class, 'main']);
 Route::get('sitemap-services.xml', [SitemapController::class, 'services']);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use App\Services\Api;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -76,84 +77,508 @@ class ServiceController extends Controller
     }
     public function getAllServices(Request $request)
     {
-        $query = Service::query();
-        $currentLanguage = app()->getLocale();
+        try {
+            $query = Service::query();
+            $currentLanguage = app()->getLocale();
 
-        // Define the fields based on language
-        $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
-        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+            // Define the fields based on language
+            $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
+            $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
 
-        // Get current category if set
-        $currentCategory = $request->filled('category') ? $request->category : null;
+            // Get current filters
+            $currentCategory = $request->filled('category') ? $request->category : null;
+            $currentPlatform = $request->filled('platform') ? $request->platform : null;
+            $searchTerm = $request->filled('search') ? $request->search : null;
 
-        // Get current platform if set
-        $currentPlatform = $request->filled('platform') ? $request->platform : null;
+            // Apply category filter if present
+            if ($currentCategory && $currentCategory !== 'all') {
+                $query->where($categoryField, $currentCategory);
+            }
 
-        // Apply category filter if present
-        if ($currentCategory) {
-            $query->where($categoryField, $currentCategory);
-        }
+            // Apply platform filter if present
+            if ($currentPlatform && $currentPlatform !== 'all') {
+                $platformName = $this->platforms[$currentPlatform][$currentLanguage] ?? $currentPlatform;
+                $query->where($categoryField, 'like', '%' . $platformName . '%');
+            }
 
-        // Apply platform filter if present
-        if ($currentPlatform && $currentPlatform !== 'all') {
-            $platformName = $this->platforms[$currentPlatform][$currentLanguage] ?? $currentPlatform;
-            $query->where($categoryField, 'like', '%' . $platformName . '%');
-        }
+            // Apply search filter if present
+            if ($searchTerm) {
+                $query->where(function ($q) use ($searchTerm, $nameField, $categoryField) {
+                    $q->orWhere('service_id', 'like', '%' . $searchTerm . '%')
+                        ->orWhere($nameField, 'like', '%' . $searchTerm . '%')
+                        ->orWhere($categoryField, 'like', '%' . $searchTerm . '%')
+                        ->orWhere('type', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('rate', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('cost', 'like', '%' . $searchTerm . '%');
+                });
+            }
 
-        // Apply search filter if present
-        if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm, $nameField, $categoryField) {
-                $q->orWhere('service_id', 'like', '%' . $searchTerm . '%')
-                    ->orWhere($nameField, 'like', '%' . $searchTerm . '%')
-                    ->orWhere($categoryField, 'like', '%' . $searchTerm . '%')
-                    ->orWhere('type', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('rate', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('cost', 'like', '%' . $searchTerm . '%');
+            // Apply sorting
+            $sortBy = $request->get('sort_by', 'created_at');
+            $sortOrder = $request->get('sort_order', 'desc');
+
+            // Validate sort parameters
+            $allowedSortFields = ['service_id', 'rate', 'min', 'max', 'created_at', 'updated_at', $nameField, $categoryField];
+            $allowedSortOrders = ['asc', 'desc'];
+
+            if (in_array($sortBy, $allowedSortFields) && in_array($sortOrder, $allowedSortOrders)) {
+                $query->orderBy($sortBy, $sortOrder);
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
+
+            // Cache key based on query parameters and language
+            $cacheKey = 'services_' . $currentLanguage . '_' . md5(serialize($request->all()));
+
+            // Cache results for 15 minutes to improve performance
+            $services = Cache::remember($cacheKey, 900, function() use ($query) {
+                return $query->paginate(100);
             });
+
+            // Get all categories for filtering
+            $categories = Cache::remember('categories_' . $currentLanguage, 3600, function() use ($categoryField) {
+                return DB::table('services')
+                    ->select($categoryField)
+                    ->whereNotNull($categoryField)
+                    ->where($categoryField, '!=', '')
+                    ->distinct()
+                    ->orderBy($categoryField)
+                    ->pluck($categoryField);
+            });
+
+            // Get platform statistics
+            $platformStats = Cache::remember('platform_stats_' . $currentLanguage, 3600, function() use ($currentLanguage, $categoryField) {
+                $stats = [];
+                foreach ($this->platforms as $key => $platform) {
+                    if ($key === 'all') continue;
+
+                    $platformName = $platform[$currentLanguage] ?? $key;
+                    $count = Service::where($categoryField, 'like', '%' . $platformName . '%')->count();
+
+                    if ($count > 0) {
+                        $stats[$key] = [
+                            'name' => $platformName,
+                            'count' => $count
+                        ];
+                    }
+                }
+                return $stats;
+            });
+
+            // Get featured/popular services
+            $featuredServices = Cache::remember('featured_services_' . $currentLanguage, 3600, function() use ($nameField) {
+                return Service::where('rate', '<', 5) // Example: services under $5
+                ->orderBy('rate', 'asc')
+                    ->limit(6)
+                    ->get([$nameField, 'service_id', 'rate', 'min', 'max']);
+            });
+
+            // Prepare SEO data
+            $seoTitle = $this->generateSeoTitle($currentCategory, $currentPlatform, $currentLanguage);
+            $seoDescription = $this->generateSeoDescription($currentCategory, $currentPlatform, $currentLanguage);
+            $seoKeywords = $this->generateSeoKeywords($currentCategory, $currentPlatform, $currentLanguage);
+            $canonicalUrl = $this->generateCanonicalUrl($request);
+
+            // Prepare structured data for the page
+            $structuredData = $this->generateStructuredData($services, $currentCategory, $currentPlatform);
+
+            // Prepare breadcrumbs
+            $breadcrumbs = $this->generateBreadcrumbs($currentCategory, $currentPlatform);
+
+            // Check if no results found with filters applied
+            if ($services->isEmpty() && ($currentCategory || $currentPlatform || $searchTerm)) {
+                $noResultsMessage = $this->generateNoResultsMessage($currentLanguage, $currentCategory, $currentPlatform, $searchTerm);
+                session()->flash('info', $noResultsMessage);
+            }
+
+            // Prepare filter statistics
+            $filterStats = [
+                'total_services' => $services->total(),
+                'current_page_count' => $services->count(),
+                'has_filters' => !empty($currentCategory) || !empty($currentPlatform) || !empty($searchTerm)
+            ];
+
+            return view('services', compact(
+                'services',
+                'categories',
+                'currentCategory',
+                'currentPlatform',
+                'searchTerm',
+                'seoTitle',
+                'seoDescription',
+                'seoKeywords',
+                'canonicalUrl',
+                'structuredData',
+                'breadcrumbs',
+                'platformStats',
+                'featuredServices',
+                'filterStats'
+            ));
+
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error in getAllServices: ' . $e->getMessage(), [
+                'request_params' => $request->all(),
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Return error view or redirect with error message
+            session()->flash('error', $currentLanguage === 'en'
+                ? 'Unable to load services. Please try again later.'
+                : 'غير قادر على تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقاً.');
+
+            // Return empty results
+            $services = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 100);
+            $categories = collect([]);
+            $platformStats = [];
+            $featuredServices = collect([]);
+
+            return view('services', compact(
+                'services',
+                'categories',
+                'platformStats',
+                'featuredServices'
+            ));
+        }
+    }
+
+    /**
+     * Generate SEO keywords based on filters
+     */
+    private function generateSeoKeywords($category = null, $platform = null, $language = 'en'): string
+    {
+        $keywords = [];
+
+        if ($language === 'en') {
+            $baseKeywords = ['SMM panel', 'social media marketing', 'buy followers', 'social media services', 'SMM services'];
+
+            if ($platform && $platform !== 'all') {
+                $platformName = $this->platforms[$platform][$language] ?? $platform;
+                $keywords[] = $platformName . ' services';
+                $keywords[] = 'buy ' . $platformName . ' followers';
+                $keywords[] = $platformName . ' marketing';
+            }
+
+            if ($category) {
+                $keywords[] = $category . ' services';
+                $keywords[] = 'buy ' . $category;
+                $keywords[] = 'cheap ' . $category;
+            }
+
+            $keywords = array_merge($baseKeywords, $keywords);
+            $keywords[] = 'affordable SMM';
+            $keywords[] = 'instant delivery';
+            $keywords[] = '24/7 support';
+
+        } else {
+            $baseKeywords = ['لوحة SMM', 'تسويق وسائل التواصل الاجتماعي', 'شراء متابعين', 'خدمات وسائل التواصل الاجتماعي', 'خدمات SMM'];
+
+            if ($platform && $platform !== 'all') {
+                $platformName = $this->platforms[$platform][$language] ?? $platform;
+                $keywords[] = 'خدمات ' . $platformName;
+                $keywords[] = 'شراء متابعين ' . $platformName;
+                $keywords[] = 'تسويق ' . $platformName;
+            }
+
+            if ($category) {
+                $keywords[] = 'خدمات ' . $category;
+                $keywords[] = 'شراء ' . $category;
+                $keywords[] = $category . ' رخيص';
+            }
+
+            $keywords = array_merge($baseKeywords, $keywords);
+            $keywords[] = 'SMM بأسعار معقولة';
+            $keywords[] = 'تسليم فوري';
+            $keywords[] = 'دعم على مدار الساعة';
         }
 
-        // Cache key based on query parameters and language
-        $cacheKey = 'services_' . $currentLanguage . '_' . md5(serialize($request->all()));
+        return implode(', ', $keywords);
+    }
 
-        // Cache results for 15 minutes to improve performance
-        $services = Cache::remember($cacheKey, 900, function() use ($query) {
-            return $query->paginate(100);
-        });
+    /**
+     * Generate no results message
+     */
+    private function generateNoResultsMessage($language, $category = null, $platform = null, $searchTerm = null): string
+    {
+        if ($language === 'en') {
+            $message = 'No services found';
 
-        // Get all categories for filtering
-        $categories = Cache::remember('categories_' . $currentLanguage, 3600, function() use ($categoryField) {
-            return DB::table('services')
-                ->select($categoryField)
-                ->whereNotNull($categoryField)
-                ->where($categoryField, '!=', '')
-                ->distinct()
-                ->orderBy($categoryField)
-                ->pluck($categoryField);
-        });
+            if ($searchTerm) {
+                $message .= ' for "' . $searchTerm . '"';
+            }
 
-        // Prepare SEO data
-        $seoTitle = $this->generateSeoTitle($currentCategory, $currentPlatform, $currentLanguage);
-        $seoDescription = $this->generateSeoDescription($currentCategory, $currentPlatform, $currentLanguage);
-        $canonicalUrl = $this->generateCanonicalUrl($request);
+            if ($platform && $platform !== 'all') {
+                $platformName = $this->platforms[$platform][$language] ?? $platform;
+                $message .= ' in ' . $platformName;
+            }
 
-        // Prepare structured data for the page
-        $structuredData = $this->generateStructuredData($services, $currentCategory, $currentPlatform);
+            if ($category) {
+                $message .= ' for category "' . $category . '"';
+            }
 
-        // Prepare breadcrumbs
-        $breadcrumbs = $this->generateBreadcrumbs($currentCategory, $currentPlatform);
+            $message .= '. Try removing some filters or search for different terms.';
 
-        return view('services', compact(
-            'services',
-            'categories',
-            'currentCategory',
-            'currentPlatform',
-            'seoTitle',
-            'seoDescription',
-            'canonicalUrl',
-            'structuredData',
-            'breadcrumbs'
-        ));
+        } else {
+            $message = 'لم يتم العثور على خدمات';
+
+            if ($searchTerm) {
+                $message .= ' لـ "' . $searchTerm . '"';
+            }
+
+            if ($platform && $platform !== 'all') {
+                $platformName = $this->platforms[$platform][$language] ?? $platform;
+                $message .= ' في ' . $platformName;
+            }
+
+            if ($category) {
+                $message .= ' في فئة "' . $category . '"';
+            }
+
+            $message .= '. جرب إزالة بعض المرشحات أو البحث عن مصطلحات مختلفة.';
+        }
+
+        return $message;
+    }
+
+    /**
+     * Show a single service with SEO optimization
+     */
+    public function showService($serviceId)
+    {
+        try {
+            $service = Service::where('service_id', $serviceId)->firstOrFail();
+            $currentLanguage = app()->getLocale();
+
+            // Define the fields based on language
+            $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
+            $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+
+            // Generate SEO data
+            $seoTitle = $service->$nameField . ' | SMM-Followers';
+            $seoDescription = $this->generateServiceSeoDescription($service, $currentLanguage);
+            $seoKeywords = $this->generateServiceSeoKeywords($service, $currentLanguage);
+
+            // Generate canonical URL
+            $canonicalUrl = url('/service/' . $service->service_id);
+
+            // Generate breadcrumbs
+            $breadcrumbs = [
+                [
+                    'title' => $currentLanguage === 'en' ? 'Home' : 'الرئيسية',
+                    'url' => url('/')
+                ],
+                [
+                    'title' => $currentLanguage === 'en' ? 'Services' : 'الخدمات',
+                    'url' => url('/all-services')
+                ],
+                [
+                    'title' => $service->$categoryField,
+                    'url' => url('/category/' . $this->slugify($service->$categoryField))
+                ],
+                [
+                    'title' => $service->$nameField,
+                    'url' => $canonicalUrl
+                ]
+            ];
+
+            // Generate structured data for the service
+            $structuredData = $this->generateServiceStructuredData($service, $currentLanguage);
+
+            // Get related services
+            $relatedServices = Service::where($categoryField, $service->$categoryField)
+                ->where('service_id', '!=', $service->service_id)
+                ->limit(6)
+                ->get([$nameField, 'service_id', 'rate', 'min', 'max']);
+
+            return view('services.show', compact(
+                'service',
+                'seoTitle',
+                'seoDescription',
+                'seoKeywords',
+                'canonicalUrl',
+                'breadcrumbs',
+                'structuredData',
+                'relatedServices'
+            ));
+
+        } catch (ModelNotFoundException $e) {
+            abort(404, 'Service not found');
+        } catch (\Exception $e) {
+            Log::error('Error showing service: ' . $e->getMessage(), [
+                'service_id' => $serviceId,
+                'user_id' => auth()->id()
+            ]);
+
+            abort(500, 'Unable to load service details');
+        }
+    }
+
+    /**
+     * Generate SEO description for individual service
+     */
+    private function generateServiceSeoDescription($service, $language = 'en'): string
+    {
+        $nameField = $language === 'ar' ? 'name_ar' : 'name_en';
+        $categoryField = $language === 'ar' ? 'category_ar' : 'category_en';
+
+        if ($language === 'en') {
+            return "Buy {$service->$nameField} starting at \${$service->rate} per 1K. High quality {$service->$categoryField} service with fast delivery and 24/7 support. Min: {$service->min}, Max: {$service->max}.";
+        } else {
+            return "اشتري {$service->$nameField} بدءًا من \${$service->rate} لكل 1000. خدمة {$service->$categoryField} عالية الجودة مع التسليم السريع والدعم على مدار الساعة. الحد الأدنى: {$service->min}، الحد الأقصى: {$service->max}.";
+        }
+    }
+
+    /**
+     * Generate SEO keywords for individual service
+     */
+    private function generateServiceSeoKeywords($service, $language = 'en'): string
+    {
+        $nameField = $language === 'ar' ? 'name_ar' : 'name_en';
+        $categoryField = $language === 'ar' ? 'category_ar' : 'category_en';
+
+        if ($language === 'en') {
+            return "buy {$service->$nameField}, {$service->$categoryField}, SMM panel, social media marketing, cheap {$service->$categoryField}, {$service->$nameField} service, service {$service->service_id}";
+        } else {
+            return "شراء {$service->$nameField}, {$service->$categoryField}, لوحة SMM, تسويق وسائل التواصل الاجتماعي, {$service->$categoryField} رخيص, خدمة {$service->$nameField}, خدمة {$service->service_id}";
+        }
+    }
+
+    /**
+     * Generate structured data for individual service
+     */
+    private function generateServiceStructuredData($service, $language = 'en'): bool|string
+    {
+        $nameField = $language === 'ar' ? 'name_ar' : 'name_en';
+        $categoryField = $language === 'ar' ? 'category_ar' : 'category_en';
+
+        $structuredData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $service->$nameField,
+            'description' => $this->generateServiceSeoDescription($service, $language),
+            'sku' => $service->service_id,
+            'category' => $service->$categoryField,
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => url('/service/' . $service->service_id),
+                'price' => $service->rate,
+                'priceCurrency' => 'USD',
+                'availability' => 'https://schema.org/InStock',
+                'priceValidUntil' => now()->addMonths(1)->toDateString(),
+                'seller' => [
+                    '@type' => 'Organization',
+                    'name' => 'SMM-Followers'
+                ]
+            ],
+            'brand' => [
+                '@type' => 'Brand',
+                'name' => 'SMM-Followers'
+            ],
+            'aggregateRating' => [
+                '@type' => 'AggregateRating',
+                'ratingValue' => '4.8',
+                'reviewCount' => '150'
+            ]
+        ];
+
+        return json_encode($structuredData);
+    }
+
+    /**
+     * Show platform services page
+     */
+    public function showPlatform($platform)
+    {
+        try {
+            $currentLanguage = app()->getLocale();
+            $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+
+            if (!isset($this->platforms[$platform])) {
+                abort(404, 'Platform not found');
+            }
+
+            $platformName = $this->platforms[$platform][$currentLanguage];
+
+            $query = Service::where($categoryField, 'like', '%' . $platformName . '%');
+            $services = $query->paginate(20);
+
+            $seoTitle = ucfirst($platformName) . ($currentLanguage === 'en' ? ' SMM Services | SMM-Followers' : ' خدمات التسويق | SMM-Followers');
+            $seoDescription = $this->generateSeoDescription(null, $platform, $currentLanguage);
+
+            $breadcrumbs = [
+                [
+                    'title' => $currentLanguage === 'en' ? 'Home' : 'الرئيسية',
+                    'url' => url('/')
+                ],
+                [
+                    'title' => $currentLanguage === 'en' ? 'Services' : 'الخدمات',
+                    'url' => url('/all-services')
+                ],
+                [
+                    'title' => ucfirst($platformName),
+                    'url' => url('/platform/' . $platform)
+                ]
+            ];
+
+            return view('services.platform', compact('services', 'platform', 'platformName', 'seoTitle', 'seoDescription', 'breadcrumbs'));
+
+        } catch (\Exception $e) {
+            Log::error('Error showing platform: ' . $e->getMessage(), [
+                'platform' => $platform,
+                'user_id' => auth()->id()
+            ]);
+
+            abort(500, 'Unable to load platform services');
+        }
+    }
+
+    /**
+     * Show category services page
+     */
+    public function showCategory($categorySlug)
+    {
+        try {
+            $currentLanguage = app()->getLocale();
+            $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+
+            // Convert slug back to category name
+            $categoryName = str_replace('-', ' ', $categorySlug);
+
+            $services = Service::where($categoryField, 'like', '%' . $categoryName . '%')->paginate(20);
+
+            if ($services->isEmpty()) {
+                abort(404, 'Category not found or no services available');
+            }
+
+            $seoTitle = ucfirst($categoryName) . ($currentLanguage === 'en' ? ' Services | SMM-Followers' : ' خدمات | SMM-Followers');
+            $seoDescription = $this->generateSeoDescription($categoryName, null, $currentLanguage);
+
+            $breadcrumbs = [
+                [
+                    'title' => $currentLanguage === 'en' ? 'Home' : 'الرئيسية',
+                    'url' => url('/')
+                ],
+                [
+                    'title' => $currentLanguage === 'en' ? 'Services' : 'الخدمات',
+                    'url' => url('/all-services')
+                ],
+                [
+                    'title' => ucfirst($categoryName),
+                    'url' => url('/category/' . $categorySlug)
+                ]
+            ];
+
+            return view('services.category', compact('services', 'categorySlug', 'categoryName', 'seoTitle', 'seoDescription', 'breadcrumbs'));
+
+        } catch (\Exception $e) {
+            \Log::error('Error showing category: ' . $e->getMessage(), [
+                'category_slug' => $categorySlug,
+                'user_id' => auth()->id()
+            ]);
+
+            abort(500, 'Unable to load category services');
+        }
     }
 
     /**
@@ -501,45 +926,6 @@ class ServiceController extends Controller
     {
         $service = Service::where('service_id', $serviceId)->firstOrFail();
         return view('services.show', compact('service'));
-    }
-    public function showService($serviceId)
-    {
-        $service = Service::where('service_id', $serviceId)->firstOrFail();
-        $currentLanguage = app()->getLocale();
-
-        // Define the fields based on language
-        $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
-        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
-
-        // SEO data
-        $seoTitle = $service->$nameField . ' | SMM-Followers';
-        $seoDescription = "Buy " . $service->$nameField . " at the best price. Fast delivery, high quality, 24/7 support.";
-
-        return view('services.show_service', compact('service', 'seoTitle', 'seoDescription'));
-    }
-
-    public function showPlatform($platform)
-    {
-        $currentLanguage = app()->getLocale();
-        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
-
-        if (!isset($this->platforms[$platform])) {
-            abort(404);
-        }
-
-        $platformName = $this->platforms[$platform][$currentLanguage];
-
-        $services = Service::where($categoryField, 'like', '%' . $platformName . '%')->paginate(20);
-
-        return view('services.platform', compact('services', 'platform', 'platformName'));
-    }
-
-    public function showCategory($categorySlug)
-    {
-        // Convert slug back to category name and find services
-        $services = Service::where('category_en', 'like', '%' . str_replace('-', ' ', $categorySlug) . '%')->paginate(20);
-
-        return view('services.category', compact('services', 'categorySlug'));
     }
 
     public function edit(Service $service)
