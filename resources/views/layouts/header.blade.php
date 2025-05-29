@@ -821,73 +821,78 @@
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
-<div class="container">
-    <div class="row align-items-center">
-        <div class="col-lg-8 col-md-12">
-            <h1 class="display-4 fw-bold mb-4 fade-in" data-aos="fade-up" data-aos-duration="1000">
-                <span class="text-gradient">{!! __('adminlte.empower_social_influence') !!}</span>
-            </h1>
-            <p class="lead mb-4 fade-in" data-aos="fade-up" data-aos-duration="1200">
-                {{ __('Transform your social media presence with our premium marketing services. Get real followers, engagement, and results that matter for your business growth.') }}
-            </p>
-        </div>
-        <div class="col-lg-4 col-md-12">
-            <div class="row justify-content-center g-3">
-                <!-- Instagram Card -->
-                <div class="col-12 col-sm-4 col-lg-12" data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="200">
-                    <div class="card text-center border-0 shadow-lg">
-                        <div class="card-body">
-                            <i class="fab fa-instagram text-danger mb-2"></i>
-                            <h6 class="card-title fw-bold">{{ __('adminlte.instagram') }}</h6>
-                            <p class="card-text mb-3">
-                                <span class="h5 fw-bold text-primary">$2.60</span>
-                                <small class="text-muted">/ 1K {{ __('adminlte.followers') }}</small>
-                            </p>
-                            <a href="{{ route('services.all', ['platform' => 'instagram']) }}" class="btn btn-primary btn-sm rounded-pill px-4">
-                                <i class="fas fa-shopping-cart me-1"></i>{{ __('adminlte.order_now') }}
-                            </a>
+<!-- Enhanced Hero Section -->
+<section id="hero-sec" class="hero-section">
+    <div class="hero-bg"></div>
+
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-12">
+                <h1 class="display-4 fw-bold mb-4 fade-in" data-aos="fade-up" data-aos-duration="1000">
+                    <span class="text-gradient">{!! __('adminlte.empower_social_influence') !!}</span>
+                </h1>
+                <p class="lead mb-4 fade-in" data-aos="fade-up" data-aos-duration="1200">
+                    {{ __('Transform your social media presence with our premium marketing services. Get real followers, engagement, and results that matter for your business growth.') }}
+                </p>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="row justify-content-center g-3">
+                    <!-- Instagram Card -->
+                    <div class="col-12 col-sm-4 col-lg-12" data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="200">
+                        <div class="card text-center border-0 shadow-lg">
+                            <div class="card-body">
+                                <i class="fab fa-instagram text-danger mb-2"></i>
+                                <h6 class="card-title fw-bold">{{ __('adminlte.instagram') }}</h6>
+                                <p class="card-text mb-3">
+                                    <span class="h5 fw-bold text-primary">$2.60</span>
+                                    <small class="text-muted">/ 1K {{ __('adminlte.followers') }}</small>
+                                </p>
+                                <a href="{{ route('services.all', ['platform' => 'instagram']) }}" class="btn btn-primary btn-sm rounded-pill px-4">
+                                    <i class="fas fa-shopping-cart me-1"></i>{{ __('adminlte.order_now') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Facebook Card -->
-                <div class="col-12 col-sm-4 col-lg-12" data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="400">
-                    <div class="card text-center border-0 shadow-lg">
-                        <div class="card-body">
-                            <i class="fab fa-facebook text-primary mb-2"></i>
-                            <h6 class="card-title fw-bold">{{ __('adminlte.facebook') }}</h6>
-                            <p class="card-text mb-3">
-                                <span class="h5 fw-bold text-primary">$2.40</span>
-                                <small class="text-muted">/ 1K {{ __('adminlte.followers') }}</small>
-                            </p>
-                            <a href="{{ route('services.all', ['platform' => 'facebook']) }}" class="btn btn-primary btn-sm rounded-pill px-4">
-                                <i class="fas fa-shopping-cart me-1"></i>{{ __('adminlte.order_now') }}
-                            </a>
+                    <!-- Facebook Card -->
+                    <div class="col-12 col-sm-4 col-lg-12" data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="400">
+                        <div class="card text-center border-0 shadow-lg">
+                            <div class="card-body">
+                                <i class="fab fa-facebook text-primary mb-2"></i>
+                                <h6 class="card-title fw-bold">{{ __('adminlte.facebook') }}</h6>
+                                <p class="card-text mb-3">
+                                    <span class="h5 fw-bold text-primary">$2.40</span>
+                                    <small class="text-muted">/ 1K {{ __('adminlte.followers') }}</small>
+                                </p>
+                                <a href="{{ route('services.all', ['platform' => 'facebook']) }}" class="btn btn-primary btn-sm rounded-pill px-4">
+                                    <i class="fas fa-shopping-cart me-1"></i>{{ __('adminlte.order_now') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- TikTok Card -->
-                <div class="col-12 col-sm-4 col-lg-12" data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="600">
-                    <div class="card text-center border-0 shadow-lg">
-                        <div class="card-body">
-                            <i class="fab fa-tiktok text-dark mb-2"></i>
-                            <h6 class="card-title fw-bold">{{ __('adminlte.tiktok') }}</h6>
-                            <p class="card-text mb-3">
-                                <span class="h5 fw-bold text-primary">$3.40</span>
-                                <small class="text-muted">/ 1K {{ __('adminlte.followers') }}</small>
-                            </p>
-                            <a href="{{ route('services.all', ['platform' => 'tiktok']) }}" class="btn btn-primary btn-sm rounded-pill px-4">
-                                <i class="fas fa-shopping-cart me-1"></i>{{ __('adminlte.order_now') }}
-                            </a>
+                    <!-- TikTok Card -->
+                    <div class="col-12 col-sm-4 col-lg-12" data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="600">
+                        <div class="card text-center border-0 shadow-lg">
+                            <div class="card-body">
+                                <i class="fab fa-tiktok text-dark mb-2"></i>
+                                <h6 class="card-title fw-bold">{{ __('adminlte.tiktok') }}</h6>
+                                <p class="card-text mb-3">
+                                    <span class="h5 fw-bold text-primary">$3.40</span>
+                                    <small class="text-muted">/ 1K {{ __('adminlte.followers') }}</small>
+                                </p>
+                                <a href="{{ route('services.all', ['platform' => 'tiktok']) }}" class="btn btn-primary btn-sm rounded-pill px-4">
+                                    <i class="fas fa-shopping-cart me-1"></i>{{ __('adminlte.order_now') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </section>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
