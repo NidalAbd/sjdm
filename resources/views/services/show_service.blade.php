@@ -1,4 +1,5 @@
 @extends('layouts.welcome')
+
 @section('content')
     <div class="container-fluid px-4 py-5">
         <!-- Hero Section -->
@@ -422,8 +423,7 @@
                 quantityInput.addEventListener('input', function() {
                     const quantity = parseFloat(this.value) || 0;
                     const total = (quantity / 1000) * serviceRate;
-                    totalAmount.textContent = '
-                        @endsection + total.toFixed(2);
+                    totalAmount.textContent = '$' + total.toFixed(2);
 
                     @auth
                     // Check if user has sufficient balance

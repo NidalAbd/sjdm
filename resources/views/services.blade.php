@@ -1,5 +1,4 @@
 @extends('layouts.welcome')
-
 @section('content')
     <div class="services-page">
         <!-- Hero Section -->
