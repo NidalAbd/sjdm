@@ -46,7 +46,10 @@ Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact'
 // Service routes
 Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/platform/{platform}', [ServiceController::class, 'showPlatform'])->name('platform.show');
+Route::get('/category/{category}', [ServiceController::class, 'showCategory'])->name('category.show');
 
+Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])->name('service.show');
 // Sitemap routes
 Route::get('sitemap-main.xml', [SitemapController::class, 'main']);
 Route::get('sitemap-services.xml', [SitemapController::class, 'services']);

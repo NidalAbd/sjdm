@@ -502,6 +502,46 @@ class ServiceController extends Controller
         return view('services.show', compact('service'));
     }
 
+    public function showService($serviceId)
+    {
+        $service = Service::where('service_id', $serviceId)->firstOrFail();
+        $currentLanguage = app()->getLocale();
+
+        // Define the fields based on language
+        $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+
+        // SEO data
+        $seoTitle = $service->$nameField . ' | SMM-Followers';
+        $seoDescription = "Buy " . $service->$nameField . " at the best price. Fast delivery, high quality, 24/7 support.";
+
+        return view('services.show_service', compact('service', 'seoTitle', 'seoDescription'));
+    }
+
+    public function showPlatform($platform)
+    {
+        $currentLanguage = app()->getLocale();
+        $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+
+        if (!isset($this->platforms[$platform])) {
+            abort(404);
+        }
+
+        $platformName = $this->platforms[$platform][$currentLanguage];
+
+        $services = Service::where($categoryField, 'like', '%' . $platformName . '%')->paginate(20);
+
+        return view('services.platform', compact('services', 'platform', 'platformName'));
+    }
+
+    public function showCategory($categorySlug)
+    {
+        // Convert slug back to category name and find services
+        $services = Service::where('category_en', 'like', '%' . str_replace('-', ' ', $categorySlug) . '%')->paginate(20);
+
+        return view('services.category', compact('services', 'categorySlug'));
+    }
+
     public function edit(Service $service)
     {
         return view('services.edit', compact('service'));
