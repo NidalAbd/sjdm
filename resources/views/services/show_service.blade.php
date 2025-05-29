@@ -1,5 +1,4 @@
 @extends('layouts.welcome')
-
 @section('content')
     <div class="container-fluid px-4 py-5">
         <!-- Hero Section -->
