@@ -13,19 +13,32 @@ class SetLocale
 {
     public function handle($request, Closure $next)
     {
-        // Check URL for language prefix
+        // Get locale from route parameter first
+        $locale = $request->route('locale');
+
+        if ($locale) {
+            // If locale is in the route, validate it
+            if (in_array($locale, ['ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'])) {
+                App::setLocale($locale);
+                Session::put('applocale', $locale);
+                return $next($request);
+            }
+        }
+
+        // If no locale in route, check URL path
         $path = $request->path();
 
-        if (strpos($path, 'ar/') === 0 || strpos($path, 'ar') === 0) {
-            // Arabic URL
-            $locale = 'ar';
+        if (strpos($path, 'ar/') === 0 || $path === 'ar') {
+            App::setLocale('ar');
+            Session::put('applocale', 'ar');
+            return $next($request);
+        }
+
+        // Default to English or user preference
+        if (Auth::check()) {
+            $locale = Auth::user()->language ?? 'en';
         } else {
-            // Check user preference or session for non-prefixed URLs
-            if (Auth::check()) {
-                $locale = Auth::user()->language ?? 'en';
-            } else {
-                $locale = Session::get('applocale', 'en');
-            }
+            $locale = Session::get('applocale', 'en');
         }
 
         // Ensure valid locale
