@@ -125,12 +125,6 @@ Route::group([
     Route::get('/service/{serviceId}', [ServiceController::class, 'showServiceLocalized'])
         ->name('service.show.localized')
         ->where('serviceId', '[0-9]+');
-    Route::get('/platform/{platform}', [ServiceController::class, 'showPlatformLocalized'])
-        ->name('platform.show.localized')
-        ->where('platform', '[a-zA-Z0-9\-\_]+');
-    Route::get('/category/{category}', [ServiceController::class, 'showCategoryLocalized'])
-        ->name('category.show.localized')
-        ->where('category', '[^/]+'); // Allow spaces and special characters
 });
 
 // =============================================
@@ -151,12 +145,6 @@ Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name(
 Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])
     ->name('service.show')
     ->where('serviceId', '[0-9]+');
-Route::get('/platform/{platform}', [ServiceController::class, 'showPlatform'])
-    ->name('platform.show')
-    ->where('platform', '[a-zA-Z0-9\-\_]+');
-Route::get('/category/{category}', [ServiceController::class, 'showCategory'])
-    ->name('category.show')
-    ->where('category', '[^/]+'); // Allow spaces and special characters
 
 // =============================================
 // HOME AND DASHBOARD ROUTES

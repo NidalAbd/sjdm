@@ -4,23 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class SitemapController extends Controller
 {
-    /**
-     * Cache duration in seconds (1 day)
-     */
-    protected $cacheDuration = 86400;
-
-    /**
-     * Supported languages
-     */
+    protected $cacheDuration = 86400; // 1 day
     protected $languages = ['en', 'ar'];
 
     /**
-     * Generate the main sitemap index
+     * Generate the main sitemap index - UPDATED to exclude categories/platforms
      */
     public function index()
     {
@@ -32,15 +24,8 @@ class SitemapController extends Controller
             [
                 'url' => url('sitemap-services.xml'),
                 'lastmod' => Carbon::now()->toDateString()
-            ],
-            [
-                'url' => url('sitemap-categories.xml'),
-                'lastmod' => Carbon::now()->toDateString()
-            ],
-            [
-                'url' => url('sitemap-platforms.xml'),
-                'lastmod' => Carbon::now()->toDateString()
             ]
+            // REMOVED: sitemap-categories.xml and sitemap-platforms.xml
         ];
 
         return response()->view('sitemaps.index', [
@@ -118,13 +103,18 @@ class SitemapController extends Controller
     }
 
     /**
-     * Generate the services sitemap
+     * Generate the services sitemap - ONLY individual service pages
      */
     public function services()
     {
-        // Get all services
+        // Get only active services with proper names
         $services = Cache::remember('sitemap_services', $this->cacheDuration, function () {
-            return Service::select(['service_id', 'updated_at'])->get();
+            return Service::select(['service_id', 'updated_at'])
+                ->whereNotNull('name_en')
+                ->whereNotNull('name_ar')
+                ->where('name_en', '!=', '')
+                ->where('name_ar', '!=', '')
+                ->get();
         });
 
         $urls = [];
@@ -146,67 +136,23 @@ class SitemapController extends Controller
     }
 
     /**
-     * Generate the categories sitemap
+     * DISABLED: Categories sitemap - return 404
      */
     public function categories()
     {
-        $urls = [];
-
-        // Get English categories
-        $enCategories = Cache::remember('sitemap_categories_en', $this->cacheDuration, function () {
-            return DB::table('services')
-                ->select('category_en')
-                ->distinct()
-                ->whereNotNull('category_en')
-                ->where('category_en', '!=', '')
-                ->pluck('category_en');
-        });
-
-        foreach ($enCategories as $category) {
-            $urls[] = [
-                'loc' => url('/category/' . urlencode($category)),
-                'lastmod' => Carbon::now()->toDateString(),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-                'alternates' => $this->getAlternateUrls('/category/' . urlencode($category))
-            ];
-        }
-
-        return response()->view('sitemaps.urls', [
-            'urls' => $urls
-        ])->header('Content-Type', 'text/xml');
+        abort(404, 'Categories sitemap disabled');
     }
 
     /**
-     * Generate the platforms sitemap
+     * DISABLED: Platforms sitemap - return 404
      */
     public function platforms()
     {
-        $urls = [];
-
-        // Get platforms from ServiceController
-        $serviceController = new ServiceController();
-        $platforms = $serviceController->platforms;
-
-        foreach ($platforms as $platformKey => $platformNames) {
-            if ($platformKey === 'all') continue; // Skip the "all" option
-
-            $urls[] = [
-                'loc' => url('/platform/' . $platformKey),
-                'lastmod' => Carbon::now()->toDateString(),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-                'alternates' => $this->getAlternateUrls('/platform/' . $platformKey)
-            ];
-        }
-
-        return response()->view('sitemaps.urls', [
-            'urls' => $urls
-        ])->header('Content-Type', 'text/xml');
+        abort(404, 'Platforms sitemap disabled');
     }
 
     /**
-     * Generate robots.txt file
+     * Generate robots.txt file - UPDATED to block categories/platforms
      */
     public function robots()
     {
@@ -217,7 +163,12 @@ class SitemapController extends Controller
         $content .= "Disallow: /user/\n";
         $content .= "Disallow: /login\n";
         $content .= "Disallow: /register\n";
-        $content .= "Disallow: /api/\n\n";
+        $content .= "Disallow: /api/\n";
+        $content .= "Disallow: /category/\n";           // Block English categories
+        $content .= "Disallow: /platform/\n";          // Block English platforms
+        $content .= "Disallow: /ar/category/\n";       // Block Arabic categories
+        $content .= "Disallow: /ar/platform/\n";       // Block Arabic platforms
+        $content .= "\n";
         $content .= "Sitemap: " . url('/sitemap.xml') . "\n";
 
         return response($content, 200)->header('Content-Type', 'text/plain');
