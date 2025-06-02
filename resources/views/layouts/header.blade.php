@@ -193,57 +193,7 @@
             transform: translateY(-10px);
         }
     }
-
-    /* Language Switcher in Navbar Styles */
-    .lang-flag {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        margin-right: 5px;
-    }
-
-    .flag-en {
-        background: linear-gradient(to bottom, #012169 33%, #fff 33%, #fff 66%, #C8102E 66%);
-    }
-
-    .flag-ar {
-        background: linear-gradient(to right, #000 25%, #fff 25%, #fff 50%, #ce1126 50%, #ce1126 75%, #007a3d 75%);
-    }
-
-    /* Language dropdown styling */
-    .language-dropdown .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .language-dropdown .dropdown-menu {
-        min-width: 120px;
-    }
-
-    .language-dropdown .dropdown-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 15px;
-    }
-
-    .language-dropdown .dropdown-item:hover {
-        background-color: #f8f9fa;
-    }
-
-    .dark-mode .language-dropdown .dropdown-item:hover {
-        background-color: #444;
-    }
 </style>
-
-<!-- Modern Language Switcher -->
-
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
@@ -307,52 +257,22 @@
                         </ul>
                     </li>
                 @endguest
-
                 <!-- Language Dropdown -->
-                <li class="nav-item dropdown language-dropdown">
-                    @php
-                        $currentLanguage = app()->getLocale();
-                        $currentPath = request()->path();
-
-                        // Clean the current path from any language prefix
-                        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-                        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
-                        $cleanPath = $cleanPath === '' ? '' : $cleanPath;
-
-                        // Generate URLs for both languages
-                        if ($currentLanguage === 'en') {
-                            $switchUrl = url('ar/' . $cleanPath);
-                            $currentText = 'English';
-                            $currentFlag = 'flag-en';
-                            $otherText = 'العربية';
-                            $otherFlag = 'flag-ar';
-                        } else {
-                            $switchUrl = url($cleanPath ?: '/');
-                            $currentText = 'العربية';
-                            $currentFlag = 'flag-ar';
-                            $otherText = 'English';
-                            $otherFlag = 'flag-en';
-                        }
-
-                        // Preserve query parameters
-                        if (request()->getQueryString()) {
-                            $switchUrl .= '?' . request()->getQueryString();
-                        }
-                    @endphp
-
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="lang-flag {{ $currentFlag }}"></span>
-                        {{ $currentText }}
+                        <i class="fas fa-globe"></i> {{ __('adminlte.language') }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
-                        <li>
-                            <a class="dropdown-item" href="{{ $switchUrl }}">
-                                <span class="lang-flag {{ $otherFlag }}"></span>
-                                {{ $otherText }}
-                            </a>
-                        </li>
+                        @foreach (config('app.available_locales') as $localeCode => $localeName)
+                            <li>
+                                <a class="dropdown-item" href="{{ route('changeLang', $localeCode) }}">
+                                    {{ $localeName }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </li>
+                <!-- Dark Mode Toggle -->
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#" id="darkModeToggle">
                         <i class="fas fa-moon"></i>
@@ -367,6 +287,8 @@
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
+
+
 
 <!-- Hero Section -->
 <section id="hero-sec" class="hero-section d-flex align-items-center justify-content-center text-center text-white position-relative overflow-hidden">
@@ -418,6 +340,7 @@
     </div>
 </section>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Check localStorage for theme
@@ -445,7 +368,8 @@
     });
 </script>
 <style>
-    /* General Section Title Styling */
+    >
+        /* General Section Title Styling */
     .platform-title, .achievements-title {
         font-size: 2.5rem; /* Increased font size for better visibility */
         font-weight: 700;
@@ -482,6 +406,7 @@
         transform: translateY(-10px);
         box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
     }
+
 
     .stats-title {
         font-size: 1.8rem; /* Increased font size for titles */
