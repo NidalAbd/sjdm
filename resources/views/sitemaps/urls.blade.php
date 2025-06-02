@@ -4,20 +4,14 @@
     @foreach($urls as $url)
         <url>
             <loc>{{ $url['loc'] }}</loc>
-            @if(isset($url['lastmod']))
-                <lastmod>{{ $url['lastmod'] }}</lastmod>
-            @endif
-            @if(isset($url['changefreq']))
-                <changefreq>{{ $url['changefreq'] }}</changefreq>
-            @endif
-            @if(isset($url['priority']))
-                <priority>{{ $url['priority'] }}</priority>
-            @endif
-
+            <lastmod>{{ $url['lastmod'] }}</lastmod>
+            <changefreq>{{ $url['changefreq'] }}</changefreq>
+            <priority>{{ $url['priority'] }}</priority>
             @if(isset($url['alternates']))
-                @foreach($url['alternates'] as $lang => $alternateUrl)
-                    <xhtml:link rel="alternate" hreflang="{{ $lang }}" href="{{ $alternateUrl }}" />
+                @foreach($url['alternates'] as $lang => $altUrl)
+                    <xhtml:link rel="alternate" hreflang="{{ $lang }}" href="{{ $altUrl }}" />
                 @endforeach
+                <xhtml:link rel="alternate" hreflang="x-default" href="{{ $url['alternates']['en'] }}" />
             @endif
         </url>
     @endforeach

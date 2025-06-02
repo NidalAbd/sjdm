@@ -15,6 +15,11 @@ class SitemapController extends Controller
     protected $cacheDuration = 86400;
 
     /**
+     * Supported languages
+     */
+    protected $languages = ['en', 'ar'];
+
+    /**
      * Generate the main sitemap index
      */
     public function index()
@@ -45,7 +50,6 @@ class SitemapController extends Controller
 
     /**
      * Generate the main pages sitemap
-     * ONLY canonical URLs (English versions)
      */
     public function main()
     {
@@ -54,49 +58,57 @@ class SitemapController extends Controller
                 'loc' => url('/'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'daily',
-                'priority' => '1.0'
+                'priority' => '1.0',
+                'alternates' => $this->getAlternateUrls('/')
             ],
             [
                 'loc' => url('/all-services'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'daily',
-                'priority' => '0.9'
+                'priority' => '0.9',
+                'alternates' => $this->getAlternateUrls('/all-services')
             ],
             [
                 'loc' => url('/faq'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'monthly',
-                'priority' => '0.8'
+                'priority' => '0.8',
+                'alternates' => $this->getAlternateUrls('/faq')
             ],
             [
                 'loc' => url('/about'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'monthly',
-                'priority' => '0.8'
+                'priority' => '0.8',
+                'alternates' => $this->getAlternateUrls('/about')
             ],
             [
                 'loc' => url('/contact-us'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'monthly',
-                'priority' => '0.8'
+                'priority' => '0.8',
+                'alternates' => $this->getAlternateUrls('/contact-us')
             ],
             [
                 'loc' => url('/privacy-policy'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'yearly',
-                'priority' => '0.5'
+                'priority' => '0.5',
+                'alternates' => $this->getAlternateUrls('/privacy-policy')
             ],
             [
                 'loc' => url('/terms-and-conditions'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'yearly',
-                'priority' => '0.5'
+                'priority' => '0.5',
+                'alternates' => $this->getAlternateUrls('/terms-and-conditions')
             ],
             [
                 'loc' => url('/how-it-works'),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'monthly',
-                'priority' => '0.7'
+                'priority' => '0.7',
+                'alternates' => $this->getAlternateUrls('/how-it-works')
             ]
         ];
 
@@ -107,7 +119,6 @@ class SitemapController extends Controller
 
     /**
      * Generate the services sitemap
-     * ONLY canonical service URLs (English versions)
      */
     public function services()
     {
@@ -119,12 +130,13 @@ class SitemapController extends Controller
         $urls = [];
 
         foreach ($services as $service) {
-            // ONLY add canonical URLs (no Arabic versions)
+            // Add canonical URL (English) with alternates
             $urls[] = [
                 'loc' => url('/service/' . $service->service_id),
                 'lastmod' => $service->updated_at ? $service->updated_at->toDateString() : Carbon::now()->toDateString(),
                 'changefreq' => 'weekly',
-                'priority' => '0.7'
+                'priority' => '0.7',
+                'alternates' => $this->getAlternateUrls('/service/' . $service->service_id)
             ];
         }
 
@@ -135,13 +147,12 @@ class SitemapController extends Controller
 
     /**
      * Generate the categories sitemap
-     * ONLY canonical category URLs (English versions)
      */
     public function categories()
     {
         $urls = [];
 
-        // Get English categories only
+        // Get English categories
         $enCategories = Cache::remember('sitemap_categories_en', $this->cacheDuration, function () {
             return DB::table('services')
                 ->select('category_en')
@@ -152,12 +163,12 @@ class SitemapController extends Controller
         });
 
         foreach ($enCategories as $category) {
-            // ONLY add canonical URLs (no Arabic versions)
             $urls[] = [
                 'loc' => url('/category/' . urlencode($category)),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'weekly',
-                'priority' => '0.8'
+                'priority' => '0.8',
+                'alternates' => $this->getAlternateUrls('/category/' . urlencode($category))
             ];
         }
 
@@ -168,7 +179,6 @@ class SitemapController extends Controller
 
     /**
      * Generate the platforms sitemap
-     * ONLY canonical platform URLs (English versions)
      */
     public function platforms()
     {
@@ -181,12 +191,12 @@ class SitemapController extends Controller
         foreach ($platforms as $platformKey => $platformNames) {
             if ($platformKey === 'all') continue; // Skip the "all" option
 
-            // ONLY add canonical URLs (no Arabic versions)
             $urls[] = [
                 'loc' => url('/platform/' . $platformKey),
                 'lastmod' => Carbon::now()->toDateString(),
                 'changefreq' => 'weekly',
-                'priority' => '0.8'
+                'priority' => '0.8',
+                'alternates' => $this->getAlternateUrls('/platform/' . $platformKey)
             ];
         }
 
@@ -207,41 +217,27 @@ class SitemapController extends Controller
         $content .= "Disallow: /user/\n";
         $content .= "Disallow: /login\n";
         $content .= "Disallow: /register\n";
-        $content .= "Disallow: /api/\n";
-        $content .= "Disallow: /ar/\n";  // Block all Arabic URLs from crawling
-        $content .= "\n";
+        $content .= "Disallow: /api/\n\n";
         $content .= "Sitemap: " . url('/sitemap.xml') . "\n";
 
         return response($content, 200)->header('Content-Type', 'text/plain');
     }
 
     /**
-     * Convert text to slug (if needed)
+     * Generate alternate URLs for all supported languages
      */
-    protected function slugify($text)
+    protected function getAlternateUrls($path)
     {
-        // Replace non letter or digits by -
-        $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+        $alternates = [];
 
-        // Transliterate
-        if (function_exists('iconv')) {
-            $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+        foreach ($this->languages as $lang) {
+            if ($lang === 'en') {
+                $alternates[$lang] = url($path);
+            } else {
+                $alternates[$lang] = url('/' . $lang . $path);
+            }
         }
 
-        // Remove unwanted characters
-        $text = preg_replace('~[^-\w]+~', '', $text);
-
-        // Trim
-        $text = trim($text, '-');
-
-        // Remove duplicate -
-        $text = preg_replace('~-+~', '-', $text);
-
-        // Lowercase
-        $text = strtolower($text);
-
-        return $text ?: 'n-a';
+        return $alternates;
     }
-
-
 }
