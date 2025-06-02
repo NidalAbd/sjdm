@@ -194,66 +194,17 @@
         }
     }
 
-    /* Modern Language Switcher Styles */
-    .language-switcher-modern {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1060;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 25px;
-        padding: 8px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-    }
-
-    .language-switcher-modern:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .lang-toggle-btn {
-        background: transparent;
-        border: none;
-        border-radius: 20px;
-        padding: 10px 15px;
-        color: #495057;
-        font-weight: 600;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        min-width: 100px;
-        justify-content: center;
-        text-decoration: none;
-    }
-
-    .lang-toggle-btn:hover {
-        background: rgba(52, 144, 220, 0.1);
-        color: #3490dc;
-        transform: scale(1.05);
-        text-decoration: none;
-    }
-
-    .lang-toggle-btn.active {
-        background: linear-gradient(135deg, #3490dc, #2779bd);
-        color: white;
-        box-shadow: 0 4px 15px rgba(52, 144, 220, 0.3);
-    }
-
+    /* Language Switcher in Navbar Styles */
     .lang-flag {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         border-radius: 50%;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        font-size: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-right: 5px;
     }
 
     .flag-en {
@@ -264,86 +215,34 @@
         background: linear-gradient(to right, #000 25%, #fff 25%, #fff 50%, #ce1126 50%, #ce1126 75%, #007a3d 75%);
     }
 
-    /* Dark mode styles */
-    .dark-mode .language-switcher-modern {
-        background: rgba(52, 58, 64, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Language dropdown styling */
+    .language-dropdown .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 5px;
     }
 
-    .dark-mode .lang-toggle-btn {
-        color: #dee2e6;
+    .language-dropdown .dropdown-menu {
+        min-width: 120px;
     }
 
-    .dark-mode .lang-toggle-btn:hover {
-        background: rgba(52, 144, 220, 0.2);
-        color: #3490dc;
+    .language-dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 15px;
     }
 
-    .dark-mode .lang-toggle-btn.active {
-        background: linear-gradient(135deg, #4a90e2, #357abd);
-        color: white;
+    .language-dropdown .dropdown-item:hover {
+        background-color: #f8f9fa;
     }
 
-    /* RTL Support */
-    [dir="rtl"] .language-switcher-modern {
-        right: auto;
-        left: 20px;
-    }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-switcher-modern {
-            top: 10px;
-            right: 10px;
-            padding: 6px;
-        }
-
-        .lang-toggle-btn {
-            padding: 8px 12px;
-            font-size: 13px;
-            min-width: 80px;
-        }
+    .dark-mode .language-dropdown .dropdown-item:hover {
+        background-color: #444;
     }
 </style>
 
 <!-- Modern Language Switcher -->
-<div class="language-switcher-modern">
-    @php
-        $currentLanguage = app()->getLocale();
-        $currentPath = request()->path();
-
-        // Clean the current path from any language prefix
-        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
-        $cleanPath = $cleanPath === '' ? '' : $cleanPath;
-
-        // Generate URLs for both languages
-        if ($currentLanguage === 'en') {
-            $switchUrl = url('ar/' . $cleanPath);
-            $switchLang = 'ar';
-            $switchText = 'العربية';
-            $currentText = 'English';
-            $currentFlag = 'flag-en';
-        } else {
-            $switchUrl = url($cleanPath ?: '/');
-            $switchLang = 'en';
-            $switchText = 'English';
-            $currentText = 'العربية';
-            $currentFlag = 'flag-ar';
-        }
-
-        // Preserve query parameters
-        if (request()->getQueryString()) {
-            $switchUrl .= '?' . request()->getQueryString();
-        }
-    @endphp
-
-    <a href="{{ $switchUrl }}" class="lang-toggle-btn active" title="Switch to {{ $switchText }}">
-        <span class="lang-flag {{ $currentFlag }}"></span>
-        <span>{{ $currentText }}</span>
-        <i class="fas fa-globe fa-xs"></i>
-    </a>
-</div>
 
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
@@ -409,7 +308,51 @@
                     </li>
                 @endguest
 
-                <!-- Dark Mode Toggle -->
+                <!-- Language Dropdown -->
+                <li class="nav-item dropdown language-dropdown">
+                    @php
+                        $currentLanguage = app()->getLocale();
+                        $currentPath = request()->path();
+
+                        // Clean the current path from any language prefix
+                        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+                        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
+                        $cleanPath = $cleanPath === '' ? '' : $cleanPath;
+
+                        // Generate URLs for both languages
+                        if ($currentLanguage === 'en') {
+                            $switchUrl = url('ar/' . $cleanPath);
+                            $currentText = 'English';
+                            $currentFlag = 'flag-en';
+                            $otherText = 'العربية';
+                            $otherFlag = 'flag-ar';
+                        } else {
+                            $switchUrl = url($cleanPath ?: '/');
+                            $currentText = 'العربية';
+                            $currentFlag = 'flag-ar';
+                            $otherText = 'English';
+                            $otherFlag = 'flag-en';
+                        }
+
+                        // Preserve query parameters
+                        if (request()->getQueryString()) {
+                            $switchUrl .= '?' . request()->getQueryString();
+                        }
+                    @endphp
+
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="lang-flag {{ $currentFlag }}"></span>
+                        {{ $currentText }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
+                        <li>
+                            <a class="dropdown-item" href="{{ $switchUrl }}">
+                                <span class="lang-flag {{ $otherFlag }}"></span>
+                                {{ $otherText }}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#" id="darkModeToggle">
                         <i class="fas fa-moon"></i>
