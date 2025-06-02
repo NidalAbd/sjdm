@@ -19,6 +19,16 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+// Temporary test route - add this at the top of web.php
+Route::get('ar/test-service/{id}', function($id) {
+    return response()->json([
+        'message' => 'Arabic service route test',
+        'id' => $id,
+        'locale' => app()->getLocale(),
+        'url' => request()->url()
+    ]);
+});
+
 // FIXED Language change route
 Route::get('lang/{lang}', function ($lang) {
     // Validate language
