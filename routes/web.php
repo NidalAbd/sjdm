@@ -30,8 +30,31 @@ Route::get('lang/{lang}', function ($lang) {
         $user->save();
     }
 
-    return redirect()->back();
-})->name('changeLang');
+    // FIXED: Redirect to proper language URL
+    $currentPath = request()->path();
+    $currentRoute = request()->route()->getName();
+
+    // Remove any existing language prefix from current path
+    $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+    $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
+
+    if ($lang === 'en') {
+        // Redirect to English version (no prefix)
+        if ($cleanPath === '' || $cleanPath === '/') {
+            return redirect('/');
+        } else {
+            return redirect('/' . ltrim($cleanPath, '/'));
+        }
+    } else {
+        // Redirect to language-prefixed version
+        if ($cleanPath === '' || $cleanPath === '/') {
+            return redirect('/' . $lang);
+        } else {
+            return redirect('/' . $lang . '/' . ltrim($cleanPath, '/'));
+        }
+    }
+
+})->name('changeLang')->where('lang', 'en|ar|es|fr|de|ru|zh|hi|pt');
 
 // Sitemap and robots routes (no language prefix)
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

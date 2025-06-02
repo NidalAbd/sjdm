@@ -273,16 +273,39 @@
 
 <body class="{{ session('dark_mode', false) ? 'dark-mode' : 'light-mode' }}">
 <!-- Language Switcher -->
+<!-- REPLACE the language switcher section with this: -->
 <div class="language-switcher">
-    @if($currentLanguage === 'en')
-        <a href="{{ $alternateUrls['ar'] }}" title="Switch to Arabic">
-            <i class="fas fa-globe me-1"></i>العربية
-        </a>
-    @else
-        <a href="{{ $alternateUrls['en'] }}" title="Switch to English">
-            <i class="fas fa-globe me-1"></i>English
-        </a>
-    @endif
+    @php
+        $currentLanguage = app()->getLocale();
+        $currentPath = request()->path();
+
+        // Clean the current path from any language prefix
+        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
+        $cleanPath = $cleanPath === '' ? '' : $cleanPath;
+
+        // Generate URLs for both languages
+        if ($currentLanguage === 'en') {
+            $currentUrl = url($cleanPath ?: '/');
+            $switchUrl = url('ar/' . $cleanPath);
+            $switchLang = 'ar';
+            $switchText = 'العربية';
+        } else {
+            $currentUrl = url($currentLanguage . '/' . $cleanPath);
+            $switchUrl = url($cleanPath ?: '/');
+            $switchLang = 'en';
+            $switchText = 'English';
+        }
+
+        // Preserve query parameters
+        if (request()->getQueryString()) {
+            $switchUrl .= '?' . request()->getQueryString();
+        }
+    @endphp
+
+    <a href="{{ $switchUrl }}" title="Switch to {{ $switchText }}">
+        <i class="fas fa-globe me-1"></i>{{ $switchText }}
+    </a>
 </div>
 
 <!-- Include Header -->
