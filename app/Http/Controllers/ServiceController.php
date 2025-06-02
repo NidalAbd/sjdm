@@ -405,75 +405,44 @@ class ServiceController extends Controller
     public function showService($serviceId)
     {
         try {
-            $service = Service::where('service_id', $serviceId)->firstOrFail();
-            $currentLanguage = app()->getLocale();
+            Log::info('showService method called', [
+                'serviceId' => $serviceId,
+                'locale' => app()->getLocale(),
+                'url' => request()->url()
+            ]);
 
-            // Get language-specific fields
-            $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
-            $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
+            // Test if we can find the service
+            $service = Service::where('service_id', $serviceId)->first();
 
-            // SEO data
-            $seoTitle = $service->$nameField . ' | SMM-Followers';
-            $seoDescription = $this->generateServiceSeoDescription($service, $currentLanguage);
-            $seoKeywords = $this->generateServiceSeoKeywords($service, $currentLanguage);
+            if (!$service) {
+                Log::error('Service not found in database', ['serviceId' => $serviceId]);
+                abort(404, 'Service not found');
+            }
 
-            // CANONICAL URL (always English)
-            $canonicalUrl = url('/service/' . $service->service_id);
+            Log::info('Service found', ['service_name' => $service->name_en]);
 
-            // ALTERNATE URLs for hreflang
-            $alternateUrls = [
-                'en' => url('/service/' . $service->service_id),
-                'ar' => url('/ar/service/' . $service->service_id)
-            ];
+            // Return a simple test response instead of the view
+            return response()->json([
+                'success' => true,
+                'service_id' => $service->service_id,
+                'service_name_en' => $service->name_en,
+                'service_name_ar' => $service->name_ar,
+                'locale' => app()->getLocale()
+            ]);
 
-            // Breadcrumbs
-            $breadcrumbs = [
-                [
-                    'title' => $currentLanguage === 'en' ? 'Home' : 'الرئيسية',
-                    'url' => $currentLanguage === 'en' ? url('/') : url('/ar')
-                ],
-                [
-                    'title' => $currentLanguage === 'en' ? 'Services' : 'الخدمات',
-                    'url' => $currentLanguage === 'en' ? url('/all-services') : url('/ar/all-services')
-                ],
-                [
-                    'title' => $service->$categoryField,
-                    'url' => $currentLanguage === 'en'
-                        ? url('/category/' . urlencode($service->$categoryField))
-                        : url('/ar/category/' . urlencode($service->$categoryField))
-                ],
-                [
-                    'title' => $service->$nameField,
-                    'url' => $currentLanguage === 'en' ? $canonicalUrl : $alternateUrls['ar']
-                ]
-            ];
+        } catch (\Exception $e) {
+            Log::error('Error in showService', [
+                'serviceId' => $serviceId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
-            // Structured data
-            $structuredData = $this->generateServiceStructuredData($service, $currentLanguage);
-
-            // Related services
-            $relatedServices = Service::where($categoryField, $service->$categoryField)
-                ->where('service_id', '!=', $service->service_id)
-                ->limit(6)
-                ->get([$nameField, 'service_id', 'rate', 'min', 'max']);
-
-            return view('services.show_service', compact(
-                'service',
-                'seoTitle',
-                'seoDescription',
-                'seoKeywords',
-                'canonicalUrl',
-                'alternateUrls',
-                'breadcrumbs',
-                'structuredData',
-                'relatedServices'
-            ));
-
-        } catch (ModelNotFoundException $e) {
-            abort(404, 'Service not found');
+            return response()->json([
+                'error' => $e->getMessage(),
+                'serviceId' => $serviceId
+            ], 500);
         }
     }
-
     public function showCategory($categorySlug)
     {
         try {
