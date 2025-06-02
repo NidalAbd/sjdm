@@ -1,41 +1,69 @@
 <IfModule mod_rewrite.c>
-
     <IfModule mod_negotiation.c>
-
         Options -MultiViews -Indexes
-
     </IfModule>
-
-
 
     RewriteEngine On
 
-
-
     # Handle Authorization Header
-
     RewriteCond %{HTTP:Authorization} .
-
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+    # Redirect login/register with redirect parameters to prevent indexing
+    RewriteCond %{QUERY_STRING} ^redirect=
+    RewriteCond %{REQUEST_URI} ^/(login|register)/?$
+    RewriteRule ^(.*)$ $1? [R=302,L]
 
+    # Redirect multiple slashes to single slash
+    RewriteCond %{REQUEST_URI} ^(.*)//(.*)$
+    RewriteRule . %1/%2 [R=301,L]
 
-    # Redirect Trailing Slashes If Not A Folder...
+    # Remove trailing slash (except for root)
+    RewriteCond %{REQUEST_URI} !^/$
+    RewriteCond %{REQUEST_URI} (.*)/$
+    RewriteRule ^(.*)/$  $1 [R=301,L]
 
+    # Redirect index.php to root
+    RewriteCond %{THE_REQUEST} /index\.php(\?[^\s]*)?[\s?] [NC]
+    RewriteRule ^index\.php$ / [R=301,L]
+
+    # Handle language-specific URLs and ensure proper canonical structure
+    # Redirect invalid language prefixes
+    RewriteCond %{REQUEST_URI} ^/([a-z]{2})/
+    RewriteCond %1 !^(ar|es|fr|de|ru|zh|hi|pt)$
+    RewriteRule ^[a-z]{2}/(.*)$ /$1 [R=301,L]
+
+    # Redirect to Laravel router
     RewriteCond %{REQUEST_FILENAME} !-d
-
-    RewriteCond %{REQUEST_URI} (.+)/$
-
-    RewriteRule ^ %1 [L,R=301]
-
-
-
-    # Send Requests To Front Controller...
-
-    RewriteCond %{REQUEST_FILENAME} !-d
-
     RewriteCond %{REQUEST_FILENAME} !-f
-
     RewriteRule ^ index.php [L]
 
+    # Security headers
+    <IfModule mod_headers.c>
+        # Add security headers
+        Header always set X-Content-Type-Options nosniff
+        Header always set X-Frame-Options DENY
+        Header always set X-XSS-Protection "1; mode=block"
+        Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+        # Add robots header for auth pages with redirects
+        SetEnvIf Request_URI "^/(login|register)" auth_page=1
+        SetEnvIf Query_String "redirect=" has_redirect=1
+        Header set X-Robots-Tag "noindex, nofollow" env=auth_page
+        Header set X-Robots-Tag "noindex, nofollow" env=has_redirect
+    </IfModule>
+</IfModule>
+
+# Cache Control
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType application/pdf "access plus 1 year"
+    ExpiresByType text/html "access plus 1 hour"
 </IfModule>

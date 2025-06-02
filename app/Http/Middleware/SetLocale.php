@@ -24,25 +24,50 @@ class SetLocale
         // For API requests, use the 'Accept-Language' header
         if ($request->is('api/*')) {
             $locale = $request->header('Accept-Language') ?? config('app.locale');
+            $locale = $this->extractPrimaryLocale($locale);
         } else {
-            // Check if the user is authenticated
-            if (Auth::check()) {
-                // If authenticated, use the user's language from the database
-                $locale = Auth::user()->language ?? config('app.locale');
+            // Check if there's a locale in the URL (from route parameter)
+            $routeLocale = $request->route('locale');
+
+            if ($routeLocale) {
+                // Validate the locale from the URL
+                $supportedLocales = ['ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'];
+
+                if (in_array($routeLocale, $supportedLocales)) {
+                    $locale = $routeLocale;
+                } else {
+                    // Invalid locale in URL, default to English
+                    $locale = 'en';
+                }
             } else {
-                // For guests, use session or fallback to default locale
-                $locale = Session::get('applocale', config('app.locale'));
+                // No locale in URL, determine from user preference or session
+                if (Auth::check()) {
+                    // If authenticated, use the user's language from the database
+                    $locale = Auth::user()->language ?? config('app.locale');
+                } else {
+                    // For guests, use session or fallback to default locale
+                    $locale = Session::get('applocale', config('app.locale'));
+                }
             }
+        }
+
+        // Ensure we have a valid locale
+        $allSupportedLocales = ['en', 'ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'];
+        if (!in_array($locale, $allSupportedLocales)) {
+            $locale = 'en'; // Default to English
         }
 
         // Set the application locale
         App::setLocale($locale);
 
-        // Update the session locale for future requests
-        Session::put('applocale', $locale);
+        // Update the session locale for future requests (only if not from URL)
+        if (!$request->route('locale')) {
+            Session::put('applocale', $locale);
+        }
 
         return $next($request);
     }
+
     /**
      * Extracts the primary locale from the Accept-Language header.
      *

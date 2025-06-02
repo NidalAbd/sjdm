@@ -71,6 +71,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check.banned' => \App\Http\Middleware\CheckIfBanned::class,
-
+        'setlocale' => \App\Http\Middleware\SetLocale::class,
+        'handle.auth.redirects' => \App\Http\Middleware\HandleAuthRedirects::class,
     ];
 }

@@ -1,4 +1,3 @@
-<!-- resources/views/layouts/welcome.blade.php -->
 @php
     if (!function_exists('getOgLocale')) {
         function getOgLocale()
@@ -23,7 +22,21 @@
     $pageTitle = $seoTitle ?? __('title');
     $pageDescription = $seoDescription ?? __('description');
     $pageKeywords = $seoKeywords ?? __('keywords');
-    $pageCanonical = $canonicalUrl ?? url()->current();
+
+    // FIXED: Always use English canonical URL (no language prefix)
+    $currentLanguage = app()->getLocale();
+    $currentPath = request()->path();
+
+    // Remove language prefix from canonical URL
+    if ($currentLanguage !== 'en') {
+        $currentPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+    }
+
+    $pageCanonical = $canonicalUrl ?? url($currentPath);
+
+    // Ensure canonical doesn't have language prefix
+    $pageCanonical = preg_replace('/\/(ar|es|fr|de|ru|zh|hi|pt)\//', '/', $pageCanonical);
+    $pageCanonical = preg_replace('/\/(ar|es|fr|de|ru|zh|hi|pt)$/', '', $pageCanonical);
 @endphp
     <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
@@ -36,29 +49,42 @@
     <meta name="description" content="{{ $pageDescription }}">
     <meta name="keywords" content="{{ $pageKeywords }}">
 
-    <!-- Canonical URL -->
+    <!-- Robots Meta Tags -->
+    @if(request()->has('redirect') && (request()->is('login') || request()->is('register')))
+        <meta name="robots" content="noindex, nofollow">
+    @elseif(request()->get('page', 1) > 1)
+        <meta name="robots" content="noindex, follow">
+    @else
+        <meta name="robots" content="index, follow">
+    @endif
+
+    <!-- FIXED: Canonical URL always points to English version -->
     <link rel="canonical" href="{{ $pageCanonical }}">
 
-    <!-- Alternate Language URLs -->
+    <!-- FIXED: Hreflang tags with proper URL generation -->
     @foreach(['en', 'ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'] as $lang)
-        @if(app()->getLocale() != $lang)
-            @php
-                $langPath = $lang === 'en' ? '' : $lang;
-                $currentPath = request()->path();
-                $currentPathWithoutLang = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-                $alternateUrl = $lang === 'en'
-                    ? url($currentPathWithoutLang)
-                    : url($langPath . '/' . $currentPathWithoutLang);
+        @php
+            // Get current path without language prefix
+            $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', request()->path());
+            $cleanPath = $cleanPath === '' ? '' : $cleanPath;
 
-                // Preserve query parameters
-                if(request()->getQueryString()) {
-                    $alternateUrl .= '?' . request()->getQueryString();
-                }
-            @endphp
-            <link rel="alternate" hreflang="{{ $lang }}" href="{{ $alternateUrl }}">
-        @endif
+            // Generate proper URL for each language
+            if ($lang === 'en') {
+                $alternateUrl = url($cleanPath);
+            } else {
+                $alternateUrl = url($lang . '/' . $cleanPath);
+            }
+
+            // Preserve query parameters
+            if(request()->getQueryString()) {
+                $alternateUrl .= '?' . request()->getQueryString();
+            }
+        @endphp
+        <link rel="alternate" hreflang="{{ $lang }}" href="{{ $alternateUrl }}">
     @endforeach
-    <link rel="alternate" hreflang="x-default" href="{{ url(preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', request()->path())) }}">
+
+    <!-- Default hreflang pointing to English canonical -->
+    <link rel="alternate" hreflang="x-default" href="{{ $pageCanonical }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -67,7 +93,7 @@
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     <meta property="og:locale" content="{{ getOgLocale() }}">
-    <meta property="og:site_name" content="SJDM">
+    <meta property="og:site_name" content="SMM-Followers">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -88,21 +114,21 @@
         {
             "@context": "https://schema.org",
             "@type": "Organization",
-            "name": "SJDM",
+            "name": "SMM-Followers",
             "url": "{{ url('/') }}",
-        "logo": "{{ asset('images/logo.png') }}",
-        "sameAs": [
-            "https://facebook.com/sjdmstore",
-            "https://twitter.com/sjdmstore",
-            "https://instagram.com/sjdmstore"
-        ],
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+971-55-783-0054",
-            "contactType": "customer service",
-            "email": "info@sjdm.store"
+            "logo": "{{ asset('images/logo.png') }}",
+            "sameAs": [
+                "https://facebook.com/smmfollowers",
+                "https://twitter.com/smmfollowers",
+                "https://instagram.com/smmfollowers"
+            ],
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+971-55-783-0054",
+                "contactType": "customer service",
+                "email": "info@smm-followers.com"
+            }
         }
-    }
     </script>
 
     <!-- Base Structured Data for SMM Service -->
@@ -113,10 +139,10 @@
             "serviceType": "Social Media Marketing",
             "provider": {
                 "@type": "Organization",
-                "name": "SJDM",
-                "url": "https://sjdm.store"
+                "name": "SMM-Followers",
+                "url": "{{ url('/') }}"
             },
-            "description": "SJDM is a leading platform for boosting followers and engagement across various social media platforms.",
+            "description": "SMM-Followers is a leading platform for boosting followers and engagement across various social media platforms.",
             "areaServed": {
                 "@type": "Place",
                 "name": "Global"
