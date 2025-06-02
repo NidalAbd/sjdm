@@ -107,7 +107,7 @@ Route::group([
     Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy.localized');
     Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.localized');
 
-    // Service routes with language prefix
+    // Service routes with language prefix - FIXED ORDER
     Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all.localized');
     Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])
         ->name('service.show.localized')
@@ -130,7 +130,7 @@ Route::get('/support_take', [WelcomeController::class, 'support'])->name('suppor
 Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
 
-// Service routes (English - no prefix)
+// Service routes (English - no prefix) - FIXED ORDER
 Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
 Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])
     ->name('service.show')
