@@ -212,7 +212,7 @@ class SitemapController extends Controller
         $content .= "\n";
         $content .= "Sitemap: " . url('/sitemap.xml') . "\n";
 
-        return response($content)->header('Content-Type', 'text/plain');
+        return response($content, 200)->header('Content-Type', 'text/plain');
     }
 
     /**
@@ -242,4 +242,6 @@ class SitemapController extends Controller
 
         return $text ?: 'n-a';
     }
+
+
 }
