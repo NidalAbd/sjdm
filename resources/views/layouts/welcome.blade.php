@@ -208,29 +208,6 @@
             font-family: {{ $currentLanguage === 'ar' ? "'Cairo', sans-serif" : "'Nunito', sans-serif" }};
         }
 
-        /* Language Switcher */
-        .language-switcher {
-            position: fixed;
-            top: 20px;
-            {{ $currentLanguage === 'ar' ? 'left: 20px;' : 'right: 20px;' }}
-            z-index: 1050;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 25px;
-            padding: 8px 15px;
-        }
-
-        .language-switcher a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-
-        .language-switcher a:hover {
-            color: #007bff;
-        }
-
         /* RTL Support */
         @if($currentLanguage === 'ar')
         body {
@@ -272,43 +249,8 @@
 </head>
 
 <body class="{{ session('dark_mode', false) ? 'dark-mode' : 'light-mode' }}">
-<!-- Language Switcher -->
-<!-- REPLACE the language switcher section with this: -->
-<div class="language-switcher">
-    @php
-        $currentLanguage = app()->getLocale();
-        $currentPath = request()->path();
 
-        // Clean the current path from any language prefix
-        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
-        $cleanPath = $cleanPath === '' ? '' : $cleanPath;
-
-        // Generate URLs for both languages
-        if ($currentLanguage === 'en') {
-            $currentUrl = url($cleanPath ?: '/');
-            $switchUrl = url('ar/' . $cleanPath);
-            $switchLang = 'ar';
-            $switchText = 'العربية';
-        } else {
-            $currentUrl = url($currentLanguage . '/' . $cleanPath);
-            $switchUrl = url($cleanPath ?: '/');
-            $switchLang = 'en';
-            $switchText = 'English';
-        }
-
-        // Preserve query parameters
-        if (request()->getQueryString()) {
-            $switchUrl .= '?' . request()->getQueryString();
-        }
-    @endphp
-
-    <a href="{{ $switchUrl }}" title="Switch to {{ $switchText }}">
-        <i class="fas fa-globe me-1"></i>{{ $switchText }}
-    </a>
-</div>
-
-<!-- Include Header -->
+<!-- Include Header (which now contains the language switcher) -->
 @include('layouts.header')
 
 <div class="d-flex justify-content-center">
@@ -377,16 +319,6 @@
                 rtl: {{ $currentLanguage === 'ar' ? 'true' : 'false' }}
             });
         }
-
-        // Language switcher analytics
-        $('.language-switcher a').on('click', function() {
-            const targetLang = $(this).attr('href').includes('/ar/') ? 'Arabic' : 'English';
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'language_switch', {
-                    'custom_parameter': targetLang
-                });
-            }
-        });
     });
 </script>
 
