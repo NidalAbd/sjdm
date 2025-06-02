@@ -4,42 +4,48 @@
         {
             $locales = [
                 'ar' => 'ar_AR',
-                'es' => 'es_ES',
-                'zh' => 'zh_CN',
-                'hi' => 'hi_IN',
-                'pt' => 'pt_PT',
-                'ru' => 'ru_RU',
-                'de' => 'de_DE',
-                'fr' => 'fr_FR',
-                'en' => 'en_US', // Default for English
+                'en' => 'en_US',
             ];
-
             return $locales[app()->getLocale()] ?? 'en_US';
         }
     }
+
+    $currentLanguage = app()->getLocale();
 
     // Default SEO values that can be overridden by individual pages
     $pageTitle = $seoTitle ?? __('title');
     $pageDescription = $seoDescription ?? __('description');
     $pageKeywords = $seoKeywords ?? __('keywords');
 
-    // FIXED: Always use English canonical URL (no language prefix)
-    $currentLanguage = app()->getLocale();
-    $currentPath = request()->path();
+    // Canonical URL (always English version)
+    $pageCanonical = $canonicalUrl ?? url(request()->path());
 
-    // Remove language prefix from canonical URL
-    if ($currentLanguage !== 'en') {
-        $currentPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+    // Remove /ar/ from canonical if present
+    $pageCanonical = str_replace('/ar/', '/', $pageCanonical);
+    $pageCanonical = preg_replace('/\/ar$/', '', $pageCanonical);
+    $pageCanonical = str_replace('/ar', '', $pageCanonical);
+
+    // Generate alternate URLs if not provided
+    if (!isset($alternateUrls)) {
+        $currentPath = request()->path();
+        $cleanPath = str_replace('ar/', '', $currentPath);
+        $cleanPath = str_replace('ar', '', $cleanPath);
+        $cleanPath = ltrim($cleanPath, '/');
+
+        $alternateUrls = [
+            'en' => url($cleanPath ?: '/'),
+            'ar' => url('ar/' . ($cleanPath ?: ''))
+        ];
+
+        // Preserve query parameters
+        if (request()->getQueryString()) {
+            $alternateUrls['en'] .= '?' . request()->getQueryString();
+            $alternateUrls['ar'] .= '?' . request()->getQueryString();
+        }
     }
-
-    $pageCanonical = $canonicalUrl ?? url($currentPath);
-
-    // Ensure canonical doesn't have language prefix
-    $pageCanonical = preg_replace('/\/(ar|es|fr|de|ru|zh|hi|pt)\//', '/', $pageCanonical);
-    $pageCanonical = preg_replace('/\/(ar|es|fr|de|ru|zh|hi|pt)$/', '', $pageCanonical);
 @endphp
     <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+<html lang="{{ str_replace('_', '-', $currentLanguage) }}" dir="{{ $currentLanguage === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,33 +64,14 @@
         <meta name="robots" content="index, follow">
     @endif
 
-    <!-- FIXED: Canonical URL always points to English version -->
+    <!-- Canonical URL (always English version) -->
     <link rel="canonical" href="{{ $pageCanonical }}">
 
-    <!-- FIXED: Hreflang tags with proper URL generation -->
-    @foreach(['en', 'ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'] as $lang)
-        @php
-            // Get current path without language prefix
-            $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', request()->path());
-            $cleanPath = $cleanPath === '' ? '' : $cleanPath;
-
-            // Generate proper URL for each language
-            if ($lang === 'en') {
-                $alternateUrl = url($cleanPath);
-            } else {
-                $alternateUrl = url($lang . '/' . $cleanPath);
-            }
-
-            // Preserve query parameters
-            if(request()->getQueryString()) {
-                $alternateUrl .= '?' . request()->getQueryString();
-            }
-        @endphp
-        <link rel="alternate" hreflang="{{ $lang }}" href="{{ $alternateUrl }}">
+    <!-- Hreflang Tags -->
+    @foreach($alternateUrls as $lang => $url)
+        <link rel="alternate" hreflang="{{ $lang }}" href="{{ $url }}">
     @endforeach
-
-    <!-- Default hreflang pointing to English canonical -->
-    <link rel="alternate" hreflang="x-default" href="{{ $pageCanonical }}">
+    <link rel="alternate" hreflang="x-default" href="{{ $alternateUrls['en'] }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -94,6 +81,11 @@
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     <meta property="og:locale" content="{{ getOgLocale() }}">
     <meta property="og:site_name" content="SMM-Followers">
+    @if($currentLanguage === 'ar')
+        <meta property="og:locale:alternate" content="en_US">
+    @else
+        <meta property="og:locale:alternate" content="ar_AR">
+    @endif
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -195,6 +187,9 @@
 
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    @if($currentLanguage === 'ar')
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    @endif
 
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -203,16 +198,93 @@
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
 
-    <!-- Your existing styles -->
+    <!-- Custom Styles -->
     <style>
         html {
             scroll-behavior: smooth;
         }
-        /* Your existing styles here... */
+
+        body {
+            font-family: {{ $currentLanguage === 'ar' ? "'Cairo', sans-serif" : "'Nunito', sans-serif" }};
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            {{ $currentLanguage === 'ar' ? 'left: 20px;' : 'right: 20px;' }}
+            z-index: 1050;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 25px;
+            padding: 8px 15px;
+        }
+
+        .language-switcher a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .language-switcher a:hover {
+            color: #007bff;
+        }
+
+        /* RTL Support */
+        @if($currentLanguage === 'ar')
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .navbar-nav {
+            margin-right: auto !important;
+            margin-left: 0 !important;
+        }
+
+        .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+
+        .text-start {
+            text-align: right !important;
+        }
+
+        .text-end {
+            text-align: left !important;
+        }
+
+        .me-auto {
+            margin-left: auto !important;
+            margin-right: 0 !important;
+        }
+
+        .ms-auto {
+            margin-right: auto !important;
+            margin-left: 0 !important;
+        }
+        @endif
+
+        /* Your existing styles can go here... */
     </style>
 </head>
 
 <body class="{{ session('dark_mode', false) ? 'dark-mode' : 'light-mode' }}">
+<!-- Language Switcher -->
+<div class="language-switcher">
+    @if($currentLanguage === 'en')
+        <a href="{{ $alternateUrls['ar'] }}" title="Switch to Arabic">
+            <i class="fas fa-globe me-1"></i>العربية
+        </a>
+    @else
+        <a href="{{ $alternateUrls['en'] }}" title="Switch to English">
+            <i class="fas fa-globe me-1"></i>English
+        </a>
+    @endif
+</div>
+
 <!-- Include Header -->
 @include('layouts.header')
 
@@ -229,7 +301,9 @@
                     @if($loop->last)
                         <li class="breadcrumb-item active" aria-current="page">{{ $breadcrumb['title'] }}</li>
                     @else
-                        <li class="breadcrumb-item"><a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['title'] }}</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['title'] }}</a>
+                        </li>
                     @endif
                 @endforeach
             </ol>
@@ -250,6 +324,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
 <script>
     $(document).ready(function(){
         AOS.init(); // Initialize AOS for animations
@@ -276,9 +351,23 @@
                 autoplaySpeed: 2000,
                 arrows: false,
                 dots: false,
+                rtl: {{ $currentLanguage === 'ar' ? 'true' : 'false' }}
             });
         }
+
+        // Language switcher analytics
+        $('.language-switcher a').on('click', function() {
+            const targetLang = $(this).attr('href').includes('/ar/') ? 'Arabic' : 'English';
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'language_switch', {
+                    'custom_parameter': targetLang
+                });
+            }
+        });
     });
 </script>
+
+<!-- Additional Scripts for specific pages -->
+@stack('scripts')
 </body>
 </html>

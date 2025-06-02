@@ -408,44 +408,50 @@ class ServiceController extends Controller
             $service = Service::where('service_id', $serviceId)->firstOrFail();
             $currentLanguage = app()->getLocale();
 
-            // Define the fields based on language
+            // Get language-specific fields
             $nameField = $currentLanguage === 'ar' ? 'name_ar' : 'name_en';
             $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
 
-            // Generate SEO data
+            // SEO data
             $seoTitle = $service->$nameField . ' | SMM-Followers';
             $seoDescription = $this->generateServiceSeoDescription($service, $currentLanguage);
             $seoKeywords = $this->generateServiceSeoKeywords($service, $currentLanguage);
 
-            // FIXED: Always use the canonical English URL (without language prefix)
+            // CANONICAL URL (always English)
             $canonicalUrl = url('/service/' . $service->service_id);
 
-            // Generate breadcrumbs with proper language handling
+            // ALTERNATE URLs for hreflang
+            $alternateUrls = [
+                'en' => url('/service/' . $service->service_id),
+                'ar' => url('/ar/service/' . $service->service_id)
+            ];
+
+            // Breadcrumbs
             $breadcrumbs = [
                 [
                     'title' => $currentLanguage === 'en' ? 'Home' : 'الرئيسية',
-                    'url' => $currentLanguage === 'en' ? url('/') : url('/' . $currentLanguage)
+                    'url' => $currentLanguage === 'en' ? url('/') : url('/ar')
                 ],
                 [
                     'title' => $currentLanguage === 'en' ? 'Services' : 'الخدمات',
-                    'url' => $currentLanguage === 'en' ? url('/all-services') : url('/' . $currentLanguage . '/all-services')
+                    'url' => $currentLanguage === 'en' ? url('/all-services') : url('/ar/all-services')
                 ],
                 [
                     'title' => $service->$categoryField,
                     'url' => $currentLanguage === 'en'
                         ? url('/category/' . urlencode($service->$categoryField))
-                        : url('/' . $currentLanguage . '/category/' . urlencode($service->$categoryField))
+                        : url('/ar/category/' . urlencode($service->$categoryField))
                 ],
                 [
                     'title' => $service->$nameField,
-                    'url' => $canonicalUrl
+                    'url' => $currentLanguage === 'en' ? $canonicalUrl : $alternateUrls['ar']
                 ]
             ];
 
-            // Generate structured data for the service
+            // Structured data
             $structuredData = $this->generateServiceStructuredData($service, $currentLanguage);
 
-            // Get related services
+            // Related services
             $relatedServices = Service::where($categoryField, $service->$categoryField)
                 ->where('service_id', '!=', $service->service_id)
                 ->limit(6)
@@ -457,6 +463,7 @@ class ServiceController extends Controller
                 'seoDescription',
                 'seoKeywords',
                 'canonicalUrl',
+                'alternateUrls',
                 'breadcrumbs',
                 'structuredData',
                 'relatedServices'
@@ -464,13 +471,6 @@ class ServiceController extends Controller
 
         } catch (ModelNotFoundException $e) {
             abort(404, 'Service not found');
-        } catch (\Exception $e) {
-            Log::error('Error showing service: ' . $e->getMessage(), [
-                'service_id' => $serviceId,
-                'user_id' => auth()->id()
-            ]);
-
-            abort(500, 'Unable to load service details');
         }
     }
 
@@ -480,35 +480,27 @@ class ServiceController extends Controller
             $currentLanguage = app()->getLocale();
             $categoryField = $currentLanguage === 'ar' ? 'category_ar' : 'category_en';
 
-            // Convert slug back to category name (handle URL encoding)
+            // Decode category name
             $categoryName = urldecode($categorySlug);
-            $categoryName = str_replace('-', ' ', $categoryName);
 
+            // Find services in this category
             $services = Service::where($categoryField, 'like', '%' . $categoryName . '%')->paginate(20);
 
             if ($services->isEmpty()) {
-                abort(404, 'Category not found or no services available');
+                abort(404, 'Category not found');
             }
 
+            // SEO
             $seoTitle = ucfirst($categoryName) . ($currentLanguage === 'en' ? ' Services | SMM-Followers' : ' خدمات | SMM-Followers');
             $seoDescription = $this->generateSeoDescription($categoryName, null, $currentLanguage);
 
-            // FIXED: Always use canonical English URL
+            // CANONICAL URL (always English)
             $canonicalUrl = url('/category/' . urlencode($categoryName));
 
-            $breadcrumbs = [
-                [
-                    'title' => $currentLanguage === 'en' ? 'Home' : 'الرئيسية',
-                    'url' => $currentLanguage === 'en' ? url('/') : url('/' . $currentLanguage)
-                ],
-                [
-                    'title' => $currentLanguage === 'en' ? 'Services' : 'الخدمات',
-                    'url' => $currentLanguage === 'en' ? url('/all-services') : url('/' . $currentLanguage . '/all-services')
-                ],
-                [
-                    'title' => ucfirst($categoryName),
-                    'url' => $canonicalUrl
-                ]
+            // ALTERNATE URLs
+            $alternateUrls = [
+                'en' => url('/category/' . urlencode($categoryName)),
+                'ar' => url('/ar/category/' . urlencode($categoryName))
             ];
 
             return view('services.category', compact(
@@ -518,19 +510,14 @@ class ServiceController extends Controller
                 'seoTitle',
                 'seoDescription',
                 'canonicalUrl',
-                'breadcrumbs'
+                'alternateUrls'
             ));
 
         } catch (\Exception $e) {
-            Log::error('Error showing category: ' . $e->getMessage(), [
-                'category_slug' => $categorySlug,
-                'user_id' => auth()->id()
-            ]);
-
+            Log::error('Error showing category: ' . $e->getMessage());
             abort(500, 'Unable to load category services');
         }
     }
-
     public function showPlatform($platform)
     {
         try {
