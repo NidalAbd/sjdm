@@ -223,7 +223,7 @@
     }
 
     .language-dropdown .dropdown-menu {
-        min-width: 120px;
+        min-width: 150px;
     }
 
     .language-dropdown .dropdown-item {
@@ -231,10 +231,21 @@
         align-items: center;
         gap: 8px;
         padding: 8px 15px;
+        position: relative;
+    }
+
+    .language-dropdown .dropdown-item.active {
+        background-color: #e3f2fd;
+        font-weight: 600;
     }
 
     .language-dropdown .dropdown-item:hover {
         background-color: #f8f9fa;
+    }
+
+    .dark-mode .language-dropdown .dropdown-item.active {
+        background-color: #2c3e50;
+        color: #fff;
     }
 
     .dark-mode .language-dropdown .dropdown-item:hover {
@@ -320,23 +331,22 @@
                         $cleanPath = $cleanPath === '' ? '' : $cleanPath;
 
                         // Generate URLs for both languages
-                        if ($currentLanguage === 'en') {
-                            $switchUrl = url('ar/' . $cleanPath);
-                            $currentText = 'English';
-                            $currentFlag = 'flag-en';
-                            $otherText = 'العربية';
-                            $otherFlag = 'flag-ar';
-                        } else {
-                            $switchUrl = url($cleanPath ?: '/');
-                            $currentText = 'العربية';
-                            $currentFlag = 'flag-ar';
-                            $otherText = 'English';
-                            $otherFlag = 'flag-en';
-                        }
+                        $enUrl = url($cleanPath ?: '/');
+                        $arUrl = url('ar/' . $cleanPath);
 
                         // Preserve query parameters
                         if (request()->getQueryString()) {
-                            $switchUrl .= '?' . request()->getQueryString();
+                            $enUrl .= '?' . request()->getQueryString();
+                            $arUrl .= '?' . request()->getQueryString();
+                        }
+
+                        // Current language display
+                        if ($currentLanguage === 'en') {
+                            $currentText = 'English';
+                            $currentFlag = 'flag-en';
+                        } else {
+                            $currentText = 'العربية';
+                            $currentFlag = 'flag-ar';
                         }
                     @endphp
 
@@ -346,9 +356,21 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
                         <li>
-                            <a class="dropdown-item" href="{{ $switchUrl }}">
-                                <span class="lang-flag {{ $otherFlag }}"></span>
-                                {{ $otherText }}
+                            <a class="dropdown-item {{ $currentLanguage === 'en' ? 'active' : '' }}" href="{{ $enUrl }}">
+                                <span class="lang-flag flag-en"></span>
+                                English
+                                @if($currentLanguage === 'en')
+                                    <i class="fas fa-check ms-auto text-success"></i>
+                                @endif
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ $currentLanguage === 'ar' ? 'active' : '' }}" href="{{ $arUrl }}">
+                                <span class="lang-flag flag-ar"></span>
+                                العربية
+                                @if($currentLanguage === 'ar')
+                                    <i class="fas fa-check ms-auto text-success"></i>
+                                @endif
                             </a>
                         </li>
                     </ul>
