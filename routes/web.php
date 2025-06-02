@@ -19,22 +19,10 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Temporary test route - add this at the top of web.php
-// Add this temporary test route to web.php (before your existing routes)
-Route::get('{locale}/service/{serviceId}', function($locale, $serviceId) {
-    return response()->json([
-        'message' => 'Service route test',
-        'locale' => $locale,
-        'serviceId' => $serviceId,
-        'app_locale' => app()->getLocale(),
-        'url' => request()->url(),
-        'route_name' => request()->route()->getName()
-    ]);
-})->where(['locale' => 'ar|es|fr|de|ru|zh|hi|pt', 'serviceId' => '[0-9]+'])
-    ->name('test.service.show')
-    ->middleware('setlocale');
+// =============================================
+// LANGUAGE CHANGE ROUTE
+// =============================================
 
-// FIXED Language change route
 Route::get('lang/{lang}', function ($lang) {
     // Validate language
     if (!in_array($lang, ['en', 'ar'])) {
@@ -77,6 +65,10 @@ Route::get('lang/{lang}', function ($lang) {
 
 })->name('changeLang');
 
+// =============================================
+// SITEMAP AND ROBOTS ROUTES
+// =============================================
+
 // Arabic home route without trailing slash
 Route::get('ar', [WelcomeController::class, 'index'])->name('home.ar.no-slash')->middleware('setlocale');
 
@@ -87,6 +79,10 @@ Route::get('sitemap-services.xml', [SitemapController::class, 'services']);
 Route::get('sitemap-categories.xml', [SitemapController::class, 'categories']);
 Route::get('sitemap-platforms.xml', [SitemapController::class, 'platforms']);
 Route::get('robots.txt', [SitemapController::class, 'robots']);
+
+// =============================================
+// AUTHENTICATION ROUTES
+// =============================================
 
 // Auth routes
 Auth::routes(['verify' => true]);
@@ -102,8 +98,10 @@ Route::middleware(['handle.auth.redirects'])->group(function () {
     })->name('register');
 });
 
-// === LOCALIZED ROUTES GROUP ===
-// Routes with language prefix for non-English languages
+// =============================================
+// LOCALIZED ROUTES GROUP (Arabic and other languages)
+// =============================================
+
 Route::group([
     'prefix' => '{locale}',
     'where' => ['locale' => 'ar|es|fr|de|ru|zh|hi|pt'],
@@ -122,20 +120,23 @@ Route::group([
     Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy.localized');
     Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.localized');
 
-    // Service routes with language prefix - FIXED ORDER
-    Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all.localized');
-    Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])
+    // Service routes with language prefix - UPDATED TO USE NEW LOCALIZED METHODS
+    Route::get('/all-services', [ServiceController::class, 'getAllServicesLocalized'])->name('services.all.localized');
+    Route::get('/service/{serviceId}', [ServiceController::class, 'showServiceLocalized'])
         ->name('service.show.localized')
         ->where('serviceId', '[0-9]+');
-    Route::get('/platform/{platform}', [ServiceController::class, 'showPlatform'])
+    Route::get('/platform/{platform}', [ServiceController::class, 'showPlatformLocalized'])
         ->name('platform.show.localized')
         ->where('platform', '[a-zA-Z0-9\-\_]+');
-    Route::get('/category/{category}', [ServiceController::class, 'showCategory'])
+    Route::get('/category/{category}', [ServiceController::class, 'showCategoryLocalized'])
         ->name('category.show.localized')
         ->where('category', '[^/]+'); // Allow spaces and special characters
 });
 
-// === DEFAULT ENGLISH ROUTES ===
+// =============================================
+// DEFAULT ENGLISH ROUTES
+// =============================================
+
 // Static content routes (English - no prefix)
 Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms');
 Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq');
@@ -145,7 +146,7 @@ Route::get('/support_take', [WelcomeController::class, 'support'])->name('suppor
 Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
 
-// Service routes (English - no prefix) - FIXED ORDER
+// Service routes (English - no prefix) - USING ORIGINAL METHODS
 Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
 Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])
     ->name('service.show')
@@ -157,14 +158,21 @@ Route::get('/category/{category}', [ServiceController::class, 'showCategory'])
     ->name('category.show')
     ->where('category', '[^/]+'); // Allow spaces and special characters
 
-// Home and dashboard routes
+// =============================================
+// HOME AND DASHBOARD ROUTES
+// =============================================
+
 Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
-// === PROTECTED ROUTES ===
+// =============================================
+// PROTECTED ROUTES (Authentication Required)
+// =============================================
+
 Route::middleware(['auth', 'check.banned'])->group(function () {
 
+    // User Management Routes
     Route::resource('users', UserController::class);
     Route::get('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
     Route::post('users/{user}/assign-role', [UserController::class, 'storeAssignRole'])->name('users.storeAssignRole');
@@ -184,18 +192,18 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::post('/users/{user}/toggle-ban', [UserController::class, 'toggleBan'])->name('users.toggleBan');
     Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
 
-    // Role and permission routes
+    // Role and Permission Management Routes
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
 
-    // Order routes
+    // Order Management Routes
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
-    // Admin Service routes
+    // Admin Service Management Routes
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('services/create', [ServiceController::class, 'create'])->name('services.create');
     Route::post('services', [ServiceController::class, 'store'])->name('services.store');
@@ -208,6 +216,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/services/filter', [ServiceController::class, 'filter'])->name('services.filter');
     Route::get('/services/getCategories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
 
+    // Transaction Management Routes
     Route::resource('transactions', TransactionController::class);
 
     // Support Ticket Routes
@@ -223,6 +232,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
         Route::post('/{ticket}/close', [SupportTicketController::class, 'closeTicket'])->name('support.close');
     });
 
+    // Notification Routes
     Route::get('notifications/latest', [NotificationController::class, 'fetchLatest'])->name('notifications.latest');
     Route::get('notifications/{id}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -232,13 +242,15 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
         return response()->json(['success' => true]);
     })->name('notifications.markAllAsRead');
 
+    // Payment Routes (Stripe)
     Route::get('/checkout/cancel/{transaction_id}', [StripeController::class, 'cancel'])->name('checkout.cancel');
     Route::get('/checkout/success/{transaction_id}', [StripeController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/fail/{transaction_id}', [StripeController::class, 'fail'])->name('checkout.fail');
     Route::post('/webhook/stripe', [StripeController::class, 'handleWebhook']);
     Route::get('/transactions/complete/{transaction_id}', [StripeController::class, 'completeTransaction'])->name('transactions.complete');
-
     Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+
+    // Points System Routes
     Route::get('/points', [PointsController::class, 'index'])->name('points.index');
     Route::post('/points/redeem', [PointsController::class, 'redeem'])->name('points.redeem');
 });

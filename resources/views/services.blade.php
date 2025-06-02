@@ -240,12 +240,14 @@
                                             </div>
                                         </div>
 
+                                        {{-- Service Card Footer (in services.blade.php) --}}
                                         <div class="service-footer">
                                             <div class="price-section">
                                                 <span class="price">${{ number_format($service->rate, 4) }}</span>
                                                 <span class="price-unit">/ 1K</span>
                                             </div>
-                                            <a href="{{ route('service.show', $service->service_id) }}" class="btn btn-primary">
+                                            {{-- Using helper function (recommended) --}}
+                                            <a href="{{ serviceUrl($service->service_id) }}" class="btn btn-primary">
                                                 {{ __('Order Now') }}
                                             </a>
                                         </div>
