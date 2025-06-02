@@ -1,5 +1,4 @@
 <?php
-// app/Http/Middleware/SetLocale.php
 
 namespace App\Http\Middleware;
 
@@ -13,42 +12,65 @@ class SetLocale
 {
     public function handle($request, Closure $next)
     {
-        // Get locale from route parameter first
-        $locale = $request->route('locale');
+        // For API requests, use the 'Accept-Language' header
+        if ($request->is('api/*')) {
+            $locale = $request->header('Accept-Language') ?? config('app.locale');
+            $locale = $this->extractPrimaryLocale($locale);
+        } else {
+            // FIXED: Get locale from route parameter first (this handles {locale} routes)
+            $locale = $request->route('locale');
 
-        if ($locale) {
-            // If locale is in the route, validate it
-            if (in_array($locale, ['ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'])) {
-                App::setLocale($locale);
-                Session::put('applocale', $locale);
-                return $next($request);
+            if ($locale) {
+                // Validate the locale from the URL parameter
+                $supportedLocales = ['ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'];
+
+                if (in_array($locale, $supportedLocales)) {
+                    // Valid locale from route parameter
+                    App::setLocale($locale);
+                    Session::put('applocale', $locale);
+                    return $next($request);
+                }
+            }
+
+            // Fallback: No locale in route parameter, check path
+            $path = $request->path();
+
+            if (strpos($path, 'ar/') === 0 || $path === 'ar') {
+                $locale = 'ar';
+            } else {
+                // Default to English or user preference
+                if (Auth::check()) {
+                    $locale = Auth::user()->language ?? 'en';
+                } else {
+                    $locale = Session::get('applocale', 'en');
+                }
             }
         }
 
-        // If no locale in route, check URL path
-        $path = $request->path();
-
-        if (strpos($path, 'ar/') === 0 || $path === 'ar') {
-            App::setLocale('ar');
-            Session::put('applocale', 'ar');
-            return $next($request);
+        // Ensure we have a valid locale
+        $allSupportedLocales = ['en', 'ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'];
+        if (!in_array($locale, $allSupportedLocales)) {
+            $locale = 'en'; // Default to English
         }
 
-        // Default to English or user preference
-        if (Auth::check()) {
-            $locale = Auth::user()->language ?? 'en';
-        } else {
-            $locale = Session::get('applocale', 'en');
-        }
-
-        // Ensure valid locale
-        if (!in_array($locale, ['en', 'ar'])) {
-            $locale = 'en';
-        }
-
+        // Set the application locale
         App::setLocale($locale);
+
+        // Update the session locale for future requests
         Session::put('applocale', $locale);
 
         return $next($request);
+    }
+
+    /**
+     * Extracts the primary locale from the Accept-Language header.
+     */
+    private function extractPrimaryLocale($localeHeader)
+    {
+        // Parse the Accept-Language header, take the first part (e.g., 'en-US' -> 'en')
+        $localeParts = explode(',', $localeHeader);
+        $primaryLocale = explode('-', $localeParts[0])[0];  // 'en-US' -> 'en'
+
+        return $primaryLocale;
     }
 }
