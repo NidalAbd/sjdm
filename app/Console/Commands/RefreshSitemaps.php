@@ -68,7 +68,7 @@ class RefreshSitemaps extends Command
 
         // Ping search engines if requested
         if ($this->option('ping')) {
-            $this->pingSearchEngines(); // FIXED: Removed the extra space
+            $this->pingSearchEngines();
         } else {
             $this->info('Use --ping flag to notify search engines of updates');
         }
@@ -83,8 +83,13 @@ class RefreshSitemaps extends Command
         $this->info("Pinging search engines with sitemap: {$sitemapUrl}");
 
         $searchEngines = [
-            'Google' => "https://www.google.com/ping?sitemap=" . urlencode($sitemapUrl),
-            'Bing' => "https://www.bing.com/ping?sitemap=" . urlencode($sitemapUrl),
+            // Google: Use the webmasters ping URL (still works)
+            'Google' => "https://www.google.com/webmasters/sitemaps/ping?sitemap=" . urlencode($sitemapUrl),
+
+            // Bing: They deprecated their ping service, but we'll try the indexnow API endpoint
+            'Bing IndexNow' => "https://www.bing.com/indexnow?url=" . urlencode($sitemapUrl),
+
+            // Yandex: Keep this as it's working
             'Yandex' => "https://webmaster.yandex.com/ping?sitemap=" . urlencode($sitemapUrl)
         ];
 
@@ -104,5 +109,11 @@ class RefreshSitemaps extends Command
                 Log::error("Error pinging {$engine}: " . $e->getMessage());
             }
         }
+
+        // Additional note about manual submission
+        $this->newLine();
+        $this->info("💡 For best results, manually submit your sitemap to:");
+        $this->info("   🔍 Google Search Console: https://search.google.com/search-console");
+        $this->info("   🔍 Bing Webmaster Tools: https://www.bing.com/webmasters");
     }
 }
