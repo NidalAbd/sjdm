@@ -323,45 +323,20 @@
                 <li class="nav-item dropdown language-dropdown">
                     @php
                         $currentLanguage = app()->getLocale();
-                        $currentPath = request()->path();
-
-                        // Clean the current path from any language prefix
-                        $cleanPath = preg_replace('/^ar\//', '', $currentPath);
-                        $cleanPath = preg_replace('/^ar$/', '', $cleanPath);
-                        $cleanPath = trim($cleanPath, '/');
-
-                        // Generate URLs for both languages
-                        if (empty($cleanPath) || $cleanPath === '/') {
-                            $enUrl = url('/');
-                            $arUrl = url('/ar');
-                        } else {
-                            $enUrl = url('/' . $cleanPath);
-                            $arUrl = url('/ar/' . $cleanPath);
-                        }
-
-                        // Preserve query parameters
-                        if (request()->getQueryString()) {
-                            $enUrl .= '?' . request()->getQueryString();
-                            $arUrl .= '?' . request()->getQueryString();
-                        }
-
-                        // Current language display
-                        if ($currentLanguage === 'en') {
-                            $currentText = 'English';
-                            $currentFlag = 'flag-en';
-                        } else {
-                            $currentText = 'العربية';
-                            $currentFlag = 'flag-ar';
-                        }
                     @endphp
 
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="lang-flag {{ $currentFlag }}"></span>
-                        {{ $currentText }}
+                        @if($currentLanguage === 'en')
+                            <span class="lang-flag flag-en"></span>
+                            English
+                        @else
+                            <span class="lang-flag flag-ar"></span>
+                            العربية
+                        @endif
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
                         <li>
-                            <a class="dropdown-item {{ $currentLanguage === 'en' ? 'active' : '' }}" href="{{ $enUrl }}">
+                            <a class="dropdown-item {{ $currentLanguage === 'en' ? 'active' : '' }}" href="{{ route('changeLang', 'en') }}">
                                 <span class="lang-flag flag-en"></span>
                                 English
                                 @if($currentLanguage === 'en')
@@ -370,7 +345,7 @@
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item {{ $currentLanguage === 'ar' ? 'active' : '' }}" href="{{ $arUrl }}">
+                            <a class="dropdown-item {{ $currentLanguage === 'ar' ? 'active' : '' }}" href="{{ route('changeLang', 'ar') }}">
                                 <span class="lang-flag flag-ar"></span>
                                 العربية
                                 @if($currentLanguage === 'ar')
