@@ -19,8 +19,13 @@ use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Language change route
+// FIXED Language change route
 Route::get('lang/{lang}', function ($lang) {
+    // Validate language
+    if (!in_array($lang, ['en', 'ar'])) {
+        abort(404);
+    }
+
     session(['applocale' => $lang]);
     app()->setLocale($lang);
 
@@ -30,31 +35,35 @@ Route::get('lang/{lang}', function ($lang) {
         $user->save();
     }
 
-    // FIXED: Redirect to proper language URL
-    $currentPath = request()->path();
-    $currentRoute = request()->route()->getName();
+    // Get the referring URL to redirect back properly
+    $referer = request()->headers->get('referer');
+    $currentPath = '';
 
-    // Remove any existing language prefix from current path
-    $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-    $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
+    if ($referer) {
+        // Extract path from referer URL
+        $parsed = parse_url($referer);
+        $currentPath = isset($parsed['path']) ? trim($parsed['path'], '/') : '';
 
-    if ($lang === 'en') {
-        // Redirect to English version (no prefix)
-        if ($cleanPath === '' || $cleanPath === '/') {
-            return redirect('/');
-        } else {
-            return redirect('/' . ltrim($cleanPath, '/'));
-        }
-    } else {
-        // Redirect to language-prefixed version
-        if ($cleanPath === '' || $cleanPath === '/') {
-            return redirect('/' . $lang);
-        } else {
-            return redirect('/' . $lang . '/' . ltrim($cleanPath, '/'));
-        }
+        // Remove existing language prefix
+        $currentPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+        $currentPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $currentPath);
     }
 
-})->name('changeLang')->where('lang', 'en|ar|es|fr|de|ru|zh|hi|pt');
+    // Build redirect URL
+    if ($lang === 'en') {
+        // English: no prefix
+        $redirectUrl = $currentPath ? url($currentPath) : url('/');
+    } else {
+        // Other languages: add prefix
+        $redirectUrl = $currentPath ? url($lang . '/' . $currentPath) : url($lang);
+    }
+
+    return redirect($redirectUrl);
+
+})->name('changeLang');
+
+// Arabic home route without trailing slash
+Route::get('ar', [WelcomeController::class, 'index'])->name('home.ar.no-slash')->middleware('setlocale');
 
 // Sitemap and robots routes (no language prefix)
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -64,7 +73,7 @@ Route::get('sitemap-categories.xml', [SitemapController::class, 'categories']);
 Route::get('sitemap-platforms.xml', [SitemapController::class, 'platforms']);
 Route::get('robots.txt', [SitemapController::class, 'robots']);
 
-// Auth routes with redirect handling
+// Auth routes
 Auth::routes(['verify' => true]);
 
 // Apply redirect handling to auth routes
