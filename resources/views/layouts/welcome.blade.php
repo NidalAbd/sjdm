@@ -1,32 +1,51 @@
-<!-- resources/views/layouts/welcome.blade.php -->
 @php
     if (!function_exists('getOgLocale')) {
         function getOgLocale()
         {
             $locales = [
                 'ar' => 'ar_AR',
-                'es' => 'es_ES',
-                'zh' => 'zh_CN',
-                'hi' => 'hi_IN',
-                'pt' => 'pt_PT',
-                'ru' => 'ru_RU',
-                'de' => 'de_DE',
-                'fr' => 'fr_FR',
-                'en' => 'en_US', // Default for English
+                'en' => 'en_US',
             ];
-
             return $locales[app()->getLocale()] ?? 'en_US';
         }
     }
+
+    $currentLanguage = app()->getLocale();
 
     // Default SEO values that can be overridden by individual pages
     $pageTitle = $seoTitle ?? __('title');
     $pageDescription = $seoDescription ?? __('description');
     $pageKeywords = $seoKeywords ?? __('keywords');
-    $pageCanonical = $canonicalUrl ?? url()->current();
+
+    // Canonical URL (always English version)
+    $pageCanonical = $canonicalUrl ?? url(request()->path());
+
+    // Remove /ar/ from canonical if present
+    $pageCanonical = str_replace('/ar/', '/', $pageCanonical);
+    $pageCanonical = preg_replace('/\/ar$/', '', $pageCanonical);
+    $pageCanonical = str_replace('/ar', '', $pageCanonical);
+
+    // Generate alternate URLs if not provided
+    if (!isset($alternateUrls)) {
+        $currentPath = request()->path();
+        $cleanPath = str_replace('ar/', '', $currentPath);
+        $cleanPath = str_replace('ar', '', $cleanPath);
+        $cleanPath = ltrim($cleanPath, '/');
+
+        $alternateUrls = [
+            'en' => url($cleanPath ?: '/'),
+            'ar' => url('ar/' . ($cleanPath ?: ''))
+        ];
+
+        // Preserve query parameters
+        if (request()->getQueryString()) {
+            $alternateUrls['en'] .= '?' . request()->getQueryString();
+            $alternateUrls['ar'] .= '?' . request()->getQueryString();
+        }
+    }
 @endphp
     <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+<html lang="{{ str_replace('_', '-', $currentLanguage) }}" dir="{{ $currentLanguage === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,29 +55,23 @@
     <meta name="description" content="{{ $pageDescription }}">
     <meta name="keywords" content="{{ $pageKeywords }}">
 
-    <!-- Canonical URL -->
+    <!-- Robots Meta Tags -->
+    @if(request()->has('redirect') && (request()->is('login') || request()->is('register')))
+        <meta name="robots" content="noindex, nofollow">
+    @elseif(request()->get('page', 1) > 1)
+        <meta name="robots" content="noindex, follow">
+    @else
+        <meta name="robots" content="index, follow">
+    @endif
+
+    <!-- Canonical URL (always English version) -->
     <link rel="canonical" href="{{ $pageCanonical }}">
 
-    <!-- Alternate Language URLs -->
-    @foreach(['en', 'ar', 'es', 'fr', 'de', 'ru', 'zh', 'hi', 'pt'] as $lang)
-        @if(app()->getLocale() != $lang)
-            @php
-                $langPath = $lang === 'en' ? '' : $lang;
-                $currentPath = request()->path();
-                $currentPathWithoutLang = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-                $alternateUrl = $lang === 'en'
-                    ? url($currentPathWithoutLang)
-                    : url($langPath . '/' . $currentPathWithoutLang);
-
-                // Preserve query parameters
-                if(request()->getQueryString()) {
-                    $alternateUrl .= '?' . request()->getQueryString();
-                }
-            @endphp
-            <link rel="alternate" hreflang="{{ $lang }}" href="{{ $alternateUrl }}">
-        @endif
+    <!-- Hreflang Tags -->
+    @foreach($alternateUrls as $lang => $url)
+        <link rel="alternate" hreflang="{{ $lang }}" href="{{ $url }}">
     @endforeach
-    <link rel="alternate" hreflang="x-default" href="{{ url(preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', request()->path())) }}">
+    <link rel="alternate" hreflang="x-default" href="{{ $alternateUrls['en'] }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -67,7 +80,12 @@
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     <meta property="og:locale" content="{{ getOgLocale() }}">
-    <meta property="og:site_name" content="SJDM">
+    <meta property="og:site_name" content="SMM-Followers">
+    @if($currentLanguage === 'ar')
+        <meta property="og:locale:alternate" content="en_US">
+    @else
+        <meta property="og:locale:alternate" content="ar_AR">
+    @endif
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -88,21 +106,21 @@
         {
             "@context": "https://schema.org",
             "@type": "Organization",
-            "name": "SJDM",
+            "name": "SMM-Followers",
             "url": "{{ url('/') }}",
-        "logo": "{{ asset('images/logo.png') }}",
-        "sameAs": [
-            "https://facebook.com/sjdmstore",
-            "https://twitter.com/sjdmstore",
-            "https://instagram.com/sjdmstore"
-        ],
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+971-55-783-0054",
-            "contactType": "customer service",
-            "email": "info@sjdm.store"
+            "logo": "{{ asset('images/logo.png') }}",
+            "sameAs": [
+                "https://facebook.com/smmfollowers",
+                "https://twitter.com/smmfollowers",
+                "https://instagram.com/smmfollowers"
+            ],
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+971-55-783-0054",
+                "contactType": "customer service",
+                "email": "info@smm-followers.com"
+            }
         }
-    }
     </script>
 
     <!-- Base Structured Data for SMM Service -->
@@ -113,10 +131,10 @@
             "serviceType": "Social Media Marketing",
             "provider": {
                 "@type": "Organization",
-                "name": "SJDM",
-                "url": "https://sjdm.store"
+                "name": "SMM-Followers",
+                "url": "{{ url('/') }}"
             },
-            "description": "SJDM is a leading platform for boosting followers and engagement across various social media platforms.",
+            "description": "SMM-Followers is a leading platform for boosting followers and engagement across various social media platforms.",
             "areaServed": {
                 "@type": "Place",
                 "name": "Global"
@@ -169,6 +187,9 @@
 
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    @if($currentLanguage === 'ar')
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    @endif
 
     <!-- Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -177,16 +198,116 @@
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
 
-    <!-- Your existing styles -->
+    <!-- Custom Styles -->
     <style>
         html {
             scroll-behavior: smooth;
         }
-        /* Your existing styles here... */
+
+        body {
+            font-family: {{ $currentLanguage === 'ar' ? "'Cairo', sans-serif" : "'Nunito', sans-serif" }};
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            {{ $currentLanguage === 'ar' ? 'left: 20px;' : 'right: 20px;' }}
+            z-index: 1050;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 25px;
+            padding: 8px 15px;
+        }
+
+        .language-switcher a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .language-switcher a:hover {
+            color: #007bff;
+        }
+
+        /* RTL Support */
+        @if($currentLanguage === 'ar')
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .navbar-nav {
+            margin-right: auto !important;
+            margin-left: 0 !important;
+        }
+
+        .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+
+        .text-start {
+            text-align: right !important;
+        }
+
+        .text-end {
+            text-align: left !important;
+        }
+
+        .me-auto {
+            margin-left: auto !important;
+            margin-right: 0 !important;
+        }
+
+        .ms-auto {
+            margin-right: auto !important;
+            margin-left: 0 !important;
+        }
+        @endif
+
+        /* Your existing styles can go here... */
     </style>
 </head>
 
 <body class="{{ session('dark_mode', false) ? 'dark-mode' : 'light-mode' }}">
+<!-- Language Switcher -->
+<!-- REPLACE the language switcher section with this: -->
+<div class="language-switcher">
+    @php
+        $currentLanguage = app()->getLocale();
+        $currentPath = request()->path();
+
+        // Clean the current path from any language prefix
+        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
+        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
+        $cleanPath = $cleanPath === '' ? '' : $cleanPath;
+
+        // Generate URLs for both languages
+        if ($currentLanguage === 'en') {
+            $currentUrl = url($cleanPath ?: '/');
+            $switchUrl = url('ar/' . $cleanPath);
+            $switchLang = 'ar';
+            $switchText = 'العربية';
+        } else {
+            $currentUrl = url($currentLanguage . '/' . $cleanPath);
+            $switchUrl = url($cleanPath ?: '/');
+            $switchLang = 'en';
+            $switchText = 'English';
+        }
+
+        // Preserve query parameters
+        if (request()->getQueryString()) {
+            $switchUrl .= '?' . request()->getQueryString();
+        }
+    @endphp
+
+    <a href="{{ $switchUrl }}" title="Switch to {{ $switchText }}">
+        <i class="fas fa-globe me-1"></i>{{ $switchText }}
+    </a>
+</div>
+
 <!-- Include Header -->
 @include('layouts.header')
 
@@ -203,7 +324,9 @@
                     @if($loop->last)
                         <li class="breadcrumb-item active" aria-current="page">{{ $breadcrumb['title'] }}</li>
                     @else
-                        <li class="breadcrumb-item"><a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['title'] }}</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['title'] }}</a>
+                        </li>
                     @endif
                 @endforeach
             </ol>
@@ -224,6 +347,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
 <script>
     $(document).ready(function(){
         AOS.init(); // Initialize AOS for animations
@@ -250,9 +374,23 @@
                 autoplaySpeed: 2000,
                 arrows: false,
                 dots: false,
+                rtl: {{ $currentLanguage === 'ar' ? 'true' : 'false' }}
             });
         }
+
+        // Language switcher analytics
+        $('.language-switcher a').on('click', function() {
+            const targetLang = $(this).attr('href').includes('/ar/') ? 'Arabic' : 'English';
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'language_switch', {
+                    'custom_parameter': targetLang
+                });
+            }
+        });
     });
 </script>
+
+<!-- Additional Scripts for specific pages -->
+@stack('scripts')
 </body>
 </html>
