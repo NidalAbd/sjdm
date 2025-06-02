@@ -35,7 +35,8 @@
             <div class="filters-section mb-5">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <form id="filtersForm" method="GET" action="{{ route('services.all') }}">
+                        {{-- Updated form action to use helper function --}}
+                        <form id="filtersForm" method="GET" action="{{ servicesUrl() }}">
                             <div class="row g-3">
                                 <!-- Search -->
                                 <div class="col-lg-4 col-md-6">
@@ -113,7 +114,8 @@
                                         <button type="submit" class="btn btn-primary btn-lg px-4">
                                             <i class="fas fa-filter me-2"></i>{{ __('Apply Filters') }}
                                         </button>
-                                        <a href="{{ route('services.all') }}" class="btn btn-outline-secondary btn-lg px-4">
+                                        {{-- Updated clear filters link to use helper function --}}
+                                        <a href="{{ servicesUrl() }}" class="btn btn-outline-secondary btn-lg px-4">
                                             <i class="fas fa-times me-2"></i>{{ __('Clear Filters') }}
                                         </a>
                                     </div>
@@ -144,9 +146,20 @@
                                     <h6 class="fw-bold mb-2">{{ app()->getLocale() === 'ar' ? $featured->name_ar : $featured->name_en }}</h6>
                                     <div class="price-tag">${{ number_format($featured->rate, 2) }}</div>
                                     <div class="limits">{{ number_format($featured->min) }} - {{ number_format($featured->max) }}</div>
-                                    <a href="{{ route('service.show', $featured->service_id) }}" class="btn btn-sm btn-primary mt-2">
-                                        {{ __('View Details') }}
-                                    </a>
+                                    {{-- Updated featured service link to use helper function --}}
+                                    @if(function_exists('serviceUrl'))
+                                        <a href="{{ serviceUrl($featured->service_id) }}" class="btn btn-sm btn-primary mt-2">
+                                            {{ __('View Details') }}
+                                        </a>
+                                    @else
+                                        <a href="{{
+                                            app()->getLocale() === 'en'
+                                                ? route('service.show', $featured->service_id)
+                                                : route('service.show.localized', ['locale' => app()->getLocale(), 'serviceId' => $featured->service_id])
+                                        }}" class="btn btn-sm btn-primary mt-2">
+                                            {{ __('View Details') }}
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
@@ -203,12 +216,32 @@
 
                                         <div class="service-body">
                                             <h5 class="service-title">
-                                                {{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}
+                                                {{-- Make service title clickable --}}
+                                                @if(function_exists('serviceUrl'))
+                                                    <a href="{{ serviceUrl($service->service_id) }}" class="text-decoration-none">
+                                                        {{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{
+                                                        app()->getLocale() === 'en'
+                                                            ? route('service.show', $service->service_id)
+                                                            : route('service.show.localized', ['locale' => app()->getLocale(), 'serviceId' => $service->service_id])
+                                                    }}" class="text-decoration-none">
+                                                        {{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}
+                                                    </a>
+                                                @endif
                                             </h5>
 
                                             <div class="service-category mb-3">
                                                 <i class="fas fa-tag text-primary me-2"></i>
-                                                {{ app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en }}
+                                                {{-- Make category clickable --}}
+                                                @if(function_exists('categoryUrl'))
+                                                    <a href="{{ categoryUrl(app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en) }}" class="text-decoration-none">
+                                                        {{ app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en }}
+                                                    </a>
+                                                @else
+                                                    {{ app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en }}
+                                                @endif
                                             </div>
 
                                             <div class="service-stats row g-2 mb-3">
@@ -240,16 +273,26 @@
                                             </div>
                                         </div>
 
-                                        {{-- Service Card Footer (in services.blade.php) --}}
+                                        {{-- Updated Service Card Footer --}}
                                         <div class="service-footer">
                                             <div class="price-section">
                                                 <span class="price">${{ number_format($service->rate, 4) }}</span>
                                                 <span class="price-unit">/ 1K</span>
                                             </div>
-                                            {{-- Using helper function (recommended) --}}
-                                            <a href="{{ serviceUrl($service->service_id) }}" class="btn btn-primary">
-                                                {{ __('Order Now') }}
-                                            </a>
+                                            {{-- Using helper function with fallback --}}
+                                            @if(function_exists('serviceUrl'))
+                                                <a href="{{ serviceUrl($service->service_id) }}" class="btn btn-primary">
+                                                    {{ __('Order Now') }}
+                                                </a>
+                                            @else
+                                                <a href="{{
+                                                    app()->getLocale() === 'en'
+                                                        ? route('service.show', $service->service_id)
+                                                        : route('service.show.localized', ['locale' => app()->getLocale(), 'serviceId' => $service->service_id])
+                                                }}" class="btn btn-primary">
+                                                    {{ __('Order Now') }}
+                                                </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -277,7 +320,20 @@
                                         <td>
                                             <div class="service-info">
                                                 <div class="service-name fw-bold">
-                                                    {{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}
+                                                    {{-- Updated table service link --}}
+                                                    @if(function_exists('serviceUrl'))
+                                                        <a href="{{ serviceUrl($service->service_id) }}" class="text-decoration-none">
+                                                            {{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}
+                                                        </a>
+                                                    @else
+                                                        <a href="{{
+                                                            app()->getLocale() === 'en'
+                                                                ? route('service.show', $service->service_id)
+                                                                : route('service.show.localized', ['locale' => app()->getLocale(), 'serviceId' => $service->service_id])
+                                                        }}" class="text-decoration-none">
+                                                            {{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}
+                                                        </a>
+                                                    @endif
                                                 </div>
                                                 <small class="text-muted">#{{ $service->service_id }}</small>
                                             </div>
@@ -305,9 +361,20 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('service.show', $service->service_id) }}" class="btn btn-sm btn-primary">
-                                                {{ __('Order') }}
-                                            </a>
+                                            {{-- Updated table action button --}}
+                                            @if(function_exists('serviceUrl'))
+                                                <a href="{{ serviceUrl($service->service_id) }}" class="btn btn-sm btn-primary">
+                                                    {{ __('Order') }}
+                                                </a>
+                                            @else
+                                                <a href="{{
+                                                    app()->getLocale() === 'en'
+                                                        ? route('service.show', $service->service_id)
+                                                        : route('service.show.localized', ['locale' => app()->getLocale(), 'serviceId' => $service->service_id])
+                                                }}" class="btn btn-sm btn-primary">
+                                                    {{ __('Order') }}
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -330,9 +397,20 @@
                             @endif
                         </p>
                         @if(request()->hasAny(['search', 'platform', 'category']))
-                            <a href="{{ route('services.all') }}" class="btn btn-primary">
-                                {{ __('View All Services') }}
-                            </a>
+                            {{-- Updated "View All Services" link --}}
+                            @if(function_exists('servicesUrl'))
+                                <a href="{{ servicesUrl() }}" class="btn btn-primary">
+                                    {{ __('View All Services') }}
+                                </a>
+                            @else
+                                <a href="{{
+                                    app()->getLocale() === 'en'
+                                        ? route('services.all')
+                                        : route('services.all.localized', ['locale' => app()->getLocale()])
+                                }}" class="btn btn-primary">
+                                    {{ __('View All Services') }}
+                                </a>
+                            @endif
                         @endif
                     </div>
                 @endif
@@ -391,7 +469,7 @@
 
         .service-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             padding: 1.5rem 1.5rem 0;
         }
@@ -431,9 +509,27 @@
             overflow: hidden;
         }
 
+        .service-title a {
+            color: #2c3e50;
+            transition: color 0.3s ease;
+        }
+
+        .service-title a:hover {
+            color: #667eea;
+        }
+
         .service-category {
             color: #667eea;
             font-weight: 500;
+        }
+
+        .service-category a {
+            color: #667eea;
+            transition: color 0.3s ease;
+        }
+
+        .service-category a:hover {
+            color: #4a6cf7;
         }
 
         .stat-box {
@@ -567,6 +663,15 @@
 
         .service-info .service-name {
             color: #2c3e50;
+        }
+
+        .service-info .service-name a {
+            color: #2c3e50;
+            transition: color 0.3s ease;
+        }
+
+        .service-info .service-name a:hover {
+            color: #667eea;
         }
 
         @media (max-width: 768px) {
