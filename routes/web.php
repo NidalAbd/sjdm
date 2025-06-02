@@ -20,14 +20,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // Temporary test route - add this at the top of web.php
-Route::get('ar/test-service/{id}', function($id) {
+// Add this temporary test route to web.php (before your existing routes)
+Route::get('{locale}/service/{serviceId}', function($locale, $serviceId) {
     return response()->json([
-        'message' => 'Arabic service route test',
-        'id' => $id,
-        'locale' => app()->getLocale(),
-        'url' => request()->url()
+        'message' => 'Service route test',
+        'locale' => $locale,
+        'serviceId' => $serviceId,
+        'app_locale' => app()->getLocale(),
+        'url' => request()->url(),
+        'route_name' => request()->route()->getName()
     ]);
-});
+})->where(['locale' => 'ar|es|fr|de|ru|zh|hi|pt', 'serviceId' => '[0-9]+'])
+    ->name('test.service.show')
+    ->middleware('setlocale');
 
 // FIXED Language change route
 Route::get('lang/{lang}', function ($lang) {
