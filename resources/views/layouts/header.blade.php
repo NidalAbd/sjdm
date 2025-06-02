@@ -326,13 +326,18 @@
                         $currentPath = request()->path();
 
                         // Clean the current path from any language prefix
-                        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-                        $cleanPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $cleanPath);
-                        $cleanPath = $cleanPath === '' ? '' : $cleanPath;
+                        $cleanPath = preg_replace('/^ar\//', '', $currentPath);
+                        $cleanPath = preg_replace('/^ar$/', '', $cleanPath);
+                        $cleanPath = trim($cleanPath, '/');
 
                         // Generate URLs for both languages
-                        $enUrl = url($cleanPath ?: '/');
-                        $arUrl = url('ar/' . $cleanPath);
+                        if (empty($cleanPath) || $cleanPath === '/') {
+                            $enUrl = url('/');
+                            $arUrl = url('/ar');
+                        } else {
+                            $enUrl = url('/' . $cleanPath);
+                            $arUrl = url('/ar/' . $cleanPath);
+                        }
 
                         // Preserve query parameters
                         if (request()->getQueryString()) {
