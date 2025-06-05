@@ -574,7 +574,7 @@
     }
 
     .card-body {
-        background-color: var(--bs-body-bg); /* Dynamic background for dark/light mode */
+        background-color: var(--bs-body-bg); /* Dynamicss background for dark/light mode */
         color: var(--bs-body-color); /* Dynamic text color for dark/light mode */
         border-radius: 1rem;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
