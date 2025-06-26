@@ -321,7 +321,7 @@ return [
     'select_type' => 'اختر النوع',
     'completed' => 'مكتمل',
     'pending' => 'قيد الانتظار',
-    'In progress'=>'قيد العمل',
+    'in progress'=>'قيد العمل',
     'credit' => 'ائتمان',
     'debit' => 'مدين',
     'view_transaction' => 'عرض المعاملة',

@@ -620,7 +620,7 @@ return [
     'pending_orders' => 'Pending Orders',
     'processing_orders' => 'Processing Orders',
     'canceled_orders' => 'Canceled Orders',
-    'In progress'=>'In Progress',
+    'in progress'=>'In Progress',
 
 
     // Support Tickets
