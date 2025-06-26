@@ -29,7 +29,7 @@ Route::get('/orders/{order}/cancel', [OrderController::class, 'checkCancel'])->n
 
 // Order Actions
 Route::get('/{order}/check-cancel', [OrderController::class, 'checkCancel'])->name('checkCancel');
-Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel"');
 Route::get('/{order}/check-refill', [OrderController::class, 'checkRefill'])->name('checkRefill');
 Route::post('/{order}/refill', [OrderController::class, 'refill'])->name('orders.refill');
 
