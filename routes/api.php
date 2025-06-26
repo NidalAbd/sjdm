@@ -28,9 +28,9 @@ Route::get('/orders/{order}/refill', [OrderController::class, 'checkRefill'])->n
 Route::get('/orders/{order}/cancel', [OrderController::class, 'checkCancel'])->name('orders.checkCancel');
 
 // Order Actions
-Route::get('/{order}/check-cancel', [OrderController::class, 'checkCancel'])->name('checkCancel');
-Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel"');
-Route::get('/{order}/check-refill', [OrderController::class, 'checkRefill'])->name('checkRefill');
-Route::post('/{order}/refill', [OrderController::class, 'refill'])->name('orders.refill');
+Route::get('/{order}/check-cancel', [\App\Services\Api::class, 'checkCancel'])->name('checkCancel');
+Route::post('/{orderId}/cancel', [\App\Services\Api::class, 'cancel'])->name('orders.cancel"');
+Route::get('/{order}/check-refill', [\App\Services\Api::class, 'checkRefill'])->name('checkRefill');
+Route::post('/{order}/refill', [\App\Services\Api::class, 'refill'])->name('orders.refill');
 
 
