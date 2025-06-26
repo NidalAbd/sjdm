@@ -642,6 +642,31 @@
             });
         }
 
+        function performRefill(orderId) {
+            $.ajax({
+                url: '{{ route("orders.refill", ":id") }}'.replace(':id', orderId),
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '{{ __("adminlte.refill_successful") }}',
+                        text: response.message || '{{ __("adminlte.order_refilled_successfully") }}'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '{{ __("adminlte.refill_failed") }}',
+                        text: xhr.responseJSON?.message || '{{ __("adminlte.error_processing_refill") }}'
+                    });
+                }
+            });
+        }
 
         function performCancel(orderId) {
             $.ajax({

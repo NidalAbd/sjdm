@@ -26,3 +26,11 @@ Route::get('orders/search', [OrderController::class, 'search'])->name('api.order
 Route::get('orders/searchServices', [OrderController::class, 'searchServices'])->name('api.orders.searchServices');
 Route::get('/orders/{order}/refill', [OrderController::class, 'checkRefill'])->name('orders.checkRefill');
 Route::get('/orders/{order}/cancel', [OrderController::class, 'checkCancel'])->name('orders.checkCancel');
+
+// Order Actions
+Route::get('/{order}/check-cancel', [OrderController::class, 'checkCancel'])->name('checkCancel');
+Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+Route::get('/{order}/check-refill', [OrderController::class, 'checkRefill'])->name('checkRefill');
+Route::post('/{order}/refill', [OrderController::class, 'refill'])->name('refill');
+
+
