@@ -591,9 +591,7 @@
             location.reload();
         }
 
-        function exportOrders() {
-            window.open('{{ route("orders.export") }}?' + $('#filterForm').serialize(), '_blank');
-        }
+
 
         function checkAndCancel(orderId) {
             Swal.fire({
