@@ -472,6 +472,14 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedPaymentType = paymentTypeRadios[0].value;
         paymentTypeRadios[0].checked = true;
         console.log('Initializing with payment type:', selectedPaymentType);
+        
+        // Check if crypto is selected by default
+        if (selectedPaymentType === 'cryptocurrency') {
+            proceedButton.style.display = 'none';
+            const cryptoNotice = document.getElementById('cryptoNotice');
+            cryptoNotice.classList.remove('d-none');
+            console.log('Crypto selected by default - button hidden');
+        }
     } else {
         console.log('No payment type radios found');
     }
@@ -505,22 +513,20 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Payment type changed to:', selectedPaymentType);
             validateForm();
             
-            // Disable continue button for crypto payments
+            // Hide/show continue button for crypto payments
             const cryptoNotice = document.getElementById('cryptoNotice');
             if (selectedPaymentType === 'cryptocurrency') {
-                proceedButton.disabled = true;
-                proceedButton.classList.remove('btn-primary');
-                proceedButton.classList.add('btn-secondary');
-                proceedButton.innerHTML = '<i class="fas fa-info-circle me-2"></i>Contact Admin for Manual Transaction';
+                proceedButton.style.display = 'none';
                 cryptoNotice.classList.remove('d-none');
-                console.log('Crypto selected - button disabled');
+                console.log('Crypto selected - button hidden');
             } else {
+                proceedButton.style.display = 'block';
                 proceedButton.disabled = false;
                 proceedButton.classList.remove('btn-secondary');
                 proceedButton.classList.add('btn-primary');
                 proceedButton.innerHTML = '<i class="fas fa-arrow-right me-2"></i>{{ __("adminlte.select_payment_and_continue") }}';
                 cryptoNotice.classList.add('d-none');
-                console.log('Non-crypto selected - button enabled');
+                console.log('Non-crypto selected - button shown');
             }
         });
     });
@@ -559,19 +565,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Check if crypto is selected
         const cryptoNotice = document.getElementById('cryptoNotice');
         if (selectedPaymentType === 'cryptocurrency') {
-            proceedButton.disabled = true;
-            proceedButton.classList.remove('btn-primary');
-            proceedButton.classList.add('btn-secondary');
-            proceedButton.innerHTML = '<i class="fas fa-info-circle me-2"></i>Contact Admin for Manual Transaction';
+            proceedButton.style.display = 'none';
             cryptoNotice.classList.remove('d-none');
-            console.log('Crypto selected - button disabled for manual transaction');
+            console.log('Crypto selected - button hidden for manual transaction');
         } else {
+            proceedButton.style.display = 'block';
             proceedButton.disabled = false;
             proceedButton.classList.remove('btn-secondary');
             proceedButton.classList.add('btn-primary');
             proceedButton.innerHTML = '<i class="fas fa-arrow-right me-2"></i>{{ __("adminlte.select_payment_and_continue") }}';
             cryptoNotice.classList.add('d-none');
-            console.log('Button enabled - form is valid');
+            console.log('Button shown - form is valid');
         }
             amountInput.setCustomValidity('');
         } else {
