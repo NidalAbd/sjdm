@@ -107,6 +107,8 @@
                                     @if($paymentMethods->isNotEmpty())
                                         <div class="row g-3">
                                             @foreach($paymentMethods as $method)
+                                                <!-- Debug info -->
+                                                <script>console.log('Payment method: {{ $method->id }} - {{ $method->name }}');</script>
                                                 <div class="col-md-6">
                                                     <div class="payment-method-card" data-method-id="{{ $method->id }}" data-method-type="{{ $method->type }}">
                                                         <div class="card h-100 border-2 payment-option">
@@ -166,6 +168,8 @@
                                         <div class="alert alert-warning">
                                             <i class="fas fa-exclamation-triangle me-2"></i>
                                             {{ __('adminlte.no_payment_methods_available') }}
+                                            <br>
+                                            <small>Debug: No payment methods found. Please check if payment methods exist in the database.</small>
                                         </div>
                                     @endif
                                 </div>
@@ -584,13 +588,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateForm() {
         const amount = parseFloat(amountInput.value);
         const isAmountValid = !isNaN(amount) && amount >= 10;
-        const isPaymentTypeSelected = selectedPaymentType !== null;
+        const isPaymentMethodSelected = selectedMethodId !== null;
 
         console.log('Validating form:', {
             amount: amount,
             isAmountValid: isAmountValid,
+            selectedMethodId: selectedMethodId,
             selectedPaymentType: selectedPaymentType,
-            isPaymentTypeSelected: isPaymentTypeSelected
+            isPaymentMethodSelected: isPaymentMethodSelected
         });
 
         // Priority check for crypto - hide button immediately
@@ -602,7 +607,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return; // Exit early for crypto
         }
 
-        if (isAmountValid && isPaymentTypeSelected) {
+        if (isAmountValid && isPaymentMethodSelected) {
             proceedButton.style.display = 'block';
             proceedButton.disabled = false;
             proceedButton.classList.remove('btn-secondary');
@@ -631,9 +636,19 @@ document.addEventListener('DOMContentLoaded', function() {
         var forms = document.querySelectorAll('.needs-validation');
         Array.prototype.slice.call(forms).forEach(function(form) {
             form.addEventListener('submit', function(event) {
+                console.log('Form submission - checking validity');
+                console.log('Form data:', {
+                    amount: form.querySelector('[name="amount"]').value,
+                    payment_method_id: form.querySelector('[name="payment_method_id"]').value,
+                    selectedMethodId: selectedMethodId
+                });
+                
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                    console.log('Form validation failed');
+                } else {
+                    console.log('Form validation passed');
                 }
                 form.classList.add('was-validated');
             }, false);

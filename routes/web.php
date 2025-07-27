@@ -236,7 +236,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/checkout/fail/{transaction_id}', [StripeController::class, 'fail'])->name('checkout.fail');
     Route::post('/webhook/stripe', [StripeController::class, 'handleWebhook']);
     Route::get('/transactions/complete/{transaction_id}', [StripeController::class, 'completeTransaction'])->name('transactions.complete');
-    Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
+    Route::match(['GET', 'POST'], '/checkout', [StripeController::class, 'checkout'])->name('checkout');
 
     // Points System Routes
     Route::get('/points', [PointsController::class, 'index'])->name('points.index');

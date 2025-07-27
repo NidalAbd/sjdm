@@ -61,6 +61,9 @@ class TransactionController extends Controller
         // Get active payment methods and group by type
         $paymentMethods = PaymentMethod::active()->ordered()->get();
         
+        // Debug: Log payment methods
+        \Log::info('Available payment methods:', $paymentMethods->toArray());
+        
         // Create payment type categories showing what's available
         $paymentTypes = [
             [
@@ -110,6 +113,9 @@ class TransactionController extends Controller
     {
         // Authorize the user to create a transaction
         $this->authorize('create', Transaction::class);
+
+        // Debug: Log the request data
+        \Log::info('Transaction store request:', $request->all());
 
         // Validate the request input
         $request->validate([
@@ -187,10 +193,8 @@ class TransactionController extends Controller
                 'payment_method_id' => $paymentMethod->id
             ]);
             
-            // Redirect to Stripe checkout
-            return redirect()->route('checkout', [
-                'amount' => $transaction->amount
-            ]);
+            // Redirect to Stripe checkout with amount parameter
+            return redirect()->route('checkout', ['amount' => $transaction->amount]);
         }
         
         // For other payment methods, simulate processing
