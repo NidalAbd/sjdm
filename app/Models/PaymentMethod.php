@@ -181,7 +181,7 @@ class PaymentMethod extends Model
     public function getLogoUrlAttribute()
     {
         if ($this->logo) {
-            return asset('storage/' . $this->logo);
+            return asset('storage/app/public/' . $this->logo);
         }
         
         return asset('images/payment-methods/default.png');
