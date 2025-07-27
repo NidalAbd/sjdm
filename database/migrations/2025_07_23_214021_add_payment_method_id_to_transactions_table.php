@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            //
+            $table->foreignId('payment_method_id')->nullable()->constrained('payment_methods')->onDelete('set null');
         });
     }
 
@@ -26,7 +26,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            //
+            $table->dropForeign(['payment_method_id']);
+            $table->dropColumn('payment_method_id');
         });
     }
 };
