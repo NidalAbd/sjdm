@@ -14,7 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::table('payment_methods', function (Blueprint $table) {
-            $table->string('currency', 50)->change();
+            $table->dropColumn('currency');
+        });
+        
+        Schema::table('payment_methods', function (Blueprint $table) {
+            $table->string('currency', 50)->default('USD')->after('processing_fee_percentage');
         });
     }
 
@@ -26,7 +30,11 @@ return new class extends Migration
     public function down()
     {
         Schema::table('payment_methods', function (Blueprint $table) {
-            $table->string('currency', 3)->change();
+            $table->dropColumn('currency');
+        });
+        
+        Schema::table('payment_methods', function (Blueprint $table) {
+            $table->string('currency', 3)->default('USD')->after('processing_fee_percentage');
         });
     }
 };
