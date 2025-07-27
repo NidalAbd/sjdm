@@ -62,9 +62,8 @@ class SetupStorage extends Command
 
         // Set permissions
         $this->info('Setting permissions...');
-        system("chmod -R 755 $storagePath");
-        system("chmod -R 777 $paymentMethodsPath");
-        system("chmod -R 755 $imagesPath");
+        // Note: Permissions will be set by the directory creation
+        // You may need to set them manually via FTP/cPanel if needed
 
         // Create default logo
         $defaultLogo = $imagesPath . '/default.svg';
