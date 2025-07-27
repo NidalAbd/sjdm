@@ -114,38 +114,48 @@ class TransactionController extends Controller
         // Validate the request input
         $request->validate([
             'amount' => 'required|numeric|min:10',
-            'payment_type' => 'required|string',
+            'payment_method_id' => 'required|exists:payment_methods,id',
         ]);
 
         // Retrieve authenticated user and amount
         $user = Auth::user();
         $amount = $request->amount;
-        $paymentType = $request->payment_type;
+        $paymentMethodId = $request->payment_method_id;
 
         // Create a new transaction record
         $transaction = new Transaction([
             'type' => 'credit',
             'amount' => $amount,
             'status' => 'pending', // Start as pending
-            'payment_method_id' => $request->payment_method_id,
+            'payment_method_id' => $paymentMethodId,
         ]);
 
         // Save the transaction
         $user->transactions()->save($transaction);
 
-        // Process payment based on payment type
-        return $this->processPayment($transaction, $paymentType);
+        // Process payment based on payment method
+        return $this->processPayment($transaction, $paymentMethodId);
     }
 
     /**
-     * Process payment based on payment type
+     * Process payment based on payment method
      */
-    private function processPayment($transaction, $paymentType)
+    private function processPayment($transaction, $paymentMethodId)
     {
-        switch ($paymentType) {
-            case 'cards':
+        // Get the payment method
+        $paymentMethod = PaymentMethod::find($paymentMethodId);
+        
+        if (!$paymentMethod) {
+            $transaction->update(['status' => 'failed']);
+            return redirect()->route('transactions.index')
+                ->with('error', 'Payment method not found.');
+        }
+        
+        // Process based on payment method type
+        switch ($paymentMethod->type) {
+            case 'credit_card':
                 return $this->processCardPayment($transaction);
-            case 'crypto':
+            case 'cryptocurrency':
                 return $this->processCryptoPayment($transaction);
             case 'bank_transfer':
                 return $this->processBankTransfer($transaction);
@@ -159,10 +169,31 @@ class TransactionController extends Controller
      */
     private function processCardPayment($transaction)
     {
-        // For now, simulate card payment processing
-        // In real implementation, integrate with Stripe, PayPal, etc.
+        // Get the payment method to check if it's Stripe
+        $paymentMethod = PaymentMethod::find($transaction->payment_method_id);
         
-        // Simulate payment processing with random outcome
+        if (!$paymentMethod) {
+            $transaction->update(['status' => 'failed']);
+            return redirect()->route('transactions.index')
+                ->with('error', 'Payment method not found.');
+        }
+        
+        // If it's Stripe, redirect to Stripe checkout
+        if ($paymentMethod->slug === 'stripe') {
+            // Store transaction info in session for Stripe controller
+            session([
+                'transaction_id' => $transaction->id,
+                'amount' => $transaction->amount,
+                'payment_method_id' => $paymentMethod->id
+            ]);
+            
+            // Redirect to Stripe checkout
+            return redirect()->route('checkout', [
+                'amount' => $transaction->amount
+            ]);
+        }
+        
+        // For other payment methods, simulate processing
         $outcomes = ['success', 'failed', 'suspected'];
         $outcome = $outcomes[array_rand($outcomes)];
         
@@ -176,9 +207,6 @@ class TransactionController extends Controller
                 // Update user balance
                 $transaction->user->increment('balance', $transaction->amount);
                 
-                // Send success notification (disabled for now due to SMTP issues)
-                // $transaction->user->notify(new TransactionNotification($transaction));
-                
                 return redirect()->route('transactions.show', $transaction)
                     ->with('success', 'Payment successful! Your balance has been updated.');
                 
@@ -188,9 +216,6 @@ class TransactionController extends Controller
                     'processed_at' => now(),
                 ]);
                 
-                // Send failure notification (disabled for now due to SMTP issues)
-                // $transaction->user->notify(new TransactionNotification($transaction));
-                
                 return redirect()->route('transactions.show', $transaction)
                     ->with('error', 'Payment failed. Please try again.');
                 
@@ -199,9 +224,6 @@ class TransactionController extends Controller
                     'status' => 'suspected',
                     'processed_at' => now(),
                 ]);
-                
-                // Send suspected notification (disabled for now due to SMTP issues)
-                // $transaction->user->notify(new TransactionNotification($transaction));
                 
                 return redirect()->route('transactions.show', $transaction)
                     ->with('warning', 'Payment is under review. You will be notified once processed.');

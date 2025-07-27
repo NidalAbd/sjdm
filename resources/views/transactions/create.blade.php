@@ -104,26 +104,37 @@
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold mb-3">{{ __('adminlte.select_payment_method') }}</label>
                                     
-                                    @if($availablePaymentTypes->isNotEmpty())
+                                    @if($paymentMethods->isNotEmpty())
                                         <div class="row g-3">
-                                            @foreach($availablePaymentTypes as $type)
+                                            @foreach($paymentMethods as $method)
                                                 <div class="col-md-6">
-                                                    <div class="payment-method-card" data-type="{{ $type['id'] }}">
+                                                    <div class="payment-method-card" data-method-id="{{ $method->id }}" data-method-type="{{ $method->type }}">
                                                         <div class="card h-100 border-2 payment-option">
                                                             <div class="card-body text-center p-3">
                                                                 <div class="form-check">
-                                                                    <input class="form-check-input payment-type-radio" 
+                                                                    <input class="form-check-input payment-method-radio" 
                                                                            type="radio" 
-                                                                           name="payment_type" 
-                                                                           value="{{ $type['id'] }}" 
-                                                                           id="type_{{ $type['id'] }}"
+                                                                           name="payment_method_id" 
+                                                                           value="{{ $method->id }}" 
+                                                                           id="method_{{ $method->id }}"
+                                                                           data-method-type="{{ $method->type }}"
                                                                            {{ $loop->first ? 'checked' : '' }}>
-                                                                    <label class="form-check-label w-100" for="type_{{ $type['id'] }}">
+                                                                    <label class="form-check-label w-100" for="method_{{ $method->id }}">
                                                                         <div class="payment-icon mb-2">
-                                                                            <i class="{{ $type['icon'] }} fa-2x text-primary"></i>
+                                                                            @if($method->logo)
+                                                                                <img src="{{ $method->logo_url }}" alt="{{ $method->name }}" class="payment-logo" style="height: 40px;">
+                                                                            @else
+                                                                                <i class="fas fa-credit-card fa-2x text-primary"></i>
+                                                                            @endif
                                                                         </div>
-                                                                        <h6 class="card-title mb-1">{{ $type['name'] }}</h6>
-                                                                        <p class="card-text small text-muted mb-0">{{ $type['description'] }}</p>
+                                                                        <h6 class="card-title mb-1">{{ $method->name }}</h6>
+                                                                        <p class="card-text small text-muted mb-0">{{ $method->description }}</p>
+                                                                        @if($method->processing_fee_percentage > 0 || $method->processing_fee_fixed > 0)
+                                                                            <small class="text-info">
+                                                                                Fee: {{ $method->processing_fee_fixed > 0 ? '$' . $method->processing_fee_fixed : '' }}
+                                                                                {{ $method->processing_fee_percentage > 0 ? $method->processing_fee_percentage . '%' : '' }}
+                                                                            </small>
+                                                                        @endif
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -450,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const amountInput = document.getElementById('amount');
     const proceedButton = document.getElementById('proceedButton');
-    const paymentTypeRadios = document.querySelectorAll('.payment-type-radio');
+    const paymentMethodRadios = document.querySelectorAll('.payment-method-radio');
     const paymentForm = document.getElementById('addBalanceForm');
     const selectedMethodIdInput = document.getElementById('selectedMethodId');
     const presetButtons = document.querySelectorAll('.preset-amount');
@@ -458,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Elements found:', {
         amountInput: amountInput,
         proceedButton: proceedButton,
-        paymentTypeRadios: paymentTypeRadios.length,
+        paymentMethodRadios: paymentMethodRadios.length,
         paymentForm: paymentForm,
         selectedMethodIdInput: selectedMethodIdInput,
         presetButtons: presetButtons.length
@@ -473,11 +484,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return cryptoTypes.includes(paymentType.toLowerCase());
     }
 
-    // Initialize with first type if available
-    if (paymentTypeRadios.length > 0) {
-        selectedPaymentType = paymentTypeRadios[0].value;
-        paymentTypeRadios[0].checked = true;
-        console.log('Initializing with payment type:', selectedPaymentType);
+    // Initialize with first method if available
+    if (paymentMethodRadios.length > 0) {
+        selectedMethodId = paymentMethodRadios[0].value;
+        selectedPaymentType = paymentMethodRadios[0].getAttribute('data-method-type');
+        paymentMethodRadios[0].checked = true;
+        console.log('Initializing with payment method:', selectedMethodId, 'type:', selectedPaymentType);
         
         // Check if crypto is selected by default
         if (isCryptoPayment(selectedPaymentType)) {
@@ -492,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function() {
             validateForm();
         }
     } else {
-        console.log('No payment type radios found');
+        console.log('No payment method radios found');
     }
 
     // Force validation on page load
@@ -524,12 +536,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Payment type selection
-    paymentTypeRadios.forEach(radio => {
+    // Payment method selection
+    paymentMethodRadios.forEach(radio => {
         radio.addEventListener('change', function() {
-            selectedPaymentType = this.value;
+            selectedMethodId = this.value;
+            selectedPaymentType = this.getAttribute('data-method-type');
             selectedMethodIdInput.value = this.value; // Set the payment method ID
-            console.log('Payment type changed to:', selectedPaymentType);
+            console.log('Payment method changed to:', selectedMethodId, 'type:', selectedPaymentType);
             validateForm();
             
             // Hide/show continue button for crypto payments

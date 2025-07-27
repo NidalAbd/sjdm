@@ -32,18 +32,38 @@ class StripeController extends Controller
         $user = Auth::user();
         $amount = $request->input('amount');
 
-        // Validate the amount against payment method limits (minimum $10)
-        $minAmount = max(10, $stripeMethod->min_amount);
-        $request->validate([
-            'amount' => [
-                'required',
-                'numeric',
-                "min:{$minAmount}",
-                $stripeMethod->max_amount ? "max:{$stripeMethod->max_amount}" : 'numeric',
-            ],
-        ], [
-            'amount.min' => __('adminlte.minimum_amount_10'),
-        ]);
+        // Check if we have an existing transaction from the TransactionController
+        $transactionId = session('transaction_id');
+        $transaction = null;
+        
+        if ($transactionId) {
+            $transaction = Transaction::find($transactionId);
+        }
+
+        // If no existing transaction, create a new one
+        if (!$transaction) {
+            // Validate the amount against payment method limits (minimum $10)
+            $minAmount = max(10, $stripeMethod->min_amount);
+            $request->validate([
+                'amount' => [
+                    'required',
+                    'numeric',
+                    "min:{$minAmount}",
+                    $stripeMethod->max_amount ? "max:{$stripeMethod->max_amount}" : 'numeric',
+                ],
+            ], [
+                'amount.min' => __('adminlte.minimum_amount_10'),
+            ]);
+
+            // Create a new transaction
+            $transaction = $user->transactions()->create([
+                'payment_method_id' => $stripeMethod->id,
+                'type' => 'credit',
+                'amount' => $amount,
+                'currency' => $stripeMethod->currency,
+                'status' => 'created', // Initial status
+            ]);
+        }
 
         // Calculate processing fees
         $processingFee = $stripeMethod->calculateFee($amount);
@@ -51,17 +71,6 @@ class StripeController extends Controller
 
         // Store the amount in the session for use in the success method
         session(['amount' => $amount, 'payment_method_id' => $stripeMethod->id]);
-
-        // Create a 'created' transaction in the database
-        $transaction = $user->transactions()->create([
-            'payment_method_id' => $stripeMethod->id,
-            'type' => 'credit',
-            'amount' => $amount,
-            'currency' => $stripeMethod->currency,
-            'status' => 'created', // Initial status
-            'api_cost' => $processingFee, // Store processing fee as api_cost
-            'profit' => 0, // Will be calculated on completion
-        ]);
 
         // Create Stripe Checkout session
         try {
@@ -84,6 +93,9 @@ class StripeController extends Controller
 
             // Update the transaction status to 'started'
             $transaction->update(['status' => 'started']);
+
+            // Clear the session transaction_id since we're using this transaction
+            session()->forget('transaction_id');
 
             // Redirect to Stripe Checkout
             return redirect($session->url, 303);
