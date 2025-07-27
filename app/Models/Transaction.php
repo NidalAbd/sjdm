@@ -11,16 +11,27 @@ class Transaction extends Model
 
     protected $fillable = [
         'user_id',
+        'payment_method_id',
         'type',
         'amount',
         'currency',
         'status',
         'api_cost',
-        'profit'
+        'profit',
+        'processed_at'
+    ];
+
+    protected $casts = [
+        'processed_at' => 'datetime',
     ];
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 
     public function supportTicket()

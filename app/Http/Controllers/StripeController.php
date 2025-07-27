@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe\Stripe;
@@ -16,28 +17,50 @@ class StripeController extends Controller
      */
     public function checkout(Request $request)
     {
-        // Set Stripe API key
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        // Get Stripe payment method configuration
+        $stripeMethod = PaymentMethod::where('slug', 'stripe')->where('is_active', true)->first();
+        
+        if (!$stripeMethod) {
+            return redirect()->route('transactions.index')->with('error', 'Stripe payment method is not available.');
+        }
+
+        // Set Stripe API key from payment method configuration
+        $apiCredentials = $stripeMethod->api_credentials;
+        $stripeSecretKey = $apiCredentials['api_secret'] ?? env('STRIPE_SECRET');
+        Stripe::setApiKey($stripeSecretKey);
 
         $user = Auth::user();
         $amount = $request->input('amount');
 
-        // Validate the amount input to avoid invalid or malicious input
+        // Validate the amount against payment method limits (minimum $10)
+        $minAmount = max(10, $stripeMethod->min_amount);
         $request->validate([
-            'amount' => 'required|numeric|min:1',
+            'amount' => [
+                'required',
+                'numeric',
+                "min:{$minAmount}",
+                $stripeMethod->max_amount ? "max:{$stripeMethod->max_amount}" : 'numeric',
+            ],
+        ], [
+            'amount.min' => __('adminlte.minimum_amount_10'),
         ]);
 
+        // Calculate processing fees
+        $processingFee = $stripeMethod->calculateFee($amount);
+        $totalAmount = $amount + $processingFee;
+
         // Store the amount in the session for use in the success method
-        session(['amount' => $amount]);
+        session(['amount' => $amount, 'payment_method_id' => $stripeMethod->id]);
 
         // Create a 'created' transaction in the database
         $transaction = $user->transactions()->create([
+            'payment_method_id' => $stripeMethod->id,
             'type' => 'credit',
             'amount' => $amount,
-            'currency' => 'USD',
+            'currency' => $stripeMethod->currency,
             'status' => 'created', // Initial status
-            'api_cost' => 0, // Adjust as needed
-            'profit' => 0, // Adjust as needed
+            'api_cost' => $processingFee, // Store processing fee as api_cost
+            'profit' => 0, // Will be calculated on completion
         ]);
 
         // Create Stripe Checkout session
@@ -46,11 +69,11 @@ class StripeController extends Controller
                 'payment_method_types' => ['card'],
                 'line_items' => [[
                     'price_data' => [
-                        'currency' => 'usd',
+                        'currency' => strtolower($stripeMethod->currency),
                         'product_data' => [
-                            'name' => 'Add Balance to ' . $user->name,
+                            'name' => 'Add Balance to ' . $user->name . ($processingFee > 0 ? " (includes $" . number_format($processingFee, 2) . " processing fee)" : ''),
                         ],
-                        'unit_amount' => $amount * 100, // Stripe expects the amount in cents
+                        'unit_amount' => $totalAmount * 100, // Stripe expects the amount in cents (including fees)
                     ],
                     'quantity' => 1,
                 ]],
@@ -80,31 +103,37 @@ class StripeController extends Controller
     {
         $user = Auth::user();
         $amount = session('amount');
+        $paymentMethodId = session('payment_method_id');
 
-        // Check if the amount exists in the session
-        if (!$amount) {
-            return redirect()->route('transactions.index')->with('error', 'Amount not found in session.');
+        // Check if the amount and payment method exist in the session
+        if (!$amount || !$paymentMethodId) {
+            return redirect()->route('transactions.index')->with('error', 'Session data not found.');
         }
 
-        // Find the transaction
+        // Find the transaction and payment method
         $transaction = Transaction::findOrFail($transaction_id);
+        $paymentMethod = PaymentMethod::findOrFail($paymentMethodId);
 
-        // Update user's balance
+        // Calculate processing fee and profit
+        $processingFee = $paymentMethod->calculateFee($amount);
+        $profit = $amount - $processingFee; // User gets the amount, we pay the processing fee
+
+        // Update user's balance (only the requested amount, not including fees)
         $user->balance += $amount;
         $user->save();
 
         // Update transaction status to 'completed'
         $transaction->update([
             'status' => 'completed',
-            'api_cost' => 0, // Set actual API cost if needed
-            'profit' => $amount, // Set the profit (amount - api_cost)
+            'api_cost' => $processingFee, // Store actual processing fee
+            'profit' => $profit, // Calculate net profit after fees
         ]);
 
         // Notify user about the completed transaction
         $user->notify(new TransactionNotification($transaction));
 
-        // Clear the amount from the session
-        session()->forget('amount');
+        // Clear session data
+        session()->forget(['amount', 'payment_method_id']);
 
         return redirect()->route('transactions.index')->with('success', 'Payment successful! Balance added.');
     }
@@ -122,6 +151,9 @@ class StripeController extends Controller
 
         // Notify user about the canceled transaction
         $transaction->user->notify(new TransactionNotification($transaction));
+
+        // Clear session data
+        session()->forget(['amount', 'payment_method_id']);
 
         // Redirect back to a page with a message to complete the transaction
         return redirect()->route('transactions.complete', ['transaction_id' => $transaction->id])

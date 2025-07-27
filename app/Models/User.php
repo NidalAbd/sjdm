@@ -167,7 +167,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $profileMedia
             ? asset('storage/' . $profileMedia->path) // Use storage path for public access
-            : 'https://example.com/default-profile.png'; // Default profile image if none is found
+            : asset('images/avatar3.png'); // Use local default avatar
     }
 
 

@@ -241,4 +241,10 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     // Points System Routes
     Route::get('/points', [PointsController::class, 'index'])->name('points.index');
     Route::post('/points/redeem', [PointsController::class, 'redeem'])->name('points.redeem');
+    
+    // Payment Methods Management Routes
+    Route::resource('payment-methods', \App\Http\Controllers\PaymentMethodController::class);
+    Route::patch('payment-methods/{paymentMethod}/toggle-status', [\App\Http\Controllers\PaymentMethodController::class, 'toggleStatus'])->name('payment-methods.toggle-status');
+    Route::post('payment-methods/bulk-action', [\App\Http\Controllers\PaymentMethodController::class, 'bulkAction'])->name('payment-methods.bulk-action');
+
 });

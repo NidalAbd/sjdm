@@ -12,8 +12,13 @@
 
     gtag('config', 'G-L001CCMV5K');
 </script>
+<!-- Preload background images only if they exist -->
+@if(file_exists(public_path('images/double-bubble-outline.webp')))
 <link rel="preload" as="image" href="{{ asset('images/double-bubble-outline.webp') }}" type="image/webp">
+@endif
+@if(file_exists(public_path('images/double-bubble-dark.webp')))
 <link rel="preload" as="image" href="{{ asset('images/double-bubble-dark.webp') }}" type="image/webp">
+@endif
 
 @section('content_header')
     @include('partials.breadcrumbs')  <!-- Include the breadcrumbs partial -->
@@ -138,3 +143,5 @@
         applyRtlMode(rtlModeEnabled);
     });
 </script>
+
+@yield('scripts')

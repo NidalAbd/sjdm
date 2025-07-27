@@ -159,6 +159,13 @@ return array(
                     'icon_color'   => 'warning', // Set predefined color
                 ),
                 array(
+                    'text' => 'payment_methods', // Use translation key
+                    'url'  => 'payment-methods',
+                    'icon' => 'fas fa-fw fa-credit-card',
+                    'can'  => 'add_balance', // Use existing permission for admin access
+                    'icon_color'   => 'purple', // Set predefined color
+                ),
+                array(
                     'text' => 'fetch services ar', // Use translation key
                     'url'  => 'services/fetch-ar',
                     'icon' => 'fas fa-sync-alt',
