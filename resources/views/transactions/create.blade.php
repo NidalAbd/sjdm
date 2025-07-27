@@ -467,6 +467,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedPaymentType = null;
     let selectedMethodId = null;
 
+    // Helper function to check if payment type is crypto
+    function isCryptoPayment(paymentType) {
+        const cryptoTypes = ['cryptocurrency', 'crypto', 'bitcoin', 'ethereum', 'usdt', 'btc', 'eth'];
+        return cryptoTypes.includes(paymentType.toLowerCase());
+    }
+
     // Initialize with first type if available
     if (paymentTypeRadios.length > 0) {
         selectedPaymentType = paymentTypeRadios[0].value;
@@ -474,11 +480,16 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Initializing with payment type:', selectedPaymentType);
         
         // Check if crypto is selected by default
-        if (selectedPaymentType === 'cryptocurrency') {
+        if (isCryptoPayment(selectedPaymentType)) {
             proceedButton.style.display = 'none';
             const cryptoNotice = document.getElementById('cryptoNotice');
             cryptoNotice.classList.remove('d-none');
             console.log('Crypto selected by default - button hidden');
+        }
+        
+        // Immediate validation for crypto
+        if (isCryptoPayment(selectedPaymentType)) {
+            validateForm();
         }
     } else {
         console.log('No payment type radios found');
@@ -487,6 +498,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Force validation on page load
     setTimeout(() => {
         validateForm();
+        
+        // Double-check crypto state after validation
+        if (isCryptoPayment(selectedPaymentType)) {
+            proceedButton.style.display = 'none';
+            const cryptoNotice = document.getElementById('cryptoNotice');
+            cryptoNotice.classList.remove('d-none');
+            console.log('Crypto detected after validation - button hidden');
+        }
     }, 100);
 
     // Preset amount buttons
@@ -515,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Hide/show continue button for crypto payments
             const cryptoNotice = document.getElementById('cryptoNotice');
-            if (selectedPaymentType === 'cryptocurrency') {
+            if (isCryptoPayment(selectedPaymentType)) {
                 proceedButton.style.display = 'none';
                 cryptoNotice.classList.remove('d-none');
                 console.log('Crypto selected - button hidden');
@@ -548,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function() {
         validateForm();
     });
 
-    // Validation function
+        // Validation function
     function validateForm() {
         const amount = parseFloat(amountInput.value);
         const isAmountValid = !isNaN(amount) && amount >= 10;
@@ -561,24 +580,27 @@ document.addEventListener('DOMContentLoaded', function() {
             isPaymentTypeSelected: isPaymentTypeSelected
         });
 
-        if (isAmountValid && isPaymentTypeSelected) {
-                    // Check if crypto is selected
-        const cryptoNotice = document.getElementById('cryptoNotice');
-        if (selectedPaymentType === 'cryptocurrency') {
+        // Priority check for crypto - hide button immediately
+        if (isCryptoPayment(selectedPaymentType)) {
             proceedButton.style.display = 'none';
+            const cryptoNotice = document.getElementById('cryptoNotice');
             cryptoNotice.classList.remove('d-none');
-            console.log('Crypto selected - button hidden for manual transaction');
-        } else {
+            console.log('Crypto selected - button hidden immediately');
+            return; // Exit early for crypto
+        }
+
+        if (isAmountValid && isPaymentTypeSelected) {
             proceedButton.style.display = 'block';
             proceedButton.disabled = false;
             proceedButton.classList.remove('btn-secondary');
             proceedButton.classList.add('btn-primary');
             proceedButton.innerHTML = '<i class="fas fa-arrow-right me-2"></i>{{ __("adminlte.select_payment_and_continue") }}';
+            const cryptoNotice = document.getElementById('cryptoNotice');
             cryptoNotice.classList.add('d-none');
             console.log('Button shown - form is valid');
-        }
             amountInput.setCustomValidity('');
         } else {
+            proceedButton.style.display = 'block';
             proceedButton.disabled = true;
             proceedButton.classList.remove('btn-primary');
             proceedButton.classList.add('btn-secondary');
