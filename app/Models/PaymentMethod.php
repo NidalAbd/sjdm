@@ -45,7 +45,7 @@ class PaymentMethod extends Model
         'sort_order' => 'integer',
         'requires_verification' => 'boolean',
         'supported_countries' => 'array',
-        'api_credentials' => 'encrypted:array',
+        'api_credentials' => 'array',
         'settings' => 'array',
     ];
 
