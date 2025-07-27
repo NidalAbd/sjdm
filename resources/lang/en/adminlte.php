@@ -770,4 +770,24 @@ return [
     'back_to_list' => 'Back to List',
     'system_information' => 'System Information',
 
+    // WhatsApp Contact
+    'whatsapp_payment' => 'WhatsApp Payment',
+    'contact_admin_whatsapp' => 'Contact Admin via WhatsApp',
+    'add_balance_whatsapp' => 'Add Balance via WhatsApp',
+    'whatsapp_description' => 'Contact our admin directly via WhatsApp to add balance to your account.',
+    'your_details' => 'Your Details',
+    'admin_contact' => 'Admin Contact',
+    'response_time' => 'Response Time',
+    'how_it_works' => 'How it works',
+    'step_contact_admin' => 'Contact Admin',
+    'step_contact_admin_desc' => 'Send a message to our admin via WhatsApp',
+    'step_provide_details' => 'Provide Details',
+    'step_provide_details_desc' => 'Share your username and desired amount',
+    'step_receive_payment_info' => 'Receive Payment Info',
+    'step_receive_payment_info_desc' => 'Admin will provide payment instructions',
+    'step_get_confirmation' => 'Get Confirmation',
+    'step_get_confirmation_desc' => 'Balance will be added to your account',
+    'open_whatsapp' => 'Open WhatsApp',
+    'admin_whatsapp_number' => '+971557830054',
+
 ];

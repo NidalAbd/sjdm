@@ -131,6 +131,25 @@
                                                     </div>
                                                 </div>
                                             @endforeach
+                                            
+                                            <!-- WhatsApp Contact Option -->
+                                            <div class="col-md-6">
+                                                <div class="whatsapp-direct-card">
+                                                    <div class="card h-100 border-2 whatsapp-option">
+                                                        <div class="card-body text-center p-4">
+                                                            <div class="whatsapp-icon mb-3">
+                                                                <i class="fab fa-whatsapp fa-3x text-success"></i>
+                                                            </div>
+                                                            <h5 class="card-title mb-2">WhatsApp Payment</h5>
+                                                            <p class="card-text text-muted mb-3">Contact admin directly via WhatsApp to add balance</p>
+                                                            <button type="button" class="btn btn-success btn-lg w-100 whatsapp-direct-btn">
+                                                                <i class="fab fa-whatsapp me-2"></i>
+                                                                Chat with Admin
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     @else
                                         <div class="alert alert-warning">
@@ -177,6 +196,8 @@
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- Right Column - Promotional Section -->
                 <div class="col-lg-4">
@@ -323,6 +344,54 @@
         justify-content: center;
     }
 
+    /* WhatsApp Styles */
+    .whatsapp-option {
+        border-color: #25D366 !important;
+        transition: all 0.3s ease;
+        background: linear-gradient(145deg, #f8fff8, #ffffff);
+    }
+
+    .whatsapp-option:hover {
+        border-color: #128C7E !important;
+        box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .whatsapp-icon {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .whatsapp-direct-btn {
+        background: #25D366;
+        border-color: #25D366;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .whatsapp-direct-btn:hover {
+        background: #128C7E;
+        border-color: #128C7E;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+    }
+
+    .whatsapp-direct-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .whatsapp-direct-card:hover .whatsapp-option {
+        border-color: #128C7E !important;
+        box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+    }
+    }
+
     .position-count {
         font-size: 2rem;
         font-weight: bold;
@@ -430,6 +499,17 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Payment type changed to:', selectedPaymentType);
             validateForm();
         });
+    });
+
+    // Handle direct WhatsApp button
+    document.querySelector('.whatsapp-direct-btn').addEventListener('click', function() {
+        const amount = document.getElementById('amount').value;
+        const message = `Hi Admin, I want to add balance to my account. Username: {{ auth()->user()->name }} Email: {{ auth()->user()->email }} Amount: $${amount}`;
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/971557830054?text=${encodedMessage}`;
+        
+        // Open WhatsApp directly
+        window.open(whatsappUrl, '_blank');
     });
 
     // Amount validation

@@ -741,5 +741,25 @@ return [
     'back_to_list' => 'العودة للقائمة',
     'system_information' => 'معلومات النظام',
 
+    // WhatsApp Contact
+    'whatsapp_payment' => 'الدفع عبر واتساب',
+    'contact_admin_whatsapp' => 'تواصل مع المدير عبر واتساب',
+    'add_balance_whatsapp' => 'إضافة رصيد عبر واتساب',
+    'whatsapp_description' => 'تواصل مع مديرنا مباشرة عبر واتساب لإضافة رصيد لحسابك.',
+    'your_details' => 'تفاصيلك',
+    'admin_contact' => 'معلومات المدير',
+    'response_time' => 'وقت الاستجابة',
+    'how_it_works' => 'كيف يعمل',
+    'step_contact_admin' => 'تواصل مع المدير',
+    'step_contact_admin_desc' => 'أرسل رسالة لمديرنا عبر واتساب',
+    'step_provide_details' => 'قدم التفاصيل',
+    'step_provide_details_desc' => 'شارك اسم المستخدم والمبلغ المطلوب',
+    'step_receive_payment_info' => 'استلم معلومات الدفع',
+    'step_receive_payment_info_desc' => 'سيقدم المدير تعليمات الدفع',
+    'step_get_confirmation' => 'احصل على التأكيد',
+    'step_get_confirmation_desc' => 'سيتم إضافة الرصيد لحسابك',
+    'open_whatsapp' => 'فتح واتساب',
+    'admin_whatsapp_number' => '+971557830054',
+
 ];
 
