@@ -184,7 +184,7 @@ class PaymentMethod extends Model
             return asset('storage/app/public/' . $this->logo);
         }
         
-        return asset('images/payment-methods/default.png');
+        return asset('images/payment-methods/default.svg');
     }
 
     /**
