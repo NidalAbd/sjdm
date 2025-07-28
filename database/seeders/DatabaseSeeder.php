@@ -21,12 +21,12 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->call(UserSeeder::class);
 
-//
-//        $this->call(OrderSeeder::class);
-//
-//
-//        $this->call(SupportTicketSeeder::class);
-//        $this->call(MessageSeeder::class);
+
+        $this->call(OrderSeeder::class);
+
+
+        $this->call(SupportTicketSeeder::class);
+        $this->call(MessageSeeder::class);
 
     }
 }

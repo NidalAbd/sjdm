@@ -72,6 +72,21 @@ return [
     'all_read' => 'All Read',
     'no_ticket' => 'No Ticket',
 
+    // Notifications Page
+    'no_notifications' => 'No notifications',
+    'you_are_all_caught_up' => 'You\'re all caught up! No new notifications to display.',
+    'mark_all_as_read' => 'Mark all as read',
+    'clear_all' => 'Clear all',
+    'are_you_sure_mark_read' => 'Are you sure you want to mark all notifications as read?',
+    'all_notifications_marked_read' => 'All notifications marked as read',
+    'failed_mark_read' => 'Failed to mark notifications as read',
+    'are_you_sure_clear_all' => 'Are you sure you want to clear all notifications? This action cannot be undone.',
+    'all_notifications_cleared' => 'All notifications cleared',
+    'failed_clear_notifications' => 'Failed to clear notifications',
+    'showing' => 'Showing',
+    'to' => 'to',
+    'of' => 'of',
+
     // ========================= User Management =========================
     'manage_users' => 'Users',
     'search_users' => 'Search users...',

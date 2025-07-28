@@ -3,7 +3,7 @@
 @section('title', __('Notifications'))
 @section('content_header')
     @include('partials.breadcrumbs')
-    <h1 class="text-primary">{{ __('adminlte.Notifications') }}</h1>
+    <h1 class="text-primary">{{ __('adminlte.notifications') }}</h1>
 @stop
 
 @section('content')
@@ -19,11 +19,11 @@
                         @if($notifications->count() > 0)
                             <button class="btn btn-outline-primary btn-sm me-2" onclick="markAllAsRead()">
                                 <i class="fas fa-check-double me-1"></i>
-                                {{ __('Mark all as read') }}
+                                {{ __('adminlte.mark_all_as_read') }}
                             </button>
                             <button class="btn btn-outline-danger btn-sm" onclick="clearAllNotifications()">
                                 <i class="fas fa-trash me-1"></i>
-                                {{ __('Clear all') }}
+                                {{ __('adminlte.clear_all') }}
                             </button>
                         @endif
                     </div>
@@ -34,8 +34,8 @@
                         <div class="text-center py-5">
                             <div class="empty-state">
                                 <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
-                                <h4 class="text-muted">{{ __('No notifications') }}</h4>
-                                <p class="text-muted">{{ __('You\'re all caught up! No new notifications to display.') }}</p>
+                                <h4 class="text-muted">{{ __('adminlte.no_notifications') }}</h4>
+                                <p class="text-muted">{{ __('adminlte.you_are_all_caught_up') }}</p>
                             </div>
                         </div>
                     @else
@@ -133,7 +133,7 @@
                         <div class="card-footer">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="pagination-info">
-                                    {{ __('Showing') }} {{ $notifications->firstItem() ?? 0 }} {{ __('to') }} {{ $notifications->lastItem() ?? 0 }} {{ __('of') }} {{ $notifications->total() }} {{ __('notifications') }}
+                                    {{ __('adminlte.showing') }} {{ $notifications->firstItem() ?? 0 }} {{ __('adminlte.to') }} {{ $notifications->lastItem() ?? 0 }} {{ __('adminlte.of') }} {{ $notifications->total() }} {{ __('adminlte.notifications') }}
                                 </div>
                                 <div class="pagination-links">
                                     {{ $notifications->links() }}
@@ -421,7 +421,7 @@
     }
 
     function markAllAsRead() {
-        if (!confirm('{{ __("Are you sure you want to mark all notifications as read?") }}')) {
+        if (!confirm('{{ __("adminlte.are_you_sure_mark_read") }}')) {
             return;
         }
 
@@ -450,9 +450,9 @@
                 // Update notification count
                 updateNotificationCount();
                 
-                showToast('{{ __("All notifications marked as read") }}', 'success');
+                showToast('{{ __("adminlte.all_notifications_marked_read") }}', 'success');
             } else {
-                showToast('{{ __("Failed to mark notifications as read") }}', 'error');
+                showToast('{{ __("adminlte.failed_mark_read") }}', 'error');
             }
         })
         .catch(error => {

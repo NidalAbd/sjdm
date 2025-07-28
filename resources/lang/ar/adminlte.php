@@ -786,5 +786,20 @@ return [
     'all_read' => 'جميع مقروءة',
     'no_ticket' => 'لا توجد تذكرة',
 
+    // Notifications Page
+    'no_notifications' => 'لا توجد إشعارات',
+    'you_are_all_caught_up' => 'أنت محدث! لا توجد إشعارات جديدة للعرض.',
+    'mark_all_as_read' => 'تحديد الكل كمقروء',
+    'clear_all' => 'مسح الكل',
+    'are_you_sure_mark_read' => 'هل أنت متأكد من أنك تريد تحديد جميع الإشعارات كمقروءة؟',
+    'all_notifications_marked_read' => 'تم تحديد جميع الإشعارات كمقروءة',
+    'failed_mark_read' => 'فشل في تحديد الإشعارات كمقروءة',
+    'are_you_sure_clear_all' => 'هل أنت متأكد من أنك تريد مسح جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.',
+    'all_notifications_cleared' => 'تم مسح جميع الإشعارات',
+    'failed_clear_notifications' => 'فشل في مسح الإشعارات',
+    'showing' => 'عرض',
+    'to' => 'إلى',
+    'of' => 'من',
+
 ];
 
