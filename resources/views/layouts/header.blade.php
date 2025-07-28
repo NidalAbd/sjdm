@@ -1,567 +1,80 @@
-<!-- Header Blade File: header.blade.php -->
-
-<style>
-    body {
-        background-image: url('{{ asset('images/double-bubble-outline.webp') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
-        background-size: auto; /* Adjust the size of the pattern if needed */
-        background-position: center;
-    }
-
-    body {
-        background-image: url('{{ asset('images/double-bubble-outline.webp') }}'); /* Default */
-        background-repeat: repeat;
-        background-size: auto;
-        background-position: center;
-    }
-
-    @media (max-width: 768px) {
-        body {
-            background-image: url('{{ asset('images/double-bubble-outline-small.webp') }}');
-        }
-    }
-
-    .dark-mode {
-        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');
-    }
-
-    @media (max-width: 768px) {
-        .dark-mode {
-            background-image: url('{{ asset('images/double-bubble-dark-small.webp') }}');
-        }
-    }
-
-    .dark-mode .navbar {
-        background-color: #111315 !important;
-    }
-
-    .navbar {
-        background-color: #111315 !important;
-        transition: background-color 0.3s ease;
-    }
-
-    .dark-mode .navbar {
-        background-color: #111315 !important;
-    }
-
-    .navbar .nav-link {
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-        transition: color 0.3s ease;
-    }
-
-    .navbar .nav-link:hover {
-        color: #ff6347; /* Custom hover color */
-    }
-
-    .navbar-brand .circular-logo {
-        border-radius: 50%;
-        max-width: 40px;
-    }
-
-    .navbar-toggler {
-        border: none;
-        outline: none;
-    }
-
-    /* Dropdown menu styling */
-    .dropdown-menu {
-        background-color: #ffffff; /* Light mode dropdown background */
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .dropdown-item {
-        color: #000; /* Light mode dropdown text */
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f8f9fa; /* Light mode hover background */
-        color: #000; /* Light mode hover text color */
-    }
-
-    /* Dark mode styles */
-    .dark-mode {
-        background-color: #365352; /* Dark mode background */
-        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
-        background-size: auto; /* Adjust the size of the pattern if needed */
-    }
-
-    .dark-mode .navbar .nav-link {
-        color: #fff;
-    }
-
-    .dark-mode .navbar .nav-link:hover {
-        color: #ff6347;
-    }
-
-    .dark-mode .navbar-brand .text-white {
-        color: #fff;
-    }
-
-    /* Dark mode dropdown menu styles */
-    .dark-mode .dropdown-menu {
-        background-color: #333; /* Dark mode dropdown background */
-        color: #fff; /* Dark mode dropdown text */
-    }
-
-    .dark-mode .dropdown-item {
-        color: #fff; /* Dark mode dropdown text */
-    }
-
-    .dark-mode .dropdown-item:hover {
-        background-color: #444; /* Dark mode hover background */
-        color: #fff; /* Dark mode hover text color */
-    }
-
-    /* Notification Bell Styles */
-    .notification-bell {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .notification-bell:hover {
-        transform: scale(1.1);
-    }
-
-    .notification-badge {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-        background: linear-gradient(45deg, #ff4757, #ff3742);
-        color: white;
-        border-radius: 50%;
-        padding: 2px 6px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        min-width: 18px;
-        height: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(255, 71, 87, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
-        }
-    }
-
-    .notification-dropdown {
-        width: 350px;
-        max-height: 400px;
-        overflow-y: auto;
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 0;
-    }
-
-    .notification-header {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 12px 12px 0 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .notification-header h6 {
-        margin: 0;
-        font-weight: 600;
-    }
-
-    .mark-all-read {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
-
-    .mark-all-read:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .notification-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background 0.3s ease;
-        cursor: pointer;
-    }
-
-    .notification-item:hover {
-        background: #f8f9fa;
-    }
-
-    .notification-item.unread {
-        background: linear-gradient(90deg, #e3f2fd, #f3e5f5);
-        border-left: 4px solid #2196f3;
-    }
-
-    .notification-item.unread:hover {
-        background: linear-gradient(90deg, #bbdefb, #e1bee7);
-    }
-
-    .notification-content {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .notification-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        font-size: 1.2rem;
-    }
-
-    .notification-icon.message {
-        background: linear-gradient(45deg, #4caf50, #66bb6a);
-        color: white;
-    }
-
-    .notification-icon.ticket {
-        background: linear-gradient(45deg, #ff9800, #ffb74d);
-        color: white;
-    }
-
-    .notification-icon.transaction {
-        background: linear-gradient(45deg, #2196f3, #42a5f5);
-        color: white;
-    }
-
-    .notification-icon.order {
-        background: linear-gradient(45deg, #9c27b0, #ba68c8);
-        color: white;
-    }
-
-    .notification-details {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .notification-title {
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 4px;
-        color: #333;
-    }
-
-    .notification-message {
-        font-size: 0.8rem;
-        color: #666;
-        margin-bottom: 4px;
-        line-height: 1.4;
-    }
-
-    .notification-time {
-        font-size: 0.75rem;
-        color: #999;
-    }
-
-    .notification-footer {
-        padding: 15px 20px;
-        text-align: center;
-        border-top: 1px solid #f0f0f0;
-    }
-
-    .view-all-notifications {
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    .view-all-notifications:hover {
-        color: #5a6fd8;
-    }
-
-    /* Dark mode notification styles */
-    .dark-mode .notification-dropdown {
-        background: #2d3748;
-        border: 1px solid #4a5568;
-    }
-
-    .dark-mode .notification-item {
-        border-bottom-color: #4a5568;
-        color: #e2e8f0;
-    }
-
-    .dark-mode .notification-item:hover {
-        background: #4a5568;
-    }
-
-    .dark-mode .notification-item.unread {
-        background: linear-gradient(90deg, #2c5282, #553c9a);
-        border-left-color: #3182ce;
-    }
-
-    .dark-mode .notification-item.unread:hover {
-        background: linear-gradient(90deg, #2a4365, #553c9a);
-    }
-
-    .dark-mode .notification-title {
-        color: #e2e8f0;
-    }
-
-    .dark-mode .notification-message {
-        color: #a0aec0;
-    }
-
-    .dark-mode .notification-time {
-        color: #718096;
-    }
-
-    .dark-mode .notification-footer {
-        border-top-color: #4a5568;
-    }
-
-    .dark-mode .view-all-notifications {
-        color: #90cdf4;
-    }
-
-    .dark-mode .view-all-notifications:hover {
-        color: #63b3ed;
-    }
-
-    /* Empty state */
-    .notification-empty {
-        padding: 40px 20px;
-        text-align: center;
-        color: #999;
-    }
-
-    .notification-empty i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        opacity: 0.5;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .notification-dropdown {
-            width: 300px;
-            right: -50px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .notification-dropdown {
-            width: 280px;
-            right: -80px;
-        }
-    }
-
-    /* Other Styles */
-    .hero-section {
-        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
-        background-repeat: repeat; /* Repeat the pattern */
-        background-size: auto; /* Adjust the size of the pattern if needed */
-        background-position: center;
-        height: 40vh; /* Adjust height to ensure full display */
-        color: #fff;
-        position: relative;
-        padding-top: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        transition: background 0.3s ease, color 0.3s ease; /* Add transition for smooth theme change */
-    }
-
-    .hero-bg {
-        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
-        opacity: 0.2;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        transition: background 0.3s ease; /* Transition for background change */
-    }
-
-    .dark-mode .hero-bg {
-        background: rgba(0, 0, 0, 0.89); /* Darker overlay for better contrast */
-        opacity: 0.5;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        transition: background 0.3s ease; /* Transition for background change */
-    }
-    .hero-section .container {
-        position: relative;
-        z-index: 2; /* Ensure text container is above the overlay */
-    }
-
-    .text-gradient {
-        background: linear-gradient(90deg, #ff6347, #ff4757);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
-    }
-
-    .btn-primary {
-        background: linear-gradient(90deg, #007bff, #0056b3);
-        border: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(90deg, #0056b3, #007bff);
-        transform: translateY(-3px);
-    }
-
-    .hero-decorative-element {
-        position: absolute;
-        max-width: 50px; /* Adjust size as needed */
-        animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    /* Language Switcher in Navbar Styles */
-    .lang-flag {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        margin-right: 5px;
-    }
-
-    .flag-en {
-        background: linear-gradient(to bottom, #012169 33%, #fff 33%, #fff 66%, #C8102E 66%);
-    }
-
-    .flag-ar {
-        background: linear-gradient(to right, #000 25%, #fff 25%, #fff 50%, #ce1126 50%, #ce1126 75%, #007a3d 75%);
-    }
-
-    /* Language dropdown styling */
-    .language-dropdown .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .language-dropdown .dropdown-menu {
-        min-width: 150px;
-    }
-
-    .language-dropdown .dropdown-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 15px;
-        position: relative;
-    }
-
-    .language-dropdown .dropdown-item.active {
-        background-color: #e3f2fd;
-        font-weight: 600;
-    }
-
-    .language-dropdown .dropdown-item:hover {
-        background-color: #f8f9fa;
-    }
-
-    .dark-mode .language-dropdown .dropdown-item.active {
-        background-color: #2c3e50;
-        color: #fff;
-    }
-
-    .dark-mode .language-dropdown .dropdown-item:hover {
-        background-color: #444;
-    }
-</style>
-
-<!-- Modern Language Switcher -->
-
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+<!-- Modern Header -->
+<nav class="navbar navbar-expand-lg fixed-top modern-navbar" data-aos="fade-down" data-aos-duration="1000">
     <div class="container">
+        <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-            <img src="{{ asset('images/sjdm_logo.png') }}" alt="{{ config('app.name') }} Logo" class="img-fluid circular-logo me-2">
-            <span class="fw-bold text-uppercase text-white">{{ config('app.name') }}</span>
+            <div class="logo-container">
+                <img src="{{ asset('images/sjdm_logo.png') }}" alt="{{ config('app.name') }} Logo" class="logo-img">
+                <div class="logo-glow"></div>
+            </div>
+            <span class="brand-text">{{ config('app.name') }}</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ __('adminlte.toggle_navigation') }}">
-            <span class="navbar-toggler-icon"></span>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler modern-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ __('adminlte.toggle_navigation') }}">
+            <span class="toggler-icon"></span>
         </button>
+
+        <!-- Navigation Menu -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                <!-- Frequently Used Links -->
+                <!-- Main Navigation -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('home') }}">{{ __('adminlte.home') }}</a>
+                    <a class="nav-link modern-link" href="{{ route('home') }}">
+                        <i class="fas fa-home"></i>
+                        <span>{{ __('adminlte.home') }}</span>
+                    </a>
                 </li>
-                <li><a class="nav-link text-white" href="{{ route('services.all') }}">{{ __('adminlte.services') }}</a></li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('about') }}">{{ __('adminlte.about_us') }}</a>
+                    <a class="nav-link modern-link" href="{{ route('services.all') }}">
+                        <i class="fas fa-cogs"></i>
+                        <span>{{ __('adminlte.services') }}</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('contact') }}">{{ __('adminlte.contact_us') }}</a>
+                    <a class="nav-link modern-link" href="{{ route('about') }}">
+                        <i class="fas fa-info-circle"></i>
+                        <span>{{ __('adminlte.about_us') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link modern-link" href="{{ route('contact') }}">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ __('adminlte.contact_us') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link modern-link" href="{{ route('faq') }}">
+                        <i class="fas fa-question-circle"></i>
+                        <span>{{ __('adminlte.faq') }}</span>
+                    </a>
                 </li>
 
-                <!-- Additional Links -->
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('faq') }}">{{ __('adminlte.faq') }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="{{ route('privacy-policy') }}">{{ __('adminlte.privacy_policy') }}</a>
-                </li>
-
-                <!-- User-Specific Links -->
+                <!-- Guest/Auth Navigation -->
                 @guest
-                    <!-- Links for Guests -->
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('login') }}">{{ __('adminlte.sign_in') }}</a>
+                        <a class="nav-link modern-link auth-link" href="{{ route('login') }}">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>{{ __('adminlte.sign_in') }}</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
+                        <a class="nav-link modern-link auth-link register" href="{{ route('register') }}">
+                            <i class="fas fa-user-plus"></i>
+                            <span>{{ __('adminlte.register') }}</span>
+                        </a>
                     </li>
                 @else
-                    <!-- Notification Bell for Authenticated Users -->
+                    <!-- Notifications -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white notification-bell" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link modern-link notification-bell" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-bell"></i>
                             @if(Auth::user()->unreadNotifications->count() > 0)
                                 <span class="notification-badge">{{ Auth::user()->unreadNotifications->count() }}</span>
                             @endif
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
-                            <div class="notification-header">
+                        <div class="dropdown-menu modern-dropdown notification-dropdown" aria-labelledby="notificationDropdown">
+                            <div class="dropdown-header">
                                 <h6>{{ __('Notifications') }}</h6>
                                 @if(Auth::user()->unreadNotifications->count() > 0)
                                     <button class="mark-all-read" onclick="markAllAsRead()">
@@ -612,7 +125,7 @@
                                             }
                                         @endphp
                                         
-                                        <div class="notification-item unread" onclick="handleNotificationClick('{{ $notification->id }}', '{{ $url }}')">
+                                        <div class="dropdown-item notification-item unread" onclick="handleNotificationClick('{{ $notification->id }}', '{{ $url }}')">
                                             <div class="notification-content">
                                                 <div class="notification-icon {{ $notificationType }}">
                                                     <i class="{{ $iconClass }}"></i>
@@ -626,14 +139,14 @@
                                         </div>
                                     @endforeach
                                 @else
-                                    <div class="notification-empty">
+                                    <div class="dropdown-item notification-empty">
                                         <i class="fas fa-bell-slash"></i>
                                         <p>{{ __('No new notifications') }}</p>
                                     </div>
                                 @endif
                             </div>
                             
-                            <div class="notification-footer">
+                            <div class="dropdown-footer">
                                 <a href="{{ route('notifications.index') }}" class="view-all-notifications">
                                     {{ __('View all notifications') }}
                                 </a>
@@ -641,69 +154,90 @@
                         </div>
                     </li>
 
-                    <!-- User Profile Dropdown -->
+                    <!-- User Profile -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <!-- Profile Image -->
-                            <img src="{{ Auth::user()->adminlte_image() }}" alt="Profile Image" class="rounded-circle me-2" style="width: 30px; height: 30px;">
-                            {{ Auth::user()->name }}
+                        <a class="nav-link modern-link user-profile" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="profile-avatar">
+                                <img src="{{ Auth::user()->adminlte_image() }}" alt="Profile Image" class="avatar-img">
+                                <div class="avatar-status"></div>
+                            </div>
+                            <span class="user-name">{{ Auth::user()->name }}</span>
+                            <i class="fas fa-chevron-down"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
-                            <li><a class="dropdown-item" href="{{ route('dashboard') }}">{{ __('adminlte.dashboard') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}">{{ __('adminlte.profile') }}</a></li>
+                        <ul class="dropdown-menu modern-dropdown user-dropdown" aria-labelledby="navbarDropdownUser">
                             <li>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    {{ __('adminlte.log_out') }}
+                                <a class="dropdown-item" href="{{ route('dashboard') }}">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>{{ __('adminlte.dashboard') }}</span>
                                 </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                    @csrf
-                                </form>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile.settings') }}">
+                                    <i class="fas fa-user-cog"></i>
+                                    <span>{{ __('adminlte.profile') }}</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item logout-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>{{ __('adminlte.log_out') }}</span>
+                                </a>
                             </li>
                         </ul>
                     </li>
                 @endguest
 
-                <!-- Language Dropdown -->
+                <!-- Language Switcher -->
                 <li class="nav-item dropdown language-dropdown">
                     @php
                         $currentLanguage = app()->getLocale();
                     @endphp
 
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        @if($currentLanguage === 'en')
-                            <span class="lang-flag flag-en"></span>
-                            English
-                        @else
-                            <span class="lang-flag flag-ar"></span>
-                            العربية
-                        @endif
+                    <a class="nav-link modern-link language-link" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="language-flag">
+                            @if($currentLanguage === 'en')
+                                <span class="flag-icon flag-en"></span>
+                            @else
+                                <span class="flag-icon flag-ar"></span>
+                            @endif
+                        </div>
+                        <span class="language-text">
+                            @if($currentLanguage === 'en')
+                                English
+                            @else
+                                العربية
+                            @endif
+                        </span>
+                        <i class="fas fa-chevron-down"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
+                    <ul class="dropdown-menu modern-dropdown language-dropdown-menu" aria-labelledby="navbarDropdownLanguage">
                         <li>
                             <a class="dropdown-item {{ $currentLanguage === 'en' ? 'active' : '' }}" href="{{ route('changeLang', 'en') }}">
-                                <span class="lang-flag flag-en"></span>
-                                English
+                                <span class="flag-icon flag-en"></span>
+                                <span>English</span>
                                 @if($currentLanguage === 'en')
-                                    <i class="fas fa-check ms-auto text-success"></i>
+                                    <i class="fas fa-check"></i>
                                 @endif
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item {{ $currentLanguage === 'ar' ? 'active' : '' }}" href="{{ route('changeLang', 'ar') }}">
-                                <span class="lang-flag flag-ar"></span>
-                                العربية
+                                <span class="flag-icon flag-ar"></span>
+                                <span>العربية</span>
                                 @if($currentLanguage === 'ar')
-                                    <i class="fas fa-check ms-auto text-success"></i>
+                                    <i class="fas fa-check"></i>
                                 @endif
                             </a>
                         </li>
                     </ul>
                 </li>
+
+                <!-- Theme Toggle -->
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#" id="darkModeToggle">
+                    <button class="nav-link modern-link theme-toggle" id="darkModeToggle" aria-label="Toggle theme">
                         <i class="fas fa-moon"></i>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -715,88 +249,457 @@
     @csrf
 </form>
 
-<!-- Hero Section -->
-<section id="hero-sec" class="hero-section d-flex align-items-center justify-content-center text-center text-white position-relative overflow-hidden">
-    <!-- Gradient Background -->
-    <div class="hero-bg"></div>
+<style>
+    /* Modern Navbar Styles */
+    .modern-navbar {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
 
-    <!-- Content Container -->
-    <div class="container">
-        <h1 class="display-4 fw-bold mb-4 text-gradient" data-aos="fade-up" data-aos-duration="1500">
-            {!! __('adminlte.empower_social_influence') !!}
-        </h1>
-        <p class="lead mb-4" data-aos="fade-up" data-aos-duration="2000">
+    [data-theme="dark"] .modern-navbar {
+        background: rgba(15, 23, 42, 0.9);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-        </p>
-        <div class="container">
-            <div class="row justify-content-center g-2">
-                <!-- Instagram Card -->
-                <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2000">
-                    <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
-                        <div class="card-body">
-                            <i class="fab fa-instagram text-danger"></i>
-                            <p class="card-text fs-6">$2.60 <small>/ 1K Followers</small></p>
-                            <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Facebook Card -->
-                <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2200">
-                    <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
-                        <div class="card-body">
-                            <i class="fab fa-facebook text-primary"></i>
-                            <p class="card-text fs-6">$2.40 <small>/ 1K Followers</small></p>
-                            <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- TikTok Card -->
-                <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2400">
-                    <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
-                        <div class="card-body">
-                            <i class="fab fa-tiktok text-dark"></i>
-                            <p class="card-text fs-6">$3.40 <small>/ 1K Followers</small></p>
-                            <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    /* Logo Styles */
+    .logo-container {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        margin-right: 0.75rem;
+    }
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check localStorage for theme
-        const savedTheme = localStorage.getItem('theme') || 'light-mode';
-        document.body.classList.add(savedTheme);
-        updateThemeIcon(savedTheme);
+    .logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        z-index: 2;
+        position: relative;
+    }
 
-        // Theme Toggle
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            const body = document.body;
-            const isDarkMode = body.classList.contains('dark-mode');
+    .logo-glow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: 8px;
+        opacity: 0.3;
+        filter: blur(8px);
+        animation: logoGlow 3s ease-in-out infinite;
+    }
 
-            body.classList.toggle('dark-mode', !isDarkMode);
-            const newTheme = isDarkMode ? 'light-mode' : 'dark-mode';
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-        });
+    @keyframes logoGlow {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.6; }
+    }
 
-        // Update theme icon based on the current theme
-        function updateThemeIcon(theme) {
-            const themeIcon = document.getElementById('darkModeToggle').querySelector('i');
-            themeIcon.classList.toggle('fa-moon', theme !== 'dark-mode');
-            themeIcon.classList.toggle('fa-sun', theme === 'dark-mode');
+    .brand-text {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Navigation Links */
+    .modern-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-primary) !important;
+        font-weight: 500;
+        padding: 0.75rem 1rem !important;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modern-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .modern-link:hover::before {
+        left: 100%;
+    }
+
+    .modern-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--primary-color) !important;
+        transform: translateY(-2px);
+    }
+
+    .modern-link i {
+        font-size: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .modern-link:hover i {
+        transform: scale(1.1);
+    }
+
+    /* Auth Links */
+    .auth-link {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white !important;
+        border-radius: 12px;
+        margin: 0 0.25rem;
+    }
+
+    .auth-link:hover {
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .auth-link.register {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+    }
+
+    .auth-link.register:hover {
+        background: linear-gradient(135deg, #059669, var(--success-color));
+    }
+
+    /* Mobile Toggle */
+    .modern-toggler {
+        border: none;
+        padding: 0.5rem;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .modern-toggler:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .toggler-icon {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--text-primary);
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .toggler-icon::before,
+    .toggler-icon::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 2px;
+        background: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .toggler-icon::before {
+        top: -6px;
+    }
+
+    .toggler-icon::after {
+        top: 6px;
+    }
+
+    /* Notifications */
+    .notification-bell {
+        position: relative;
+        padding: 0.75rem !important;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .notification-bell:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: linear-gradient(45deg, var(--danger-color), #dc2626);
+        color: white;
+        border-radius: 50%;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        min-width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+    }
+
+    /* User Profile */
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem !important;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .user-profile:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .profile-avatar {
+        position: relative;
+        width: 32px;
+        height: 32px;
+    }
+
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .avatar-status {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 8px;
+        height: 8px;
+        background: var(--success-color);
+        border-radius: 50%;
+        border: 2px solid var(--bg-primary);
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    /* Language Switcher */
+    .language-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem !important;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .language-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .language-flag {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .flag-icon {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .flag-en {
+        background: linear-gradient(to bottom, #012169 33%, #fff 33%, #fff 66%, #C8102E 66%);
+    }
+
+    .flag-ar {
+        background: linear-gradient(to right, #000 25%, #fff 25%, #fff 50%, #ce1126 50%, #ce1126 75%, #007a3d 75%);
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+        padding: 0.75rem !important;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+
+    /* Dropdowns */
+    .modern-dropdown {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        box-shadow: var(--shadow-xl);
+        padding: 0.5rem;
+        min-width: 250px;
+    }
+
+    [data-theme="dark"] .modern-dropdown {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dropdown-header h6 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .mark-all-read {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.25rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .mark-all-read:hover {
+        background: var(--primary-dark);
+        transform: scale(1.05);
+    }
+
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        color: var(--text-primary);
+    }
+
+    .dropdown-item:hover {
+        background: rgba(99, 102, 241, 0.1);
+        transform: translateX(5px);
+    }
+
+    .dropdown-item.active {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .dropdown-divider {
+        border-color: var(--border-color);
+        margin: 0.5rem 0;
+    }
+
+    .logout-item {
+        color: var(--danger-color) !important;
+    }
+
+    .logout-item:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 991px) {
+        .navbar-collapse {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        // Initialize notification system
-        initializeNotifications();
+        [data-theme="dark"] .navbar-collapse {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .modern-link {
+            padding: 1rem !important;
+            border-radius: 8px;
+            margin: 0.25rem 0;
+        }
+
+        .auth-link {
+            margin: 0.5rem 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .brand-text {
+            font-size: 1rem;
+        }
+
+        .user-name {
+            display: none;
+        }
+
+        .language-text {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.modern-navbar');
+        const isDarkMode = document.body.getAttribute('data-theme') === 'dark';
+        
+        if (window.scrollY > 50) {
+            if (isDarkMode) {
+                navbar.style.background = 'rgba(15, 23, 42, 0.95)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+            navbar.style.backdropFilter = 'blur(20px)';
+            navbar.style.boxShadow = 'var(--shadow-lg)';
+        } else {
+            if (isDarkMode) {
+                navbar.style.background = 'rgba(15, 23, 42, 0.9)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.1)';
+            }
+            navbar.style.backdropFilter = 'blur(20px)';
+            navbar.style.boxShadow = 'none';
+        }
+    });
+
+    // Add hover effects to navigation links
+    document.querySelectorAll('.modern-link').forEach(link => {
+        link.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+
+        link.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
     });
 
     // Notification functions
     function initializeNotifications() {
-        // Poll for new notifications every 30 seconds
         setInterval(fetchLatestNotifications, 30000);
     }
 
@@ -834,7 +737,7 @@
 
         if (notifications.length === 0) {
             notificationList.innerHTML = `
-                <div class="notification-empty">
+                <div class="dropdown-item notification-empty">
                     <i class="fas fa-bell-slash"></i>
                     <p>{{ __('No new notifications') }}</p>
                 </div>
@@ -851,7 +754,7 @@
             const url = getNotificationUrl(notification);
 
             html += `
-                <div class="notification-item unread" onclick="handleNotificationClick('${notification.id}', '${url}')">
+                <div class="dropdown-item notification-item unread" onclick="handleNotificationClick('${notification.id}', '${url}')">
                     <div class="notification-content">
                         <div class="notification-icon ${notificationType}">
                             <i class="${iconClass}"></i>
@@ -917,18 +820,14 @@
     }
 
     function handleNotificationClick(notificationId, url) {
-        // Mark as read
         fetch(`/notifications/${notificationId}/markAsRead`)
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Remove the unread class
                     const notificationItem = event.target.closest('.notification-item');
                     if (notificationItem) {
                         notificationItem.classList.remove('unread');
                     }
-                    
-                    // Navigate to the URL
                     window.location.href = url;
                 }
             })
@@ -946,15 +845,10 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Remove unread classes from all notifications
                 document.querySelectorAll('.notification-item.unread').forEach(item => {
                     item.classList.remove('unread');
                 });
-                
-                // Update badge
                 updateNotificationBadge(0);
-                
-                // Update mark all read button
                 const markAllButton = document.querySelector('.mark-all-read');
                 if (markAllButton) {
                     markAllButton.style.display = 'none';
@@ -963,186 +857,10 @@
         })
         .catch(error => console.error('Error marking all notifications as read:', error));
     }
+
+    // Initialize notifications if user is authenticated
+    if (document.querySelector('.notification-bell')) {
+        initializeNotifications();
+    }
+});
 </script>
-<style>
-    /* General Section Title Styling */
-    .platform-title, .achievements-title {
-        font-size: 2.5rem; /* Increased font size for better visibility */
-        font-weight: 700;
-        text-transform: uppercase;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-        letter-spacing: 1.2px;
-        color: var(--bs-body-color); /* Dynamic color based on theme */
-    }
-
-    .platform-title::after, .achievements-title::after {
-        content: '';
-        display: block;
-        margin: 0 auto;
-        width: 60px;
-        height: 3px;
-        background-color: var(--bs-primary); /* Primary color */
-        margin-top: 10px;
-    }
-
-    /* Stats Box Styling */
-    .stats-box {
-        background-color: var(--bs-body-bg); /* Dynamic background for light/dark mode */
-        border-radius: 15px;
-        text-align: center;
-        padding: 30px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-        color: var(--bs-body-color); /* Dynamic text color */
-    }
-
-    .stats-box:hover {
-        transform: translateY(-10px);
-        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .stats-title {
-        font-size: 1.8rem; /* Increased font size for titles */
-        font-weight: 700; /* Increased font weight for emphasis */
-        color: var(--bs-body-color); /* Dynamic text color */
-        margin-bottom: 15px;
-    }
-
-    .stats-value {
-        font-size: 2.8rem; /* Increased font size for values */
-        font-weight: 800;
-        color: var(--bs-primary); /* Primary color for values */
-        margin-bottom: 15px;
-    }
-
-    .metric-description {
-        font-size: 1.2rem; /* Increased font size for better readability */
-        font-weight: 600;
-        color: var(--bs-secondary-color); /* Secondary text color */
-        margin-bottom: 10px;
-    }
-
-    /* Icon and Image Styling */
-    .icon-circle, .stat-pic {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50%;
-    }
-
-    .icon-circle {
-        width: 100px;
-        height: 100px;
-        font-size: 3.5rem;
-        color: #ffffff; /* Ensure icons are white for contrast */
-    }
-
-    .stat-pic {
-        height: 100px; /* Increased icon size */
-        font-size: 5rem;
-        color: var(--bs-primary); /* Primary color for icons */
-        margin-bottom: 10px;
-    }
-
-    .widget-icon {
-        max-height: 80px; /* Increased icon size */
-        color: var(--bs-body-color); /* Dynamic color based on theme */
-        transition: transform 0.3s ease;
-    }
-
-    .widget-icon:hover {
-        transform: rotate(10deg) scale(1.1);
-    }
-
-    /* Form and Button Styling */
-    .form-floating .form-control:focus {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: none;
-    }
-
-    .form-floating label {
-        color: var(--bs-secondary-color);
-    }
-
-    .position-relative .form-control {
-        padding-right: 3rem; /* Ensure there's space for the icon */
-    }
-
-    .position-absolute i.material-icons {
-        font-size: 1.5rem;
-        color: var(--bs-secondary-color);
-    }
-
-    .btn-primary {
-        transition: background-color 0.3s ease;
-        background-image: linear-gradient(90deg, rgba(0, 123, 255, 1) 0%, rgba(0, 70, 178, 1) 100%);
-        border: none;
-    }
-
-    .btn-primary:hover {
-        background-image: linear-gradient(90deg, rgba(0, 70, 178, 1) 0%, rgba(0, 123, 255, 1) 100%);
-    }
-
-    /* Card Styling */
-    .card {
-        border-radius: 1rem;
-    }
-
-    .card-body {
-        background-color: var(--bs-body-bg); /* Dynamic background for dark/light mode */
-        color: var(--bs-body-color); /* Dynamic text color for dark/light mode */
-        border-radius: 1rem;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Dark Mode Styles */
-    .dark-mode .stats-box, .dark-mode .card-body {
-        background-color: #343a40; /* Dark mode background */
-        color: #ffffff; /* Light text in dark mode */
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); /* Slightly darker shadow for dark mode */
-    }
-
-    .dark-mode .achievements-title,
-    .dark-mode .platform-title,
-    .dark-mode .stats-title,
-    .dark-mode .stats-value,
-    .dark-mode .stats-box h3,
-    .dark-mode .metric-description {
-        color: #ffffff; /* White text for contrast in dark mode */
-    }
-
-    .dark-mode .stat-pic, .dark-mode .icon-circle {
-        color: var(--bs-primary); /* Primary color for icons in dark mode */
-    }
-
-    .dark-mode .icon-circle {
-        background-color: #495057; /* Dark mode icon circle background */
-        color: #ffffff; /* White color for icons */
-    }
-
-    .dark-mode .widget-icon {
-        filter: brightness(0) invert(1); /* Invert colors to make icons white in dark mode */
-    }
-
-    .dark-mode .form-floating .form-control {
-        background-color: #495057;
-        color: #ffffff;
-    }
-
-    .dark-mode .form-floating label,
-    .dark-mode .form-check-label {
-        color: #ffffff;
-    }
-
-    .dark-mode .form-check-input {
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
-
-    .dark-mode .position-absolute i.material-icons {
-        color: #ffffff; /* Adjust icon color for dark mode */
-    }
-</style>

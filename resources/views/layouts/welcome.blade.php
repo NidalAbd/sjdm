@@ -44,7 +44,7 @@
         }
     }
 @endphp
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', $currentLanguage) }}" dir="{{ $currentLanguage === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
@@ -185,27 +185,254 @@
         gtag('config', 'G-ZWMQW2P5G8');
     </script>
 
-    <!-- Fonts -->
-    <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @if($currentLanguage === 'ar')
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @endif
 
-    <!-- Styles -->
+    <!-- Modern CSS Libraries -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
 
-    <!-- Custom Styles -->
+    <!-- Modern Custom Styles -->
     <style>
+        :root {
+            /* Modern Color Palette */
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            
+            /* Neutral Colors */
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Light Theme */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        /* Dark Theme Variables */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         html {
             scroll-behavior: smooth;
+            font-size: 16px;
         }
 
         body {
-            font-family: {{ $currentLanguage === 'ar' ? "'Cairo', sans-serif" : "'Nunito', sans-serif" }};
+            font-family: {{ $currentLanguage === 'ar' ? "'Cairo', sans-serif" : "'Inter', sans-serif" }};
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Modern Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .display-1 { font-size: 3.5rem; font-weight: 800; }
+        .display-2 { font-size: 3rem; font-weight: 800; }
+        .display-3 { font-size: 2.5rem; font-weight: 700; }
+        .display-4 { font-size: 2rem; font-weight: 700; }
+
+        /* Modern Buttons */
+        .btn {
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        }
+
+        /* Modern Cards */
+        .card {
+            border: none;
+            border-radius: 20px;
+            background: var(--bg-primary);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+
+        [data-theme="dark"] .glass {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Modern Forms */
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 16px 20px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+
+        .form-floating > .form-control {
+            padding-top: 24px;
+            padding-bottom: 8px;
+        }
+
+        .form-floating > label {
+            padding: 16px 20px;
+            color: var(--text-secondary);
+        }
+
+        /* Modern Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Utility Classes */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bg-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .rounded-xl {
+            border-radius: 20px;
+        }
+
+        .shadow-soft {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
         }
 
         /* RTL Support */
@@ -244,13 +471,56 @@
         }
         @endif
 
-        /* Your existing styles can go here... */
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .display-1 { font-size: 2.5rem; }
+            .display-2 { font-size: 2rem; }
+            .display-3 { font-size: 1.75rem; }
+            .display-4 { font-size: 1.5rem; }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
     </style>
 </head>
 
-<body class="{{ session('dark_mode', false) ? 'dark-mode' : 'light-mode' }}">
-
-<!-- Include Header (which now contains the language switcher) -->
+<body data-theme="light">
+<!-- Include Header -->
 @include('layouts.header')
 
 <div class="d-flex justify-content-center">
@@ -284,41 +554,161 @@
 <!-- Include Footer -->
 @include('layouts.footer')
 
-<!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Modern Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
 <script>
-    $(document).ready(function(){
-        AOS.init(); // Initialize AOS for animations
+    // Modern Theme Management
+    class ThemeManager {
+        constructor() {
+            this.theme = localStorage.getItem('theme') || 'light';
+            this.init();
+        }
 
-        // Your existing script for FAQs
-        const faqList = document.getElementById('faq-list');
-        if (faqList) {
-            const answers = document.querySelectorAll('.faq-answer');
-            faqList.addEventListener('click', function(e) {
-                if (e.target && e.target.matches('li.list-group-item')) {
-                    const answerId = e.target.getAttribute('data-answer');
-                    // Hide all answers
-                    answers.forEach(answer => answer.style.display = 'none');
-                    // Show the selected answer
-                    document.getElementById(answerId).style.display = 'block';
-                }
+        init() {
+            document.body.setAttribute('data-theme', this.theme);
+            this.updateThemeIcon();
+            this.bindEvents();
+        }
+
+        toggle() {
+            this.theme = this.theme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', this.theme);
+            localStorage.setItem('theme', this.theme);
+            this.updateThemeIcon();
+        }
+
+        updateThemeIcon() {
+            const icon = document.querySelector('#darkModeToggle i');
+            if (icon) {
+                icon.className = this.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        bindEvents() {
+            const toggleBtn = document.getElementById('darkModeToggle');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => this.toggle());
+            }
+        }
+    }
+
+    // Modern Animation Manager
+    class AnimationManager {
+        constructor() {
+            this.init();
+        }
+
+        init() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-out-cubic',
+                once: true,
+                offset: 100
             });
         }
 
-        // Initialize Slick Carousel if it exists
+        addScrollAnimation(element, animation = 'fadeInUp') {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(30px)';
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+
+            observer.observe(element);
+        }
+    }
+
+    // Modern Form Manager
+    class FormManager {
+        constructor() {
+            this.init();
+        }
+
+        init() {
+            this.setupFloatingLabels();
+            this.setupFormValidation();
+        }
+
+        setupFloatingLabels() {
+            const inputs = document.querySelectorAll('.form-floating input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', () => {
+                    if (!input.value) {
+                        input.parentElement.classList.remove('focused');
+                    }
+                });
+            });
+        }
+
+        setupFormValidation() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<span class="loading"></span> Loading...';
+                        submitBtn.disabled = true;
+                    }
+                });
+            });
+        }
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        new ThemeManager();
+        new AnimationManager();
+        new FormManager();
+
+        // Initialize Slick Carousel
         if ($('.mobile-slider').length) {
             $('.mobile-slider').slick({
                 autoplay: true,
-                autoplaySpeed: 2000,
+                autoplaySpeed: 3000,
                 arrows: false,
-                dots: false,
-                rtl: {{ $currentLanguage === 'ar' ? 'true' : 'false' }}
+                dots: true,
+                rtl: {{ $currentLanguage === 'ar' ? 'true' : 'false' }},
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
             });
         }
+
+        // Add smooth scrolling to all links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     });
 </script>
 

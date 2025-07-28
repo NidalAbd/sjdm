@@ -1,204 +1,546 @@
-<div class="row mb-5 mt-5">
-    <div class="col-12">
-        <h4 class="text-center mb-4 platform-title">{{ __('adminlte.platforms_we_support') }}</h4>
-        <div class="row justify-content-center">
-            <!-- Platform cards -->
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-facebook fa-2x"></i>
+<div class="platforms-section" data-aos="fade-up" data-aos-duration="1000">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">{{ __('adminlte.platforms_we_support') }}</h2>
+            <p class="section-subtitle">{{ __('adminlte.choose_your_platform') }}</p>
+        </div>
+
+        <div class="platforms-grid">
+            <!-- Facebook -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="100">
+                <div class="platform-icon facebook">
+                    <i class="fab fa-facebook"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.facebook') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.facebook') }}</h3>
+                <p class="platform-description">{{ __('adminlte.facebook_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>1M+ Followers</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>24h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-instagram fa-2x"></i>
+
+            <!-- Instagram -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="200">
+                <div class="platform-icon instagram">
+                    <i class="fab fa-instagram"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.instagram') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.instagram') }}</h3>
+                <p class="platform-description">{{ __('adminlte.instagram_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>2M+ Followers</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>12h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-dark text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-tiktok fa-2x"></i>
+
+            <!-- TikTok -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="300">
+                <div class="platform-icon tiktok">
+                    <i class="fab fa-tiktok"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.tiktok') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.tiktok') }}</h3>
+                <p class="platform-description">{{ __('adminlte.tiktok_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>500K+ Followers</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>6h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-google fa-2x"></i>
+
+            <!-- YouTube -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="400">
+                <div class="platform-icon youtube">
+                    <i class="fab fa-youtube"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.google') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.youtube') }}</h3>
+                <p class="platform-description">{{ __('adminlte.youtube_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>300K+ Subscribers</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>48h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-twitter fa-2x"></i>
+
+            <!-- Twitter -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="500">
+                <div class="platform-icon twitter">
+                    <i class="fab fa-twitter"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.twitter') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.twitter') }}</h3>
+                <p class="platform-description">{{ __('adminlte.twitter_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>800K+ Followers</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>18h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-youtube fa-2x"></i>
+
+            <!-- LinkedIn -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="600">
+                <div class="platform-icon linkedin">
+                    <i class="fab fa-linkedin"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.youtube') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.linkedin') }}</h3>
+                <p class="platform-description">{{ __('adminlte.linkedin_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>200K+ Connections</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>36h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-spotify fa-2x"></i>
+
+            <!-- Telegram -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="700">
+                <div class="platform-icon telegram">
+                    <i class="fab fa-telegram"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.spotify') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.telegram') }}</h3>
+                <p class="platform-description">{{ __('adminlte.telegram_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>150K+ Members</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>4h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-snapchat fa-2x"></i>
+
+            <!-- Discord -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="800">
+                <div class="platform-icon discord">
+                    <i class="fab fa-discord"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.snapchat') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.discord') }}</h3>
+                <p class="platform-description">{{ __('adminlte.discord_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>100K+ Members</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>8h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-linkedin fa-2x"></i>
+
+            <!-- Spotify -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="900">
+                <div class="platform-icon spotify">
+                    <i class="fab fa-spotify"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.linkedin') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.spotify') }}</h3>
+                <p class="platform-description">{{ __('adminlte.spotify_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>50K+ Followers</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>24h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-telegram fa-2x"></i>
+
+            <!-- Snapchat -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="1000">
+                <div class="platform-icon snapchat">
+                    <i class="fab fa-snapchat"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.telegram') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.snapchat') }}</h3>
+                <p class="platform-description">{{ __('adminlte.snapchat_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>75K+ Followers</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>12h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fab fa-discord fa-2x"></i>
+
+            <!-- Google -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="1100">
+                <div class="platform-icon google">
+                    <i class="fab fa-google"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.discord') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.google') }}</h3>
+                <p class="platform-description">{{ __('adminlte.google_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>25K+ Reviews</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>72h Delivery</span>
+                    </span>
+                </div>
             </a>
-            <a href="{{ route('orders.create') }}" class="col-lg-2 col-md-3 col-sm-4 col-4 platform-card text-center aos-init aos-animate" data-aos="flip-up" data-aos-duration="1000">
-                <div class="platform-icon bg-warning text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                    <i class="fas fa-star fa-2x"></i>
+
+            <!-- Reviews -->
+            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="1200">
+                <div class="platform-icon reviews">
+                    <i class="fas fa-star"></i>
                 </div>
-                <p class="platform-text">{{ __('adminlte.reviews') }}</p>
+                <h3 class="platform-name">{{ __('adminlte.reviews') }}</h3>
+                <p class="platform-description">{{ __('adminlte.reviews_description') }}</p>
+                <div class="platform-stats">
+                    <span class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>10K+ Reviews</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>24h Delivery</span>
+                    </span>
+                </div>
             </a>
         </div>
     </div>
 </div>
 
-<!-- Include Font Awesome and AOS for animations -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-
 <style>
-    .platform-title {
-        font-size: 2rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: #333;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-        letter-spacing: 1px;
+    .platforms-section {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+        position: relative;
+    }
+
+    .platforms-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .section-header {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .platforms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
     }
 
     .platform-card {
-        margin: 20px 0;
-        transition: all 0.3s ease;
-        text-decoration: none; /* Remove underline */
+        background: var(--bg-primary);
+        border-radius: 20px;
+        padding: 2rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .platform-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .platform-card:hover::before {
+        left: 100%;
     }
 
     .platform-card:hover {
-        transform: translateY(-10px);
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-color);
     }
-
-    .platform-card:hover .platform-text {
-        color: #007bff;
-    }
-
 
     .platform-icon {
-        width: 80px; /* Consistent icon size */
-        height: 80px; /* Consistent icon size */
-        margin-bottom: 10px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .platform-card:hover .platform-icon {
-        transform: scale(1.1);
-    }
-
-    .platform-text {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #333;
-        transition: color 0.3s ease;
-    }
-
-    .platform-card:hover .platform-text {
-        color: #007bff;
-    }
-
-    .platform-icon i {
-        font-size: 2rem; /* Consistent icon size */
-    }
-
-    .platform-card:hover {
-        transform: translateY(-10px);
-    }
-
-    .row {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
         justify-content: center;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
     }
 
-    /* Dark mode styles */
-    .dark-mode .platform-title {
-        color: #ffffff;
+    .platform-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
     }
 
-    .dark-mode .platform-text {
-        color: #ffffff;
+    .platform-card:hover .platform-icon::before {
+        transform: translateX(100%);
     }
 
-    .dark-mode .platform-card:hover .platform-text {
-        color: #007bff;
+    /* Platform-specific colors */
+    .facebook { background: linear-gradient(135deg, #1877f2, #0d6efd); }
+    .instagram { background: linear-gradient(135deg, #e4405f, #c13584); }
+    .tiktok { background: linear-gradient(135deg, #000000, #25f4ee); }
+    .youtube { background: linear-gradient(135deg, #ff0000, #cc0000); }
+    .twitter { background: linear-gradient(135deg, #1da1f2, #0d8bd9); }
+    .linkedin { background: linear-gradient(135deg, #0077b5, #005885); }
+    .telegram { background: linear-gradient(135deg, #0088cc, #0077b5); }
+    .discord { background: linear-gradient(135deg, #5865f2, #4752c4); }
+    .spotify { background: linear-gradient(135deg, #1db954, #1ed760); }
+    .snapchat { background: linear-gradient(135deg, #fffc00, #ffd700); }
+    .google { background: linear-gradient(135deg, #4285f4, #34a853); }
+    .reviews { background: linear-gradient(135deg, #ff6b35, #f7931e); }
+
+    .platform-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
     }
 
-    /* Responsive styles */
+    .platform-description {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .platform-stats {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        background: var(--bg-secondary);
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .platform-card:hover .stat-item {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .stat-item i {
+        font-size: 0.8rem;
+    }
+
+    /* Dark mode adjustments */
+    [data-theme="dark"] .platforms-section {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    }
+
+    [data-theme="dark"] .platform-card {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .platform-card:hover {
+        background: rgba(30, 41, 59, 0.9);
+        border-color: var(--primary-color);
+    }
+
+    /* Responsive design */
     @media (max-width: 768px) {
-        .platform-icon {
-            width: 60px; /* Smaller icon size for mobile */
-            height: 60px; /* Smaller icon size for mobile */
+        .platforms-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
         }
 
-        .platform-icon i {
-            font-size: 1.5rem; /* Smaller icon size for mobile */
+        .section-title {
+            font-size: 2rem;
         }
 
-        .platform-text {
-            font-size: 0.8rem; /* Smaller text size for mobile */
-        }
-    }
-
-    @media (max-width: 576px) {
         .platform-card {
-            margin: 10px 0; /* Reduce margin for smaller screens */
+            padding: 1.5rem;
+        }
+
+        .platform-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .platform-stats {
+            flex-direction: column;
+            gap: 0.5rem;
         }
     }
+
+    @media (max-width: 480px) {
+        .platforms-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .platform-card {
+            padding: 1.25rem;
+        }
+    }
+
+    /* Animation for platform cards */
+    @keyframes cardFloat {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+
+    .platform-card {
+        animation: cardFloat 6s ease-in-out infinite;
+    }
+
+    .platform-card:nth-child(2) { animation-delay: 0.5s; }
+    .platform-card:nth-child(3) { animation-delay: 1s; }
+    .platform-card:nth-child(4) { animation-delay: 1.5s; }
+    .platform-card:nth-child(5) { animation-delay: 2s; }
+    .platform-card:nth-child(6) { animation-delay: 2.5s; }
+    .platform-card:nth-child(7) { animation-delay: 3s; }
+    .platform-card:nth-child(8) { animation-delay: 3.5s; }
+    .platform-card:nth-child(9) { animation-delay: 4s; }
+    .platform-card:nth-child(10) { animation-delay: 4.5s; }
+    .platform-card:nth-child(11) { animation-delay: 5s; }
+    .platform-card:nth-child(12) { animation-delay: 5.5s; }
 </style>
 
 <script>
-    $(document).ready(function() {
-        AOS.init(); // Initialize AOS for animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Add intersection observer for better performance
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
 
-        // Check localStorage for theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.body.classList.add(savedTheme);
-        }
-
-        // Theme Toggle
-        $('#themeToggle').on('click', function() {
-            if ($('body').hasClass('dark-mode')) {
-                $('body').removeClass('dark-mode');
-                localStorage.setItem('theme', 'light-mode');
-            } else {
-                $('body').addClass('dark-mode');
-                localStorage.setItem('theme', 'dark-mode');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
         });
+    }, observerOptions);
+
+    // Observe all platform cards
+    document.querySelectorAll('.platform-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        observer.observe(card);
     });
+
+    // Add click tracking
+    document.querySelectorAll('.platform-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Add ripple effect
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple 0.6s linear';
+            ripple.style.left = (e.clientX - this.offsetLeft) + 'px';
+            ripple.style.top = (e.clientY - this.offsetTop) + 'px';
+            ripple.style.width = ripple.style.height = '20px';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+});
+
+// Add ripple animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
