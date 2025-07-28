@@ -358,6 +358,7 @@
                                 <th>{{ __('adminlte.remains') }}</th>
                                 <th>{{ __('adminlte.date') }}</th>
                                 <th>{{ __('adminlte.status') }}</th>
+                                <th>{{ __('adminlte.support_status') }}</th>
                                 <th class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
                             </tfoot>
