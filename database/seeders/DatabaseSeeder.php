@@ -20,11 +20,7 @@ class DatabaseSeeder extends Seeder
             TicketStatusSeeder::class,
         ]);
         $this->call(UserSeeder::class);
-
-
         $this->call(OrderSeeder::class);
-
-
         $this->call(SupportTicketSeeder::class);
         $this->call(MessageSeeder::class);
 

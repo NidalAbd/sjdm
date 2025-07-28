@@ -510,7 +510,7 @@
     }
 
     function clearAllNotifications() {
-        if (!confirm('{{ __("Are you sure you want to clear all notifications? This action cannot be undone.") }}')) {
+        if (!confirm('{{ __("adminlte.are_you_sure_clear_all") }}')) {
             return;
         }
 
@@ -522,13 +522,21 @@
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                showToast('{{ __("All notifications cleared") }}', 'success');
+            if (data.status === 'success') {
+                // Clear all notifications from DOM
+                document.querySelectorAll('.notification-item').forEach(item => {
+                    item.style.animation = 'slideOutLeft 0.3s ease-out';
+                    setTimeout(() => item.remove(), 300);
+                });
+
+                // Reload page after animation
                 setTimeout(() => {
                     location.reload();
-                }, 1000);
+                }, 500);
+
+                showToast('{{ __("adminlte.all_notifications_cleared") }}', 'success');
             } else {
-                showToast('{{ __("Failed to clear notifications") }}', 'error');
+                showToast('{{ __("adminlte.failed_clear_notifications") }}', 'error');
             }
         })
         .catch(error => {

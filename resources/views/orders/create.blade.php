@@ -184,6 +184,201 @@
         </div>
     </div>
 
+    <style>
+        /* Modern styling for the order creation page */
+        .platform-btn {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .platform-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .platform-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .platform-btn:hover::before {
+            left: 100%;
+        }
+        
+        .platform-btn.active {
+            background: linear-gradient(135deg, #007bff, #6610f2) !important;
+            border-color: #007bff !important;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 123, 255, 0.4);
+        }
+        
+        /* Enhanced form controls */
+        .form-control {
+            border-radius: 6px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:hover {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.15);
+        }
+        
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        /* Enhanced select styling */
+        .form-control[data-platform] {
+            cursor: pointer;
+        }
+        
+        /* Card enhancements */
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        /* Button enhancements */
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3, #520dc2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        /* Tab enhancements */
+        .nav-tabs .nav-link {
+            border-radius: 6px 6px 0 0;
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+            border: none;
+        }
+        
+        /* Badge enhancements */
+        .badge-info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            border: none;
+        }
+        
+        /* Input group enhancements */
+        .input-group {
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .input-group .form-control {
+            border-radius: 0;
+        }
+        
+        .input-group .form-control:first-child {
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+        }
+        
+        .input-group .form-control:last-child {
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+        }
+        
+        /* Textarea enhancements */
+        textarea.form-control {
+            resize: none;
+            border-radius: 8px;
+        }
+        
+        /* Label enhancements */
+        .form-group label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .platform-btn {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+        }
+        
+        /* Loading animation */
+        .platform-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        /* Success animation */
+        .btn-success-animation {
+            animation: successPulse 0.6s ease-in-out;
+        }
+        
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #0056b3, #520dc2);
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             console.log("Page loaded, initializing...");
@@ -207,14 +402,45 @@
             // Load all categories initially for the default platform 'all'
             loadCategories('all');
 
-            // Platform selection
+            // Platform selection with enhanced visual feedback
             document.querySelectorAll('.platform-btn').forEach(function (btn) {
+                // Add hover effects
+                btn.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.transform = 'translateY(-2px)';
+                        this.style.boxShadow = '0 4px 12px rgba(0, 123, 255, 0.3)';
+                    }
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = 'none';
+                    }
+                });
+                
                 btn.addEventListener('click', function () {
+                    // Add loading state
+                    this.classList.add('loading');
+                    
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
                     currentPlatform = this.getAttribute('data-platform'); // Get selected platform
                     document.getElementById('selectedPlatform').value = currentPlatform; // Update hidden input
-                    loadCategories(currentPlatform); // Load categories based on selected platform
+                    
+                    // Load categories with a small delay for better UX
+                    setTimeout(() => {
+                        loadCategories(currentPlatform); // Load categories based on selected platform
+                        this.classList.remove('loading');
+                    }, 300);
                 });
             });
+
+            // Set initial active state for 'all' platform
+            document.querySelector('[data-platform="all"]').classList.add('active');
 
             document.getElementById('category').addEventListener('change', function () {
                 const category = this.value;
@@ -231,11 +457,33 @@
             // Ensure the service is selected on form submit
             document.getElementById('orderForm').addEventListener('submit', function (event) {
                 document.getElementById('serviceIdSelect').value = document.getElementById('service').value;
+                
+                // Add success animation to submit button
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.classList.add('btn-success-animation');
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    submitBtn.classList.remove('btn-success-animation');
+                }, 600);
             });
 
             // Quantity input change
             document.getElementById('quantity').addEventListener('input', function () {
                 calculateCharge();
+                
+                // Add visual feedback for valid/invalid quantity
+                const quantity = parseInt(this.value);
+                const min = parseInt(this.getAttribute('min')) || 1;
+                const max = parseInt(this.getAttribute('max')) || 1000;
+                
+                if (quantity >= min && quantity <= max) {
+                    this.style.borderColor = '#28a745';
+                    this.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+                } else {
+                    this.style.borderColor = '#dc3545';
+                    this.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+                }
             });
 
             // Search services
@@ -247,6 +495,23 @@
                     let platform = document.getElementById('selectedPlatform').value;
                     let category = document.getElementById('category').value;
                     loadServices(platform, category);  // Load services normally when search input is cleared
+                }
+            });
+
+            // Link validation
+            document.getElementById('link').addEventListener('input', function () {
+                const url = this.value;
+                const urlPattern = /^https?:\/\/.+/;
+                
+                if (url && urlPattern.test(url)) {
+                    this.style.borderColor = '#28a745';
+                    this.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+                } else if (url) {
+                    this.style.borderColor = '#dc3545';
+                    this.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+                } else {
+                    this.style.borderColor = '#e9ecef';
+                    this.style.boxShadow = 'none';
                 }
             });
 
@@ -315,8 +580,6 @@
                     document.getElementById('charge').value = ''; // Clear charge field if values are not valid
                 }
             }
-
-            // Calculate the charge based on rate and quantity
 
             // Load categories dynamically based on the selected platform
             function loadCategories(platform) {
@@ -406,7 +669,6 @@
                         }
                     });
             }
-
 
             function fetchWithLocale(url) {
                 return fetch(url, {
