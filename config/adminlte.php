@@ -119,6 +119,19 @@ return array(
             'icon_color'   => 'secondary', // Set predefined color
         ),
 
+        // Notification Bell
+        array(
+            'text'         => '',
+            'url'          => '#',
+            'icon'         => 'fas fa-bell',
+            'topnav_right' => true,
+            'id'           => 'notification-dropdown',
+            'icon_color'   => 'warning',
+            'classes'      => 'notification-bell',
+            'label'        => 0, // Will be updated by JavaScript
+            'label_color'  => 'danger',
+        ),
+
         array(
             'text' =>'home', // Use translation key with __() function
             'url'  => '/', // Relative URL to the home page
@@ -231,6 +244,14 @@ return array(
             'topnav_center' => true,
             'can'  => 'view_support',
             'icon_color'   => 'danger', // Set predefined color
+        ),
+        array(
+            'text' => 'notifications', // Use translation key
+            'url'  => 'notifications',
+            'icon' => 'fas fa-bell',
+            'topnav_center' => true,
+            'can'  => 'view_support',
+            'icon_color'   => 'warning', // Set predefined color
         ),
         array(
             'text' => 'referral', // Use translation key for referral

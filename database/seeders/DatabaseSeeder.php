@@ -17,12 +17,13 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RoleSeeder::class,
             RolePermissionSeeder::class,
+            TicketStatusSeeder::class,
         ]);
         $this->call(UserSeeder::class);
 
 //
 //        $this->call(OrderSeeder::class);
-//        $this->call(TicketStatusSeeder::class);
+//
 //
 //        $this->call(SupportTicketSeeder::class);
 //        $this->call(MessageSeeder::class);

@@ -33,7 +33,20 @@ class SupportTicketController extends Controller
             $query->where('status_id', $request->status);
         }
 
-        $tickets = $query->paginate(5);
+        // Handle unread filter
+        if ($request->filled('unread_filter')) {
+            if ($request->unread_filter === 'unread') {
+                $query->whereHas('messages', function ($q) {
+                    $q->whereNull('read_at')->where('user_id', '!=', Auth::id());
+                });
+            } elseif ($request->unread_filter === 'read') {
+                $query->whereDoesntHave('messages', function ($q) {
+                    $q->whereNull('read_at')->where('user_id', '!=', Auth::id());
+                });
+            }
+        }
+
+        $tickets = $query->with(['user', 'status', 'messages.user'])->paginate(10);
         $statuses = TicketStatus::all();
 
         return view('support.index', compact('tickets', 'statuses'));
@@ -83,6 +96,15 @@ class SupportTicketController extends Controller
             return redirect()->back()->with('error', 'A support ticket already exists for this order/transaction.');
         }
 
+        // Get or create the default ticket status
+        $defaultStatus = TicketStatus::where('name', 'Open')->first();
+        
+        // If no status exists, create the default statuses
+        if (!$defaultStatus) {
+            $this->createDefaultTicketStatuses();
+            $defaultStatus = TicketStatus::where('name', 'Open')->first();
+        }
+
         // Create the support ticket
         $ticket = SupportTicket::create([
             'user_id' => Auth::id(),
@@ -90,7 +112,7 @@ class SupportTicketController extends Controller
             'ticketable_type' => $request->ticketable_type,
             'subject' => $request->subject,
             'message' => $request->message,
-            'status_id' => TicketStatus::where('name', 'Open')->first()->id,
+            'status_id' => $defaultStatus->id,
             'type' => $request->type,
             'subtype' => $request->subtype,
         ]);
@@ -172,10 +194,27 @@ class SupportTicketController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
         }
 
-        // Set the ticket status to "Closed"
-        $closedStatus = TicketStatus::where('name', 'Closed')->firstOrFail();
+        // Get or create the "Closed" status
+        $closedStatus = TicketStatus::where('name', 'Closed')->first();
+        if (!$closedStatus) {
+            $this->createDefaultTicketStatuses();
+            $closedStatus = TicketStatus::where('name', 'Closed')->first();
+        }
+
         $ticket->update(['status_id' => $closedStatus->id]);
 
         return response()->json(['status' => 'success', 'message' => 'Ticket closed successfully.']);
+    }
+
+    /**
+     * Create default ticket statuses if they don't exist
+     */
+    private function createDefaultTicketStatuses()
+    {
+        $defaultStatuses = ['Open', 'In Progress', 'Closed', 'Resolved'];
+        
+        foreach ($defaultStatuses as $statusName) {
+            TicketStatus::firstOrCreate(['name' => $statusName]);
+        }
     }
 }

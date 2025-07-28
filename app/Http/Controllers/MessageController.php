@@ -16,7 +16,7 @@ class MessageController extends Controller
     {
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
-            'message' => 'required|string',
+            'message' => 'required|string|max:1000',
         ]);
 
         // Check if the validation fails
@@ -73,6 +73,60 @@ class MessageController extends Controller
                 'message' => 'An error occurred while sending the message. Please try again.',
                 'error_detail' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function markAsRead(Request $request, SupportTicket $ticket)
+    {
+        try {
+            $messageIds = $request->input('message_ids', []);
+            
+            if (empty($messageIds)) {
+                return response()->json(['status' => 'error', 'message' => 'No message IDs provided'], 400);
+            }
+
+            // Mark messages as read
+            Message::whereIn('id', $messageIds)
+                ->where('support_ticket_id', $ticket->id)
+                ->where('user_id', '!=', Auth::id()) // Only mark messages from other users
+                ->update(['read_at' => now()]);
+
+            return response()->json(['status' => 'success', 'message' => 'Messages marked as read']);
+        } catch (\Exception $e) {
+            Log::error('Error marking messages as read: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Failed to mark messages as read'], 500);
+        }
+    }
+
+    public function getLatestMessages(Request $request, SupportTicket $ticket)
+    {
+        try {
+            $lastMessageId = $request->input('last_message_id', 0);
+            
+            $messages = Message::where('support_ticket_id', $ticket->id)
+                ->where('id', '>', $lastMessageId)
+                ->with('user:id,name')
+                ->orderBy('created_at', 'asc')
+                ->get()
+                ->map(function ($message) {
+                    return [
+                        'id' => $message->id,
+                        'message' => $message->message,
+                        'user_id' => $message->user_id,
+                        'user_name' => $message->user->name,
+                        'created_at' => $message->created_at->diffForHumans(),
+                        'read_at' => $message->read_at,
+                        'sender_role' => $message->sender_role
+                    ];
+                });
+
+            return response()->json([
+                'status' => 'success',
+                'messages' => $messages
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error getting latest messages: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Failed to get latest messages'], 500);
         }
     }
 }

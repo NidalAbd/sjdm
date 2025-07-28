@@ -34,13 +34,24 @@ class SupportTicketFactory extends Factory
             $ticketable = Transaction::factory()->create();
         }
 
+        // Get or create the default ticket status
+        $defaultStatus = TicketStatus::where('name', 'Open')->first();
+        if (!$defaultStatus) {
+            // Create default statuses if they don't exist
+            $defaultStatuses = ['Open', 'In Progress', 'Closed', 'Resolved'];
+            foreach ($defaultStatuses as $statusName) {
+                TicketStatus::firstOrCreate(['name' => $statusName]);
+            }
+            $defaultStatus = TicketStatus::where('name', 'Open')->first();
+        }
+
         return [
             'user_id' => User::factory(), // Ensure this generates a user
             'ticketable_id' => $ticketable->id, // Polymorphic ID
             'ticketable_type' => get_class($ticketable), // Polymorphic type
             'subject' => $this->faker->sentence,
             'message' => $this->faker->paragraph,
-            'status_id' => TicketStatus::where('name', 'Open')->first()->id, // Default status as 'Open'
+            'status_id' => $defaultStatus->id, // Default status as 'Open'
             'type' => $type,
             'subtype' => $subtype,
         ];

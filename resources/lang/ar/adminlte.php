@@ -761,5 +761,30 @@ return [
     'open_whatsapp' => 'فتح واتساب',
     'admin_whatsapp_number' => '+971557830054',
 
+    // Support Ticket Enhancements
+    'last_message' => 'آخر رسالة',
+    'sender' => 'المرسل',
+    'receiver' => 'المستقبل',
+    'unread_status' => 'حالة القراءة',
+    'unread_messages' => 'الرسائل غير المقروءة',
+    'read_messages' => 'الرسائل المقروءة',
+    'all_tickets' => 'جميع التذاكر',
+    'no_messages' => 'لا توجد رسائل',
+    'admin' => 'المدير',
+    'user' => 'المستخدم',
+    'you' => 'أنت',
+    'unread' => 'غير مقروء',
+    'read' => 'مقروء',
+    'new_messages_available' => 'رسائل جديدة متاحة',
+    'view_ticket_with_new_messages' => 'عرض التذكرة مع الرسائل الجديدة',
+    'new_message_notification' => 'إشعار رسالة جديدة',
+
+    // Orders Support Status
+    'support_status' => 'حالة الدعم',
+    'new_messages' => 'رسائل جديدة',
+    'ticket_active' => 'التذكرة نشطة',
+    'all_read' => 'جميع مقروءة',
+    'no_ticket' => 'لا توجد تذكرة',
+
 ];
 

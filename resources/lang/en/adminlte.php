@@ -47,6 +47,31 @@ return [
     'balance' => 'Balance',
     'sitemap' => 'Sitemap',
 
+    // Support Ticket Enhancements
+    'last_message' => 'Last Message',
+    'sender' => 'Sender',
+    'receiver' => 'Receiver',
+    'unread_status' => 'Unread Status',
+    'unread_messages' => 'Unread Messages',
+    'read_messages' => 'Read Messages',
+    'all_tickets' => 'All Tickets',
+    'no_messages' => 'No Messages',
+    'admin' => 'Admin',
+    'user' => 'User',
+    'you' => 'You',
+    'unread' => 'Unread',
+    'read' => 'Read',
+    'new_messages_available' => 'New messages available',
+    'view_ticket_with_new_messages' => 'View ticket with new messages',
+    'new_message_notification' => 'New Message Notification',
+
+    // Orders Support Status
+    'support_status' => 'Support Status',
+    'new_messages' => 'new messages',
+    'ticket_active' => 'Ticket Active',
+    'all_read' => 'All Read',
+    'no_ticket' => 'No Ticket',
+
     // ========================= User Management =========================
     'manage_users' => 'Users',
     'search_users' => 'Search users...',
@@ -136,7 +161,7 @@ return [
     'cheapest_fastest_services' => 'Cheapest & Fastest Services SMM Panel ',
     'cheapest_fastest_services_icon' => 'Cheapest & Fastest Services Icon SMM Panel ',
     'super_fast_delivery' => 'Super Fast Delivery SMM Panel ',
-    'super_fast_delivery_icon' => 'Super Fast Delivery Icon SMM Panel ',
+    'super_fast_delivery_icon' => 'Super Fast Delivery Icon SMM Panel',
     'support_24_7' => 'Support 24/7 SMM Panel ',
     'support_24_7_icon' => 'Support 24/7 Icon SMM Panel',
     'many_payment_methods' => 'Many Payment Methods',

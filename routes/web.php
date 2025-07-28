@@ -218,17 +218,21 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
         Route::delete('/{ticket}', [SupportTicketController::class, 'destroy'])->name('support.destroy');
         Route::post('/{ticket}/messages', [MessageController::class, 'store'])->name('messages.store');
         Route::post('/{ticket}/close', [SupportTicketController::class, 'closeTicket'])->name('support.close');
+        Route::post('/{ticket}/mark-read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
+        Route::get('/{ticket}/messages/latest', [MessageController::class, 'getLatestMessages'])->name('messages.latest');
     });
 
     // Notification Routes
-    Route::get('notifications/latest', [NotificationController::class, 'fetchLatest'])->name('notifications.latest');
-    Route::get('notifications/{id}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::get('notifications/loadMore', [NotificationController::class, 'loadMore'])->name('notifications.loadMore');
-    Route::post('/notifications/markAllAsRead', function () {
-        Auth::user()->unreadNotifications->markAsRead();
-        return response()->json(['success' => true]);
-    })->name('notifications.markAllAsRead');
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/latest', [NotificationController::class, 'fetchLatest'])->name('notifications.latest');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
+        Route::get('/{id}/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+        Route::post('/markAllAsRead', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+        Route::get('/loadMore', [NotificationController::class, 'loadMore'])->name('notifications.loadMore');
+        Route::delete('/{id}', [NotificationController::class, 'deleteNotification'])->name('notifications.delete');
+        Route::delete('/', [NotificationController::class, 'clearAll'])->name('notifications.clearAll');
+    });
 
     // Payment Routes (Stripe)
     Route::get('/checkout/cancel/{transaction_id}', [StripeController::class, 'cancel'])->name('checkout.cancel');
