@@ -65,6 +65,12 @@
         const notificationBell = document.querySelector('#notification-dropdown');
         if (!notificationBell) return;
 
+        // Ensure notification badge exists
+        ensureNotificationBadge();
+
+        // Initialize notification count on page load
+        fetchLatestNotifications();
+
         // Add notification dropdown functionality
         notificationBell.addEventListener('click', function(e) {
             e.preventDefault();
@@ -73,6 +79,33 @@
 
         // Poll for new notifications every 30 seconds
         setInterval(fetchLatestNotifications, 30000);
+    }
+
+    function ensureNotificationBadge() {
+        const notificationBell = document.querySelector('#notification-dropdown');
+        const badge = document.querySelector('#notification-dropdown .badge');
+        
+        if (notificationBell && !badge) {
+            // Create badge if it doesn't exist
+            const newBadge = document.createElement('span');
+            newBadge.className = 'badge badge-danger';
+            newBadge.style.cssText = `
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                font-size: 0.7rem;
+                padding: 2px 6px;
+                border-radius: 50%;
+                min-width: 18px;
+                height: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            newBadge.textContent = '0';
+            newBadge.style.display = 'none';
+            notificationBell.appendChild(newBadge);
+        }
     }
 
     function toggleNotificationDropdown() {
@@ -300,13 +333,16 @@
     }
 
     function updateNotificationBadge(count) {
+        // Target the AdminLTE notification badge
         const badge = document.querySelector('#notification-dropdown .badge');
+        const notificationBell = document.querySelector('#notification-dropdown');
+        
         if (count > 0) {
             if (badge) {
                 badge.textContent = count;
+                badge.style.display = 'inline-block';
             } else {
                 // Create badge if it doesn't exist
-                const bell = document.getElementById('notification-dropdown');
                 const newBadge = document.createElement('span');
                 newBadge.className = 'badge badge-danger';
                 newBadge.style.cssText = `
@@ -323,11 +359,11 @@
                     justify-content: center;
                 `;
                 newBadge.textContent = count;
-                bell.appendChild(newBadge);
+                notificationBell.appendChild(newBadge);
             }
         } else {
             if (badge) {
-                badge.remove();
+                badge.style.display = 'none';
             }
         }
     }
@@ -390,11 +426,24 @@
 
     function fetchLatestNotifications() {
         fetch('/notifications/latest')
-            .then(response => response.json())
-            .then(data => {
-                updateNotificationBadge(data.length);
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
             })
-            .catch(error => console.error('Error fetching notifications:', error));
+            .then(data => {
+                if (data.error) {
+                    console.error('Notification error:', data.error);
+                    return;
+                }
+                updateNotificationBadge(data.length);
+                updateNotificationList(data);
+            })
+            .catch(error => {
+                console.error('Error fetching notifications:', error);
+                // Don't update badge on error, just log it
+            });
     }
 
     // Initialize notifications if user is authenticated
