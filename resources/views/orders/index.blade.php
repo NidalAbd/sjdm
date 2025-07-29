@@ -939,7 +939,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btnGroup.style.display = 'flex';
         btnGroup.style.visibility = 'visible';
         btnGroup.style.opacity = '1';
-
+        
         const buttons = btnGroup.querySelectorAll('.btn');
         buttons.forEach(btn => {
             btn.style.display = 'inline-flex';
@@ -947,19 +947,34 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.style.opacity = '1';
         });
     });
-
+    
     // Add hover effect to make buttons more visible
     actionButtons.forEach(btnGroup => {
         btnGroup.addEventListener('mouseenter', function() {
             this.style.transform = 'scale(1.05)';
             this.style.zIndex = '100';
         });
-
+        
         btnGroup.addEventListener('mouseleave', function() {
             this.style.transform = 'scale(1)';
             this.style.zIndex = '10';
         });
     });
+    
+    // Ensure action column header is visible
+    const actionHeader = document.querySelector('.modern-table thead th:last-child');
+    if (actionHeader) {
+        actionHeader.style.visibility = 'visible';
+        actionHeader.style.opacity = '1';
+        actionHeader.style.display = 'table-cell';
+        actionHeader.style.color = '#495057';
+        actionHeader.style.fontWeight = '600';
+        actionHeader.style.textAlign = 'center';
+        actionHeader.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+        actionHeader.style.position = 'sticky';
+        actionHeader.style.right = '0';
+        actionHeader.style.zIndex = '15';
+    }
 });
 </script>
 @stop
