@@ -132,6 +132,13 @@ return array(
             'classes'      => 'notification-bell',
             'label'        => 0, // Will be updated by JavaScript
             'label_color'  => 'danger',
+            'attributes'   => array(
+                'data-bs-toggle' => 'dropdown',
+                'aria-expanded' => 'false',
+                'role' => 'button',
+                'style' => 'cursor: pointer;',
+                'onclick' => 'toggleNotificationDropdown(); return false;'
+            ),
         ),
 
         array(

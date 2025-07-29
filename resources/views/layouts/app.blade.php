@@ -21,6 +21,101 @@
 <link rel="preload" as="image" href="{{ asset('images/double-bubble-dark.webp') }}" type="image/webp">
 @endif
 
+@section('css')
+<style>
+    /* Notification Bell Styles */
+    #notification-dropdown {
+        cursor: pointer !important;
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+
+    #notification-dropdown:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    #notification-dropdown .badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 50%;
+        min-width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    /* Notification Dropdown Styles */
+    .notification-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 350px;
+        max-height: 400px;
+        overflow-y: auto;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 0;
+        z-index: 1000;
+        background: white;
+    }
+
+    .notification-header {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .notification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.3s ease;
+        cursor: pointer;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #999;
+    }
+
+    .notification-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #f0f0f0;
+        text-align: center;
+    }
+
+    .view-all-notifications {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .view-all-notifications:hover {
+        text-decoration: underline;
+    }
+</style>
+@stop
+
 @section('content_header')
     @include('partials.breadcrumbs')  <!-- Include the breadcrumbs partial -->
 @stop
@@ -60,59 +155,21 @@
         }
     });
 
-    function initializeAdminLTENotifications() {
-        // Find the notification bell in AdminLTE navigation
-        const notificationBell = document.querySelector('#notification-dropdown');
-        if (!notificationBell) return;
-
-        // Ensure notification badge exists
-        ensureNotificationBadge();
-
-        // Initialize notification count on page load
-        fetchLatestNotifications();
-
-        // Add notification dropdown functionality
-        notificationBell.addEventListener('click', function(e) {
-            e.preventDefault();
-            toggleNotificationDropdown();
-        });
-
-        // Poll for new notifications every 30 seconds
-        setInterval(fetchLatestNotifications, 30000);
-    }
-
-    function ensureNotificationBadge() {
-        const notificationBell = document.querySelector('#notification-dropdown');
-        const badge = document.querySelector('#notification-dropdown .badge');
-        
-        if (notificationBell && !badge) {
-            // Create badge if it doesn't exist
-            const newBadge = document.createElement('span');
-            newBadge.className = 'badge badge-danger';
-            newBadge.style.cssText = `
-                position: absolute;
-                top: -8px;
-                right: -8px;
-                font-size: 0.7rem;
-                padding: 2px 6px;
-                border-radius: 50%;
-                min-width: 18px;
-                height: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            `;
-            newBadge.textContent = '0';
-            newBadge.style.display = 'none';
-            notificationBell.appendChild(newBadge);
-        }
-    }
-
+    // Global function for AdminLTE notification dropdown
     function toggleNotificationDropdown() {
         const dropdown = document.getElementById('notification-dropdown-content');
         if (dropdown) {
             dropdown.remove();
-            return;
+        } else {
+            createNotificationDropdown();
+        }
+    }
+
+    function createNotificationDropdown() {
+        // Remove existing dropdown if any
+        const existingDropdown = document.getElementById('notification-dropdown-content');
+        if (existingDropdown) {
+            existingDropdown.remove();
         }
 
         // Create notification dropdown
@@ -174,29 +231,72 @@
         footer.className = 'notification-footer';
         footer.style.cssText = `
             padding: 15px 20px;
-            text-align: center;
             border-top: 1px solid #f0f0f0;
+            text-align: center;
         `;
         footer.innerHTML = `
             <a href="{{ route('notifications.index') }}" class="view-all-notifications" style="
-                color: #667eea;
+                color: #007bff;
                 text-decoration: none;
-                font-weight: 600;
-                font-size: 0.9rem;
+                font-weight: 500;
             ">{{ __('View all notifications') }}</a>
         `;
 
+        // Assemble dropdown
         notificationDropdown.appendChild(header);
         notificationDropdown.appendChild(content);
         notificationDropdown.appendChild(footer);
 
-        // Position the dropdown
-        const bell = document.getElementById('notification-dropdown');
-        bell.style.position = 'relative';
-        bell.appendChild(notificationDropdown);
+        // Add to notification bell
+        const notificationBell = document.querySelector('#notification-dropdown');
+        if (notificationBell) {
+            notificationBell.appendChild(notificationDropdown);
+            
+            // Load notifications
+            fetchLatestNotifications();
+        }
+    }
 
-        // Load notifications
-        loadNotifications();
+    function initializeAdminLTENotifications() {
+        // Find the notification bell in AdminLTE navigation
+        const notificationBell = document.querySelector('#notification-dropdown');
+        if (!notificationBell) return;
+
+        // Ensure notification badge exists
+        ensureNotificationBadge();
+
+        // Initialize notification count on page load
+        fetchLatestNotifications();
+
+        // Poll for new notifications every 30 seconds
+        setInterval(fetchLatestNotifications, 30000);
+    }
+
+    function ensureNotificationBadge() {
+        const notificationBell = document.querySelector('#notification-dropdown');
+        const badge = document.querySelector('#notification-dropdown .badge');
+        
+        if (notificationBell && !badge) {
+            // Create badge if it doesn't exist
+            const newBadge = document.createElement('span');
+            newBadge.className = 'badge badge-danger';
+            newBadge.style.cssText = `
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                font-size: 0.7rem;
+                padding: 2px 6px;
+                border-radius: 50%;
+                min-width: 18px;
+                height: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            newBadge.textContent = '0';
+            newBadge.style.display = 'none';
+            notificationBell.appendChild(newBadge);
+        }
     }
 
     function loadNotifications() {
