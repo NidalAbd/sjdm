@@ -547,9 +547,7 @@
 @endif
 
 <!-- Main Content -->
-<main class="container my-5">
-    @yield('content')
-</main>
+@yield('content')
 
 <!-- Include Footer -->
 @include('layouts.footer')

@@ -16,7 +16,7 @@
                     </div>
                     <div class="stat-content">
                         <h3 class="stat-title">{{ __('adminlte.users') }}</h3>
-                        <div class="stat-value" data-count="{{ $usersCountLast24h }}">0</div>
+                        <div class="stat-value" data-count="{{ $usersCountLast24h ?? 0 }}">{{ number_format($usersCountLast24h ?? 0) }}</div>
                         <p class="stat-description">{{ __('adminlte.new_registrations') }}</p>
                     </div>
                     <div class="stat-trend positive">
@@ -32,7 +32,7 @@
                     </div>
                     <div class="stat-content">
                         <h3 class="stat-title">{{ __('adminlte.transactions') }}</h3>
-                        <div class="stat-value" data-count="{{ $transactionsCountLast24h }}">0</div>
+                        <div class="stat-value" data-count="{{ $transactionsCountLast24h ?? 0 }}">{{ number_format($transactionsCountLast24h ?? 0) }}</div>
                         <p class="stat-description">{{ __('adminlte.completed_transactions') }}</p>
                     </div>
                     <div class="stat-trend positive">
@@ -48,7 +48,7 @@
                     </div>
                     <div class="stat-content">
                         <h3 class="stat-title">{{ __('adminlte.orders') }}</h3>
-                        <div class="stat-value" data-count="{{ $ordersCountLast24h }}">0</div>
+                        <div class="stat-value" data-count="{{ $ordersCountLast24h ?? 0 }}">{{ number_format($ordersCountLast24h ?? 0) }}</div>
                         <p class="stat-description">{{ __('adminlte.new_orders') }}</p>
                     </div>
                     <div class="stat-trend positive">
@@ -74,7 +74,7 @@
                     </div>
                     <div class="stat-content">
                         <h3 class="stat-title">{{ __('adminlte.users') }}</h3>
-                        <div class="stat-value" data-count="{{ $totalUsersCount }}">0</div>
+                        <div class="stat-value" data-count="{{ $totalUsersCount ?? 0 }}">{{ number_format($totalUsersCount ?? 0) }}</div>
                         <p class="stat-description">{{ __('adminlte.total_registered') }}</p>
                     </div>
                     <div class="stat-badge">
@@ -90,7 +90,7 @@
                     </div>
                     <div class="stat-content">
                         <h3 class="stat-title">{{ __('adminlte.transactions') }}</h3>
-                        <div class="stat-value" data-count="{{ $totalTransactionsCount }}">0</div>
+                        <div class="stat-value" data-count="{{ $totalTransactionsCount ?? 0 }}">{{ number_format($totalTransactionsCount ?? 0) }}</div>
                         <p class="stat-description">{{ __('adminlte.total_completed') }}</p>
                     </div>
                     <div class="stat-badge">
@@ -106,7 +106,7 @@
                     </div>
                     <div class="stat-content">
                         <h3 class="stat-title">{{ __('adminlte.orders') }}</h3>
-                        <div class="stat-value" data-count="{{ $totalOrdersCount }}">0</div>
+                        <div class="stat-value" data-count="{{ $totalOrdersCount ?? 0 }}">{{ number_format($totalOrdersCount ?? 0) }}</div>
                         <p class="stat-description">{{ __('adminlte.total_processed') }}</p>
                     </div>
                     <div class="stat-badge">
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const statValue = entry.target.querySelector('.stat-value');
-                const count = parseInt(statValue.getAttribute('data-count'));
+                const count = parseInt(statValue.getAttribute('data-count')) || 0;
                 
                 if (!statValue.classList.contains('animated')) {
                     statValue.classList.add('animated');
@@ -488,6 +488,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add floating animation
     document.querySelectorAll('.stat-card').forEach((card, index) => {
         card.style.animationDelay = `${index * 0.2}s`;
+    });
+
+    // Debug: Log the values being used for counters
+    console.log('Numerical Widgets Debug:');
+    document.querySelectorAll('.stat-value').forEach((element, index) => {
+        const count = element.getAttribute('data-count');
+        console.log(`Stat ${index + 1}: ${count}`);
     });
 });
 
