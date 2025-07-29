@@ -154,8 +154,8 @@
                                     @else
                                         <a href="{{
                                             app()->getLocale() === 'en'
-                                                ? route('service.show', $featured->service_id)
-                                                : route('service.show.localized', ['locale' => app()->getLocale(), 'serviceId' => $featured->service_id])
+                                                ? route('services.show.public', $featured->service_id)
+                                                : route('services.show.public.localized', ['locale' => app()->getLocale(), 'service' => $featured->service_id])
                                         }}" class="btn btn-sm btn-primary mt-2">
                                             {{ __('View Details') }}
                                         </a>
@@ -224,8 +224,8 @@
                                                 @else
                                                     <a href="{{
                                                         app()->getLocale() === 'en'
-                                                            ? route('service.show', $service->service_id)
-                                                            : route('service.show.localized', ['locale' => app()->getLocale(), 'serviceId' => $service->service_id])
+                                                            ? route('services.show.public', $service->service_id)
+                                                            : route('services.show.public.localized', ['locale' => app()->getLocale(), 'service' => $service->service_id])
                                                     }}" class="text-decoration-none">
                                                         {{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}
                                                     </a>

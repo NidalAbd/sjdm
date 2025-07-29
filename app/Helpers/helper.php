@@ -106,9 +106,9 @@ if (!function_exists('serviceUrl')) {
         $locale = $locale ?: app()->getLocale();
 
         if ($locale === 'en') {
-            return route('service.show', $serviceId);
+            return route('services.show.public', $serviceId);
         } else {
-            return route('service.show.localized', ['locale' => $locale, 'serviceId' => $serviceId]);
+            return route('services.show.public.localized', ['locale' => $locale, 'service' => $serviceId]);
         }
     }
 }
