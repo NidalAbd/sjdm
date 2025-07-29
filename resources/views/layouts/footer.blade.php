@@ -5,7 +5,7 @@
             <!-- Company Info -->
             <div class="footer-section company-info">
                 <div class="company-logo">
-                    <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" class="logo-img">
+                    <img src="{{ asset('images/sjdm_logo.png') }}" alt="{{ config('app.name') }}" class="logo-img">
                     <h3 class="company-name">{{ config('app.name') }}</h3>
                 </div>
                 <p class="company-description">
