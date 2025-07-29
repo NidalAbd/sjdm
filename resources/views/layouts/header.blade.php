@@ -257,6 +257,7 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         padding: 1rem 0;
         transition: all 0.3s ease;
+        min-height: 70px; /* Ensure consistent height */
     }
 
     [data-theme="dark"] .modern-navbar {
@@ -270,6 +271,7 @@
         width: 40px;
         height: 40px;
         margin-right: 0.75rem;
+        flex-shrink: 0; /* Prevent logo from shrinking */
     }
 
     .logo-img {
@@ -305,6 +307,10 @@
         color: var(--text-primary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px; /* Limit width to prevent overflow */
     }
 
     /* Navigation Links */
@@ -319,6 +325,8 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        white-space: nowrap; /* Prevent text wrapping */
+        text-decoration: none !important;
     }
 
     .modern-link::before {
@@ -345,10 +353,17 @@
     .modern-link i {
         font-size: 1rem;
         transition: transform 0.3s ease;
+        flex-shrink: 0; /* Prevent icon from shrinking */
     }
 
     .modern-link:hover i {
         transform: scale(1.1);
+    }
+
+    .modern-link span {
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* Auth Links */
@@ -357,6 +372,7 @@
         color: white !important;
         border-radius: 12px;
         margin: 0 0.25rem;
+        white-space: nowrap; /* Prevent text wrapping */
     }
 
     .auth-link:hover {
@@ -381,6 +397,7 @@
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        flex-shrink: 0; /* Prevent toggle from shrinking */
     }
 
     .modern-toggler:hover {
@@ -421,6 +438,7 @@
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        flex-shrink: 0; /* Prevent bell from shrinking */
     }
 
     .notification-bell:hover {
@@ -455,6 +473,7 @@
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        white-space: nowrap; /* Prevent text wrapping */
     }
 
     .user-profile:hover {
@@ -466,6 +485,7 @@
         position: relative;
         width: 32px;
         height: 32px;
+        flex-shrink: 0; /* Prevent avatar from shrinking */
     }
 
     .avatar-img {
@@ -489,6 +509,10 @@
     .user-name {
         font-weight: 600;
         color: var(--text-primary);
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px; /* Limit width */
     }
 
     /* Language Switcher */
@@ -500,6 +524,7 @@
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        white-space: nowrap; /* Prevent text wrapping */
     }
 
     .language-link:hover {
@@ -512,6 +537,7 @@
         height: 20px;
         border-radius: 50%;
         overflow: hidden;
+        flex-shrink: 0; /* Prevent flag from shrinking */
     }
 
     .flag-icon {
@@ -528,6 +554,13 @@
         background: linear-gradient(to right, #000 25%, #fff 25%, #fff 50%, #ce1126 50%, #ce1126 75%, #007a3d 75%);
     }
 
+    .language-text {
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px; /* Limit width */
+    }
+
     /* Theme Toggle */
     .theme-toggle {
         padding: 0.75rem !important;
@@ -535,6 +568,7 @@
         background: rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
         border: none;
+        flex-shrink: 0; /* Prevent toggle from shrinking */
     }
 
     .theme-toggle:hover {
@@ -619,7 +653,22 @@
         background: rgba(239, 68, 68, 0.1) !important;
     }
 
-    /* Responsive Design */
+    /* Responsive Design - Fixed Breakpoints */
+    @media (max-width: 1200px) {
+        .brand-text {
+            font-size: 1.1rem;
+            max-width: 150px;
+        }
+        
+        .modern-link span {
+            font-size: 0.9rem;
+        }
+        
+        .user-name {
+            max-width: 100px;
+        }
+    }
+
     @media (max-width: 991px) {
         .navbar-collapse {
             background: rgba(255, 255, 255, 0.95);
@@ -639,16 +688,51 @@
             padding: 1rem !important;
             border-radius: 8px;
             margin: 0.25rem 0;
+            justify-content: flex-start; /* Align items to start */
         }
 
         .auth-link {
             margin: 0.5rem 0;
+            justify-content: center; /* Center auth buttons */
+        }
+
+        .navbar-nav {
+            width: 100%;
+        }
+
+        .navbar-nav .nav-item {
+            width: 100%;
+        }
+
+        .navbar-nav .nav-link {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .brand-text {
+            font-size: 1rem;
+            max-width: 120px;
+        }
+
+        .modern-link {
+            font-size: 0.9rem;
+        }
+
+        .modern-link i {
+            font-size: 0.9rem;
+        }
+
+        .auth-link {
+            font-size: 0.9rem;
         }
     }
 
     @media (max-width: 576px) {
         .brand-text {
-            font-size: 1rem;
+            font-size: 0.9rem;
+            max-width: 100px;
         }
 
         .user-name {
@@ -658,6 +742,42 @@
         .language-text {
             display: none;
         }
+
+        .modern-link span {
+            font-size: 0.8rem;
+        }
+
+        .auth-link span {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Force single line for navbar items */
+    .navbar-nav {
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .navbar-nav .nav-item {
+        flex-shrink: 0;
+    }
+
+    /* Ensure container doesn't cause wrapping */
+    .navbar .container {
+        max-width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Fix for navbar brand */
+    .navbar-brand {
+        flex-shrink: 0;
+        margin-right: 1rem;
+    }
+
+    /* Ensure proper spacing */
+    .navbar-nav .nav-item:not(:last-child) {
+        margin-right: 0.5rem;
     }
 </style>
 

@@ -191,12 +191,77 @@
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @endif
 
+    <!-- Font Loading Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <!-- Modern CSS Libraries -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
+
+    <!-- Font Loading Fix -->
+    <style>
+        /* Font Loading Optimization */
+        .wf-loading {
+            visibility: hidden;
+        }
+        
+        .wf-active {
+            visibility: visible;
+        }
+        
+        /* Prevent layout shifts during font loading */
+        body {
+            font-display: swap;
+        }
+        
+        /* Ensure consistent font rendering */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
+        /* Fix for navbar height consistency */
+        .navbar {
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Ensure consistent spacing */
+        .navbar-nav {
+            align-items: center;
+        }
+        
+        .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Prevent text wrapping in navbar */
+        .navbar-nav .nav-link {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Fix for container width issues */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+        
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1320px;
+            }
+        }
+    </style>
 
     <!-- Modern Custom Styles -->
     <style>
@@ -236,7 +301,7 @@
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
-
+        
         /* Dark Theme Variables */
         [data-theme="dark"] {
             --bg-primary: #0f172a;
