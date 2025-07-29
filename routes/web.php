@@ -205,6 +205,11 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    
+    // Enhanced Order Routes
+    Route::post('orders/bulk-destroy', [OrderController::class, 'bulkDestroy'])->name('orders.bulk-destroy');
+    Route::get('orders/statistics', [OrderController::class, 'getStatistics'])->name('orders.statistics');
+    Route::post('orders/update-statuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.update-statuses');
 
     // Admin Service Management Routes
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');

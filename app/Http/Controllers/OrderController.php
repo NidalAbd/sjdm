@@ -12,6 +12,8 @@ use App\Models\Service;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -49,21 +51,28 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = Order::query();
-        $currentLanguage = substr(app()->getLocale(), 0, 2); // Only the language part ('ar' or 'en')
+        $query = Order::with(['user', 'service', 'supportTicket']);
+        $currentLanguage = substr(app()->getLocale(), 0, 2);
 
         // If the user is not an admin, restrict the orders to their own
         if (!$user->hasRole('admin')) {
             $query->where('user_id', $user->id);
         }
 
-        // Filter by search term if provided
+        // Enhanced search functionality
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('link', 'like', '%' . $search . '%')
+                    ->orWhere('id', 'like', '%' . $search . '%')
                     ->orWhereHas('user', function ($query) use ($search) {
-                        $query->where('name', 'like', '%' . $search . '%');
+                        $query->where('name', 'like', '%' . $search . '%')
+                              ->orWhere('email', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('service', function ($query) use ($search) {
+                        $query->where('name_en', 'like', '%' . $search . '%')
+                              ->orWhere('name_ar', 'like', '%' . $search . '%')
+                              ->orWhere('service_id', 'like', '%' . $search . '%');
                     });
             });
         }
@@ -83,8 +92,61 @@ class OrderController extends Controller
             $query->where('status', $request->status);
         }
 
+        // Advanced filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('price_min')) {
+            $query->where('charge', '>=', $request->price_min);
+        }
+
+        if ($request->filled('price_max')) {
+            $query->where('charge', '<=', $request->price_max);
+        }
+
+        if ($request->filled('qty_min')) {
+            $query->where('quantity', '>=', $request->qty_min);
+        }
+
+        if ($request->filled('qty_max')) {
+            $query->where('quantity', '<=', $request->qty_max);
+        }
+
+        // Enhanced sorting
+        $sort = $request->get('sort', 'id_desc');
+        switch ($sort) {
+            case 'id_asc':
+                $query->orderBy('id', 'asc');
+                break;
+            case 'charge_desc':
+                $query->orderBy('charge', 'desc');
+                break;
+            case 'charge_asc':
+                $query->orderBy('charge', 'asc');
+                break;
+            case 'date_desc':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'date_asc':
+                $query->orderBy('created_at', 'asc');
+                break;
+            default:
+                $query->orderBy('id', 'desc');
+                break;
+        }
+
+        // Handle export functionality
+        if ($request->has('export')) {
+            return $this->exportOrders($query, $request);
+        }
+
         // Get the paginated orders
-        $orders = $query->orderBy('id', 'desc')->paginate(5);
+        $orders = $query->paginate(10);
 
         // Get the unique statuses from orders to populate the filter dropdown
         $statuses = Order::select('status')->distinct()->pluck('status');
@@ -93,9 +155,96 @@ class OrderController extends Controller
         $services = Service::all();
         $translatedPlatforms = array_map(fn($platform) => $platform[$currentLanguage], $this->platforms);
 
+        // Calculate statistics
+        $statistics = $this->calculateOrderStatistics($query);
+
         // Pass the data to the view
-        return view('orders.index', compact('orders', 'services', 'translatedPlatforms', 'statuses'))
+        return view('orders.index', compact('orders', 'services', 'translatedPlatforms', 'statuses', 'statistics'))
             ->with('platforms', array_keys($this->platforms));
+    }
+
+    /**
+     * Calculate order statistics
+     */
+    private function calculateOrderStatistics($query)
+    {
+        $totalOrders = $query->count();
+        $completedOrders = (clone $query)->where('status', 'completed')->count();
+        $pendingOrders = (clone $query)->where('status', 'pending')->count();
+        $totalValue = (clone $query)->sum('charge');
+
+        return [
+            'total' => $totalOrders,
+            'completed' => $completedOrders,
+            'pending' => $pendingOrders,
+            'total_value' => $totalValue,
+        ];
+    }
+
+    /**
+     * Export orders functionality
+     */
+    private function exportOrders($query, $request)
+    {
+        $exportType = $request->get('export');
+        
+        if ($exportType === 'selected' && $request->has('orders')) {
+            $orderIds = explode(',', $request->get('orders'));
+            $orders = $query->whereIn('id', $orderIds)->get();
+        } else {
+            $orders = $query->get();
+        }
+
+        $filename = 'orders_export_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($orders) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Headers
+            fputcsv($file, [
+                'Order ID',
+                'User Name',
+                'User Email',
+                'Service Name',
+                'Service ID',
+                'Link',
+                'Quantity',
+                'Charge',
+                'Start Count',
+                'Remains',
+                'Status',
+                'Created Date',
+                'Updated Date'
+            ]);
+
+            // CSV Data
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    $order->id,
+                    $order->user->name,
+                    $order->user->email,
+                    app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en,
+                    $order->service->service_id,
+                    $order->link,
+                    $order->quantity,
+                    $order->charge,
+                    $order->start_count,
+                    $order->remains,
+                    $order->status,
+                    $order->created_at->format('Y-m-d H:i:s'),
+                    $order->updated_at->format('Y-m-d H:i:s')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
     }
 
     public function create()
@@ -175,25 +324,18 @@ class OrderController extends Controller
         return redirect()->route('orders.index')->with('success', 'Order placed successfully and will be processed.');
     }
 
-
     public function getCategories(Request $request)
     {
         $currentLanguage = app()->getLocale();  // Get the current language ('en' or 'ar')
         $categoryField = $this->getLocalizedField('category');  // Get localized field for categories
         $platform = $request->query('platform', '');  // Get the platform parameter
 
-//        Log::info("Current locale: $currentLanguage");
-//        Log::info("Category field: $categoryField");
-//        Log::info("Platform parameter: $platform");
-
         if ($platform === 'all' || empty($platform)) {
             // If platform is 'all' or not specified, fetch all categories
-//            Log::info("Fetching all categories");
             $categories = Service::select($categoryField)->distinct()->pluck($categoryField);
         } else {
             // Get the platform name in the current language
             $platformName = $this->platforms[$platform][$currentLanguage] ?? $platform;
-//            Log::info("Fetching categories for platform: $platformName");
 
             // Fetch categories that match the platform name
             $categories = Service::where($categoryField, 'LIKE', "%$platformName%")
@@ -213,26 +355,16 @@ class OrderController extends Controller
         $nameField = $this->getLocalizedField('name');  // Get localized field for service names
         $platform = $request->query('platform', '');  // Get the platform parameter
         $category = $request->query('category', '');  // Get the category parameter
-//
-//        Log::info("Current locale: $currentLanguage");
-//        Log::info("Category field: $categoryField");
-//        Log::info("Name field: $nameField");
-//        Log::info("Platform parameter: $platform");
-//        Log::info("Category parameter: $category");
 
         // Fetch services based on platform and category
         $services = Service::when($platform !== 'all' && !empty($platform), function ($query) use ($platform, $categoryField, $currentLanguage) {
             $platformName = $this->platforms[$platform][$currentLanguage] ?? $platform;
-//            Log::info("Filtering services by platform: $platformName");
             return $query->where($categoryField, 'LIKE', "%$platformName%");
         })
             ->when(!empty($category), function ($query) use ($category, $categoryField) {
-//                Log::info("Filtering services by category: $category");
                 return $query->where($categoryField, 'LIKE', "%$category%");
             })
             ->get(['service_id', 'rate', 'min', 'max', $nameField]);
-
-//        Log::info("Services fetched: ", $services->toArray());
 
         // Prepare the response with the necessary fields
         $response = $services->map(function ($service) use ($nameField) {
@@ -244,8 +376,6 @@ class OrderController extends Controller
                 'max' => $service->max,
             ];
         });
-
-//        Log::info("Services response data: ", $response->toArray());
 
         return response()->json($response);  // Return services as JSON
     }
@@ -264,7 +394,6 @@ class OrderController extends Controller
         $service = $order->service;
         return view('orders.show', compact('order', 'service'));
     }
-
 
     public function destroy(Order $order)
     {
@@ -287,6 +416,41 @@ class OrderController extends Controller
         return redirect()->route('orders.index')->with('success', 'Order deleted and charge refunded successfully.');
     }
 
+    /**
+     * Bulk delete orders
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $orderIds = $request->input('order_ids', []);
+        
+        if (empty($orderIds)) {
+            return response()->json(['success' => false, 'message' => 'No orders selected']);
+        }
+
+        $orders = Order::whereIn('id', $orderIds)->get();
+        $totalRefunded = 0;
+
+        foreach ($orders as $order) {
+            if ($order->charge > 0) {
+                $user = $order->user;
+                $transactionData = [
+                    'type' => 'credit',
+                    'amount' => $order->charge,
+                    'status' => 'refunded',
+                    'description' => 'Bulk refund for deleted order ID: ' . $order->id,
+                    'currency' => 'USD',
+                ];
+                $user->createTransactionAndNotify($transactionData);
+                $totalRefunded += $order->charge;
+            }
+            $order->delete();
+        }
+
+        return response()->json([
+            'success' => true, 
+            'message' => count($orders) . ' orders deleted successfully. Total refunded: $' . number_format($totalRefunded, 2)
+        ]);
+    }
 
     public function updateOrderStatuses()
     {
@@ -339,5 +503,29 @@ class OrderController extends Controller
         return response()->json([
             'can_cancel' => $apiResponse->can_cancel ?? false
         ]);
+    }
+
+    /**
+     * Get order statistics for dashboard
+     */
+    public function getStatistics()
+    {
+        $user = Auth::user();
+        $query = Order::query();
+
+        if (!$user->hasRole('admin')) {
+            $query->where('user_id', $user->id);
+        }
+
+        $statistics = [
+            'total_orders' => $query->count(),
+            'completed_orders' => (clone $query)->where('status', 'completed')->count(),
+            'pending_orders' => (clone $query)->where('status', 'pending')->count(),
+            'total_value' => (clone $query)->sum('charge'),
+            'today_orders' => (clone $query)->whereDate('created_at', Carbon::today())->count(),
+            'this_month_orders' => (clone $query)->whereMonth('created_at', Carbon::now()->month)->count(),
+        ];
+
+        return response()->json($statistics);
     }
 }
