@@ -99,60 +99,71 @@ Route::middleware(['handle.auth.redirects'])->group(function () {
 });
 
 // =============================================
-// LOCALIZED ROUTES GROUP (Arabic and other languages)
+// DASHBOARD ROUTES
 // =============================================
 
-Route::group([
-    'prefix' => '{locale}',
-    'where' => ['locale' => 'ar|es|fr|de|ru|zh|hi|pt'],
-    'middleware' => 'setlocale'
-], function () {
+// Dashboard route for authenticated users
+Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware(['auth', 'check.banned']);
+Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard.alt')->middleware(['auth', 'check.banned']);
 
-    // Home route
+// =============================================
+// PUBLIC ROUTES
+// =============================================
+
+// Welcome page (public)
+Route::get('/', [WelcomeController::class, 'index'])->name('home');
+
+// Static pages
+Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms.localized');
+Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq.localized');
+Route::get('/about', [WelcomeController::class, 'about'])->name('about.localized');
+Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works.localized');
+Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take.localized');
+Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy.localized');
+Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.localized');
+
+// =============================================
+// LOCALIZED ROUTES (with language prefix)
+// =============================================
+
+Route::prefix('{locale}')->where(['locale' => 'ar|en'])->middleware('setlocale')->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home.localized');
-
-    // Static content routes
-    Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms.localized');
-    Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq.localized');
-    Route::get('/about', [WelcomeController::class, 'about'])->name('about.localized');
-    Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works.localized');
-    Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take.localized');
-    Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy.localized');
+    Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms');
+    Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq');
+    Route::get('/about', [WelcomeController::class, 'about'])->name('about');
+    Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works');
+    Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
+    Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
     Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.localized');
-
-    // Service routes with language prefix - UPDATED TO USE NEW LOCALIZED METHODS
-    Route::get('/all-services', [ServiceController::class, 'getAllServicesLocalized'])->name('services.all.localized');
-    Route::get('/service/{serviceId}', [ServiceController::class, 'showServiceLocalized'])
-        ->name('service.show.localized')
-        ->where('serviceId', '[0-9]+');
 });
 
 // =============================================
-// DEFAULT ENGLISH ROUTES
+// SERVICES ROUTES (Public)
 // =============================================
 
-// Static content routes (English - no prefix)
-Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms');
-Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq');
-Route::get('/about', [WelcomeController::class, 'about'])->name('about');
-Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works');
-Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
-Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
-Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
-
-// Service routes (English - no prefix) - USING ORIGINAL METHODS
-Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
-Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])
-    ->name('service.show')
-    ->where('serviceId', '[0-9]+');
+Route::get('/services', [ServiceController::class, 'publicIndex'])->name('services.all');
+Route::get('/services/{service}', [ServiceController::class, 'publicShow'])->name('services.show.public');
 
 // =============================================
-// HOME AND DASHBOARD ROUTES
+// DEBUG ROUTES (Remove in production)
 // =============================================
 
-Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
-Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
-Route::get('/', [WelcomeController::class, 'index'])->name('home');
+Route::get('/debug/auth', function () {
+    if (Auth::check()) {
+        return response()->json([
+            'authenticated' => true,
+            'user_id' => Auth::id(),
+            'user_name' => Auth::user()->name,
+            'user_status' => Auth::user()->status,
+            'session_id' => session()->getId()
+        ]);
+    } else {
+        return response()->json([
+            'authenticated' => false,
+            'session_id' => session()->getId()
+        ]);
+    }
+})->name('debug.auth');
 
 // =============================================
 // PROTECTED ROUTES (Authentication Required)

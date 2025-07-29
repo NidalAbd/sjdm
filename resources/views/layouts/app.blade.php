@@ -168,12 +168,24 @@
 
     function loadNotifications() {
         fetch('/notifications/latest')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                if (data.error) {
+                    console.error('Notification error:', data.error);
+                    return;
+                }
                 updateNotificationList(data);
                 updateNotificationBadge(data.length);
             })
-            .catch(error => console.error('Error loading notifications:', error));
+            .catch(error => {
+                console.error('Error loading notifications:', error);
+                // Don't redirect on error, just log it
+            });
     }
 
     function updateNotificationList(notifications) {
@@ -384,6 +396,22 @@
             })
             .catch(error => console.error('Error fetching notifications:', error));
     }
+
+    // Initialize notifications if user is authenticated
+    if (document.querySelector('.notification-bell')) {
+        // Delay notification loading to ensure dashboard loads first
+        setTimeout(() => {
+            initializeNotifications();
+        }, 1000);
+    }
+
+    // Ensure dashboard loads even if notifications fail
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if we're on the dashboard page
+        if (window.location.pathname === '/home' || window.location.pathname === '/dashboard') {
+            console.log('Dashboard loaded successfully');
+        }
+    });
 </script>
 @stop
 

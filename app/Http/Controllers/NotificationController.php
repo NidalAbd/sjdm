@@ -17,7 +17,19 @@ class NotificationController extends Controller
     public function fetchLatest()
     {
         try {
-            $notifications = Auth::user()->unreadNotifications()
+            // Check if user is authenticated
+            if (!Auth::check()) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            $user = Auth::user();
+            
+            // Check if user is banned
+            if ($user->status === 'banned') {
+                return response()->json(['error' => 'Account banned'], 403);
+            }
+
+            $notifications = $user->unreadNotifications()
                 ->latest()
                 ->limit(10)
                 ->get()
