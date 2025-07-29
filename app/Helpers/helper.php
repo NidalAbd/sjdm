@@ -4,6 +4,9 @@
  * Helper functions for multilingual routing
  */
 
+use App\Models\Order;
+use App\Services\Api;
+
 if (!function_exists('localizedRoute')) {
     /**
      * Generate a localized route URL
@@ -128,6 +131,68 @@ if (!function_exists('servicesUrl')) {
             return route('services.all');
         } else {
             return route('services.all.localized', ['locale' => $locale]);
+        }
+    }
+}
+
+if (!function_exists('checkWaitingOrdersAlert')) {
+    /**
+     * Check if there are waiting orders and return alert data for admins
+     *
+     * @return array|null
+     */
+    function checkWaitingOrdersAlert()
+    {
+        // Only show to admins
+        if (!auth()->check() || !auth()->user()->hasRole('admin')) {
+            return null;
+        }
+
+        $waitingOrdersCount = Order::where('status', 'waiting')->count();
+        
+        if ($waitingOrdersCount > 0) {
+            try {
+                $api = app(Api::class);
+                $apiBalanceResponse = $api->balance();
+                $apiBalance = $apiBalanceResponse->balance ?? 0;
+                
+                return [
+                    'type' => 'warning',
+                    'title' => __('adminlte.orders_waiting_for_api'),
+                    'message' => __('adminlte.orders_waiting_message', ['count' => $waitingOrdersCount]),
+                    'api_balance' => $apiBalance,
+                    'waiting_orders_count' => $waitingOrdersCount,
+                    'icon' => 'fas fa-exclamation-triangle'
+                ];
+            } catch (\Exception $e) {
+                return [
+                    'type' => 'danger',
+                    'title' => 'API Connection Error',
+                    'message' => __('adminlte.orders_waiting_message', ['count' => $waitingOrdersCount]) . ' ' . __('Unable to check API balance. Please verify API connection.'),
+                    'waiting_orders_count' => $waitingOrdersCount,
+                    'icon' => 'fas fa-exclamation-circle'
+                ];
+            }
+        }
+        
+        return null;
+    }
+}
+
+if (!function_exists('getApiBalance')) {
+    /**
+     * Get current API balance
+     *
+     * @return float|null
+     */
+    function getApiBalance()
+    {
+        try {
+            $api = app(Api::class);
+            $apiBalanceResponse = $api->balance();
+            return $apiBalanceResponse->balance ?? null;
+        } catch (\Exception $e) {
+            return null;
         }
     }
 }

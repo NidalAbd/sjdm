@@ -22,6 +22,35 @@
 @section('content')
     <div class="row justify-content-center">
         <div class="col-md-12">
+            
+            <!-- Waiting Orders Alert Section for Admins -->
+            @if(auth()->user()->hasRole('admin'))
+                @php
+                    $waitingOrdersAlert = checkWaitingOrdersAlert();
+                @endphp
+                
+                @if($waitingOrdersAlert)
+                    <div class="alert alert-{{ $waitingOrdersAlert['type'] }} alert-dismissible fade show mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="{{ $waitingOrdersAlert['icon'] }} me-2"></i>
+                            <div>
+                                <strong>{{ $waitingOrdersAlert['title'] }}</strong><br>
+                                {{ $waitingOrdersAlert['message'] }}
+                                @if(isset($waitingOrdersAlert['api_balance']))
+                                    <br><small class="text-muted">{{ __('adminlte.current_api_balance') }}: ${{ number_format($waitingOrdersAlert['api_balance'], 2) }}</small>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-plus me-1"></i>{{ __('adminlte.add_api_balance') }}
+                            </a>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+            @endif
+            
             <!-- Statistics Cards -->
             <div class="row mb-4">
                 <div class="col-md-3">
@@ -64,6 +93,21 @@
                                 </div>
                                 <div class="stat-icon">
                                     <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card bg-gradient-danger text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title mb-0">{{ __('Waiting') }}</h6>
+                                    <h3 class="mb-0">{{ $orders->where('status', 'waiting')->count() }}</h3>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-hourglass-half fa-2x"></i>
                                 </div>
                             </div>
                         </div>
@@ -282,47 +326,60 @@
                                                     <i class="fas fa-user text-primary"></i>
                                                 </div>
                                                 <div>
-                                                    <div class="fw-bold">{{ $order->user->name }}</div>
-                                                    <small class="text-muted">{{ $order->user->email }}</small>
+                                                    @if($order->user)
+                                                        <div class="fw-bold">{{ $order->user->name }}</div>
+                                                        <small class="text-muted">{{ $order->user->email }}</small>
+                                                    @else
+                                                        <div class="fw-bold text-muted">{{ __('adminlte.deleted_user') }}</div>
+                                                        <small class="text-muted">User ID: {{ $order->user_id }}</small>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="service-info-compact">
-                                                <div class="service-name-wrapper">
-                                                    @if(app()->getLocale() === 'ar')
-                                                        <span class="service-name" title="{{ $order->service->name_ar }}">
-                                                            {{ Str::limit($order->service->name_ar, 30) }}
-                                                        </span>
-                                                    @else
-                                                        <span class="service-name" title="{{ $order->service->name_en }}">
-                                                            {{ Str::limit($order->service->name_en, 30) }}
-                                                        </span>
-                                                    @endif
-                                                    @if(strlen(app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en) > 30)
-                                                        <span class="service-expand" onclick="toggleServiceDetails({{ $order->id }})">
-                                                            <i class="fas fa-chevron-down"></i>
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                <div class="service-details" id="serviceDetails{{ $order->id }}" style="display: none;">
-                                                    <div class="service-full-name">
+                                                @if($order->service)
+                                                    <div class="service-name-wrapper">
                                                         @if(app()->getLocale() === 'ar')
-                                                            {{ $order->service->name_ar }}
+                                                            <span class="service-name" title="{{ $order->service->name_ar }}">
+                                                                {{ Str::limit($order->service->name_ar, 30) }}
+                                                            </span>
                                                         @else
-                                                            {{ $order->service->name_en }}
+                                                            <span class="service-name" title="{{ $order->service->name_en }}">
+                                                                {{ Str::limit($order->service->name_en, 30) }}
+                                                            </span>
+                                                        @endif
+                                                        @if(strlen(app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en) > 30)
+                                                            <span class="service-expand" onclick="toggleServiceDetails({{ $order->id }})">
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </span>
                                                         @endif
                                                     </div>
-                                                    <div class="service-meta">
-                                                        <small class="text-muted">ID: {{ $order->service->service_id }}</small>
-                                                        <a href="{{ route('services.show', $order->service) }}"
-                                                           class="btn btn-sm btn-outline-primary service-link"
-                                                           target="_blank" title="View Service Details">
-                                                            <i class="fas fa-external-link-alt"></i> Details
-                                                        </a>
+                                                    <div class="service-details" id="serviceDetails{{ $order->id }}" style="display: none;">
+                                                        <div class="service-full-name">
+                                                            @if(app()->getLocale() === 'ar')
+                                                                {{ $order->service->name_ar }}
+                                                            @else
+                                                                {{ $order->service->name_en }}
+                                                            @endif
+                                                        </div>
+                                                        <div class="service-meta">
+                                                            <small class="text-muted">ID: {{ $order->service->service_id }}</small>
+                                                            <a href="{{ route('services.show', $order->service) }}"
+                                                               class="btn btn-sm btn-outline-primary service-link"
+                                                               target="_blank" title="View Service Details">
+                                                                <i class="fas fa-external-link-alt"></i> Details
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <small class="text-muted service-id">ID: {{ $order->service->service_id }}</small>
+                                                    <small class="text-muted service-id">ID: {{ $order->service->service_id }}</small>
+                                                @else
+                                                    <div class="text-muted">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                                        {{ __('adminlte.deleted_service') }}
+                                                    </div>
+                                                    <small class="text-muted">Service ID: {{ $order->service_id }}</small>
+                                                @endif
                                             </div>
                                         </td>
                                         <td>
@@ -468,50 +525,63 @@
                                                         <i class="fas fa-user text-primary"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="fw-bold">{{ $order->user->name }}</div>
-                                                        <small class="text-muted">{{ $order->user->email }}</small>
+                                                        @if($order->user)
+                                                            <div class="fw-bold">{{ $order->user->name }}</div>
+                                                            <small class="text-muted">{{ $order->user->email }}</small>
+                                                        @else
+                                                            <div class="fw-bold text-muted">{{ __('adminlte.deleted_user') }}</div>
+                                                            <small class="text-muted">User ID: {{ $order->user_id }}</small>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
 
-                                                                                         <div class="service-info-compact mb-3">
-                                                 <div class="service-name-wrapper">
-                                                     <h6 class="card-title">
-                                                         @if(app()->getLocale() === 'ar')
-                                                             <span class="service-name" title="{{ $order->service->name_ar }}">
-                                                                 {{ Str::limit($order->service->name_ar, 25) }}
-                                                             </span>
-                                                         @else
-                                                             <span class="service-name" title="{{ $order->service->name_en }}">
-                                                                 {{ Str::limit($order->service->name_en, 25) }}
-                                                             </span>
-                                                         @endif
-                                                         @if(strlen(app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en) > 25)
-                                                             <span class="service-expand" onclick="toggleServiceDetails({{ $order->id }})">
-                                                                 <i class="fas fa-chevron-down"></i>
-                                                             </span>
-                                                         @endif
-                                                     </h6>
-                                                 </div>
-                                                 <div class="service-details" id="serviceDetails{{ $order->id }}" style="display: none;">
-                                                     <div class="service-full-name">
-                                                         @if(app()->getLocale() === 'ar')
-                                                             {{ $order->service->name_ar }}
-                                                         @else
-                                                             {{ $order->service->name_en }}
-                                                         @endif
-                                                     </div>
-                                                     <div class="service-meta">
-                                                         <small class="text-muted">ID: {{ $order->service->service_id }}</small>
-                                                         <a href="{{ route('services.show', $order->service) }}"
-                                                            class="btn btn-sm btn-outline-primary service-link"
-                                                            target="_blank" title="View Service Details">
-                                                             <i class="fas fa-external-link-alt"></i> Details
-                                                         </a>
-                                                     </div>
-                                                 </div>
-                                                 <small class="text-muted service-id">ID: {{ $order->service->service_id }}</small>
-                                             </div>
+                                            <div class="service-info-compact mb-3">
+                                                @if($order->service)
+                                                    <div class="service-name-wrapper">
+                                                        <h6 class="card-title">
+                                                            @if(app()->getLocale() === 'ar')
+                                                                <span class="service-name" title="{{ $order->service->name_ar }}">
+                                                                    {{ Str::limit($order->service->name_ar, 25) }}
+                                                                </span>
+                                                            @else
+                                                                <span class="service-name" title="{{ $order->service->name_en }}">
+                                                                    {{ Str::limit($order->service->name_en, 25) }}
+                                                                </span>
+                                                            @endif
+                                                            @if(strlen(app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en) > 25)
+                                                                <span class="service-expand" onclick="toggleServiceDetails({{ $order->id }})">
+                                                                    <i class="fas fa-chevron-down"></i>
+                                                                </span>
+                                                            @endif
+                                                        </h6>
+                                                    </div>
+                                                    <div class="service-details" id="serviceDetails{{ $order->id }}" style="display: none;">
+                                                        <div class="service-full-name">
+                                                            @if(app()->getLocale() === 'ar')
+                                                                {{ $order->service->name_ar }}
+                                                            @else
+                                                                {{ $order->service->name_en }}
+                                                            @endif
+                                                        </div>
+                                                        <div class="service-meta">
+                                                            <small class="text-muted">ID: {{ $order->service->service_id }}</small>
+                                                            <a href="{{ route('services.show', $order->service) }}"
+                                                               class="btn btn-sm btn-outline-primary service-link"
+                                                               target="_blank" title="View Service Details">
+                                                                <i class="fas fa-external-link-alt"></i> Details
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted service-id">ID: {{ $order->service->service_id }}</small>
+                                                @else
+                                                    <div class="text-muted">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                                        {{ __('adminlte.deleted_service') }}
+                                                    </div>
+                                                    <small class="text-muted">Service ID: {{ $order->service_id }}</small>
+                                                @endif
+                                            </div>
 
                                             <div class="order-details">
                                                 <div class="row g-2 mb-3">

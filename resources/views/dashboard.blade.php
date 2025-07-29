@@ -13,6 +13,35 @@
 
     <!-- Admin-specific widgets and content -->
     @if(auth()->user()->isAdmin())
+        
+        <!-- Waiting Orders Alert Section -->
+        @php
+            $waitingOrdersAlert = checkWaitingOrdersAlert();
+        @endphp
+        
+        @if($waitingOrdersAlert)
+            <div class="alert alert-{{ $waitingOrdersAlert['type'] }} alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="{{ $waitingOrdersAlert['icon'] }} me-2"></i>
+                    <div>
+                        <strong>{{ $waitingOrdersAlert['title'] }}</strong><br>
+                        {{ $waitingOrdersAlert['message'] }}
+                        @if(isset($waitingOrdersAlert['api_balance']))
+                            <br><small class="text-muted">{{ __('adminlte.current_api_balance') }}: ${{ number_format($waitingOrdersAlert['api_balance'], 2) }}</small>
+                        @endif
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <a href="{{ route('orders.index', ['status' => 'waiting']) }}" class="btn btn-sm btn-outline-{{ $waitingOrdersAlert['type'] }}">
+                        <i class="fas fa-eye me-1"></i>{{ __('adminlte.view_waiting_orders') }}
+                    </a>
+                    <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-outline-success ms-2">
+                        <i class="fas fa-plus me-1"></i>{{ __('adminlte.add_api_balance') }}
+                    </a>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <!-- Total Cost/Profit Widgets Section -->
         <div class="row mt-4">
@@ -79,6 +108,9 @@
 
             <!-- Orders Count -->
             <x-adminlte-widget color="warning" title="{{ __('adminlte.orders') }}" count="{{ $orderCount }}" icon="fas fa-shopping-cart" link="{{ route('orders.index') }}" />
+            
+            <!-- Waiting Orders Count -->
+            <x-adminlte-widget color="danger" title="{{ __('adminlte.waiting_orders') }}" count="{{ \App\Models\Order::where('status', 'waiting')->count() }}" icon="fas fa-hourglass-half" link="{{ route('orders.index', ['status' => 'waiting']) }}" />
         </div>
 
         <!-- Pricing Section -->

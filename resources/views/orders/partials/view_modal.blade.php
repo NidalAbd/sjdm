@@ -45,18 +45,27 @@
                                         <i class="fas fa-user fa-2x text-primary"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-1">{{ $order->user->name }}</h6>
-                                        <small class="text-muted">{{ $order->user->email }}</small>
+                                        @if($order->user)
+                                            <h6 class="mb-1">{{ $order->user->name }}</h6>
+                                            <small class="text-muted">{{ $order->user->email }}</small>
+                                        @else
+                                            <h6 class="mb-1 text-muted">{{ __('adminlte.deleted_user') }}</h6>
+                                            <small class="text-muted">User ID: {{ $order->user_id }}</small>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row g-2">
                                     <div class="col-6">
                                         <small class="text-muted d-block">{{ __('User ID') }}</small>
-                                        <span class="fw-bold">{{ $order->user->id }}</span>
+                                        <span class="fw-bold">{{ $order->user_id }}</span>
                                     </div>
                                     <div class="col-6">
                                         <small class="text-muted d-block">{{ __('Balance') }}</small>
-                                        <span class="fw-bold text-success">${{ number_format($order->user->balance, 2) }}</span>
+                                        @if($order->user)
+                                            <span class="fw-bold text-success">${{ number_format($order->user->balance, 2) }}</span>
+                                        @else
+                                            <span class="fw-bold text-muted">{{ __('N/A') }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -72,31 +81,39 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <h6 class="mb-3">
-                                    @if(app()->getLocale() === 'ar')
-                                        {{ $order->service->name_ar }}
-                                    @else
-                                        {{ $order->service->name_en }}
-                                    @endif
-                                </h6>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <small class="text-muted d-block">{{ __('Service ID') }}</small>
-                                        <span class="fw-bold">{{ $order->service->service_id }}</span>
+                                @if($order->service)
+                                    <h6 class="mb-3">
+                                        @if(app()->getLocale() === 'ar')
+                                            {{ $order->service->name_ar }}
+                                        @else
+                                            {{ $order->service->name_en }}
+                                        @endif
+                                    </h6>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">{{ __('Service ID') }}</small>
+                                            <span class="fw-bold">{{ $order->service->service_id }}</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">{{ __('Rate per 1K') }}</small>
+                                            <span class="fw-bold">${{ number_format($order->service->rate, 2) }}</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">{{ __('Min Order') }}</small>
+                                            <span class="fw-bold">{{ number_format($order->service->min) }}</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">{{ __('Max Order') }}</small>
+                                            <span class="fw-bold">{{ number_format($order->service->max) }}</span>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
-                                        <small class="text-muted d-block">{{ __('Rate per 1K') }}</small>
-                                        <span class="fw-bold">${{ number_format($order->service->rate, 2) }}</span>
+                                @else
+                                    <div class="text-center text-muted">
+                                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                        <h6>{{ __('adminlte.deleted_service') }}</h6>
+                                        <small>Service ID: {{ $order->service_id }}</small>
                                     </div>
-                                    <div class="col-6">
-                                        <small class="text-muted d-block">{{ __('Min Order') }}</small>
-                                        <span class="fw-bold">{{ number_format($order->service->min) }}</span>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted d-block">{{ __('Max Order') }}</small>
-                                        <span class="fw-bold">{{ number_format($order->service->max) }}</span>
-                                    </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

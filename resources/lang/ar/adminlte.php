@@ -801,5 +801,15 @@ return [
     'to' => 'إلى',
     'of' => 'من',
 
+    'orders_waiting_for_api' => 'الطلبات في انتظار معالجة API',
+    'orders_waiting_message' => 'هناك {count} طلب بحالة انتظار. هذا عادة ما يشير إلى رصيد API غير كافٍ أو مشاكل في API.',
+    'api_balance' => 'رصيد API',
+    'current_api_balance' => 'رصيد API الحالي',
+    'add_api_balance' => 'إضافة رصيد API',
+    'view_waiting_orders' => 'عرض الطلبات المنتظرة',
+    'waiting_orders' => 'الطلبات المنتظرة',
+    'deleted_user' => 'مستخدم محذوف',
+    'deleted_service' => 'خدمة محذوفة',
+
 ];
 
