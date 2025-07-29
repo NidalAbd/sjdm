@@ -10,23 +10,133 @@
 @section('content')
     <style>
         .waiting-orders-alert {
-            animation: pulse 2s infinite;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            border-radius: 15px !important;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3) !important;
+            color: white !important;
+            position: relative;
+            overflow: hidden;
         }
         
-        @keyframes pulse {
-            0% { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-            50% { box-shadow: 0 4px 25px rgba(255, 193, 7, 0.3); }
-            100% { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .waiting-orders-alert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
         }
         
-        .alert-heading {
-            font-size: 1.25rem;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .waiting-orders-alert .alert-heading {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .waiting-orders-alert .badge {
+            background: rgba(255,255,255,0.2) !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.3);
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        
+        .waiting-orders-alert p {
+            color: rgba(255,255,255,0.9) !important;
+            font-size: 1rem;
+            line-height: 1.6;
         }
         
         .api-balance-box {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 1px solid #dee2e6;
+            background: rgba(255,255,255,0.15) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .waiting-orders-alert .btn {
+            border-radius: 25px;
+            font-weight: 600;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .waiting-orders-alert .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .waiting-orders-alert .btn-warning {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border-color: #ff6b6b;
+            color: white;
+        }
+        
+        .waiting-orders-alert .btn-success {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            border-color: #00b894;
+            color: white;
+        }
+        
+        .waiting-orders-alert .btn-outline-secondary {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .waiting-orders-alert .btn-outline-secondary:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .waiting-orders-alert .icon-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .waiting-orders-alert .icon-container i {
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .waiting-orders-alert .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .waiting-orders-alert .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
     </style>
 
@@ -42,51 +152,58 @@
         @endphp
         
         @if($waitingOrdersAlert)
-            <div class="alert alert-{{ $waitingOrdersAlert['type'] }} border-0 shadow-sm mb-4 waiting-orders-alert" role="alert" style="background: linear-gradient(135deg, {{ $waitingOrdersAlert['type'] === 'warning' ? '#fff3cd' : '#f8d7da' }} 0%, {{ $waitingOrdersAlert['type'] === 'warning' ? '#ffeaa7' : '#f5c6cb' }} 100%); border-left: 4px solid {{ $waitingOrdersAlert['type'] === 'warning' ? '#ffc107' : '#dc3545' }} !important;">
-                <div class="d-flex align-items-start">
-                    <div class="flex-shrink-0 me-3">
-                        <i class="{{ $waitingOrdersAlert['icon'] }} fa-2x text-{{ $waitingOrdersAlert['type'] === 'warning' ? 'warning' : 'danger' }}"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h5 class="alert-heading mb-0 fw-bold text-{{ $waitingOrdersAlert['type'] === 'warning' ? 'warning' : 'danger' }}">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                {{ $waitingOrdersAlert['title'] }}
-                            </h5>
-                            <span class="badge bg-{{ $waitingOrdersAlert['type'] === 'warning' ? 'warning' : 'danger' }} fs-6">
-                                {{ $waitingOrdersAlert['waiting_orders_count'] }} {{ __('adminlte.waiting_orders') }}
-                            </span>
-                        </div>
-                        
-                        <p class="mb-3 text-dark">{{ $waitingOrdersAlert['message'] }}</p>
-                        
-                        @if(isset($waitingOrdersAlert['api_balance']))
-                            <div class="mb-3 p-3 api-balance-box rounded">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-dollar-sign text-success me-2"></i>
-                                    <strong class="me-2">{{ __('adminlte.current_api_balance') }}:</strong>
-                                    <span class="fs-5 fw-bold text-{{ $waitingOrdersAlert['api_balance'] > 0 ? 'success' : 'danger' }}">
-                                        ${{ number_format($waitingOrdersAlert['api_balance'], 2) }}
-                                    </span>
-                                </div>
+            <div class="alert waiting-orders-alert mb-4" role="alert">
+                <div class="status-indicator"></div>
+                <div class="content-wrapper">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0 me-4">
+                            <div class="icon-container">
+                                <i class="fas fa-exclamation-triangle"></i>
                             </div>
-                        @endif
-                        
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a href="{{ route('orders.index', ['status' => 'waiting']) }}" 
-                               class="btn btn-{{ $waitingOrdersAlert['type'] === 'warning' ? 'warning' : 'danger' }} btn-sm">
-                                <i class="fas fa-eye me-1"></i>
-                                {{ __('adminlte.view_waiting_orders') }}
-                            </a>
-                            <a href="{{ route('transactions.create') }}" 
-                               class="btn btn-success btn-sm">
-                                <i class="fas fa-plus me-1"></i>
-                                {{ __('adminlte.add_api_balance') }}
-                            </a>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshPage()">
-                                <i class="fas fa-sync-alt me-1"></i>
-                                {{ __('Refresh') }}
-                            </button>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="alert-heading mb-0">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    {{ $waitingOrdersAlert['title'] }}
+                                </h5>
+                                <span class="badge">
+                                    {{ $waitingOrdersAlert['waiting_orders_count'] }} {{ __('adminlte.waiting_orders') }}
+                                </span>
+                            </div>
+                            
+                            <p class="mb-4">{{ $waitingOrdersAlert['message'] }}</p>
+                            
+                            @if(isset($waitingOrdersAlert['api_balance']))
+                                <div class="mb-4 p-3 api-balance-box">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-dollar-sign text-white me-3"></i>
+                                        <div>
+                                            <strong class="d-block text-white">{{ __('adminlte.current_api_balance') }}</strong>
+                                            <span class="fs-4 fw-bold text-{{ $waitingOrdersAlert['api_balance'] > 0 ? 'success' : 'danger' }}">
+                                                ${{ number_format($waitingOrdersAlert['api_balance'], 2) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            <div class="d-flex gap-3 flex-wrap">
+                                <a href="{{ route('orders.index', ['status' => 'waiting']) }}" 
+                                   class="btn btn-warning">
+                                    <i class="fas fa-eye me-2"></i>
+                                    {{ __('adminlte.view_waiting_orders') }}
+                                </a>
+                                <a href="{{ route('transactions.create') }}" 
+                                   class="btn btn-success">
+                                    <i class="fas fa-plus me-2"></i>
+                                    {{ __('adminlte.add_api_balance') }}
+                                </a>
+                                <button type="button" class="btn btn-outline-secondary" onclick="refreshPage()">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    {{ __('Refresh') }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -196,4 +313,33 @@
     function refreshPage() {
         location.reload();
     }
+    
+    // Prevent any automatic dismissal of the waiting orders alert
+    document.addEventListener('DOMContentLoaded', function() {
+        const waitingAlert = document.querySelector('.waiting-orders-alert');
+        if (waitingAlert) {
+            // Remove any dismissible functionality
+            const closeButtons = waitingAlert.querySelectorAll('.btn-close, [data-bs-dismiss="alert"]');
+            closeButtons.forEach(btn => btn.remove());
+            
+            // Ensure the alert stays visible
+            waitingAlert.style.display = 'block';
+            waitingAlert.style.visibility = 'visible';
+            waitingAlert.style.opacity = '1';
+            
+            // Prevent any fade out animations
+            waitingAlert.classList.remove('fade', 'show');
+            waitingAlert.classList.add('permanent-alert');
+        }
+    });
+    
+    // Auto-refresh the page every 30 seconds to check for updates
+    setInterval(function() {
+        // Only refresh if there are waiting orders
+        const waitingAlert = document.querySelector('.waiting-orders-alert');
+        if (waitingAlert) {
+            // Check if we should refresh (optional - uncomment if needed)
+            // location.reload();
+        }
+    }, 30000);
 </script>
