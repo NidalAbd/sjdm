@@ -20,6 +20,28 @@
 @stop
 
 @section('content')
+    <style>
+        .waiting-orders-alert {
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+            50% { box-shadow: 0 4px 25px rgba(255, 193, 7, 0.3); }
+            100% { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        }
+        
+        .alert-heading {
+            font-size: 1.25rem;
+        }
+        
+        .api-balance-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+        }
+    </style>
+
     <div class="row justify-content-center">
         <div class="col-md-12">
             
@@ -30,23 +52,49 @@
                 @endphp
                 
                 @if($waitingOrdersAlert)
-                    <div class="alert alert-{{ $waitingOrdersAlert['type'] }} alert-dismissible fade show mb-4" role="alert">
-                        <div class="d-flex align-items-center">
-                            <i class="{{ $waitingOrdersAlert['icon'] }} me-2"></i>
-                            <div>
-                                <strong>{{ $waitingOrdersAlert['title'] }}</strong><br>
-                                {{ $waitingOrdersAlert['message'] }}
+                    <div class="alert alert-{{ $waitingOrdersAlert['type'] }} border-0 shadow-sm mb-4 waiting-orders-alert" role="alert" style="background: linear-gradient(135deg, {{ $waitingOrdersAlert['type'] === 'warning' ? '#fff3cd' : '#f8d7da' }} 0%, {{ $waitingOrdersAlert['type'] === 'warning' ? '#ffeaa7' : '#f5c6cb' }} 100%); border-left: 4px solid {{ $waitingOrdersAlert['type'] === 'warning' ? '#ffc107' : '#dc3545' }} !important;">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-shrink-0 me-3">
+                                <i class="{{ $waitingOrdersAlert['icon'] }} fa-2x text-{{ $waitingOrdersAlert['type'] === 'warning' ? 'warning' : 'danger' }}"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="alert-heading mb-0 fw-bold text-{{ $waitingOrdersAlert['type'] === 'warning' ? 'warning' : 'danger' }}">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        {{ $waitingOrdersAlert['title'] }}
+                                    </h5>
+                                    <span class="badge bg-{{ $waitingOrdersAlert['type'] === 'warning' ? 'warning' : 'danger' }} fs-6">
+                                        {{ $waitingOrdersAlert['waiting_orders_count'] }} {{ __('adminlte.waiting_orders') }}
+                                    </span>
+                                </div>
+                                
+                                <p class="mb-3 text-dark">{{ $waitingOrdersAlert['message'] }}</p>
+                                
                                 @if(isset($waitingOrdersAlert['api_balance']))
-                                    <br><small class="text-muted">{{ __('adminlte.current_api_balance') }}: ${{ number_format($waitingOrdersAlert['api_balance'], 2) }}</small>
+                                    <div class="mb-3 p-3 api-balance-box rounded">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-dollar-sign text-success me-2"></i>
+                                            <strong class="me-2">{{ __('adminlte.current_api_balance') }}:</strong>
+                                            <span class="fs-5 fw-bold text-{{ $waitingOrdersAlert['api_balance'] > 0 ? 'success' : 'danger' }}">
+                                                ${{ number_format($waitingOrdersAlert['api_balance'], 2) }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 @endif
+                                
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="{{ route('transactions.create') }}" 
+                                       class="btn btn-success btn-sm">
+                                        <i class="fas fa-plus me-1"></i>
+                                        {{ __('adminlte.add_api_balance') }}
+                                    </a>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshPage()">
+                                        <i class="fas fa-sync-alt me-1"></i>
+                                        {{ __('Refresh') }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="mt-2">
-                            <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-outline-success">
-                                <i class="fas fa-plus me-1"></i>{{ __('adminlte.add_api_balance') }}
-                            </a>
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
             @endif
@@ -1046,5 +1094,9 @@ document.addEventListener('DOMContentLoaded', function() {
         actionHeader.style.zIndex = '15';
     }
 });
+
+function refreshPage() {
+    location.reload();
+}
 </script>
 @stop
