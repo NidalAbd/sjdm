@@ -20,11 +20,31 @@ class UpdateOrderStatuses implements ShouldQueue
         Log::info('UpdateOrderStatuses job started.');
 
         try {
-            // Retrieve all orders with 'Pending' status
-            $orders = Order::whereNotIn('status', ['Canceled', 'Completed', 'Partial'])->get();
-            Log::info('Found ' . $orders->count() . ' pending orders.');
+            // Retrieve all orders that are NOT in final statuses (completed, canceled, partial, refunded)
+            // This includes: waiting, processing, pending, in progress, etc.
+            $orders = Order::whereNotIn('status', ['completed', 'canceled', 'cancelled', 'partial', 'refunded'])->get();
+            Log::info('Found ' . $orders->count() . ' orders to check for status updates.');
 
-            $orderIds = $orders->pluck('api_order_id')->filter()->toArray(); // Ensure we only get non-null api_order_ids
+            // Filter orders that have api_order_id (only these can be checked via API)
+            $ordersWithApiId = $orders->filter(function($order) {
+                return !empty($order->api_order_id);
+            });
+            
+            $ordersWithoutApiId = $orders->filter(function($order) {
+                return empty($order->api_order_id);
+            });
+
+            Log::info('Orders with API ID: ' . $ordersWithApiId->count());
+            Log::info('Orders without API ID: ' . $ordersWithoutApiId->count());
+
+            if ($ordersWithoutApiId->count() > 0) {
+                Log::info('Orders without API ID (these need to be processed first):');
+                foreach ($ordersWithoutApiId as $order) {
+                    Log::info("Order ID: {$order->id}, Status: {$order->status}, Created: {$order->created_at}");
+                }
+            }
+
+            $orderIds = $ordersWithApiId->pluck('api_order_id')->toArray();
             Log::info('Order IDs to check: ' . implode(', ', $orderIds));
 
             if (!empty($orderIds)) {
@@ -39,12 +59,54 @@ class UpdateOrderStatuses implements ShouldQueue
                     // Single order response
                     $this->updateOrderFromApiResponse($apiResponse->order, $apiResponse);
                 } elseif (is_object($apiResponse) || is_array($apiResponse)) {
-                    // Multiple orders response
-                    foreach ($apiResponse as $orderId => $orderData) {
-                        if (is_object($orderData) || is_array($orderData)) {
-                            $this->updateOrderFromApiResponse($orderId, $orderData);
+                    // Multiple orders response - handle different response structures
+                    if (is_array($apiResponse)) {
+                        // If it's an array, iterate through it
+                        foreach ($apiResponse as $orderId => $orderData) {
+                            if (is_object($orderData) || is_array($orderData)) {
+                                // Check if the response contains an error
+                                if (is_object($orderData) && property_exists($orderData, 'error')) {
+                                    Log::warning("API Error for order ID {$orderId}: " . $orderData->error);
+                                    continue;
+                                }
+                                if (is_array($orderData) && isset($orderData['error'])) {
+                                    Log::warning("API Error for order ID {$orderId}: " . $orderData['error']);
+                                    continue;
+                                }
+                                $this->updateOrderFromApiResponse($orderId, $orderData);
+                            } else {
+                                Log::warning('Invalid order data structure in API response for order ID: ' . $orderId);
+                            }
+                        }
+                    } else {
+                        // If it's an object, check for common response structures
+                        if (property_exists($apiResponse, 'orders')) {
+                            // Response with 'orders' property
+                            foreach ($apiResponse->orders as $orderId => $orderData) {
+                                if (is_object($orderData) && property_exists($orderData, 'error')) {
+                                    Log::warning("API Error for order ID {$orderId}: " . $orderData->error);
+                                    continue;
+                                }
+                                $this->updateOrderFromApiResponse($orderId, $orderData);
+                            }
                         } else {
-                            Log::warning('Invalid order data structure in API response.');
+                            // Try to iterate through object properties
+                            foreach ($apiResponse as $orderId => $orderData) {
+                                if (is_object($orderData) || is_array($orderData)) {
+                                    // Check if the response contains an error
+                                    if (is_object($orderData) && property_exists($orderData, 'error')) {
+                                        Log::warning("API Error for order ID {$orderId}: " . $orderData->error);
+                                        continue;
+                                    }
+                                    if (is_array($orderData) && isset($orderData['error'])) {
+                                        Log::warning("API Error for order ID {$orderId}: " . $orderData['error']);
+                                        continue;
+                                    }
+                                    $this->updateOrderFromApiResponse($orderId, $orderData);
+                                } else {
+                                    Log::warning('Invalid order data structure in API response for order ID: ' . $orderId);
+                                }
+                            }
                         }
                     }
                 } else {
@@ -93,24 +155,48 @@ class UpdateOrderStatuses implements ShouldQueue
             Log::info('Current order status: ' . $order->status . ', Start Count: ' . $order->start_count . ', Remains: ' . $order->remains);
 
             // Extract API response data with proper checks
-            $status = $orderData->status ?? $order->status;
-            $startCount = isset($orderData->start_count) && $orderData->start_count !== null ? (string)$orderData->start_count : $order->start_count;
-            $remains = isset($orderData->remains) && $orderData->remains !== null ? (string)$orderData->remains : $order->remains;
+            // Handle both object and array data structures
+            if (is_object($orderData)) {
+                $status = $orderData->status ?? $order->status;
+                $startCount = isset($orderData->start_count) && $orderData->start_count !== null ? (string)$orderData->start_count : $order->start_count;
+                $remains = isset($orderData->remains) && $orderData->remains !== null ? (string)$orderData->remains : $order->remains;
+            } elseif (is_array($orderData)) {
+                $status = $orderData['status'] ?? $order->status;
+                $startCount = isset($orderData['start_count']) && $orderData['start_count'] !== null ? (string)$orderData['start_count'] : $order->start_count;
+                $remains = isset($orderData['remains']) && $orderData['remains'] !== null ? (string)$orderData['remains'] : $order->remains;
+            } else {
+                Log::warning('Invalid order data type for order ID: ' . $orderId);
+                return;
+            }
 
-            Log::info('API Data for Order ' . $orderId . ': Start Count Type: ' . gettype($startCount) . ', Start Count: ' . $startCount . ', Remains Type: ' . gettype($remains) . ', Remains: ' . $remains);
+            Log::info('API Data for Order ' . $orderId . ': Status: ' . $status . ', Start Count Type: ' . gettype($startCount) . ', Start Count: ' . $startCount . ', Remains Type: ' . gettype($remains) . ', Remains: ' . $remains);
 
-            // Update order status and other fields
-            $order->status = $status;
-            $order->start_count = $startCount;
-            $order->remains = $remains;
-            $order->save();
+            // Only update if there are actual changes
+            $hasChanges = false;
+            if ($status !== $order->status) {
+                $order->status = $status;
+                $hasChanges = true;
+            }
+            if ($startCount !== $order->start_count) {
+                $order->start_count = $startCount;
+                $hasChanges = true;
+            }
+            if ($remains !== $order->remains) {
+                $order->remains = $remains;
+                $hasChanges = true;
+            }
 
-            Log::info('Order ' . $orderId . ' updated. New Status: ' . $order->status . ', New Start Count: ' . $order->start_count . ', New Remains: ' . $order->remains);
+            if ($hasChanges) {
+                $order->save();
+                Log::info('Order ' . $orderId . ' updated. New Status: ' . $order->status . ', New Start Count: ' . $order->start_count . ', New Remains: ' . $order->remains);
+            } else {
+                Log::info('Order ' . $orderId . ' - No changes detected.');
+            }
 
             // Log the order update
             Log::info('Order Update Logged: Order ID: ' . $order->id . ', Status: ' . $order->status . ', Start Count: ' . $order->start_count . ', Remains: ' . $order->remains);
         } else {
-            Log::warning('Order not found for ID: ' . $orderId);
+            Log::warning('Order not found for API ID: ' . $orderId);
         }
     }
 }

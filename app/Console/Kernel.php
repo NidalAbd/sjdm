@@ -34,7 +34,8 @@ class Kernel extends ConsoleKernel
 
         // Schedule the ProcessPendingOrders job every minute
         $schedule->call(function () {
-            ProcessPendingOrders::dispatch(new Api);
+            $api = app(\App\Services\Api::class);
+            ProcessPendingOrders::dispatch($api);
         })->everyMinute();
 
         // Other scheduled commands
