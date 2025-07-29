@@ -99,6 +99,13 @@ Route::middleware(['handle.auth.redirects'])->group(function () {
 });
 
 // =============================================
+// PUBLIC SERVICES ROUTES (Must be before protected routes)
+// =============================================
+
+Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
+Route::get('/service/{service}', [ServiceController::class, 'showService'])->name('services.show.public');
+
+// =============================================
 // DASHBOARD ROUTES
 // =============================================
 
@@ -114,13 +121,13 @@ Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard.alt'
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 // Static pages
-Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms.localized');
-Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq.localized');
-Route::get('/about', [WelcomeController::class, 'about'])->name('about.localized');
-Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works.localized');
-Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take.localized');
-Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy.localized');
-Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.localized');
+Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms');
+Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq');
+Route::get('/about', [WelcomeController::class, 'about'])->name('about');
+Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works');
+Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
+Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
+Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
 
 // =============================================
 // LOCALIZED ROUTES (with language prefix)
@@ -128,21 +135,18 @@ Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.
 
 Route::prefix('{locale}')->where(['locale' => 'ar|en'])->middleware('setlocale')->group(function () {
     Route::get('/', [WelcomeController::class, 'index'])->name('home.localized');
-    Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms');
-    Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq');
-    Route::get('/about', [WelcomeController::class, 'about'])->name('about');
-    Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works');
-    Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take');
-    Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
+    Route::get('/terms-and-conditions', [WelcomeController::class, 'terms'])->name('terms.localized');
+    Route::get('/faq', [WelcomeController::class, 'faq'])->name('faq.localized');
+    Route::get('/about', [WelcomeController::class, 'about'])->name('about.localized');
+    Route::get('/how-it-works', [WelcomeController::class, 'howItWorks'])->name('how-it-works.localized');
+    Route::get('/support_take', [WelcomeController::class, 'support'])->name('support.take.localized');
+    Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy.localized');
     Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.localized');
+    
+    // Localized services routes
+    Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all.localized');
+    Route::get('/service/{service}', [ServiceController::class, 'showService'])->name('services.show.public.localized');
 });
-
-// =============================================
-// SERVICES ROUTES (Public)
-// =============================================
-
-Route::get('/services', [ServiceController::class, 'publicIndex'])->name('services.all');
-Route::get('/services/{service}', [ServiceController::class, 'publicShow'])->name('services.show.public');
 
 // =============================================
 // DEBUG ROUTES (Remove in production)
