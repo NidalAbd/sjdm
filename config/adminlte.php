@@ -156,7 +156,7 @@ return array(
             'text'    => 'admin', // Just use the translation key
             'icon'    => 'fas fa-fw fa-user-shield',
             'topnav_center' => true,
-            'can' => 'roles',
+            'can' => 'view_any_role',
             'icon_color'   => 'primary', // Set predefined color
             'submenu' => array(
                 array(
@@ -184,7 +184,7 @@ return array(
                     'text' => 'payment_methods', // Use translation key
                     'url'  => 'payment-methods',
                     'icon' => 'fas fa-fw fa-credit-card',
-                    'can'  => 'roles', // Use existing permission for admin access
+                    'can'  => 'add_balance', // Use existing permission for admin access
                     'icon_color'   => 'purple', // Set predefined color
                 ),
                 array(

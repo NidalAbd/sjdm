@@ -21,63 +21,85 @@
 
 @section('content')
     <style>
-        .waiting-orders-alert {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        .waiting-alert-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%) !important;
             border: none !important;
-            border-radius: 0 !important;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3) !important;
+            border-radius: 15px !important;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3) !important;
             color: white !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            z-index: 9999 !important;
-            padding: 15px 20px !important;
-            margin: 0 !important;
-            min-height: auto !important;
-            height: auto !important;
+            position: relative !important;
+            overflow: hidden !important;
+            animation: pulse-glow 2s infinite !important;
+            height: 100% !important;
+            min-height: 120px !important;
+            padding: 0 !important;
         }
         
-        .waiting-orders-alert .alert-content {
+        /* Ensure same height as stat cards */
+        .waiting-alert-card .card-body {
+            height: 100% !important;
             display: flex !important;
             align-items: center !important;
-            justify-content: space-between !important;
-            max-width: 1400px !important;
-            margin: 0 auto !important;
-            gap: 20px !important;
+            padding: 1.5rem !important;
         }
         
-        .waiting-orders-alert .left-section {
-            display: flex !important;
+        .waiting-alert-card .d-flex {
+            height: 100% !important;
             align-items: center !important;
-            gap: 15px !important;
-            flex: 1 !important;
+            width: 100% !important;
         }
         
-        .waiting-orders-alert .icon-container {
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3); }
+            50% { box-shadow: 0 8px 35px rgba(255, 107, 107, 0.5); }
+        }
+        
+        .waiting-alert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .waiting-alert-card .alert-icon {
             background: rgba(255,255,255,0.2) !important;
             border-radius: 50% !important;
-            width: 45px !important;
-            height: 45px !important;
+            width: 55px !important;
+            height: 55px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            backdrop-filter: blur(10px) !important;
             flex-shrink: 0 !important;
+            backdrop-filter: blur(10px) !important;
+            margin-right: 1rem !important;
         }
         
-        .waiting-orders-alert .icon-container i {
-            font-size: 1.2rem !important;
+        .waiting-alert-card .alert-icon i {
+            font-size: 1.4rem !important;
             color: white !important;
+            animation: pulse-icon 2s infinite !important;
         }
         
-        .waiting-orders-alert .text-content {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 2px !important;
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
         
-        .waiting-orders-alert .alert-title {
+        .waiting-alert-card .alert-content {
+            flex: 1 !important;
+            padding-right: 1rem !important;
+        }
+        
+        .waiting-alert-card .alert-title {
             font-size: 1.1rem !important;
             font-weight: 700 !important;
             color: white !important;
@@ -85,85 +107,80 @@
             line-height: 1.2 !important;
         }
         
-        .waiting-orders-alert .alert-description {
-            font-size: 0.9rem !important;
+        .waiting-alert-card .alert-message {
+            font-size: 0.85rem !important;
             color: rgba(255,255,255,0.9) !important;
-            margin: 0 !important;
+            margin: 0 0 8px 0 !important;
             line-height: 1.3 !important;
         }
         
-        .waiting-orders-alert .right-section {
-            display: flex !important;
-            align-items: center !important;
-            gap: 15px !important;
-            flex-shrink: 0 !important;
-        }
-        
-        .waiting-orders-alert .api-balance {
-            background: rgba(255,255,255,0.15) !important;
-            border: 1px solid rgba(255,255,255,0.2) !important;
-            border-radius: 8px !important;
-            padding: 8px 12px !important;
-            backdrop-filter: blur(10px) !important;
+        .waiting-alert-card .api-balance-info {
             display: flex !important;
             align-items: center !important;
             gap: 8px !important;
+            padding: 10px 15px !important;
+            background: rgba(255,255,255,0.15) !important;
+            border-radius: 10px !important;
+            backdrop-filter: blur(10px) !important;
+            white-space: nowrap !important;
+            margin-right: 1rem !important;
         }
         
-        .waiting-orders-alert .api-balance i {
+        .waiting-alert-card .api-balance-info i {
             color: white !important;
             font-size: 0.9rem !important;
         }
         
-        .waiting-orders-alert .api-balance-text {
-            font-size: 0.85rem !important;
+        .waiting-alert-card .api-balance-info span {
+            font-size: 1rem !important;
             color: white !important;
             font-weight: 600 !important;
         }
         
-        .waiting-orders-alert .btn {
-            border-radius: 20px !important;
+        .waiting-alert-card .alert-actions {
+            flex-shrink: 0 !important;
+        }
+        
+        .waiting-alert-card .btn {
+            border-radius: 25px !important;
             font-weight: 600 !important;
-            padding: 8px 16px !important;
-            font-size: 0.85rem !important;
+            padding: 10px 20px !important;
+            font-size: 0.9rem !important;
             text-transform: uppercase !important;
             letter-spacing: 0.5px !important;
             transition: all 0.3s ease !important;
             border: 2px solid transparent !important;
+            background: rgba(255,255,255,0.2) !important;
+            color: white !important;
             white-space: nowrap !important;
         }
         
-        .waiting-orders-alert .btn:hover {
+        .waiting-alert-card .btn:hover {
+            background: rgba(255,255,255,0.3) !important;
             transform: translateY(-1px) !important;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
         }
         
-        .waiting-orders-alert .btn-success {
+        .waiting-alert-card .btn-success {
             background: linear-gradient(135deg, #00b894, #00a085) !important;
             border-color: #00b894 !important;
-            color: white !important;
         }
         
-        .waiting-orders-alert .btn-outline-secondary {
-            background: rgba(255,255,255,0.1) !important;
-            border-color: rgba(255,255,255,0.3) !important;
-            color: white !important;
+        .waiting-alert-card .btn-success:hover {
+            background: linear-gradient(135deg, #00a085, #008f75) !important;
         }
         
-        .waiting-orders-alert .btn-outline-secondary:hover {
-            background: rgba(255,255,255,0.2) !important;
-            border-color: rgba(255,255,255,0.5) !important;
-        }
-        
-        .waiting-orders-alert .status-indicator {
-            position: absolute !important;
-            top: 10px !important;
-            right: 15px !important;
-            width: 8px !important;
-            height: 8px !important;
-            background: #ff4757 !important;
-            border-radius: 50% !important;
-            animation: pulse-dot 2s infinite !important;
+        /* Status indicator dot */
+        .waiting-alert-card::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
         }
         
         @keyframes pulse-dot {
@@ -171,84 +188,33 @@
             50% { opacity: 0.5; transform: scale(1.2); }
         }
         
-        /* Add top margin to body when alert is present */
-        body.has-waiting-alert {
-            padding-top: 80px !important;
-        }
-        
-        /* Ensure alert stays visible */
-        .waiting-orders-alert {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            pointer-events: auto !important;
-        }
-        
-        /* Hide any close buttons */
-        .waiting-orders-alert .btn-close,
-        .waiting-orders-alert [data-bs-dismiss="alert"] {
-            display: none !important;
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .waiting-alert-card .alert-icon {
+                width: 40px !important;
+                height: 40px !important;
+                margin-right: 10px !important;
+            }
+            
+            .waiting-alert-card .alert-icon i {
+                font-size: 1.1rem !important;
+            }
+            
+            .waiting-alert-card .alert-title {
+                font-size: 0.9rem !important;
+            }
+            
+            .waiting-alert-card .alert-message {
+                font-size: 0.8rem !important;
+            }
         }
     </style>
 
     <div class="row justify-content-center">
         <div class="col-md-12">
             
-            <!-- Waiting Orders Alert Section for Admins -->
-            @if(auth()->user()->hasRole('admin'))
-                @php
-                    $waitingOrdersAlert = checkWaitingOrdersAlert();
-                @endphp
-                
-                @if($waitingOrdersAlert)
-                    <div class="alert waiting-orders-alert" role="alert">
-                        <div class="status-indicator"></div>
-                        <div class="alert-content">
-                            <div class="left-section">
-                                <div class="icon-container">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                </div>
-                                <div class="text-content">
-                                    <h6 class="alert-title">{{ $waitingOrdersAlert['title'] }}</h6>
-                                    <p class="alert-description">{{ $waitingOrdersAlert['message'] }}</p>
-                                </div>
-                            </div>
-                            <div class="right-section">
-                                @if(isset($waitingOrdersAlert['api_balance']))
-                                    <div class="api-balance">
-                                        <i class="fas fa-dollar-sign"></i>
-                                        <span class="api-balance-text">${{ number_format($waitingOrdersAlert['api_balance'], 2) }}</span>
-                                    </div>
-                                @endif
-                                <a href="{{ route('transactions.create') }}" class="btn btn-success">
-                                    <i class="fas fa-plus me-1"></i>Add Balance
-                                </a>
-                                <button type="button" class="btn btn-outline-secondary" onclick="refreshPage()">
-                                    <i class="fas fa-sync-alt me-1"></i>Refresh
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            @endif
-            
-            <!-- Statistics Cards -->
+            <!-- Order Statistics Row -->
             <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card stat-card bg-gradient-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6 class="card-title mb-0">{{ __('Total Orders') }}</h6>
-                                    <h3 class="mb-0">{{ $orders->total() }}</h3>
-                                </div>
-                                <div class="stat-icon">
-                                    <i class="fas fa-shopping-cart fa-2x"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-md-3">
                     <div class="card stat-card bg-gradient-success text-white">
                         <div class="card-body">
@@ -310,6 +276,47 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Waiting Orders Alert Section for Admins -->
+            @if(auth()->user()->hasRole('admin'))
+                @php
+                    $waitingOrdersAlert = checkWaitingOrdersAlert();
+                @endphp
+                
+                @if($waitingOrdersAlert)
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card waiting-alert-card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between p-3">
+                                        <div class="d-flex align-items-center flex-grow-1 me-4">
+                                            <div class="alert-icon me-3">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="alert-content">
+                                                <h6 class="alert-title">Orders Waiting for API Processing</h6>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-4">
+                                            @if(isset($waitingOrdersAlert['api_balance']))
+                                                <div class="api-balance-info">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <span>${{ number_format($waitingOrdersAlert['api_balance'], 2) }}</span>
+                                                </div>
+                                            @endif
+                                            <div class="alert-actions">
+                                                <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-plus me-1"></i>Add Balance
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endif
 
             <!-- Main Content Card -->
             <div class="card shadow-sm border-0">
@@ -900,383 +907,8 @@
 
 @section('js')
 <script>
-// View Toggle Functionality
-function toggleView(view) {
-    const tableView = document.getElementById('tableView');
-    const cardView = document.getElementById('cardView');
-
-    if (view === 'table') {
-        tableView.style.display = 'block';
-        cardView.style.display = 'none';
-        localStorage.setItem('orderView', 'table');
-    } else {
-        tableView.style.display = 'none';
-        cardView.style.display = 'block';
-        localStorage.setItem('orderView', 'cards');
+    function refreshPage() {
+        location.reload();
     }
-}
-
-// Advanced Filters Toggle
-function toggleAdvancedFilters() {
-    const advancedFilters = document.getElementById('advancedFilters');
-    const isVisible = advancedFilters.style.display !== 'none';
-    advancedFilters.style.display = isVisible ? 'none' : 'block';
-}
-
-// Clear Filters
-function clearFilters() {
-    const form = document.getElementById('filterForm');
-    const inputs = form.querySelectorAll('input, select');
-    inputs.forEach(input => {
-        if (input.type === 'text' || input.type === 'number' || input.type === 'date') {
-            input.value = '';
-        } else if (input.tagName === 'SELECT') {
-            input.selectedIndex = 0;
-        }
-    });
-    form.submit();
-}
-
-// Bulk Selection
-document.getElementById('selectAll').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.order-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = this.checked;
-    });
-    updateSelectedCount();
-});
-
-document.querySelectorAll('.order-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', updateSelectedCount);
-});
-
-function updateSelectedCount() {
-    const selectedCheckboxes = document.querySelectorAll('.order-checkbox:checked');
-    const count = selectedCheckboxes.length;
-    document.getElementById('selectedCount').textContent = count;
-
-    if (count > 0) {
-        // Show bulk actions button or modal
-        showBulkActions();
-    }
-}
-
-function showBulkActions() {
-    const modal = new bootstrap.Modal(document.getElementById('bulkActionsModal'));
-    modal.show();
-}
-
-// Export Orders
-function exportOrders() {
-    const selectedOrders = Array.from(document.querySelectorAll('.order-checkbox:checked'))
-        .map(checkbox => checkbox.value);
-
-    if (selectedOrders.length === 0) {
-        // Export all orders
-        window.location.href = '{{ route("orders.index") }}?export=all';
-    } else {
-        // Export selected orders
-        window.location.href = '{{ route("orders.index") }}?export=selected&orders=' + selectedOrders.join(',');
-    }
-}
-
-function bulkExport() {
-    const selectedOrders = Array.from(document.querySelectorAll('.order-checkbox:checked'))
-        .map(checkbox => checkbox.value);
-
-    if (selectedOrders.length > 0) {
-        window.location.href = '{{ route("orders.index") }}?export=selected&orders=' + selectedOrders.join(',');
-    }
-}
-
-// Delete Order with Confirmation
-function deleteOrder(orderId) {
-    if (confirm('{{ __("Are you sure you want to delete this order?") }}')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ route("orders.destroy", ":id") }}'.replace(':id', orderId);
-
-        const csrfToken = document.createElement('input');
-        csrfToken.type = 'hidden';
-        csrfToken.name = '_token';
-        csrfToken.value = '{{ csrf_token() }}';
-
-        const methodField = document.createElement('input');
-        methodField.type = 'hidden';
-        methodField.name = '_method';
-        methodField.value = 'DELETE';
-
-        form.appendChild(csrfToken);
-        form.appendChild(methodField);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-function bulkDelete() {
-    const selectedOrders = Array.from(document.querySelectorAll('.order-checkbox:checked'))
-        .map(checkbox => checkbox.value);
-
-    if (selectedOrders.length === 0) {
-        alert('{{ __("Please select orders to delete") }}');
-        return;
-    }
-
-    if (confirm('{{ __("Are you sure you want to delete the selected orders?") }}')) {
-        // Implement bulk delete functionality
-        console.log('Bulk delete:', selectedOrders);
-    }
-}
-
-// Enhanced Order Actions
-function checkAndRefill(orderId) {
-    // Add loading state
-    const button = event.target.closest('button');
-    const originalContent = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    button.disabled = true;
-
-    fetch(`/orders/${orderId}/check-refill`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.can_refill) {
-                if (confirm('{{ __("This order can be refilled. Proceed?") }}')) {
-                    // Implement refill functionality
-                    console.log('Refilling order:', orderId);
-                }
-            } else {
-                alert('{{ __("This order cannot be refilled") }}');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('{{ __("An error occurred while checking refill status") }}');
-        })
-        .finally(() => {
-            button.innerHTML = originalContent;
-            button.disabled = false;
-        });
-}
-
-function checkAndCancel(orderId) {
-    const button = event.target.closest('button');
-    const originalContent = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    button.disabled = true;
-
-    fetch(`/orders/${orderId}/check-cancel`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.can_cancel) {
-                if (confirm('{{ __("This order can be cancelled. Proceed?") }}')) {
-                    // Implement cancel functionality
-                    console.log('Cancelling order:', orderId);
-                }
-            } else {
-                alert('{{ __("This order cannot be cancelled") }}');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('{{ __("An error occurred while checking cancel status") }}');
-        })
-        .finally(() => {
-            button.innerHTML = originalContent;
-            button.disabled = false;
-        });
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Restore view preference
-    const savedView = localStorage.getItem('orderView') || 'table';
-    toggleView(savedView);
-
-    // Add fade-in animation to cards
-    document.querySelectorAll('.order-card').forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-        card.classList.add('fade-in');
-    });
-
-    // Initialize tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    // Auto-refresh functionality (optional)
-    // setInterval(() => {
-    //     location.reload();
-    // }, 300000); // Refresh every 5 minutes
-});
-
-// Real-time updates (WebSocket or Server-Sent Events)
-function initializeRealTimeUpdates() {
-    // Implement real-time updates if needed
-    console.log('Real-time updates initialized');
-}
-
-// Search with debouncing
-let searchTimeout;
-document.querySelector('input[name="search"]').addEventListener('input', function() {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        document.getElementById('filterForm').submit();
-    }, 500);
-});
-
-// Service details toggle function
-function toggleServiceDetails(orderId) {
-    const serviceDetails = document.getElementById('serviceDetails' + orderId);
-    const expandIcon = event.target.closest('.service-expand');
-
-    if (serviceDetails.style.display === 'none' || serviceDetails.style.display === '') {
-        // Show details
-        serviceDetails.style.display = 'block';
-        expandIcon.classList.add('expanded');
-        expandIcon.innerHTML = '<i class="fas fa-chevron-up"></i>';
-
-        // Add smooth animation
-        serviceDetails.style.opacity = '0';
-        serviceDetails.style.transform = 'translateY(-10px)';
-
-        setTimeout(() => {
-            serviceDetails.style.opacity = '1';
-            serviceDetails.style.transform = 'translateY(0)';
-        }, 10);
-    } else {
-        // Hide details
-        serviceDetails.style.opacity = '0';
-        serviceDetails.style.transform = 'translateY(-10px)';
-
-        setTimeout(() => {
-            serviceDetails.style.display = 'none';
-        }, 300);
-
-        expandIcon.classList.remove('expanded');
-        expandIcon.innerHTML = '<i class="fas fa-chevron-down"></i>';
-    }
-}
-
-// Auto-hide service details when clicking outside
-document.addEventListener('click', function(event) {
-    if (!event.target.closest('.service-info-compact')) {
-        const allServiceDetails = document.querySelectorAll('.service-details');
-        const allExpandIcons = document.querySelectorAll('.service-expand');
-
-        allServiceDetails.forEach((details, index) => {
-            if (details.style.display !== 'none') {
-                details.style.opacity = '0';
-                details.style.transform = 'translateY(-10px)';
-
-                setTimeout(() => {
-                    details.style.display = 'none';
-                }, 300);
-
-                if (allExpandIcons[index]) {
-                    allExpandIcons[index].classList.remove('expanded');
-                    allExpandIcons[index].innerHTML = '<i class="fas fa-chevron-down"></i>';
-                }
-            }
-        });
-    }
-});
-
-// Ensure action buttons are visible
-document.addEventListener('DOMContentLoaded', function() {
-    // Force visibility of action buttons
-    const actionButtons = document.querySelectorAll('.modern-table .btn-group');
-    actionButtons.forEach(btnGroup => {
-        btnGroup.style.display = 'flex';
-        btnGroup.style.visibility = 'visible';
-        btnGroup.style.opacity = '1';
-        
-        const buttons = btnGroup.querySelectorAll('.btn');
-        buttons.forEach(btn => {
-            btn.style.display = 'inline-flex';
-            btn.style.visibility = 'visible';
-            btn.style.opacity = '1';
-        });
-    });
-    
-    // Add hover effect to make buttons more visible
-    actionButtons.forEach(btnGroup => {
-        btnGroup.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.05)';
-            this.style.zIndex = '100';
-        });
-        
-        btnGroup.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1)';
-            this.style.zIndex = '10';
-        });
-    });
-    
-    // Ensure action column header is visible
-    const actionHeader = document.querySelector('.modern-table thead th:last-child');
-    if (actionHeader) {
-        actionHeader.style.visibility = 'visible';
-        actionHeader.style.opacity = '1';
-        actionHeader.style.display = 'table-cell';
-        actionHeader.style.color = '#495057';
-        actionHeader.style.fontWeight = '600';
-        actionHeader.style.textAlign = 'center';
-        actionHeader.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
-        actionHeader.style.position = 'sticky';
-        actionHeader.style.right = '0';
-        actionHeader.style.zIndex = '15';
-    }
-});
-
-function refreshPage() {
-    location.reload();
-}
-
-// Prevent any automatic dismissal of the waiting orders alert
-document.addEventListener('DOMContentLoaded', function() {
-    const waitingAlert = document.querySelector('.waiting-orders-alert');
-    if (waitingAlert) {
-        // Add body padding to prevent content overlap
-        document.body.classList.add('has-waiting-alert');
-        
-        // Remove any dismissible functionality
-        const closeButtons = waitingAlert.querySelectorAll('.btn-close, [data-bs-dismiss="alert"]');
-        closeButtons.forEach(btn => btn.remove());
-        
-        // Ensure the alert stays visible
-        waitingAlert.style.display = 'block';
-        waitingAlert.style.visibility = 'visible';
-        waitingAlert.style.opacity = '1';
-        waitingAlert.style.position = 'fixed';
-        waitingAlert.style.top = '0';
-        waitingAlert.style.left = '0';
-        waitingAlert.style.right = '0';
-        waitingAlert.style.zIndex = '9999';
-        
-        // Prevent any fade out animations
-        waitingAlert.classList.remove('fade', 'show');
-        waitingAlert.classList.add('permanent-alert');
-        
-        // Force the alert to stay on top
-        setInterval(function() {
-            if (waitingAlert.style.display === 'none' || waitingAlert.style.visibility === 'hidden') {
-                waitingAlert.style.display = 'block';
-                waitingAlert.style.visibility = 'visible';
-                waitingAlert.style.opacity = '1';
-            }
-        }, 1000);
-    }
-});
-
-// Auto-refresh the page every 30 seconds to check for updates
-setInterval(function() {
-    // Only refresh if there are waiting orders
-    const waitingAlert = document.querySelector('.waiting-orders-alert');
-    if (waitingAlert) {
-        // Check if we should refresh (optional - uncomment if needed)
-        // location.reload();
-    }
-}, 30000);
-
 </script>
 @stop
