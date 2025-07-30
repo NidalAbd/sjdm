@@ -456,19 +456,4 @@
             padding: 1.25rem;
         }
     }
-
-    /* Platform cards - no animations */
-    .platform-card {
-        /* Static display - no animations */
-    }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Platform cards - no animations, just static display
-    document.querySelectorAll('.platform-card').forEach(card => {
-        card.style.opacity = '1';
-        card.style.transform = 'none';
-    });
-});
-</script>

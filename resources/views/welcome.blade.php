@@ -426,7 +426,6 @@
             border: 1px solid var(--border-color);
             position: relative;
             z-index: 2;
-            animation: float 6s ease-in-out infinite;
         }
 
         .platform-card.main-card {
@@ -496,7 +495,6 @@
             color: var(--text-primary);
             font-weight: 600;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            animation: float 6s ease-in-out infinite;
             backdrop-filter: blur(10px);
         }
 
@@ -509,10 +507,7 @@
         .card-3 { animation-delay: 2s; bottom: 20%; left: 15%; }
         .card-4 { animation-delay: 3s; top: 30%; right: 25%; }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(2deg); }
-        }
+
 
         /* Dark Mode Support */
         [data-theme="dark"] .hero-section {

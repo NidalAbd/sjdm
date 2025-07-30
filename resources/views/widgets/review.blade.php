@@ -1,5 +1,5 @@
 <!-- Modern Reviews Section -->
-<div class="reviews-section" data-aos="fade-up" data-aos-duration="1000">
+<div class="reviews-section">
     <div class="container">
         <div class="section-header text-center mb-5">
             <h2 class="section-title">{{ __('adminlte.title_Reviews') }}</h2>
@@ -8,7 +8,7 @@
 
         <div class="reviews-grid">
             <!-- Review 1 -->
-            <div class="review-card" data-aos="fade-right" data-aos-delay="100">
+            <div class="review-card">
                 <div class="review-avatar">
                     <img src="{{ asset('images/avatar1.png') }}" alt="{{ __('adminlte.reviewer_name1') }}" class="avatar-img">
                 </div>
@@ -24,7 +24,7 @@
             </div>
 
             <!-- Review 2 -->
-            <div class="review-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="review-card">
                 <div class="review-avatar">
                     <img src="{{ asset('images/avatar2.png') }}" alt="{{ __('adminlte.reviewer_name2') }}" class="avatar-img">
                 </div>
@@ -40,7 +40,7 @@
             </div>
 
             <!-- Review 3 -->
-            <div class="review-card" data-aos="fade-left" data-aos-delay="300">
+            <div class="review-card">
                 <div class="review-avatar">
                     <img src="{{ asset('images/avatar3.png') }}" alt="{{ __('adminlte.reviewer_name3') }}" class="avatar-img">
                 </div>

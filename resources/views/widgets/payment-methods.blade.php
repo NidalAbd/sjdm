@@ -260,7 +260,3 @@
         }
     }
 </style>
-
-<script>
-    AOS.init();
-</script>
