@@ -1,5 +1,5 @@
 <!-- Modern Payment Methods Section -->
-<div class="payment-methods-section" data-aos="fade-up" data-aos-duration="1000">
+<div class="payment-methods-section">
     <div class="container">
         <div class="section-header text-center mb-5">
             <h2 class="section-title">{{ __('adminlte.payment_methods_we_support') }}</h2>
@@ -8,7 +8,7 @@
 
         <div class="payment-methods-grid">
             <!-- Visa -->
-            <div class="payment-card" data-aos="zoom-in" data-aos-delay="100">
+            <div class="payment-card">
                 <div class="payment-icon">
                     <img src="{{ asset('images/payement/visa.png') }}" alt="{{ __('adminlte.visa') }}" class="payment-img">
                 </div>
@@ -17,7 +17,7 @@
             </div>
 
             <!-- MasterCard -->
-            <div class="payment-card" data-aos="zoom-in" data-aos-delay="200">
+            <div class="payment-card">
                 <div class="payment-icon">
                     <img src="{{ asset('images/payement/card.png') }}" alt="{{ __('adminlte.mastercard') }}" class="payment-img">
                 </div>
@@ -26,7 +26,7 @@
             </div>
 
             <!-- American Express -->
-            <div class="payment-card" data-aos="zoom-in" data-aos-delay="300">
+            <div class="payment-card">
                 <div class="payment-icon">
                     <img src="{{ asset('images/payement/american-express.png') }}" alt="{{ __('adminlte.american_express') }}" class="payment-img">
                 </div>
@@ -35,7 +35,7 @@
             </div>
 
             <!-- PayPal -->
-            <div class="payment-card" data-aos="zoom-in" data-aos-delay="400">
+            <div class="payment-card">
                 <div class="payment-icon">
                     <img src="{{ asset('images/payement/stripe.png') }}" alt="{{ __('adminlte.paypal') }}" class="payment-img">
                 </div>
@@ -44,7 +44,7 @@
             </div>
 
             <!-- Apple Pay -->
-            <div class="payment-card" data-aos="zoom-in" data-aos-delay="500">
+            <div class="payment-card">
                 <div class="payment-icon">
                     <img src="{{ asset('images/payement/apple-pay.png') }}" alt="{{ __('adminlte.apple_pay') }}" class="payment-img">
                 </div>
@@ -53,7 +53,7 @@
             </div>
 
             <!-- Google Pay -->
-            <div class="payment-card" data-aos="zoom-in" data-aos-delay="600">
+            <div class="payment-card">
                 <div class="payment-icon">
                     <img src="{{ asset('images/payement/google-pay.png') }}" alt="{{ __('adminlte.google_pay') }}" class="payment-img">
                 </div>

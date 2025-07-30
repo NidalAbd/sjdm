@@ -1,5 +1,5 @@
-<!-- Modern Header -->
-<nav class="navbar navbar-expand-lg fixed-top modern-navbar" data-aos="fade-down" data-aos-duration="1000">
+<!-- Mobile-Optimized Header -->
+<nav class="navbar navbar-expand-lg fixed-top modern-navbar">
     <div class="container">
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
@@ -250,14 +250,14 @@
 </form>
 
 <style>
-    /* Modern Navbar Styles */
+    /* Mobile-Optimized Navbar Styles */
     .modern-navbar {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 1rem 0;
-        transition: all 0.3s ease;
-        min-height: 70px; /* Ensure consistent height */
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0.75rem 0;
+        min-height: 60px; /* Reduced height for mobile */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     [data-theme="dark"] .modern-navbar {
@@ -653,47 +653,45 @@
         background: rgba(239, 68, 68, 0.1) !important;
     }
 
-    /* Responsive Design - Fixed Breakpoints */
+    /* Mobile-First Responsive Design */
     @media (max-width: 1200px) {
         .brand-text {
-            font-size: 1.1rem;
-            max-width: 150px;
+            font-size: 1rem;
+            max-width: 120px;
         }
         
         .modern-link span {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         .user-name {
-            max-width: 100px;
+            max-width: 80px;
         }
     }
 
     @media (max-width: 991px) {
         .navbar-collapse {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            margin-top: 0.5rem;
             padding: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        [data-theme="dark"] .navbar-collapse {
-            background: rgba(30, 41, 59, 0.95);
-            border-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
         .modern-link {
-            padding: 1rem !important;
+            padding: 0.75rem 1rem !important;
             border-radius: 8px;
             margin: 0.25rem 0;
-            justify-content: flex-start; /* Align items to start */
+            justify-content: flex-start;
+            font-size: 0.9rem;
         }
 
         .auth-link {
             margin: 0.5rem 0;
-            justify-content: center; /* Center auth buttons */
+            justify-content: center;
+            padding: 0.75rem 1.5rem !important;
         }
 
         .navbar-nav {
@@ -708,31 +706,35 @@
             width: 100%;
             justify-content: flex-start;
         }
+
+        .user-profile {
+            justify-content: center;
+            padding: 0.75rem 1rem !important;
+        }
+
+        .notification-bell {
+            justify-content: center;
+            padding: 0.75rem !important;
+        }
     }
 
     @media (max-width: 768px) {
         .brand-text {
-            font-size: 1rem;
-            max-width: 120px;
+            font-size: 0.9rem;
+            max-width: 100px;
         }
 
         .modern-link {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            padding: 0.75rem !important;
         }
 
         .modern-link i {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .auth-link {
-            font-size: 0.9rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .brand-text {
-            font-size: 0.9rem;
-            max-width: 100px;
+            font-size: 0.85rem;
         }
 
         .user-name {
@@ -743,12 +745,53 @@
             display: none;
         }
 
+        .language-link {
+            justify-content: center;
+            padding: 0.75rem !important;
+        }
+
+        .theme-toggle {
+            padding: 0.75rem !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .brand-text {
+            font-size: 0.8rem;
+            max-width: 80px;
+        }
+
         .modern-link span {
             font-size: 0.8rem;
         }
 
         .auth-link span {
             font-size: 0.8rem;
+        }
+
+        .navbar .container {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .modern-navbar {
+            padding: 0.5rem 0;
+            min-height: 55px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .brand-text {
+            display: none;
+        }
+
+        .logo-container {
+            width: 35px;
+            height: 35px;
+        }
+
+        .modern-navbar {
+            min-height: 50px;
         }
     }
 
@@ -783,40 +826,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.modern-navbar');
-        const isDarkMode = document.body.getAttribute('data-theme') === 'dark';
-        
-        if (window.scrollY > 50) {
-            if (isDarkMode) {
-                navbar.style.background = 'rgba(15, 23, 42, 0.95)';
-            } else {
-                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-            }
-            navbar.style.backdropFilter = 'blur(20px)';
-            navbar.style.boxShadow = 'var(--shadow-lg)';
-        } else {
-            if (isDarkMode) {
-                navbar.style.background = 'rgba(15, 23, 42, 0.9)';
-            } else {
-                navbar.style.background = 'rgba(255, 255, 255, 0.1)';
-            }
-            navbar.style.backdropFilter = 'blur(20px)';
-            navbar.style.boxShadow = 'none';
-        }
-    });
+    // Mobile-optimized navbar - no scroll effects for better performance
 
-    // Add hover effects to navigation links
-    document.querySelectorAll('.modern-link').forEach(link => {
-        link.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-
-        link.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
+    // Mobile-optimized navigation - no hover effects for better performance
 
     // Notification functions
     function initializeNotifications() {

@@ -1,5 +1,5 @@
-<!-- Modern Footer Section -->
-<footer class="modern-footer" data-aos="fade-up" data-aos-duration="1000">
+<!-- Mobile-Optimized Footer Section -->
+<footer class="modern-footer">
     <div class="container">
         <div class="footer-content">
             <!-- Company Info -->
@@ -104,8 +104,8 @@
     .modern-footer {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
         position: relative;
-        padding: 4rem 0 2rem;
-        margin-top: 4rem;
+        padding: 2rem 0 1rem;
+        margin-top: 2rem;
     }
 
     .modern-footer::before {
@@ -355,11 +355,11 @@
         color: var(--primary-color);
     }
 
-    /* Responsive design */
+    /* Mobile-First Responsive Design */
     @media (max-width: 1024px) {
         .footer-content {
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .company-info {
@@ -370,12 +370,12 @@
 
     @media (max-width: 768px) {
         .modern-footer {
-            padding: 3rem 0 1.5rem;
+            padding: 1.5rem 0 1rem;
         }
 
         .footer-content {
             grid-template-columns: 1fr;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .company-info {
@@ -389,18 +389,59 @@
         .footer-bottom-content {
             flex-direction: column;
             text-align: center;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .footer-bottom-links {
             justify-content: center;
         }
+
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .company-name {
+            font-size: 1.25rem;
+        }
+
+        .company-description {
+            font-size: 0.9rem;
+        }
     }
 
     @media (max-width: 480px) {
+        .modern-footer {
+            padding: 1rem 0 0.5rem;
+        }
+
+        .footer-content {
+            gap: 1rem;
+        }
+
         .footer-bottom-links {
             flex-direction: column;
             gap: 0.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .contact-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 0.9rem;
+        }
+
+        .footer-link {
+            font-size: 0.9rem;
+        }
+
+        .contact-value {
+            font-size: 0.9rem;
         }
     }
 </style>

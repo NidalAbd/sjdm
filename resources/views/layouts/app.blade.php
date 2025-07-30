@@ -3,6 +3,12 @@
 @section('title', __('adminlte.dashboard')) <!-- Use translation key -->
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<!-- Mobile-Optimized Viewport -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#6366f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="{{ asset('manifest-mobile.json') }}">
 <link rel="icon" href="{{ asset('images/favicon-96x96.png') }}" type="image/jpeg">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-L001CCMV5K"></script>
@@ -22,7 +28,72 @@
 @endif
 
 @section('css')
+<!-- Mobile-Optimized CSS -->
+<link rel="stylesheet" href="{{ asset('css/mobile-optimized.css') }}">
 <style>
+    /* Override AdminLTE styles that might cause white space */
+    body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    .content-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    .main-header {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Ensure full width for all sections */
+    .container-fluid {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 1rem !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Override any AdminLTE sidebar if present */
+    .sidebar {
+        display: none !important;
+    }
+    
+    .content-wrapper {
+        margin-left: 0 !important;
+    }
+    
+    /* Override any AdminLTE content area */
+    .content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Ensure no horizontal scroll */
+    .wrapper {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+    }
+    
     /* Notification Bell Styles */
     #notification-dropdown {
         cursor: pointer !important;
@@ -565,6 +636,8 @@
 @stop
 
 @yield('scripts')
+<!-- Mobile-Optimized JavaScript -->
+<script src="{{ asset('js/mobile-optimized.js') }}"></script>
 <!-- Include jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Include Bootstrap JS -->

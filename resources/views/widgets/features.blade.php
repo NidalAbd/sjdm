@@ -1,5 +1,5 @@
 <!-- Modern Features Section -->
-<div class="features-section" data-aos="fade-up" data-aos-duration="1000">
+<div class="features-section">
     <div class="container">
         <div class="section-header text-center mb-5">
             <h2 class="section-title">{{ __('adminlte.feature') }}</h2>
@@ -8,7 +8,7 @@
 
         <div class="features-grid">
             <!-- Feature 1: Cheapest & Fastest Services -->
-            <div class="feature-card" data-aos="zoom-in" data-aos-delay="100">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <img src="{{ asset('images/payement/arrows.png') }}" alt="{{ __('adminlte.cheapest_fastest_services_icon') }}" class="feature-img">
                     <div class="icon-glow"></div>
@@ -24,7 +24,7 @@
             </div>
 
             <!-- Feature 2: Super Fast Delivery -->
-            <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <img src="{{ asset('images/payement/on-time.png') }}" alt="{{ __('adminlte.super_fast_delivery_icon') }}" class="feature-img">
                     <div class="icon-glow"></div>
@@ -40,7 +40,7 @@
             </div>
 
             <!-- Feature 3: Support 24/7 -->
-            <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <img src="{{ asset('images/payement/call-center.png') }}" alt="{{ __('adminlte.support_24_7_icon') }}" class="feature-img">
                     <div class="icon-glow"></div>
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Feature 4: Many Payment Methods -->
-            <div class="feature-card" data-aos="zoom-in" data-aos-delay="400">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <img src="{{ asset('images/payement/atm-machine.png') }}" alt="{{ __('adminlte.many_payment_methods_icon') }}" class="feature-img">
                     <div class="icon-glow"></div>
@@ -72,7 +72,7 @@
             </div>
 
             <!-- Feature 5: Friendly Dashboard -->
-            <div class="feature-card" data-aos="zoom-in" data-aos-delay="500">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <img src="{{ asset('images/payement/dashboard.png') }}" alt="{{ __('adminlte.friendly_dashboard_icon') }}" class="feature-img">
                     <div class="icon-glow"></div>
@@ -88,7 +88,7 @@
             </div>
 
             <!-- Feature 6: Updates Page for Services -->
-            <div class="feature-card" data-aos="zoom-in" data-aos-delay="600">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <img src="{{ asset('images/payement/cyber-security.png') }}" alt="{{ __('adminlte.updates_page_icon') }}" class="feature-img">
                     <div class="icon-glow"></div>

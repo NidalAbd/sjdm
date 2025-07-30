@@ -1,4 +1,4 @@
-<div class="platforms-section" data-aos="fade-up" data-aos-duration="1000">
+<div class="platforms-section">
     <div class="container">
         <div class="section-header text-center mb-5">
             <h2 class="section-title">{{ __('adminlte.platforms_we_support') }}</h2>
@@ -7,7 +7,7 @@
 
         <div class="platforms-grid">
             <!-- Facebook -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="100">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon facebook">
                     <i class="fab fa-facebook"></i>
                 </div>
@@ -26,7 +26,7 @@
             </a>
 
             <!-- Instagram -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="200">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon instagram">
                     <i class="fab fa-instagram"></i>
                 </div>
@@ -45,7 +45,7 @@
             </a>
 
             <!-- TikTok -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="300">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon tiktok">
                     <i class="fab fa-tiktok"></i>
                 </div>
@@ -64,7 +64,7 @@
             </a>
 
             <!-- YouTube -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="400">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon youtube">
                     <i class="fab fa-youtube"></i>
                 </div>
@@ -83,7 +83,7 @@
             </a>
 
             <!-- Twitter -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="500">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon twitter">
                     <i class="fab fa-twitter"></i>
                 </div>
@@ -102,7 +102,7 @@
             </a>
 
             <!-- LinkedIn -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="600">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon linkedin">
                     <i class="fab fa-linkedin"></i>
                 </div>
@@ -121,7 +121,7 @@
             </a>
 
             <!-- Telegram -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="700">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon telegram">
                     <i class="fab fa-telegram"></i>
                 </div>
@@ -140,7 +140,7 @@
             </a>
 
             <!-- Discord -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="800">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon discord">
                     <i class="fab fa-discord"></i>
                 </div>
@@ -159,7 +159,7 @@
             </a>
 
             <!-- Spotify -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="900">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon spotify">
                     <i class="fab fa-spotify"></i>
                 </div>
@@ -178,7 +178,7 @@
             </a>
 
             <!-- Snapchat -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="1000">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon snapchat">
                     <i class="fab fa-snapchat"></i>
                 </div>
@@ -197,7 +197,7 @@
             </a>
 
             <!-- Google -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="1100">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon google">
                     <i class="fab fa-google"></i>
                 </div>
@@ -216,7 +216,7 @@
             </a>
 
             <!-- Reviews -->
-            <a href="{{ route('orders.create') }}" class="platform-card" data-aos="zoom-in" data-aos-delay="1200">
+            <a href="{{ route('orders.create') }}" class="platform-card">
                 <div class="platform-icon reviews">
                     <i class="fas fa-star"></i>
                 </div>
@@ -457,90 +457,18 @@
         }
     }
 
-    /* Animation for platform cards */
-    @keyframes cardFloat {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-5px);
-        }
-    }
-
+    /* Platform cards - no animations */
     .platform-card {
-        animation: cardFloat 6s ease-in-out infinite;
+        /* Static display - no animations */
     }
-
-    .platform-card:nth-child(2) { animation-delay: 0.5s; }
-    .platform-card:nth-child(3) { animation-delay: 1s; }
-    .platform-card:nth-child(4) { animation-delay: 1.5s; }
-    .platform-card:nth-child(5) { animation-delay: 2s; }
-    .platform-card:nth-child(6) { animation-delay: 2.5s; }
-    .platform-card:nth-child(7) { animation-delay: 3s; }
-    .platform-card:nth-child(8) { animation-delay: 3.5s; }
-    .platform-card:nth-child(9) { animation-delay: 4s; }
-    .platform-card:nth-child(10) { animation-delay: 4.5s; }
-    .platform-card:nth-child(11) { animation-delay: 5s; }
-    .platform-card:nth-child(12) { animation-delay: 5.5s; }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add intersection observer for better performance
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-
-    // Observe all platform cards
+    // Platform cards - no animations, just static display
     document.querySelectorAll('.platform-card').forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-        observer.observe(card);
-    });
-
-    // Add click tracking
-    document.querySelectorAll('.platform-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            // Add ripple effect
-            const ripple = document.createElement('div');
-            ripple.style.position = 'absolute';
-            ripple.style.borderRadius = '50%';
-            ripple.style.background = 'rgba(255, 255, 255, 0.3)';
-            ripple.style.transform = 'scale(0)';
-            ripple.style.animation = 'ripple 0.6s linear';
-            ripple.style.left = (e.clientX - this.offsetLeft) + 'px';
-            ripple.style.top = (e.clientY - this.offsetTop) + 'px';
-            ripple.style.width = ripple.style.height = '20px';
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
+        card.style.opacity = '1';
+        card.style.transform = 'none';
     });
 });
-
-// Add ripple animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes ripple {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
 </script>

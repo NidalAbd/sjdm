@@ -6,7 +6,7 @@
 
     <!-- Continuous Updates Widget -->
     <div class="col-md-4">
-        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box">
             <div class="p-4 text-center">
                 <div class="stat-pic mb-3">
                     <i class="fas fa-sync-alt fa-1x widget-icon"></i>
@@ -19,7 +19,7 @@
 
     <!-- Easy Control Panel Widget -->
     <div class="col-md-4">
-        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box">
             <div class="p-4 text-center">
                 <div class="stat-pic mb-3">
                     <i class="fas fa-cogs fa-1x widget-icon"></i>
@@ -32,7 +32,7 @@
 
     <!-- Special Discounts Widget -->
     <div class="col-md-4">
-        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box" data-aos="flip-left" data-aos-easing="ease-out-cubic" data-aos-duration="1000">
+        <div class="shadow-lg rounded-lg border-0 mb-4 stats-box">
             <div class="p-4 text-center">
                 <div class="stat-pic mb-3">
                     <i class="fas fa-tags fa-1x widget-icon"></i>
@@ -46,16 +46,11 @@
 
 
 
-<!-- Include Font Awesome and AOS for animations -->
+<!-- Include Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-
 
 <script>
     $(document).ready(function() {
-        AOS.init(); // Initialize AOS for animations
-
         // Check localStorage for theme
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {

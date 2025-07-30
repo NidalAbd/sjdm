@@ -1,5 +1,5 @@
 <!-- Modern Statistics Section -->
-<div class="statistics-section" data-aos="fade-up" data-aos-duration="1000">
+<div class="statistics-section">
     <div class="container">
         <!-- Last 24 Hours Section -->
         <div class="stats-group">
@@ -10,7 +10,7 @@
 
             <div class="stats-grid">
                 <!-- Users Last 24h -->
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="100">
+                <div class="stat-card">
                     <div class="stat-icon users">
                         <i class="fas fa-user-plus"></i>
                     </div>
@@ -26,7 +26,7 @@
                 </div>
 
                 <!-- Transactions Last 24h -->
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="200">
+                <div class="stat-card">
                     <div class="stat-icon transactions">
                         <i class="fas fa-money-bill-wave"></i>
                     </div>
@@ -42,7 +42,7 @@
                 </div>
 
                 <!-- Orders Last 24h -->
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="300">
+                <div class="stat-card">
                     <div class="stat-icon orders">
                         <i class="fas fa-shopping-cart"></i>
                     </div>
@@ -68,7 +68,7 @@
 
             <div class="stats-grid">
                 <!-- Total Users -->
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="400">
+                <div class="stat-card">
                     <div class="stat-icon total-users">
                         <i class="fas fa-users"></i>
                     </div>
@@ -84,7 +84,7 @@
                 </div>
 
                 <!-- Total Transactions -->
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="500">
+                <div class="stat-card">
                     <div class="stat-icon total-transactions">
                         <i class="fas fa-exchange-alt"></i>
                     </div>
@@ -100,7 +100,7 @@
                 </div>
 
                 <!-- Total Orders -->
-                <div class="stat-card" data-aos="zoom-in" data-aos-delay="600">
+                <div class="stat-card">
                     <div class="stat-icon total-orders">
                         <i class="fas fa-shopping-cart"></i>
                     </div>

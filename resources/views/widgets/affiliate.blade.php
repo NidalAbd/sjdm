@@ -1,4 +1,4 @@
-<div class="affiliate-section" data-aos="fade-up" data-aos-duration="1000">
+<div class="affiliate-section">
     <div class="container">
         <div class="section-header text-center mb-5">
             <h2 class="section-title">{{ __('adminlte.title_Affiliate') }}</h2>
@@ -7,7 +7,7 @@
 
         <div class="affiliate-grid">
             <!-- Step 1 -->
-            <div class="affiliate-card" data-aos="fade-right" data-aos-delay="100">
+            <div class="affiliate-card">
                 <div class="affiliate-icon">
                     <i class="fas fa-share-alt"></i>
                 </div>
@@ -16,7 +16,7 @@
             </div>
 
             <!-- Step 2 -->
-            <div class="affiliate-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="affiliate-card">
                 <div class="affiliate-icon">
                     <i class="fas fa-user-check"></i>
                 </div>
@@ -25,7 +25,7 @@
             </div>
 
             <!-- Step 3 -->
-            <div class="affiliate-card" data-aos="fade-left" data-aos-delay="300">
+            <div class="affiliate-card">
                 <div class="affiliate-icon">
                     <i class="fas fa-gift"></i>
                 </div>
