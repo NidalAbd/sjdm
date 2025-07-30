@@ -29,68 +29,7 @@
 
 @section('css')
 <style>
-    /* Override AdminLTE styles that might cause white space */
-    body, html {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        overflow-x: hidden !important;
-    }
-    
-    .content-wrapper {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-    }
-    
-    .main-header {
-        width: 100% !important;
-        margin: 0 !important;
-    }
-    
-    .main-content {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-    }
-    
-    /* Ensure full width for all sections */
-    .container-fluid {
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
-    }
-    
-    .container {
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: 0 1rem !important;
-        margin: 0 auto !important;
-    }
-    
-    /* Ensure proper sidebar display */
-    .sidebar {
-        display: block !important;
-    }
-    
-    .content-wrapper {
-        margin-left: 250px !important;
-    }
-    
-    /* Override any AdminLTE content area */
-    .content {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-    }
-    
-    /* Ensure no horizontal scroll */
-    .wrapper {
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow-x: hidden !important;
-    }
+
     
     /* Notification Bell Styles */
     #notification-dropdown {

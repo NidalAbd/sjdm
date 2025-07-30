@@ -189,6 +189,13 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Center content vertically and horizontally */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 280px;
     }
 
     .stat-card::before {
@@ -252,6 +259,10 @@
 
     .stat-content {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .stat-title {
@@ -359,6 +370,7 @@
 
         .stat-card {
             padding: 1.5rem;
+            min-height: 250px;
         }
 
         .stat-icon {
@@ -369,6 +381,12 @@
 
         .stat-value {
             font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stat-card {
+            min-height: 220px;
         }
     }
 </style>

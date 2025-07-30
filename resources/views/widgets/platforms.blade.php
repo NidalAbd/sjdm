@@ -297,6 +297,13 @@
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
+        /* Center content vertically and horizontally */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 280px;
     }
 
     .platform-card::before {
@@ -382,6 +389,7 @@
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
+        justify-content: center;
     }
 
     .stat-item {
@@ -433,6 +441,7 @@
 
         .platform-card {
             padding: 1.5rem;
+            min-height: 250px;
         }
 
         .platform-icon {
@@ -454,6 +463,7 @@
 
         .platform-card {
             padding: 1.25rem;
+            min-height: 220px;
         }
     }
 </style>
