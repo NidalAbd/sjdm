@@ -66,9 +66,9 @@
             max-width: 100% !important;
         }
         
-        /* Hide any AdminLTE sidebar */
-        .sidebar,
-        .main-sidebar {
+        /* Hide sidebar only on welcome page */
+        .mobile-welcome-container .sidebar,
+        .mobile-welcome-container .main-sidebar {
             display: none !important;
         }
         

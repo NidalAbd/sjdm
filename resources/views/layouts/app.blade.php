@@ -28,8 +28,6 @@
 @endif
 
 @section('css')
-<!-- Mobile-Optimized CSS -->
-<link rel="stylesheet" href="{{ asset('css/mobile-optimized.css') }}">
 <style>
     /* Override AdminLTE styles that might cause white space */
     body, html {
@@ -70,13 +68,13 @@
         margin: 0 auto !important;
     }
     
-    /* Override any AdminLTE sidebar if present */
+    /* Ensure proper sidebar display */
     .sidebar {
-        display: none !important;
+        display: block !important;
     }
     
     .content-wrapper {
-        margin-left: 0 !important;
+        margin-left: 250px !important;
     }
     
     /* Override any AdminLTE content area */

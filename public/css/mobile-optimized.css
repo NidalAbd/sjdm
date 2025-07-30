@@ -388,6 +388,55 @@ button:focus {
     transition: none !important;
 }
 
+/* Only hide sidebar on welcome page, not dashboard */
+.mobile-welcome-container .sidebar,
+.mobile-welcome-container .main-sidebar {
+    display: none !important;
+}
+
+/* Ensure welcome page takes full width */
+.mobile-welcome-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+}
+
+/* Hero Section Animations */
+.animate-fade-in { animation: fadeIn 1s ease-out; }
+.animate-fade-in-delay { animation: fadeIn 1s ease-out 0.3s both; }
+.animate-fade-in-delay-2 { animation: fadeIn 1s ease-out 0.6s both; }
+.animate-slide-in { animation: slideInRight 1s ease-out 0.3s both; }
+.animate-bounce { animation: bounce 2s ease-in-out infinite; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-in-delay,
+    .animate-fade-in-delay-2,
+    .animate-slide-in,
+    .animate-bounce {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
 /* Mobile-Optimized Alerts */
 .alert {
     padding: 1rem;

@@ -145,7 +145,6 @@ return array(
             'text' =>'home', // Use translation key with __() function
             'url'  => '/', // Relative URL to the home page
             'icon' => 'fas fa-home', // Font Awesome icon class
-            'topnav_center' => true, // Position the link in the center of the top navigation
             'can' => 'create_order', // Permission check for displaying the item
             'icon_color' => 'primary', // Set predefined icon color
         ),
@@ -155,7 +154,6 @@ return array(
         array(
             'text'    => 'admin', // Just use the translation key
             'icon'    => 'fas fa-fw fa-user-shield',
-            'topnav_center' => true,
             'can' => 'view_any_role',
             'icon_color'   => 'primary', // Set predefined color
             'submenu' => array(
@@ -209,7 +207,6 @@ return array(
             'text' => 'add_order', // Use translation key
             'url'  => 'orders/create', // Just the relative URL
             'icon' => 'fas fa-cart-plus',
-            'topnav_center' => true,
             'can'  => 'create_order',
             'icon_color'   => 'primary', // Set predefined color
         ),
@@ -218,7 +215,6 @@ return array(
             'text' => 'orders', // Use translation key
             'url'  => 'orders', // Just the relative URL
             'icon' => 'fas fa-shopping-cart',
-            'topnav_center' => true,
             'can'  => 'view_orders',
             'icon_color'   => 'success', // Set predefined color
         ),
@@ -226,7 +222,6 @@ return array(
             'text' => 'services', // Use translation key
             'url'  => 'services',
             'icon' => 'fas fa-tools',
-            'topnav_center' => true,
             'can'  => 'view_anyServices_services',
             'icon_color'   => 'info', // Set predefined color
         ),
@@ -234,7 +229,6 @@ return array(
             'text' => 'add_balance', // Use translation key
             'url'  => 'transactions/create', // Just the relative URL
             'icon' => 'fab fa-stripe',
-            'topnav_center' => true,
             'can'  => 'view_balance',
             'icon_color'   => 'purple', // Set predefined color
         ),
@@ -242,7 +236,6 @@ return array(
             'text' => 'transactions', // Use translation key
             'url'  => 'transactions', // Just the relative URL
             'icon' => 'fas fa-comments-dollar',
-            'topnav_center' => true,
             'can'  => 'view_any_transaction',
             'icon_color'   => 'warning', // Set predefined color
         ),
@@ -250,7 +243,6 @@ return array(
             'text' => 'support', // Use translation key
             'url'  => 'support',
             'icon' => 'fas fa-headset',
-            'topnav_center' => true,
             'can'  => 'view_support',
             'icon_color'   => 'danger', // Set predefined color
         ),
@@ -258,7 +250,6 @@ return array(
             'text' => 'notifications', // Use translation key
             'url'  => 'notifications',
             'icon' => 'fas fa-bell',
-            'topnav_center' => true,
             'can'  => 'view_support',
             'icon_color'   => 'warning', // Set predefined color
         ),
@@ -266,7 +257,6 @@ return array(
             'text' => 'referral', // Use translation key for referral
             'url'  => '/referrals', // URL for referral
             'icon' => 'fas fa-user-friends', // Icon for referral
-            'topnav_center' => true, // Display in top navigation center
             'can'  => 'view_support', // Permission for viewing referral
             'icon_color' => 'success', // Set predefined color
         ),
@@ -274,7 +264,6 @@ return array(
             'text' => 'Points', // Label for the menu item (can be translated using a translation key)
             'url'  => 'points', // URL for the points page (route name or actual URL)
             'icon' => 'fas fa-coins', // FontAwesome icon for the points menu
-            'topnav_center' => true, // Display in the center of the top navigation
             'can'  => 'view_support', // Permission required to see the menu item (you'll need a policy or gate for this)
             'icon_color' => 'warning', // Set color for the icon (Bootstrap predefined colors)
         ),
