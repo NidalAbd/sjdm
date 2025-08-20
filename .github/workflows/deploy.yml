@@ -41,32 +41,43 @@ jobs:
             --exclude='package*.json' \
             ./ deploy_temp/
 
-      - name: Setup public_html structure
-        run: |
-          # Create public_html directory
-          mkdir -p deploy_temp/public_html
+       - name: Setup public_html structure
+         run: |
+           # Create public_html directory
+           mkdir -p deploy_temp/public_html
 
-          # Move public folder contents to public_html
-          if [ -d "deploy_temp/public" ]; then
-            # Copy all files and directories from public to public_html
-            cp -r deploy_temp/public/* deploy_temp/public_html/ 2>/dev/null || true
-            # Also copy hidden files if any
-            cp -r deploy_temp/public/.[^.]* deploy_temp/public_html/ 2>/dev/null || true
-            # Remove the public directory completely
-            rm -rf deploy_temp/public
-          fi
+           # Move public folder contents to public_html
+           if [ -d "deploy_temp/public" ]; then
+             # Copy all files and directories from public to public_html
+             cp -r deploy_temp/public/* deploy_temp/public_html/ 2>/dev/null || true
+             # Also copy hidden files if any
+             cp -r deploy_temp/public/.[^.]* deploy_temp/public_html/ 2>/dev/null || true
+             # Remove the public directory completely
+             rm -rf deploy_temp/public
+           fi
 
-          # Handle Laravel storage symlink issue - remove any existing storage link/dir
-          if [ -L "deploy_temp/public_html/storage" ]; then
-            echo "Removing storage symlink..."
-            rm deploy_temp/public_html/storage
-          elif [ -d "deploy_temp/public_html/storage" ]; then
-            echo "Removing storage directory..."
-            rm -rf deploy_temp/public_html/storage
-          fi
+           # Handle Laravel storage symlink issue - remove any existing storage link/dir
+           if [ -L "deploy_temp/public_html/storage" ]; then
+             echo "Removing storage symlink..."
+             rm deploy_temp/public_html/storage
+           elif [ -d "deploy_temp/public_html/storage" ]; then
+             echo "Removing storage directory..."
+             rm -rf deploy_temp/public_html/storage
+           fi
 
-          # Note: We don't create storage directory here as it will be handled by post-deployment script
-          echo "Storage directory will be created by post-deployment script on server"
+           # Create storage directory structure locally to avoid FTP conflicts
+           mkdir -p deploy_temp/storage/app/public
+           mkdir -p deploy_temp/storage/framework/cache
+           mkdir -p deploy_temp/storage/framework/sessions
+           mkdir -p deploy_temp/storage/framework/views
+           mkdir -p deploy_temp/storage/logs
+           mkdir -p deploy_temp/bootstrap/cache
+
+           # Set proper permissions for storage directories
+           chmod -R 775 deploy_temp/storage
+           chmod -R 775 deploy_temp/bootstrap/cache
+
+           echo "Storage directories created locally to avoid FTP conflicts"
 
       - name: Fix Laravel paths for shared hosting
         run: |
@@ -139,11 +150,20 @@ jobs:
               }
           }
 
-          // Verify that storage/app/public exists on server
-          if (!file_exists($storagePath)) {
-              echo "Warning: $storagePath does not exist on server\n";
-              echo "Creating storage/app/public directory...\n";
-              mkdir($storagePath, 0755, true);
+          // Create storage directory structure if it doesn't exist
+          $storageDirs = [
+              'storage/app/public',
+              'storage/framework/cache',
+              'storage/framework/sessions',
+              'storage/framework/views',
+              'storage/logs'
+          ];
+
+          foreach ($storageDirs as $dir) {
+              if (!file_exists($dir)) {
+                  mkdir($dir, 0755, true);
+                  echo "Created directory: $dir\n";
+              }
           }
 
           // Create the symlink
@@ -257,6 +277,8 @@ jobs:
             *.md
             .DS_Store
             Thumbs.db
+            storage/**
+            bootstrap/cache/**
 
       - name: Verify deployment success
         run: |
