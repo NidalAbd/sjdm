@@ -1,0 +1,151 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, fileinfo, gd, exif, zip
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-php-
+
+      - name: Install Composer dependencies
+        run: |
+          echo "Installing Composer dependencies..."
+          composer install --no-dev --optimize-autoloader --no-interaction
+          echo "Composer dependencies installed successfully!"
+
+      - name: Check Laravel installation
+        run: |
+          echo "Checking Laravel installation..."
+          php artisan --version
+          echo "Laravel is properly installed!"
+
+      - name: Generate application key (if needed)
+        run: |
+          echo "Checking if APP_KEY is set..."
+          if [ -z "$(grep 'APP_KEY=base64:' .env.example 2>/dev/null || echo '')" ]; then
+            echo "APP_KEY not found, generating new one..."
+            php artisan key:generate --show
+          else
+            echo "APP_KEY already exists"
+          fi
+
+      - name: Clear and cache Laravel
+        run: |
+          echo "Clearing Laravel caches..."
+          php artisan cache:clear
+          php artisan config:clear
+          php artisan route:clear
+          php artisan view:clear
+          
+          echo "Generating optimized files..."
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          echo "Laravel optimization completed!"
+
+      - name: Create deployment package
+        run: |
+          echo "Creating deployment package..."
+          
+          # Create deployment directory
+          mkdir -p deployment
+          
+          # Copy application files with exclusions
+          echo "Copying application files..."
+          rsync -av --exclude='.git' \
+                    --exclude='node_modules' \
+                    --exclude='tests' \
+                    --exclude='.github' \
+                    --exclude='.env.example' \
+                    --exclude='README.md' \
+                    --exclude='deployment' \
+                    --exclude='storage/logs/*' \
+                    --exclude='storage/framework/cache/*' \
+                    --exclude='storage/framework/sessions/*' \
+                    --exclude='storage/framework/views/*' \
+                    ./ deployment/
+          
+          # Copy public files to public_html directory
+          echo "Copying public files..."
+          mkdir -p deployment/public_html
+          cp -r public/* deployment/public_html/
+          
+          # Show deployment structure
+          echo "Deployment package structure:"
+          ls -la deployment/
+          echo "Public HTML structure:"
+          ls -la deployment/public_html/
+          
+          echo "Deployment package created successfully!"
+
+      - name: Deploy to Hostinger via SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: talbna.cloud
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: sftp
+          local-dir: ./deployment/
+          server-dir: /
+          dangerous-clean-slate: false
+          log-level: verbose
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/.github/**
+            **/.env.example
+            **/README.md
+            **/storage/logs/*
+            **/storage/framework/cache/*
+            **/storage/framework/sessions/*
+            **/storage/framework/views/*
+
+      - name: Deploy public files separately
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: talbna.cloud
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: sftp
+          local-dir: ./deployment/public_html/
+          server-dir: /public_html/
+          dangerous-clean-slate: false
+          log-level: verbose
+
+      - name: Deployment Summary
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "📁 Application files deployed to server root"
+          echo "🌐 Public files deployed to public_html"
+          echo "⏰ Deployment time: $(date)"
+          echo "📝 Check your website at: https://talbna.cloud"
