@@ -214,7 +214,15 @@ jobs:
           [ -d "deploy_temp/vendor" ] && echo "✓ vendor directory exists" || echo "✗ vendor directory missing"
           [ -d "deploy_temp/public_html/storage" ] && echo "✓ storage directory exists" || echo "✗ storage directory missing"
 
-      - name: Deploy to Hostinger via FTP
+      - name: Test FTP connection
+        run: |
+          echo "Testing FTP connection..."
+          echo "Server: ftp.talbna.cloud"
+          echo "Username: u693675641"
+          echo "Testing basic connectivity..."
+
+      - name: Deploy to Hostinger via FTP (Primary)
+        id: ftp-deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp.talbna.cloud
@@ -223,6 +231,34 @@ jobs:
           local-dir: ./deploy_temp/
           server-dir: ./domains/talbna.cloud/
           state-name: .ftp-deploy-sync-state.json
+          dangerous-clean-slate: false
+          log-level: verbose
+          timeout: 300
+          exclude: |
+            .git*
+            .git*/
+            node_modules/**
+            vendor/**
+            .github/**
+            tests/**
+            *.md
+            .DS_Store
+            Thumbs.db
+
+      - name: Deploy to Hostinger via SFTP (Fallback)
+        if: failure() && steps.ftp-deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: talbna.cloud
+          username: u693675641
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: sftp
+          local-dir: ./deploy_temp/
+          server-dir: ./domains/talbna.cloud/
+          state-name: .sftp-deploy-sync-state.json
+          dangerous-clean-slate: false
+          log-level: verbose
+          timeout: 300
           exclude: |
             .git*
             .git*/
@@ -236,7 +272,7 @@ jobs:
 
       - name: Setup Laravel storage symlink and clear cache via web request
         run: |
-          echo "Waiting 10 seconds for FTP files to sync..."
+          echo "Waiting 10 seconds for files to sync..."
           sleep 10
           echo "Running post-deployment setup (cache clearing + storage symlink)..."
           response=$(curl -s -w "HTTPSTATUS:%{http_code}" https://talbna.cloud/setup_storage.php)
