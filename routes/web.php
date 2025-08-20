@@ -210,6 +210,13 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::post('orders/bulk-destroy', [OrderController::class, 'bulkDestroy'])->name('orders.bulk-destroy');
     Route::get('orders/statistics', [OrderController::class, 'getStatistics'])->name('orders.statistics');
     Route::post('orders/update-statuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.update-statuses');
+    
+    // Order Refill and Cancel Routes
+    Route::get('orders/{order}/check-refill', [OrderController::class, 'checkRefill'])->name('orders.check-refill');
+    Route::post('orders/{order}/refill', [OrderController::class, 'refill'])->name('orders.refill');
+    Route::get('orders/{order}/check-cancel', [OrderController::class, 'checkCancel'])->name('orders.check-cancel');
+    Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('orders/{order}/process-refund', [OrderController::class, 'processPartialRefund'])->name('orders.process-refund');
 
     // Admin Service Management Routes
     Route::get('services', [ServiceController::class, 'index'])->name('services.index');

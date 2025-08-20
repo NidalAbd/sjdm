@@ -506,6 +506,156 @@ class OrderController extends Controller
     }
 
     /**
+     * Process refill for an order
+     */
+    public function refill($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            $apiOrderId = $order->api_order_id;
+
+            if (!$apiOrderId) {
+                return response()->json(['success' => false, 'message' => 'Invalid API order ID.'], 400);
+            }
+
+            // Call API to refill the order
+            $apiResponse = $this->api->refill($apiOrderId);
+            
+            if ($apiResponse && isset($apiResponse->success) && $apiResponse->success) {
+                // Update order status if needed
+                $order->update(['status' => 'processing']);
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order refilled successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to refill order. Please try again.'
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error refilling order: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while processing the refill.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Cancel an order
+     */
+    public function cancel($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            $apiOrderId = $order->api_order_id;
+
+            if (!$apiOrderId) {
+                return response()->json(['success' => false, 'message' => 'Invalid API order ID.'], 400);
+            }
+
+            // Call API to cancel the order
+            $apiResponse = $this->api->cancel([$apiOrderId]);
+            
+            if ($apiResponse && isset($apiResponse->success) && $apiResponse->success) {
+                // Update order status
+                $order->update(['status' => 'cancelled']);
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order cancelled successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to cancel order. Please try again.'
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error cancelling order: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while processing the cancellation.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Process refund for partial orders
+     */
+    public function processPartialRefund($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            
+            // Check if order is partial and has a charge
+            if ($order->status !== 'partial' || $order->charge <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order is not eligible for a partial refund.'
+                ], 400);
+            }
+
+            $user = $order->user;
+            
+            // Calculate refund amount based on completion percentage
+            $startCount = $order->start_count ?? 0;
+            $remains = $order->remains ?? 0;
+            $completed = $startCount - $remains;
+            
+            if ($startCount <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot calculate refund: invalid start count.'
+                ], 400);
+            }
+
+            // Calculate completion percentage and refund amount
+            $completionPercentage = ($completed / $startCount) * 100;
+            $refundAmount = $order->charge * (1 - ($completionPercentage / 100));
+            
+            // Round to 2 decimal places
+            $refundAmount = round($refundAmount, 2);
+
+            if ($refundAmount <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No refund amount calculated.'
+                ], 400);
+            }
+
+            // Create refund transaction
+            $transactionData = [
+                'type' => 'credit',
+                'amount' => $refundAmount,
+                'status' => 'refunded',
+                'description' => 'Partial refund for order ID: ' . $order->id . ' (Completed: ' . number_format($completionPercentage, 1) . '%)',
+                'currency' => 'USD',
+            ];
+
+            $user->createTransactionAndNotify($transactionData);
+
+            // Update order status to completed
+            $order->update(['status' => 'completed']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Partial refund processed successfully! Refunded: $' . number_format($refundAmount, 2) . ' (Completion: ' . number_format($completionPercentage, 1) . '%)'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error processing partial refund: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while processing the refund.'
+            ], 500);
+        }
+    }
+
+    /**
      * Get order statistics for dashboard
      */
     public function getStatistics()
