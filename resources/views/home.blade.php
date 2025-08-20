@@ -9,7 +9,7 @@
     <section class="hero-section">
         <div class="hero-content">
             <div class="hero-text">
-                <h1 class="hero-title animate-fade-in">{{ __('Welcome to') }} {{ config('app.name') }}</h1>
+                <h1 class="hero-title animate-fade-in">{{ __('Welcssome to') }} {{ config('app.name') }}</h1>
                 <p class="hero-subtitle animate-fade-in-delay">{{ __('Your trusted partner for social media growth and digital marketing solutions') }}</p>
                 <div class="hero-actions animate-fade-in-delay-2">
                     <a href="{{ route('services.all') }}" class="btn btn-primary hero-btn">
@@ -646,7 +646,7 @@ html, body {
     * {
         transition: none !important;
     }
-    
+
     .animate-fade-in,
     .animate-fade-in-delay,
     .animate-fade-in-delay-2,
