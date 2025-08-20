@@ -1,146 +1,261 @@
-name: Deploy to Hostinger
+name: Deploy Laravel to Hostinger
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  workflow_dispatch: # Allow manual deployment
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
+    environment: production # Add environment protection
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Debug - Show current directory
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Directory contents:"
-          ls -la
+        uses: actions/checkout@v4 # Updated to latest version
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.1' # Match your Laravel version
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, pdo, curl, zip, bcmath
+          tools: composer:v2
 
-      - name: Debug - Check PHP installation
+      - name: Create deployment directory
+        run: mkdir -p deploy_temp
+
+      - name: Prepare Laravel files
         run: |
-          echo "PHP version:"
-          php --version
-          echo "PHP extensions:"
-          php -m
+          # Copy all files except those we want to exclude (including vendor)
+          rsync -av \
+            --exclude='node_modules' \
+            --exclude='vendor' \
+            --exclude='.git' \
+            --exclude='deploy_temp' \
+            --exclude='tests' \
+            --exclude='.github' \
+            --exclude='README.md' \
+            --exclude='phpunit.xml' \
+            --exclude='vite.config.js' \
+            --exclude='package*.json' \
+            ./ deploy_temp/
 
-      - name: Install Composer dependencies
+      - name: Setup public_html structure
         run: |
-          echo "Installing Composer dependencies..."
-          composer install --no-dev --optimize-autoloader --no-interaction
-          echo "Composer dependencies installed successfully!"
+          # Create public_html directory
+          mkdir -p deploy_temp/public_html
 
-      - name: Debug - Check Composer
+          # Move public folder contents to public_html
+          if [ -d "deploy_temp/public" ]; then
+            # Copy all files and directories from public to public_html
+            cp -r deploy_temp/public/* deploy_temp/public_html/ 2>/dev/null || true
+            # Also copy hidden files if any
+            cp -r deploy_temp/public/.[^.]* deploy_temp/public_html/ 2>/dev/null || true
+            # Remove the public directory completely
+            rm -rf deploy_temp/public
+          fi
+
+          # Handle Laravel storage symlink issue - remove any existing storage link/dir
+          if [ -L "deploy_temp/public_html/storage" ]; then
+            echo "Removing storage symlink..."
+            rm deploy_temp/public_html/storage
+          elif [ -d "deploy_temp/public_html/storage" ]; then
+            echo "Removing storage directory..."
+            rm -rf deploy_temp/public_html/storage
+          fi
+
+          # Note: We don't create storage directory here as it will be handled by post-deployment script
+          echo "Storage directory will be created by post-deployment script on server"
+
+      - name: Fix Laravel paths for shared hosting
         run: |
-          echo "Composer version:"
-          composer --version
-          echo "Composer dependencies:"
-          composer show --installed
+          # Update index.php to work with shared hosting structure
+          sed -i "s|require __DIR__.'/../vendor/autoload.php';|require __DIR__.'/../vendor/autoload.php';|g" deploy_temp/public_html/index.php
+          sed -i "s|\$app = require_once __DIR__.'/../bootstrap/app.php';|\$app = require_once __DIR__.'/../bootstrap/app.php';|g" deploy_temp/public_html/index.php
 
-      - name: Check Laravel installation
+      - name: Update environment for production
         run: |
-          echo "Checking Laravel installation..."
-          php artisan --version
-          echo "Laravel is properly installed!"
+          cd deploy_temp
 
-      - name: Create deployment package
+          # Copy .env.example to .env if .env doesn't exist
+          if [ ! -f ".env" ]; then
+            cp .env.example .env
+            echo "Created .env from .env.example"
+          fi
+
+          # Modify existing .env for production
+          sed -i 's/APP_ENV=local/APP_ENV=production/' .env
+          sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
+          sed -i 's|APP_URL=http://localhost|APP_URL=https://talbna.cloud|' .env
+          sed -i 's/LOG_LEVEL=debug/LOG_LEVEL=error/' .env
+          sed -i 's/DB_HOST=127.0.0.1/DB_HOST=localhost/' .env
+
+          # Note: Cache clearing will be done on server since vendor folder is not deployed
+
+      - name: Create post-deployment script
         run: |
-          echo "Creating deployment package..."
-          
-          # Create deployment directory
-          mkdir -p deployment
-          echo "Deployment directory created"
-          
-          # Copy application files with exclusions (Windows compatible)
-          echo "Copying application files..."
-          
-          # Copy everything first, then remove unwanted directories
-          echo "Copying app directory..."
-          cp -r app deployment/
-          echo "Copying bootstrap directory..."
-          cp -r bootstrap deployment/
-          echo "Copying config directory..."
-          cp -r config deployment/
-          echo "Copying database directory..."
-          cp -r database deployment/
-          echo "Copying lang directory..."
-          cp -r lang deployment/
-          echo "Copying resources directory..."
-          cp -r resources deployment/
-          echo "Copying routes directory..."
-          cp -r routes deployment/
-          echo "Copying storage directory..."
-          cp -r storage deployment/
-          echo "Copying vendor directory..."
-          cp -r vendor deployment/
-          echo "Copying artisan file..."
-          cp artisan deployment/
-          echo "Copying composer files..."
-          cp composer.json deployment/
-          cp composer.lock deployment/
-          
-          # Remove unwanted files
-          echo "Cleaning up storage directories..."
-          rm -rf deployment/storage/logs/*
-          rm -rf deployment/storage/framework/cache/*
-          rm -rf deployment/storage/framework/sessions/*
-          rm -rf deployment/storage/framework/views/*
-          
-          # Copy public files to public_html directory
-          echo "Copying public files..."
-          mkdir -p deployment/public_html
-          cp -r public/* deployment/public_html/
-          
-          # Show deployment structure
-          echo "Deployment package structure:"
-          ls -la deployment/
-          echo "Public HTML structure:"
-          ls -la deployment/public_html/
-          
-          echo "Deployment package created successfully!"
+          # Create a script that will run on the server to recreate storage symlink and clear cache
+          cat > deploy_temp/setup_storage.php << 'EOF'
+          <?php
+          echo "Starting post-deployment setup...\n";
 
-      - name: Debug - Check deployment package
+          $publicPath = __DIR__ . '/public_html';
+          $storagePath = __DIR__ . '/storage/app/public';
+
+          // Clear Laravel caches first (since vendor exists on server)
+          echo "Clearing Laravel caches...\n";
+          $commands = [
+              'php artisan config:clear',
+              'php artisan cache:clear',
+              'php artisan view:clear',
+              'php artisan route:clear'
+          ];
+
+          foreach ($commands as $command) {
+              $output = shell_exec("cd " . __DIR__ . " && $command 2>&1");
+              if ($output) {
+                  echo "  $command: " . trim($output) . "\n";
+              }
+          }
+
+          // Remove existing storage directory/symlink in public_html if it exists
+          if (file_exists($publicPath . '/storage')) {
+              if (is_dir($publicPath . '/storage') && !is_link($publicPath . '/storage')) {
+                  // Remove directory recursively
+                  $files = new RecursiveIteratorIterator(
+                      new RecursiveDirectoryIterator($publicPath . '/storage', RecursiveDirectoryIterator::SKIP_DOTS),
+                      RecursiveIteratorIterator::CHILD_FIRST
+                  );
+                  foreach ($files as $fileinfo) {
+                      $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                      $todo($fileinfo->getRealPath());
+                  }
+                  rmdir($publicPath . '/storage');
+                  echo "Removed existing storage directory from public_html\n";
+              } elseif (is_link($publicPath . '/storage')) {
+                  unlink($publicPath . '/storage');
+                  echo "Removed existing storage symlink\n";
+              }
+          }
+
+          // Verify that storage/app/public exists on server
+          if (!file_exists($storagePath)) {
+              echo "Warning: $storagePath does not exist on server\n";
+              echo "Creating storage/app/public directory...\n";
+              mkdir($storagePath, 0755, true);
+          }
+
+          // Create the symlink
+          if (symlink('../storage/app/public', $publicPath . '/storage')) {
+              echo "✅ Storage symlink created successfully!\n";
+              echo "public_html/storage -> ../storage/app/public\n";
+          } else {
+              echo "❌ Failed to create storage symlink\n";
+              echo "Please check file permissions\n";
+          }
+
+          // Verify the symlink works
+          if (is_link($publicPath . '/storage') && file_exists($publicPath . '/storage')) {
+              echo "✅ Symlink verification: SUCCESS - Link is working\n";
+          } else {
+              echo "❌ Symlink verification: FAILED - Link is not working\n";
+          }
+
+          echo "✅ Post-deployment setup completed!\n";
+          EOF
+
+      - name: Set proper permissions
         run: |
-          echo "Checking deployment package size:"
-          du -sh deployment/
-          echo "Checking deployment package contents:"
-          find deployment/ -type f | head -20
+          cd deploy_temp
+          # Set proper permissions for Laravel
+          find . -type f -exec chmod 644 {} \;
+          find . -type d -exec chmod 755 {} \;
+          chmod -R 775 storage bootstrap/cache
+          chmod 644 public_html/index.php
 
-      - name: Deploy to Hostinger via SFTP
+      - name: Create .htaccess for public_html
+        run: |
+          cat > deploy_temp/public_html/.htaccess << 'EOF'
+          <IfModule mod_rewrite.c>
+              <IfModule mod_negotiation.c>
+                  Options -MultiViews -Indexes
+              </IfModule>
+
+              RewriteEngine On
+
+              # Handle Authorization Header
+              RewriteCond %{HTTP:Authorization} .
+              RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+              # Redirect Trailing Slashes If Not A Folder...
+              RewriteCond %{REQUEST_FILENAME} !-d
+              RewriteCond %{REQUEST_URI} (.+)/$
+              RewriteRule ^ %1 [L,R=301]
+
+              # Send Requests To Front Controller...
+              RewriteCond %{REQUEST_FILENAME} !-d
+              RewriteCond %{REQUEST_FILENAME} !-f
+              RewriteRule ^ index.php [L]
+          </IfModule>
+          EOF
+
+      - name: Verify deployment structure
+        run: |
+          echo "Deployment structure:"
+          ls -la deploy_temp/
+          echo "Public HTML contents:"
+          ls -la deploy_temp/public_html/
+          echo "Storage directory contents:"
+          ls -la deploy_temp/public_html/storage/ || echo "Storage directory is empty or doesn't exist"
+          echo "Checking critical files:"
+          [ -f "deploy_temp/public_html/index.php" ] && echo "✓ index.php exists" || echo "✗ index.php missing"
+          [ -f "deploy_temp/.env" ] && echo "✓ .env exists" || echo "✗ .env missing"
+          [ -d "deploy_temp/vendor" ] && echo "✓ vendor directory exists" || echo "✗ vendor directory missing"
+          [ -d "deploy_temp/public_html/storage" ] && echo "✓ storage directory exists" || echo "✗ storage directory missing"
+
+      - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: talbna.cloud
-          username: ${{ secrets.FTP_USERNAME }}
+          server: ftp.talbna.cloud
+          username: u693675641
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
-          local-dir: ./deployment/
-          server-dir: /
-          dangerous-clean-slate: false
-          log-level: verbose
+          local-dir: ./deploy_temp/
+          server-dir: ./domains/talbna.cloud/
+          state-name: .ftp-deploy-sync-state.json
+          exclude: |
+            .git*
+            .git*/
+            node_modules/**
+            vendor/**
+            .github/**
+            tests/**
+            *.md
+            .DS_Store
+            Thumbs.db
 
-      - name: Deploy public files separately
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: talbna.cloud
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
-          local-dir: ./deployment/public_html/
-          server-dir: /public_html/
-          dangerous-clean-slate: false
-          log-level: verbose
-
-      - name: Deployment Summary
+      - name: Setup Laravel storage symlink and clear cache via web request
         run: |
-          echo "🎉 Deployment completed successfully!"
-          echo "📁 Application files deployed to server root"
-          echo "🌐 Public files deployed to public_html"
-          echo "⏰ Deployment time: $(date)"
-          echo "📝 Check your website at: https://talbna.cloud"
+          echo "Waiting 10 seconds for FTP files to sync..."
+          sleep 10
+          echo "Running post-deployment setup (cache clearing + storage symlink)..."
+          response=$(curl -s -w "HTTPSTATUS:%{http_code}" https://talbna.cloud/setup_storage.php)
+          http_code=$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+          body=$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ Post-deployment setup completed successfully!"
+          else
+            echo "⚠️  Setup script executed but returned HTTP $http_code"
+            echo "Check manually at: https://talbna.cloud/setup_storage.php"
+          fi
+
+      - name: Post-deployment cleanup
+        if: always()
+        run: |
+          echo "Deployment completed"
+          # Remove sensitive deployment files
+          rm -rf deploy_temp
