@@ -1,9 +1,9 @@
-name: Deploy to Hostinger
+name: Deploy to Hostinger via Git
 
 on:
   push:
     branches:
-      - main  # or main, depending on your branch name
+      - main
 
 jobs:
   deploy:
@@ -13,20 +13,54 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Deploy application files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          server: talbna.cloud
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./  # Directory to deploy (project ssroot, with trailing slash)
-          server-dir: /  # Deploy to root directory on the server (with trailing slash)
+          php-version: '8.1'
 
-      - name: Deploy public files
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Generate optimized files
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      - name: Create deployment package
+        run: |
+          # Create a deployment directory
+          mkdir -p deployment
+          
+          # Copy application files (excluding public and other unnecessary files)
+          rsync -av --exclude='.git' \
+                    --exclude='node_modules' \
+                    --exclude='tests' \
+                    --exclude='.github' \
+                    --exclude='.env.example' \
+                    --exclude='README.md' \
+                    --exclude='deployment' \
+                    ./ deployment/
+          
+          # Copy public files to public_html directory
+          mkdir -p deployment/public_html
+          cp -r public/* deployment/public_html/
+
+      - name: Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
           server: talbna.cloud
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./public/  # Directory to deploy (Laravel public directory, with trailing slash)
-          server-dir: /public_html/  # Deploy to public_html directory on the server (with trailing slash)
+          protocol: sftp
+          local-dir: ./deployment/
+          server-dir: /
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/.github/**
+            **/.env.example
+            **/README.md
