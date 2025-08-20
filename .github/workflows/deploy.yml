@@ -218,7 +218,7 @@ jobs:
         run: |
           echo "Testing FTP connection..."
           echo "Server: ftp.talbna.cloud"
-          echo "Username: u693675641"
+          echo "Username: ${{ secrets.FTP_USERNAME }}"
           echo "Testing basic connectivity..."
 
       - name: Deploy to Hostinger via FTP (Primary)
@@ -226,7 +226,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp.talbna.cloud
-          username: u693675641
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy_temp/
           server-dir: ./domains/talbna.cloud/
@@ -250,7 +250,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: talbna.cloud
-          username: u693675641
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: sftp
           local-dir: ./deploy_temp/
