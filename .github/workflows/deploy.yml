@@ -46,7 +46,7 @@ jobs:
            # Create public_html directory
            mkdir -p deploy_temp/public_html
 
-           # Move public folder contents to public_html
+           # Mosve public folder contents to public_html
            if [ -d "deploy_temp/public" ]; then
              # Copy all files and directories from public to public_html
              cp -r deploy_temp/public/* deploy_temp/public_html/ 2>/dev/null || true
@@ -239,18 +239,18 @@ jobs:
           echo "Testing FTP connection..."
           echo "Username: ${{ secrets.FTP_USERNAME }}"
           echo "Testing Hostinger FTP server..."
-          
+
           # Test Hostinger FTP server
           server="45.84.207.200"
           echo "Testing server: $server"
-          
+
           # Test FTP port 21 (only port Hostinger provides)
           if nc -z "$server" 21; then
             echo "✅ $server: Port 21 (FTP) is reachable"
           else
             echo "❌ $server: Port 21 (FTP) is not reachable"
           fi
-          
+
           echo "---"
 
       - name: Deploy Laravel project files
