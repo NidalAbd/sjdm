@@ -233,70 +233,16 @@ jobs:
           
           echo "---"
 
-      - name: Deploy Laravel core files first
-        id: ftp-core-deploy
+      - name: Deploy Laravel project files
+        id: ftp-deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: 45.84.207.200
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy_temp/
-          server-dir: /home/u693675641/domains/smm-followerss.com/
-          state-name: .ftp-core-deploy-sync-state.json
-          dangerous-clean-slate: false
-          log-level: verbose
-          timeout: 600
-          max-retries: 3
-          exclude: |
-            .git*
-            .git*/
-            node_modules/**
-            vendor/**
-            .github/**
-            tests/**
-            *.md
-            .DS_Store
-            Thumbs.db
-            public_html/**
-            storage/**
-            bootstrap/cache/**
-
-      - name: Deploy public_html files separately
-        id: ftp-public-deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: 45.84.207.200
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./deploy_temp/public_html/
-          server-dir: /home/u693675641/domains/smm-followerss.com/public_html/
-          state-name: .ftp-public-deploy-sync-state.json
-          dangerous-clean-slate: false
-          log-level: verbose
-          timeout: 600
-          max-retries: 3
-          exclude: |
-            .git*
-            .git*/
-            node_modules/**
-            vendor/**
-            .github/**
-            tests/**
-            *.md
-            .DS_Store
-            Thumbs.db
-
-      - name: Deploy to Hostinger via FTP (Fallback - Full deployment)
-        id: ftp-full-deploy
-        if: failure() && (steps.ftp-core-deploy.outcome == 'failure' || steps.ftp-public-deploy.outcome == 'failure')
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: 45.84.207.200
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./deploy_temp/
-          server-dir: /home/u693675641/domains/smm-followerss.com/
-          state-name: .ftp-full-deploy-sync-state.json
+          server-dir: ./
+          state-name: .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
           log-level: verbose
           timeout: 900
@@ -315,10 +261,10 @@ jobs:
       - name: Verify deployment success
         run: |
           echo "Checking if deployment was successful..."
-          if [ "${{ steps.ftp-core-deploy.outcome }}" = "success" ] || [ "${{ steps.ftp-public-deploy.outcome }}" = "success" ] || [ "${{ steps.ftp-full-deploy.outcome }}" = "success" ]; then
+          if [ "${{ steps.ftp-deploy.outcome }}" = "success" ]; then
             echo "✅ Deployment completed successfully!"
           else
-            echo "❌ All deployment methods failed"
+            echo "❌ Deployment failed"
             exit 1
           fi
 
