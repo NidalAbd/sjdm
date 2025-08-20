@@ -12,28 +12,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
+      - name: Debug - Show current directory
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, fileinfo, gd, exif, zip
 
-      - name: Validate composer.json
-        run: composer validate --strict
-
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-php-
+      - name: Debug - Check PHP installation
+        run: |
+          echo "PHP version:"
+          php --version
+          echo "PHP extensions:"
+          php -m
 
       - name: Install Composer dependencies
         run: |
@@ -41,35 +37,18 @@ jobs:
           composer install --no-dev --optimize-autoloader --no-interaction
           echo "Composer dependencies installed successfully!"
 
+      - name: Debug - Check Composer
+        run: |
+          echo "Composer version:"
+          composer --version
+          echo "Composer dependencies:"
+          composer show --installed
+
       - name: Check Laravel installation
         run: |
           echo "Checking Laravel installation..."
           php artisan --version
           echo "Laravel is properly installed!"
-
-      - name: Generate application key (if needed)
-        run: |
-          echo "Checking if APP_KEY is set..."
-          if [ -z "$(grep 'APP_KEY=base64:' .env.example 2>/dev/null || echo '')" ]; then
-            echo "APP_KEY not found, generating new one..."
-            php artisan key:generate --show
-          else
-            echo "APP_KEY already exists"
-          fi
-
-      - name: Clear and cache Laravel
-        run: |
-          echo "Clearing Laravel caches..."
-          php artisan cache:clear
-          php artisan config:clear
-          php artisan route:clear
-          php artisan view:clear
-          
-          echo "Generating optimized files..."
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-          echo "Laravel optimization completed!"
 
       - name: Create deployment package
         run: |
@@ -77,21 +56,42 @@ jobs:
           
           # Create deployment directory
           mkdir -p deployment
+          echo "Deployment directory created"
           
-          # Copy application files with exclusions
+          # Copy application files with exclusions (Windows compatible)
           echo "Copying application files..."
-          rsync -av --exclude='.git' \
-                    --exclude='node_modules' \
-                    --exclude='tests' \
-                    --exclude='.github' \
-                    --exclude='.env.example' \
-                    --exclude='README.md' \
-                    --exclude='deployment' \
-                    --exclude='storage/logs/*' \
-                    --exclude='storage/framework/cache/*' \
-                    --exclude='storage/framework/sessions/*' \
-                    --exclude='storage/framework/views/*' \
-                    ./ deployment/
+          
+          # Copy everything first, then remove unwanted directories
+          echo "Copying app directory..."
+          cp -r app deployment/
+          echo "Copying bootstrap directory..."
+          cp -r bootstrap deployment/
+          echo "Copying config directory..."
+          cp -r config deployment/
+          echo "Copying database directory..."
+          cp -r database deployment/
+          echo "Copying lang directory..."
+          cp -r lang deployment/
+          echo "Copying resources directory..."
+          cp -r resources deployment/
+          echo "Copying routes directory..."
+          cp -r routes deployment/
+          echo "Copying storage directory..."
+          cp -r storage deployment/
+          echo "Copying vendor directory..."
+          cp -r vendor deployment/
+          echo "Copying artisan file..."
+          cp artisan deployment/
+          echo "Copying composer files..."
+          cp composer.json deployment/
+          cp composer.lock deployment/
+          
+          # Remove unwanted files
+          echo "Cleaning up storage directories..."
+          rm -rf deployment/storage/logs/*
+          rm -rf deployment/storage/framework/cache/*
+          rm -rf deployment/storage/framework/sessions/*
+          rm -rf deployment/storage/framework/views/*
           
           # Copy public files to public_html directory
           echo "Copying public files..."
@@ -106,6 +106,13 @@ jobs:
           
           echo "Deployment package created successfully!"
 
+      - name: Debug - Check deployment package
+        run: |
+          echo "Checking deployment package size:"
+          du -sh deployment/
+          echo "Checking deployment package contents:"
+          find deployment/ -type f | head -20
+
       - name: Deploy to Hostinger via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -117,18 +124,6 @@ jobs:
           server-dir: /
           dangerous-clean-slate: false
           log-level: verbose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/tests/**
-            **/.github/**
-            **/.env.example
-            **/README.md
-            **/storage/logs/*
-            **/storage/framework/cache/*
-            **/storage/framework/sessions/*
-            **/storage/framework/views/*
 
       - name: Deploy public files separately
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
