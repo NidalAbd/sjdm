@@ -220,6 +220,19 @@ jobs:
           echo "Server: ftp.talbna.cloud"
           echo "Username: ${{ secrets.FTP_USERNAME }}"
           echo "Testing basic connectivity..."
+          
+          # Test if we can reach the server
+          if nc -z ftp.talbna.cloud 21; then
+            echo "✅ Port 21 (FTP) is reachable"
+          else
+            echo "❌ Port 21 (FTP) is not reachable"
+          fi
+          
+          if nc -z ftp.talbna.cloud 990; then
+            echo "✅ Port 990 (FTPS) is reachable"
+          else
+            echo "❌ Port 990 (FTPS) is not reachable"
+          fi
 
       - name: Deploy to Hostinger via FTP (Primary)
         id: ftp-deploy
@@ -245,17 +258,18 @@ jobs:
             .DS_Store
             Thumbs.db
 
-      - name: Deploy to Hostinger via SFTP (Fallback)
+      - name: Deploy to Hostinger via FTPS (Fallback)
+        id: ftps-deploy
         if: failure() && steps.ftp-deploy.outcome == 'failure'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: talbna.cloud
+          server: ftp.talbna.cloud
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
+          protocol: ftps
           local-dir: ./deploy_temp/
           server-dir: ./domains/talbna.cloud/
-          state-name: .sftp-deploy-sync-state.json
+          state-name: .ftps-deploy-sync-state.json
           dangerous-clean-slate: false
           log-level: verbose
           timeout: 300
@@ -269,6 +283,17 @@ jobs:
             *.md
             .DS_Store
             Thumbs.db
+
+      - name: Deploy to Hostinger via SFTP (Final Fallback)
+        if: failure() && steps.ftp-deploy.outcome == 'failure' && steps.ftps-deploy.outcome == 'failure'
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: ${{ secrets.FTP_USERNAME }}
+          server: talbna.cloud
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          local_path: './deploy_temp/*'
+          remote_path: './domains/talbna.cloud/'
+          delete_remote_files: false
 
       - name: Setup Laravel storage symlink and clear cache via web request
         run: |
