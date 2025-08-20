@@ -217,32 +217,38 @@ jobs:
       - name: Test FTP connection
         run: |
           echo "Testing FTP connection..."
-          echo "Server: ftp.talbna.cloud"
           echo "Username: ${{ secrets.FTP_USERNAME }}"
-          echo "Testing basic connectivity..."
+          echo "Testing Hostinger FTP server..."
           
-          # Test if we can reach the server
-          if nc -z ftp.talbna.cloud 21; then
-            echo "✅ Port 21 (FTP) is reachable"
+          # Test Hostinger FTP server
+          server="45.84.207.200"
+          echo "Testing server: $server"
+          
+          # Test FTP port 21
+          if nc -z "$server" 21; then
+            echo "✅ $server: Port 21 (FTP) is reachable"
           else
-            echo "❌ Port 21 (FTP) is not reachable"
+            echo "❌ $server: Port 21 (FTP) is not reachable"
           fi
           
-          if nc -z ftp.talbna.cloud 990; then
-            echo "✅ Port 990 (FTPS) is reachable"
+          # Test FTPS port 990
+          if nc -z "$server" 990; then
+            echo "✅ $server: Port 990 (FTPS) is reachable"
           else
-            echo "❌ Port 990 (FTPS) is not reachable"
+            echo "❌ $server: Port 990 (FTPS) is not reachable"
           fi
+          
+          echo "---"
 
       - name: Deploy to Hostinger via FTP (Primary)
         id: ftp-deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.talbna.cloud
+          server: 45.84.207.200
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy_temp/
-          server-dir: ./domains/talbna.cloud/
+          server-dir: /home/u693675641/domains/smm-followerss.com/
           state-name: .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
           log-level: verbose
@@ -263,12 +269,12 @@ jobs:
         if: failure() && steps.ftp-deploy.outcome == 'failure'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.talbna.cloud
+          server: 45.84.207.200
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./deploy_temp/
-          server-dir: ./domains/talbna.cloud/
+          server-dir: /home/u693675641/domains/smm-followerss.com/
           state-name: .ftps-deploy-sync-state.json
           dangerous-clean-slate: false
           log-level: verbose
@@ -289,10 +295,10 @@ jobs:
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           username: ${{ secrets.FTP_USERNAME }}
-          server: talbna.cloud
+          server: 45.84.207.200
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           local_path: './deploy_temp/*'
-          remote_path: './domains/talbna.cloud/'
+          remote_path: '/home/u693675641/domains/smm-followerss.com/'
           delete_remote_files: false
 
       - name: Setup Laravel storage symlink and clear cache via web request
@@ -300,7 +306,7 @@ jobs:
           echo "Waiting 10 seconds for files to sync..."
           sleep 10
           echo "Running post-deployment setup (cache clearing + storage symlink)..."
-          response=$(curl -s -w "HTTPSTATUS:%{http_code}" https://talbna.cloud/setup_storage.php)
+          response=$(curl -s -w "HTTPSTATUS:%{http_code}" https://smm-followerss.com/setup_storage.php)
           http_code=$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
           body=$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
 
@@ -311,7 +317,7 @@ jobs:
             echo "✅ Post-deployment setup completed successfully!"
           else
             echo "⚠️  Setup script executed but returned HTTP $http_code"
-            echo "Check manually at: https://talbna.cloud/setup_storage.php"
+            echo "Check manually at: https://smm-followerss.com/setup_storage.php"
           fi
 
       - name: Post-deployment cleanup
