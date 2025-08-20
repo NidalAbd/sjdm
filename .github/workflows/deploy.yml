@@ -87,7 +87,7 @@ jobs:
           # Modify existing .env for production
           sed -i 's/APP_ENV=local/APP_ENV=production/' .env
           sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
-          sed -i 's|APP_URL=http://localhost|APP_URL=https://talbna.cloud|' .env
+          sed -i 's|APP_URL=http://localhost|APP_URL=https://smm-followerss.com|' .env
           sed -i 's/LOG_LEVEL=debug/LOG_LEVEL=error/' .env
           sed -i 's/DB_HOST=127.0.0.1/DB_HOST=localhost/' .env
 
@@ -224,24 +224,17 @@ jobs:
           server="45.84.207.200"
           echo "Testing server: $server"
           
-          # Test FTP port 21
+          # Test FTP port 21 (only port Hostinger provides)
           if nc -z "$server" 21; then
             echo "✅ $server: Port 21 (FTP) is reachable"
           else
             echo "❌ $server: Port 21 (FTP) is not reachable"
           fi
           
-          # Test FTPS port 990
-          if nc -z "$server" 990; then
-            echo "✅ $server: Port 990 (FTPS) is reachable"
-          else
-            echo "❌ $server: Port 990 (FTPS) is not reachable"
-          fi
-          
           echo "---"
 
-      - name: Deploy to Hostinger via FTP (Primary)
-        id: ftp-deploy
+      - name: Deploy Laravel core files first
+        id: ftp-core-deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: 45.84.207.200
@@ -249,10 +242,39 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy_temp/
           server-dir: /home/u693675641/domains/smm-followerss.com/
-          state-name: .ftp-deploy-sync-state.json
+          state-name: .ftp-core-deploy-sync-state.json
           dangerous-clean-slate: false
           log-level: verbose
-          timeout: 300
+          timeout: 600
+          max-retries: 3
+          exclude: |
+            .git*
+            .git*/
+            node_modules/**
+            vendor/**
+            .github/**
+            tests/**
+            *.md
+            .DS_Store
+            Thumbs.db
+            public_html/**
+            storage/**
+            bootstrap/cache/**
+
+      - name: Deploy public_html files separately
+        id: ftp-public-deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: 45.84.207.200
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./deploy_temp/public_html/
+          server-dir: /home/u693675641/domains/smm-followerss.com/public_html/
+          state-name: .ftp-public-deploy-sync-state.json
+          dangerous-clean-slate: false
+          log-level: verbose
+          timeout: 600
+          max-retries: 3
           exclude: |
             .git*
             .git*/
@@ -264,21 +286,21 @@ jobs:
             .DS_Store
             Thumbs.db
 
-      - name: Deploy to Hostinger via FTPS (Fallback)
-        id: ftps-deploy
-        if: failure() && steps.ftp-deploy.outcome == 'failure'
+      - name: Deploy to Hostinger via FTP (Fallback - Full deployment)
+        id: ftp-full-deploy
+        if: failure() && (steps.ftp-core-deploy.outcome == 'failure' || steps.ftp-public-deploy.outcome == 'failure')
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: 45.84.207.200
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
           local-dir: ./deploy_temp/
           server-dir: /home/u693675641/domains/smm-followerss.com/
-          state-name: .ftps-deploy-sync-state.json
+          state-name: .ftp-full-deploy-sync-state.json
           dangerous-clean-slate: false
           log-level: verbose
-          timeout: 300
+          timeout: 900
+          max-retries: 5
           exclude: |
             .git*
             .git*/
@@ -290,16 +312,15 @@ jobs:
             .DS_Store
             Thumbs.db
 
-      - name: Deploy to Hostinger via SFTP (Final Fallback)
-        if: failure() && steps.ftp-deploy.outcome == 'failure' && steps.ftps-deploy.outcome == 'failure'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: ${{ secrets.FTP_USERNAME }}
-          server: 45.84.207.200
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: './deploy_temp/*'
-          remote_path: '/home/u693675641/domains/smm-followerss.com/'
-          delete_remote_files: false
+      - name: Verify deployment success
+        run: |
+          echo "Checking if deployment was successful..."
+          if [ "${{ steps.ftp-core-deploy.outcome }}" = "success" ] || [ "${{ steps.ftp-public-deploy.outcome }}" = "success" ] || [ "${{ steps.ftp-full-deploy.outcome }}" = "success" ]; then
+            echo "✅ Deployment completed successfully!"
+          else
+            echo "❌ All deployment methods failed"
+            exit 1
+          fi
 
       - name: Setup Laravel storage symlink and clear cache via web request
         run: |
