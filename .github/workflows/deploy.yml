@@ -3,32 +3,63 @@ name: Deploy to Hostinger
 on:
   push:
     branches:
-      - main  # or main, depending on your branch name
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Deploy application files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          server: talbna.cloud
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./  # Directory to deploy (project ssroot, with trailing slash)
-          server-dir: /domains/smm-followerss.com/  # This should be the *actual* Laravel app base
-      #          dangerous-clean-slate: true  # <== Force full sync
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, openssl, tokenizer, json, fileinfo, gd, zip
 
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
 
-      - name: Deploy public files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      - name: Build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Create deployment package
+        run: |
+          # Remove unnecessary files for production
+          rm -rf .git .github node_modules tests storage/framework/cache/* storage/framework/sessions/* storage/framework/views/* storage/logs/* .env.example composer.lock package-lock.json
+          
+          # Create .env file from example if it doesn't exist
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          fi
+          
+          # Set proper permissions
+          chmod -R 755 storage bootstrap/cache
+
+      - name: Deploy to Hostinger via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
+          username: ${{ secrets.SFTP_USERNAME }}
           server: talbna.cloud
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./public/  # Directory to deploy (Laravel public directory, with trailing slash)
-          server-dir: /domains/smm-followerss.com/public_html/
+          ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          local_path: './'
+          remote_path: '/'
+          exclude: |
+            .git*
+            .github*
+            node_modules/**
+            tests/**
+            .env.example
+            composer.lock
+            package-lock.json
+            storage/framework/cache/**
+            storage/framework/sessions/**
+            storage/framework/views/**
+            storage/logs/**
+            storage/app/public/**
+            bootstrap/cache/**
