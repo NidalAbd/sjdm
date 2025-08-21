@@ -165,9 +165,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $profileMedia = $this->media()->where('file_type', 'like', 'image%')->first();
 
-        return $profileMedia
-            ? asset('storage/' . $profileMedia->path) // Use storage path for public access
-            : asset('images/avatar3.png'); // Use local default avatar
+        if ($profileMedia) {
+            $url = asset('storage/' . $profileMedia->path);
+            // Add cache-busting in case CDNs/browsers cache old path
+            if (!is_null($profileMedia->updated_at)) {
+                $url .= '?v=' . $profileMedia->updated_at->timestamp;
+            }
+            return $url; // Use storage path for public access
+        }
+
+        return asset('images/avatar3.png'); // Use local default avatar
     }
 
 

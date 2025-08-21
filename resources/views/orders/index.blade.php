@@ -73,19 +73,19 @@
                                 <col style="width: 120px;" />
                             </colgroup>
                             <thead class="table-light sticky-top shadow-sm">
-                                <tr>
-                                    <th>#</th>
-                                    <th>{{ __('adminlte.name') }}</th>
+                            <tr>
+                                <th>#</th>
+                                <th>{{ __('adminlte.name') }}</th>
                                     <th class="text-end">{{ __('adminlte.quantity') }}</th>
                                     <th class="text-end">{{ __('adminlte.charge') }}</th>
                                     <th class="text-end">{{ __('adminlte.start_count') }}</th>
                                     <th class="text-end">{{ __('adminlte.remains') }}</th>
-                                    <th>{{ __('adminlte.date') }}</th>
+                                <th>{{ __('adminlte.date') }}</th>
                                     <th>API</th>
                                     <th>System</th>
-                                    <th>{{ __('adminlte.support_status') }}</th>
-                                    <th class="text-center">{{ __('adminlte.actions') }}</th>
-                                </tr>
+                                <th>{{ __('adminlte.support_status') }}</th>
+                                <th class="text-center">{{ __('adminlte.actions') }}</th>
+                            </tr>
                             </thead>
                             <tbody>
                             @if($orders->count() > 0)
@@ -183,12 +183,12 @@
                                                 @can('delete_order', $order)
                                                     @if(strtolower($order->status) === 'waiting')
                                                         <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
+                                                        @csrf
+                                                        @method('DELETE')
                                                             <button class="btn btn-outline-danger" title="{{ __('adminlte.delete_order') }}" onclick="return confirm('Delete this waiting order and refund full amount?')">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        </form>
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
                                                     @endif
                                                 @endcan
 
@@ -474,7 +474,7 @@
                                     <th colspan="11" class="text-muted small fw-normal">
                                         {{ $orders->firstItem() }}-{{ $orders->lastItem() }} / {{ $orders->total() }}
                                     </th>
-                                </tr>
+                            </tr>
                             </tfoot>
                         </table>
                     </div>
