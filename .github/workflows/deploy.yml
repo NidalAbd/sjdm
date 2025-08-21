@@ -3,46 +3,32 @@ name: Deploy to Hostinger
 on:
   push:
     branches:
-      - main
+      - master  # or main, depending on your branch name
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, openssl, tokenizer, json, fileinfo, gd, zip
-
-      - name: Install Composer dependencies
-        run: |
-          composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-          composer dump-autoload --optimize
-
-      - name: Deploy to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy application files
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
           server: talbna.cloud
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /
-          exclude: |
-            **/.git*
-            **/.github*
-            **/node_modules/**
-            **/tests/**
-            **/storage/framework/cache/**
-            **/storage/framework/sessions/**
-            **/storage/framework/views/**
-            **/storage/logs/**
-            **/storage/app/public/**
-            **/bootstrap/cache/**
-          dangerous-clean-slate: false
-          log-level: verbose
+          local-dir: ./  # Directory to deploy (project ssroot, with trailing slash)
+          server-dir: /domains/smm-followerss.com/  # This should be the *actual* Laravel app base
+      #          dangerous-clean-slate: true  # <== Force full sync
+
+
+      - name: Deploy public files
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: talbna.cloud
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public/  # Directory to deploy (Laravel public directory, with trailing slash)
+          server-dir: /domains/smm-followerss.com/public_html/
