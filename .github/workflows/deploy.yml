@@ -40,8 +40,8 @@ jobs:
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: talbna.cloud
-          username: ${{ secrets.FTP_USERNAME }}
+          server: 45.84.207.200
+          username: u693675641.smm-followerss.com
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /
