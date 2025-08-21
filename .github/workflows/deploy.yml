@@ -84,6 +84,20 @@ jobs:
           chmod -R 775 deploy_temp/bootstrap/cache
 
           echo "✓ Storage directories created at root level"
+          
+          # Ensure vendor assets are in public_html
+          if [ -d "deploy_temp/public_html" ]; then
+            # Check if vendor folder exists in public_html
+            if [ ! -d "deploy_temp/public_html/vendor" ]; then
+              echo "⚠️  Vendor assets not found in public_html, checking public folder..."
+              if [ -d "deploy_temp/public/vendor" ]; then
+                echo "Found vendor assets in public folder, this should have been moved..."
+              fi
+            else
+              echo "✓ Vendor assets present in public_html"
+            fi
+          fi
+          
           echo "✓ Laravel project structure:"
           echo "  - Core folders (app, bootstrap, config, etc.) at root level"
           echo "  - public_html/ contains only public files"
@@ -330,6 +344,7 @@ jobs:
             .git*/
             node_modules/**
             vendor/**
+            !public_html/vendor/**
             .github/**
             *.md
             .DS_Store
