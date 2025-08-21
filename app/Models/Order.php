@@ -18,7 +18,8 @@ class Order extends Model
     ];
     public function user()
     {
-        return $this->belongsTo(User::class);
+        // Include soft-deleted users so refunds/transactions still link correctly
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function service()
