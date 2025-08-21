@@ -289,7 +289,7 @@
                                                                     <h5 class="card-title mb-3">
                                                                         <i class="fas fa-user text-info" style="margin-right: 10px;"></i>{{ __('adminlte.name') }}
                                                                     </h5>
-                                                                    <p class="card-text"><strong>{{ $order->user->name }}</strong></p>
+                                                                    <p class="card-text"><strong>{{ optional($order->user)->name ?? 'Deleted user' }}</strong></p>
                                                                 </div>
                                                             </div>
                                                         </div>
