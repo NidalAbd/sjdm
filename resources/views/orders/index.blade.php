@@ -57,24 +57,39 @@
                     </form>
 
                     <!-- Orders Table -->
-                    <div class="table-responsive mt-4">
-                        <table class="table  table-striped table-hover">
-                            <thead class="table-dark text-white">
-                            <tr>
-                                <th>#</th>
-                                <th>{{ __('adminlte.name') }}</th>
-                                <th>{{ __('adminlte.service_name') }}</th>
-                                <th>{{ __('adminlte.link') }}</th>
-                                <th>{{ __('adminlte.quantity') }}</th>
-                                <th>{{ __('adminlte.charge') }}</th>
-                                <th>{{ __('adminlte.start_count') }}</th>
-                                <th>{{ __('adminlte.remains') }}</th>
-                                <th>{{ __('adminlte.date') }}</th>
-                                <th>{{ __('adminlte.api_status') }}</th>
-                                <th>{{ __('adminlte.system_status') }}</th>
-                                <th>{{ __('adminlte.support_status') }}</th>
-                                <th class="text-center">{{ __('adminlte.actions') }}</th>
-                            </tr>
+                    <div class="orders-table-wrapper mt-4">
+                        <table class="table table-sm align-middle table-hover table-striped mb-0">
+                            <colgroup>
+                                <col style="width: 50px;" />
+                                <col style="width: 150px;" />
+                                <col />
+                                <col style="width: 220px;" />
+                                <col style="width: 90px;" />
+                                <col style="width: 100px;" />
+                                <col style="width: 95px;" />
+                                <col style="width: 95px;" />
+                                <col style="width: 110px;" />
+                                <col style="width: 120px;" />
+                                <col style="width: 120px;" />
+                                <col style="width: 150px;" />
+                                <col style="width: 70px;" />
+                            </colgroup>
+                            <thead class="table-light sticky-top shadow-sm">
+                                <tr>
+                                    <th>#</th>
+                                    <th>{{ __('adminlte.name') }}</th>
+                                    <th>{{ __('adminlte.service_name') }}</th>
+                                    <th>{{ __('adminlte.link') }}</th>
+                                    <th class="text-end">{{ __('adminlte.quantity') }}</th>
+                                    <th class="text-end">{{ __('adminlte.charge') }}</th>
+                                    <th class="text-end">{{ __('adminlte.start_count') }}</th>
+                                    <th class="text-end">{{ __('adminlte.remains') }}</th>
+                                    <th>{{ __('adminlte.date') }}</th>
+                                    <th>API</th>
+                                    <th>System</th>
+                                    <th>{{ __('adminlte.support_status') }}</th>
+                                    <th class="text-center">{{ __('adminlte.actions') }}</th>
+                                </tr>
                             </thead>
                             <tbody>
                             @if($orders->count() > 0)
@@ -90,8 +105,7 @@
                                             ->where('user_id', '!=', Auth::id())
                                             ->count() : 0;
                                     @endphp
-                                    <tr class="{{ $hasUnreadMessages ? 'table-warning unread-order' : '' }}" 
-                                        data-order-id="{{ $order->id }}">
+                                    <tr class="{{ $hasUnreadMessages ? 'table-warning unread-order' : '' }}" data-order-id="{{ $order->id }}">
                                         <td>
                                             {{ $order->id }}
                                             @if($hasUnreadMessages)
@@ -102,23 +116,35 @@
                                         </td>
                                         <td>{{ $order->user->name }}</td>
                                         <td>
-                                            @if(app()->getLocale() === 'ar')
-                                                {{ $order->service->name_ar }}
-                                            @else
-                                                {{ $order->service->name_en }}
-                                            @endif
+                                            <div class="truncate" title="{{ app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en }}">
+                                                @if(app()->getLocale() === 'ar')
+                                                    {{ $order->service->name_ar }}
+                                                @else
+                                                    {{ $order->service->name_en }}
+                                                @endif
+                                            </div>
                                         </td>
-                                        <td><a href="{{ $order->link }}" target="_blank">{{ $order->link }}</a></td>
-                                        <td>{{ $order->quantity }}</td>
-                                        <td>${{ number_format($order->charge, 2) }}</td>
-                                        <td>{{ $order->start_count }}</td>
-                                        <td>{{ $order->remains }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2 truncate" title="{{ $order->link }}">
+                                                <a href="{{ $order->link }}" target="_blank" class="text-decoration-none">
+                                                    <i class="fas fa-external-link-alt me-1 text-muted"></i>
+                                                    <span class="text-muted">{{ $order->link }}</span>
+                                                </a>
+                                                <button class="btn btn-link btn-sm text-secondary p-0 ms-2" onclick="copyToClipboard('{{ $order->link }}')" title="Copy link">
+                                                    <i class="far fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">{{ $order->quantity }}</td>
+                                        <td class="text-end">${{ number_format($order->charge, 2) }}</td>
+                                        <td class="text-end">{{ $order->start_count }}</td>
+                                        <td class="text-end">{{ $order->remains }}</td>
                                         <td>{{ $order->created_at->format('Y-m-d') }}</td>
                                         <td>
-                                            <span class="badge bg-secondary">{{ $order->status }}</span>
+                                            <span class="badge bg-secondary text-uppercase">{{ $order->status }}</span>
                                         </td>
                                         <td>
-                                            <span class="badge {{ $order->system_status === 'refunded' ? 'bg-success' : ($order->system_status === 'canceled' ? 'bg-danger' : 'bg-info') }}">
+                                            <span class="badge {{ $order->system_status === 'refunded' ? 'bg-success' : ($order->system_status === 'canceled' ? 'bg-danger' : 'bg-info') }} text-uppercase">
                                                 {{ $order->system_status ?? '-' }}
                                             </span>
                                         </td>
@@ -146,69 +172,71 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <div class="btn-group" role="group" aria-label="{{ __('adminlte.order_actions') }}">
-                                                @can('view_order', $order)
-                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#viewOrderModal{{ $order->id }}"
-                                                            title="{{ __('adminlte.view_order') }}">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                @endcan
-                                                @can('delete_order', $order)
-                                                    @if(strtolower($order->status) === 'waiting')
-                                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="btn btn-danger btn-sm" type="submit"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                    title="{{ __('adminlte.delete_order') }}">
-                                                                <i class="fas fa-trash-alt"></i>
+                                            <div class="dropdown">
+                                                <button class="btn btn-light btn-sm" type="button" id="actionsDropdown{{ $order->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionsDropdown{{ $order->id }}">
+                                                    @can('view_order', $order)
+                                                        <li>
+                                                            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#viewOrderModal{{ $order->id }}">
+                                                                <i class="fas fa-eye me-2"></i>{{ __('adminlte.view_order') }}
                                                             </button>
-                                                        </form>
-                                                    @endif
-                                                @endcan
-
-                                                @if(auth()->user()->hasRole('admin'))
-                                                    @if(!in_array(strtolower($order->status), ['completed','canceled']))
-                                                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST" style="display:inline;">
-                                                            @csrf
-                                                            <button class="btn btn-outline-danger btn-sm" type="submit" title="Cancel order" onclick="return confirm('Cancel this order?')">
-                                                                <i class="fas fa-ban"></i>
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                    @php
-                                                        $quantityInt = max(1, (int) $order->quantity);
-                                                        $remainsInt = (int) ($order->remains ?? 0);
-                                                        $suggestedRefund = 0;
-                                                        if (strtolower($order->status) === 'partial') {
-                                                            $suggestedRefund = round($order->charge * ($remainsInt / $quantityInt), 2);
-                                                        }
-                                                    @endphp
-                                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#refundModal{{ $order->id }}" title="Refund">
-                                                        <i class="fas fa-dollar-sign"></i>
-                                                    </button>
-                                                @endif
-                                                <!-- Support Ticket Button with enhanced styling -->
-                                                @if(!$order->supportTicket)
-                                                    @can('create_ticket')
-                                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                                data-bs-target="#createTicketModal{{ $order->id }}"
-                                                                title="{{ __('adminlte.create_support_ticket') }}">
-                                                            <i class="fas fa-headset"></i>
-                                                        </button>
+                                                        </li>
                                                     @endcan
-                                                @else
-                                                    <a href="{{ route('support.show', $order->supportTicket->id) }}" 
-                                                       class="btn btn-info btn-sm {{ $hasUnreadMessages ? 'btn-warning' : '' }}"
-                                                       title="{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}">
-                                                        <i class="fas fa-ticket-alt"></i>
-                                                        @if($hasUnreadMessages)
-                                                            <span class="badge badge-light badge-sm ml-1">{{ $unreadCount }}</span>
+
+                                                    @if(auth()->user()->hasRole('admin'))
+                                                        @if(!in_array(strtolower($order->status), ['completed','canceled']))
+                                                            <li>
+                                                                <form action="{{ route('orders.cancel', $order->id) }}" method="POST">
+                                                                    @csrf
+                                                                    <button class="dropdown-item text-danger" onclick="return confirm('Cancel this order?')">
+                                                                        <i class="fas fa-ban me-2"></i>Cancel
+                                                                    </button>
+                                                                </form>
+                                                            </li>
                                                         @endif
-                                                    </a>
-                                                @endif
+                                                        <li>
+                                                            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}">
+                                                                <i class="fas fa-dollar-sign me-2"></i>Refund
+                                                            </button>
+                                                        </li>
+                                                    @endif
+
+                                                    @can('delete_order', $order)
+                                                        @if(strtolower($order->status) === 'waiting')
+                                                            <li>
+                                                                <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button class="dropdown-item text-danger" onclick="return confirm('Delete this waiting order and refund full amount?')">
+                                                                        <i class="fas fa-trash-alt me-2"></i>{{ __('adminlte.delete_order') }}
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        @endif
+                                                    @endcan
+
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    @if(!$order->supportTicket)
+                                                        @can('create_ticket')
+                                                            <li>
+                                                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createTicketModal{{ $order->id }}">
+                                                                    <i class="fas fa-headset me-2"></i>{{ __('adminlte.create_support_ticket') }}
+                                                                </button>
+                                                            </li>
+                                                        @endcan
+                                                    @else
+                                                        <li>
+                                                            <a class="dropdown-item {{ $hasUnreadMessages ? 'text-warning' : '' }}" href="{{ route('support.show', $order->supportTicket->id) }}">
+                                                                <i class="fas fa-ticket-alt me-2"></i>{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}
+                                                                @if($hasUnreadMessages)
+                                                                    <span class="badge bg-warning text-dark ms-2">{{ $unreadCount }}</span>
+                                                                @endif
+                                                            </a>
+                                                        </li>
+                                                    @endif
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>
@@ -409,21 +437,12 @@
                                 </tr>
                             @endif
                             </tbody>
-                            <tfoot class="table-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>{{ __('adminlte.name') }}</th>
-                                <th>{{ __('adminlte.service_name') }}</th>
-                                <th>{{ __('adminlte.link') }}</th>
-                                <th>{{ __('adminlte.quantity') }}</th>
-                                <th>{{ __('adminlte.charge') }}</th>
-                                <th>{{ __('adminlte.start_count') }}</th>
-                                <th>{{ __('adminlte.remains') }}</th>
-                                <th>{{ __('adminlte.date') }}</th>
-                                <th>{{ __('adminlte.status') }}</th>
-                                <th>{{ __('adminlte.support_status') }}</th>
-                                <th class="text-center">{{ __('adminlte.actions') }}</th>
-                            </tr>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="13" class="text-muted small fw-normal">
+                                        {{ $orders->firstItem() }}-{{ $orders->lastItem() }} / {{ $orders->total() }}
+                                    </th>
+                                </tr>
                             </tfoot>
                         </table>
                     </div>
@@ -441,59 +460,38 @@
 
 @section('css')
 <style>
-    .unread-order {
-        background-color: #fff3cd !important;
-        border-left: 4px solid #ffc107;
-        animation: pulse 2s infinite;
+    .orders-table-wrapper {
+        max-height: 70vh;
+        overflow: auto;
+        border-radius: .25rem;
     }
-
-    .unread-order:hover {
-        background-color: #ffeaa7 !important;
+    .truncate {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-        70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
-    }
-
-    .notification-badge {
-        animation: bounce 1s infinite;
-    }
-
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-5px); }
-        60% { transform: translateY(-3px); }
-    }
-
-    .support-status {
-        text-align: center;
-    }
-
-    .badge-pill {
-        border-radius: 50rem;
-    }
-
-    .table-hover tbody tr:hover {
-        transform: scale(1.01);
-        transition: transform 0.2s ease;
-    }
-
-    .btn-warning {
-        animation: pulse 2s infinite;
-    }
-
-    .support-status .badge {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.5rem;
-    }
+    .support-status { text-align: center; }
+    .badge-pill { border-radius: 50rem; }
+    .table-hover tbody tr:hover { background-color: #f8f9fa; }
+    .notification-badge { animation: bounce 1s infinite; }
+    @keyframes bounce { 0%,20%,50%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-5px);} 60%{transform:translateY(-3px);} }
 </style>
 @stop
 
 @section('js')
 <script>
     console.log('Manage Orders page loaded');
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.cssText = `position: fixed; bottom: 20px; right: 20px; background: #198754; color: white; padding: 8px 12px; border-radius: 6px; z-index: 9999;`;
+            toast.textContent = 'Link copied';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        });
+    }
 
     // Check for new notifications every 30 seconds
     setInterval(function() {
