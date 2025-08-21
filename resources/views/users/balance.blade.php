@@ -15,7 +15,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="amount" class="form-label">Amount</label>
-                                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+                                    <input type="number" class="form-control" id="amount" name="amount" step="0.0000001" min="0.0000001" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="currency" class="form-label">Currency</label>

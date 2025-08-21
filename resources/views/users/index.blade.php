@@ -172,7 +172,7 @@
                                                         </div>
                                                         <div class="form-group mt-3">
                                                             <label for="amount">{{ __('adminlte.amount') }}</label>
-                                                            <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+                                                            <input type="number" class="form-control" id="amount" name="amount" min="0.0000001" step="0.0000001" required>
                                                         </div>
                                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     </div>

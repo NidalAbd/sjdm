@@ -365,7 +365,7 @@ class UserController extends Controller
         // Validate the request
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:0.0000001',
             'transaction_type' => 'required|in:credit,debit',
         ]);
 
