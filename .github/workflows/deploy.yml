@@ -40,8 +40,8 @@ jobs:
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: 45.84.207.200
-          username: u693675641.smm-followerss.com
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /
@@ -50,6 +50,7 @@ jobs:
             **/.github*
             **/node_modules/**
             **/tests/**
+            **/.env
             **/storage/framework/cache/**
             **/storage/framework/sessions/**
             **/storage/framework/views/**
@@ -62,8 +63,8 @@ jobs:
       - name: Deploy public folder to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: 45.84.207.200
-          username: u693675641.smm-followerss.com
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./public/
           server-dir: /public_html/
