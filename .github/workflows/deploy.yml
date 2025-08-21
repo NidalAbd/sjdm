@@ -37,11 +37,24 @@ jobs:
           echo "=== Composer.lock exists ==="
           ls -la composer.lock
 
-      - name: Simple deploy test
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          username: ${{ secrets.SFTP_USERNAME }}
           server: talbna.cloud
-          ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
-          local_path: './'
-          remote_path: '/'
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.github*
+            **/node_modules/**
+            **/tests/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+            **/storage/logs/**
+            **/storage/app/public/**
+            **/bootstrap/cache/**
+          dangerous-clean-slate: false
+          log-level: verbose
