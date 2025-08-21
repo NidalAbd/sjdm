@@ -1,0 +1,220 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\SupportTicket;
+use App\Models\Order;
+use App\Models\Transaction;
+use App\Models\TicketStatus;
+use App\Models\User;
+use App\Notifications\TicketNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
+
+class SupportTicketController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = SupportTicket::query();
+
+        // Allow admins to view all tickets
+        if (!Auth::user()->hasRole('admin')) {
+            $query->where('user_id', Auth::id());
+        }
+
+        if ($request->filled('search')) {
+            $query->where('subject', 'LIKE', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_id', $request->status);
+        }
+
+        // Handle unread filter
+        if ($request->filled('unread_filter')) {
+            if ($request->unread_filter === 'unread') {
+                $query->whereHas('messages', function ($q) {
+                    $q->whereNull('read_at')->where('user_id', '!=', Auth::id());
+                });
+            } elseif ($request->unread_filter === 'read') {
+                $query->whereDoesntHave('messages', function ($q) {
+                    $q->whereNull('read_at')->where('user_id', '!=', Auth::id());
+                });
+            }
+        }
+
+        $tickets = $query->with(['user', 'status', 'messages.user'])->paginate(10);
+        $statuses = TicketStatus::all();
+
+        return view('support.index', compact('tickets', 'statuses'));
+    }
+
+    public function create(Order $order)
+    {
+        return view('support.create', compact('order'));
+    }
+
+    public function store(Request $request)
+    {
+        // Custom validation messages
+        $messages = [
+            'ticketable_id.required' => 'The ticketable ID field is required and cannot be empty.',
+            'ticketable_type.required' => 'The ticketable type field is required and cannot be empty.',
+            'ticketable_type.in' => 'The ticketable type must be either Order or Transaction.',
+            'subject.required' => 'The subject field is required and cannot be empty.',
+            'message.required' => 'The message field is required and cannot be empty.',
+            'type.required' => 'The type field is required and cannot be empty.',
+            'type.in' => 'The type must be either order or transaction.',
+            'subtype.in' => 'The subtype must be one of the following: refund, acceleration, cancel, failed_payment, refund_request, payment_dispute, chargeback, invoice_request.',
+        ];
+
+        // Validation logic
+        $validator = Validator::make($request->all(), [
+            'ticketable_id' => 'required|integer',
+            'ticketable_type' => 'required|string|in:App\Models\Order,App\Models\Transaction',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'type' => 'required|string|in:order,transaction',
+            'subtype' => 'nullable|string|in:refund,acceleration,cancel,failed_payment,refund_request,payment_dispute,chargeback,invoice_request'
+        ], $messages);
+
+        // If validation fails, redirect back with errors
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Check if a ticket already exists for the same Order or Transaction
+        $existingTicket = SupportTicket::where('ticketable_id', $request->ticketable_id)
+            ->where('ticketable_type', $request->ticketable_type)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($existingTicket) {
+            return redirect()->back()->with('error', 'A support ticket already exists for this order/transaction.');
+        }
+
+        // Get or create the default ticket status
+        $defaultStatus = TicketStatus::where('name', 'Open')->first();
+        
+        // If no status exists, create the default statuses
+        if (!$defaultStatus) {
+            $this->createDefaultTicketStatuses();
+            $defaultStatus = TicketStatus::where('name', 'Open')->first();
+        }
+
+        // Create the support ticket
+        $ticket = SupportTicket::create([
+            'user_id' => Auth::id(),
+            'ticketable_id' => $request->ticketable_id,
+            'ticketable_type' => $request->ticketable_type,
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'status_id' => $defaultStatus->id,
+            'type' => $request->type,
+            'subtype' => $request->subtype,
+        ]);
+
+        // Notify the user about the new ticket via email and database notification
+        auth()->user()->notify(new TicketNotification($ticket));
+
+        // Redirect the user to the support page with success message
+        return redirect()->route('support.index')->with('success', 'Ticket created successfully!');
+    }
+
+    public function show(SupportTicket $ticket)
+    {
+        $user = Auth::user();
+
+        // Log the user's roles and permissions
+        Log::info('User Roles: ', $user->getRoleNames()->toArray());
+        Log::info('User Permissions: ', $user->getAllPermissions()->pluck('name')->toArray());
+
+        // Check if the current user is authorized to view this ticket
+        if ($user->cannot('view', $ticket)) {
+            abort(403);
+        }
+
+        Log::info('Ticket Details:', $ticket->toArray());
+
+        // Mark unread notifications related to this specific ticket as read
+        $user->unreadNotifications->each(function ($notification) use ($ticket) {
+            if (isset($notification->data['support_ticket_id']) && $notification->data['support_ticket_id'] == $ticket->id) {
+                $notification->markAsRead();
+            }
+        });
+
+        // Mark the messages as read for the current user (admin or client)
+        $ticket->messages()->whereNull('read_at')->where('user_id', '!=', $user->id)->update(['read_at' => now()]);
+
+        return view('support.show', compact('ticket'));
+    }
+
+
+
+    public function edit(SupportTicket $ticket)
+    {
+        // Get all statuses to allow status updates
+        $statuses = TicketStatus::all();
+
+        return view('support.edit', compact('ticket', 'statuses'));
+    }
+
+    public function update(Request $request, SupportTicket $ticket)
+    {
+        // Ensure only the owner or authorized users can update the ticket
+        $this->authorize('update', $ticket);
+
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'status_id' => 'required|exists:ticket_statuses,id',
+        ]);
+
+        $ticket->update($request->all());
+
+        return redirect()->route('support.index')->with('success', 'Ticket updated successfully!');
+    }
+
+    public function destroy(SupportTicket $ticket)
+    {
+        $this->authorize('delete', $ticket);
+
+        $ticket->delete();
+
+        return redirect()->route('support.index')->with('success', 'Ticket deleted successfully!');
+    }
+
+    public function closeTicket(SupportTicket $ticket)
+    {
+        // Ensure only admins can close tickets
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
+        }
+
+        // Get or create the "Closed" status
+        $closedStatus = TicketStatus::where('name', 'Closed')->first();
+        if (!$closedStatus) {
+            $this->createDefaultTicketStatuses();
+            $closedStatus = TicketStatus::where('name', 'Closed')->first();
+        }
+
+        $ticket->update(['status_id' => $closedStatus->id]);
+
+        return response()->json(['status' => 'success', 'message' => 'Ticket closed successfully.']);
+    }
+
+    /**
+     * Create default ticket statuses if they don't exist
+     */
+    private function createDefaultTicketStatuses()
+    {
+        $defaultStatuses = ['Open', 'In Progress', 'Closed', 'Resolved'];
+        
+        foreach ($defaultStatuses as $statusName) {
+            TicketStatus::firstOrCreate(['name' => $statusName]);
+        }
+    }
+}

@@ -1,0 +1,1148 @@
+<!-- Header Blade File: header.blade.php -->
+
+<style>
+    body {
+        background-image: url('{{ asset('images/double-bubble-outline.webp') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
+    }
+
+    body {
+        background-image: url('{{ asset('images/double-bubble-outline.webp') }}'); /* Default */
+        background-repeat: repeat;
+        background-size: auto;
+        background-position: center;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            background-image: url('{{ asset('images/double-bubble-outline-small.webp') }}');
+        }
+    }
+
+    .dark-mode {
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');
+    }
+
+    @media (max-width: 768px) {
+        .dark-mode {
+            background-image: url('{{ asset('images/double-bubble-dark-small.webp') }}');
+        }
+    }
+
+    .dark-mode .navbar {
+        background-color: #111315 !important;
+    }
+
+    .navbar {
+        background-color: #111315 !important;
+        transition: background-color 0.3s ease;
+    }
+
+    .dark-mode .navbar {
+        background-color: #111315 !important;
+    }
+
+    .navbar .nav-link {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .navbar .nav-link:hover {
+        color: #ff6347; /* Custom hover color */
+    }
+
+    .navbar-brand .circular-logo {
+        border-radius: 50%;
+        max-width: 40px;
+    }
+
+    .navbar-toggler {
+        border: none;
+        outline: none;
+    }
+
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        background-color: #ffffff; /* Light mode dropdown background */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item {
+        color: #000; /* Light mode dropdown text */
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa; /* Light mode hover background */
+        color: #000; /* Light mode hover text color */
+    }
+
+    /* Dark mode styles */
+    .dark-mode {
+        background-color: #365352; /* Dark mode background */
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+    }
+
+    .dark-mode .navbar .nav-link {
+        color: #fff;
+    }
+
+    .dark-mode .navbar .nav-link:hover {
+        color: #ff6347;
+    }
+
+    .dark-mode .navbar-brand .text-white {
+        color: #fff;
+    }
+
+    /* Dark mode dropdown menu styles */
+    .dark-mode .dropdown-menu {
+        background-color: #333; /* Dark mode dropdown background */
+        color: #fff; /* Dark mode dropdown text */
+    }
+
+    .dark-mode .dropdown-item {
+        color: #fff; /* Dark mode dropdown text */
+    }
+
+    .dark-mode .dropdown-item:hover {
+        background-color: #444; /* Dark mode hover background */
+        color: #fff; /* Dark mode hover text color */
+    }
+
+    /* Notification Bell Styles */
+    .notification-bell {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .notification-bell:hover {
+        transform: scale(1.1);
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(45deg, #ff4757, #ff3742);
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        min-width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(255, 71, 87, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+        }
+    }
+
+    .notification-dropdown {
+        width: 350px;
+        max-height: 400px;
+        overflow-y: auto;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 0;
+    }
+
+    .notification-header {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .notification-header h6 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .mark-all-read {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .notification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.3s ease;
+        cursor: pointer;
+    }
+
+    .notification-item:hover {
+        background: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background: linear-gradient(90deg, #e3f2fd, #f3e5f5);
+        border-left: 4px solid #2196f3;
+    }
+
+    .notification-item.unread:hover {
+        background: linear-gradient(90deg, #bbdefb, #e1bee7);
+    }
+
+    .notification-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.2rem;
+    }
+
+    .notification-icon.message {
+        background: linear-gradient(45deg, #4caf50, #66bb6a);
+        color: white;
+    }
+
+    .notification-icon.ticket {
+        background: linear-gradient(45deg, #ff9800, #ffb74d);
+        color: white;
+    }
+
+    .notification-icon.transaction {
+        background: linear-gradient(45deg, #2196f3, #42a5f5);
+        color: white;
+    }
+
+    .notification-icon.order {
+        background: linear-gradient(45deg, #9c27b0, #ba68c8);
+        color: white;
+    }
+
+    .notification-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        color: #333;
+    }
+
+    .notification-message {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 4px;
+        line-height: 1.4;
+    }
+
+    .notification-time {
+        font-size: 0.75rem;
+        color: #999;
+    }
+
+    .notification-footer {
+        padding: 15px 20px;
+        text-align: center;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .view-all-notifications {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .view-all-notifications:hover {
+        color: #5a6fd8;
+    }
+
+    /* Dark mode notification styles */
+    .dark-mode .notification-dropdown {
+        background: #2d3748;
+        border: 1px solid #4a5568;
+    }
+
+    .dark-mode .notification-item {
+        border-bottom-color: #4a5568;
+        color: #e2e8f0;
+    }
+
+    .dark-mode .notification-item:hover {
+        background: #4a5568;
+    }
+
+    .dark-mode .notification-item.unread {
+        background: linear-gradient(90deg, #2c5282, #553c9a);
+        border-left-color: #3182ce;
+    }
+
+    .dark-mode .notification-item.unread:hover {
+        background: linear-gradient(90deg, #2a4365, #553c9a);
+    }
+
+    .dark-mode .notification-title {
+        color: #e2e8f0;
+    }
+
+    .dark-mode .notification-message {
+        color: #a0aec0;
+    }
+
+    .dark-mode .notification-time {
+        color: #718096;
+    }
+
+    .dark-mode .notification-footer {
+        border-top-color: #4a5568;
+    }
+
+    .dark-mode .view-all-notifications {
+        color: #90cdf4;
+    }
+
+    .dark-mode .view-all-notifications:hover {
+        color: #63b3ed;
+    }
+
+    /* Empty state */
+    .notification-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #999;
+    }
+
+    .notification-empty i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .notification-dropdown {
+            width: 300px;
+            right: -50px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .notification-dropdown {
+            width: 280px;
+            right: -80px;
+        }
+    }
+
+    /* Other Styles */
+    .hero-section {
+        background-image: url('{{ asset('images/double-bubble-dark.webp') }}');  /* Pattern texture */
+        background-repeat: repeat; /* Repeat the pattern */
+        background-size: auto; /* Adjust the size of the pattern if needed */
+        background-position: center;
+        height: 40vh; /* Adjust height to ensure full display */
+        color: #fff;
+        position: relative;
+        padding-top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transition: background 0.3s ease, color 0.3s ease; /* Add transition for smooth theme change */
+    }
+
+    .hero-bg {
+        background: rgba(209, 209, 209, 0.5); /* Darker overlay for better contrast */
+        opacity: 0.2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
+    }
+
+    .dark-mode .hero-bg {
+        background: rgba(0, 0, 0, 0.89); /* Darker overlay for better contrast */
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: background 0.3s ease; /* Transition for background change */
+    }
+    .hero-section .container {
+        position: relative;
+        z-index: 2; /* Ensure text container is above the overlay */
+    }
+
+    .text-gradient {
+        background: linear-gradient(90deg, #ff6347, #ff4757);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #0056b3, #007bff);
+        transform: translateY(-3px);
+    }
+
+    .hero-decorative-element {
+        position: absolute;
+        max-width: 50px; /* Adjust size as needed */
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    /* Language Switcher in Navbar Styles */
+    .lang-flag {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-right: 5px;
+    }
+
+    .flag-en {
+        background: linear-gradient(to bottom, #012169 33%, #fff 33%, #fff 66%, #C8102E 66%);
+    }
+
+    .flag-ar {
+        background: linear-gradient(to right, #000 25%, #fff 25%, #fff 50%, #ce1126 50%, #ce1126 75%, #007a3d 75%);
+    }
+
+    /* Language dropdown styling */
+    .language-dropdown .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .language-dropdown .dropdown-menu {
+        min-width: 150px;
+    }
+
+    .language-dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 15px;
+        position: relative;
+    }
+
+    .language-dropdown .dropdown-item.active {
+        background-color: #e3f2fd;
+        font-weight: 600;
+    }
+
+    .language-dropdown .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dark-mode .language-dropdown .dropdown-item.active {
+        background-color: #2c3e50;
+        color: #fff;
+    }
+
+    .dark-mode .language-dropdown .dropdown-item:hover {
+        background-color: #444;
+    }
+</style>
+
+<!-- Modern Language Switcher -->
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
+            <img src="{{ asset('images/sjdm_logo.png') }}" alt="{{ config('app.name') }} Logo" class="img-fluid circular-logo me-2">
+            <span class="fw-bold text-uppercase text-white">{{ config('app.name') }}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ __('adminlte.toggle_navigation') }}">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <!-- Frequently Used Links -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ route('home') }}">{{ __('adminlte.home') }}</a>
+                </li>
+                <li><a class="nav-link text-white" href="{{ route('services.all') }}">{{ __('adminlte.services') }}</a></li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ route('about') }}">{{ __('adminlte.about_us') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ route('contact') }}">{{ __('adminlte.contact_us') }}</a>
+                </li>
+
+                <!-- Additional Links -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ route('faq') }}">{{ __('adminlte.faq') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ route('privacy-policy') }}">{{ __('adminlte.privacy_policy') }}</a>
+                </li>
+
+                <!-- User-Specific Links -->
+                @guest
+                    <!-- Links for Guests -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('login') }}">{{ __('adminlte.sign_in') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('register') }}">{{ __('adminlte.register') }}</a>
+                    </li>
+                @else
+                    <!-- Notification Bell for Authenticated Users -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white notification-bell" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            @if(Auth::user()->unreadNotifications->count() > 0)
+                                <span class="notification-badge">{{ Auth::user()->unreadNotifications->count() }}</span>
+                            @endif
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
+                            <div class="notification-header">
+                                <h6>{{ __('Notifications') }}</h6>
+                                @if(Auth::user()->unreadNotifications->count() > 0)
+                                    <button class="mark-all-read" onclick="markAllAsRead()">
+                                        {{ __('Mark all read') }}
+                                    </button>
+                                @endif
+                            </div>
+                            
+                            <div id="notification-list">
+                                @if(Auth::user()->unreadNotifications->count() > 0)
+                                    @foreach(Auth::user()->unreadNotifications->take(5) as $notification)
+                                        @php
+                                            $notificationType = '';
+                                            $iconClass = '';
+                                            $title = '';
+                                            $message = '';
+                                            $url = '#';
+                                            
+                                            if (isset($notification->data['support_ticket_id'])) {
+                                                $notificationType = 'message';
+                                                $iconClass = 'fas fa-envelope';
+                                                $title = __('New Message');
+                                                $message = $notification->data['message_content'] ?? __('You have a new message');
+                                                $url = route('support.show', $notification->data['support_ticket_id']);
+                                            } elseif (isset($notification->data['ticket_id'])) {
+                                                $notificationType = 'ticket';
+                                                $iconClass = 'fas fa-ticket-alt';
+                                                $title = __('Support Ticket');
+                                                $message = $notification->data['subject'] ?? __('New support ticket created');
+                                                $url = route('support.show', $notification->data['ticket_id']);
+                                            } elseif (isset($notification->data['transaction_id'])) {
+                                                $notificationType = 'transaction';
+                                                $iconClass = 'fas fa-dollar-sign';
+                                                $title = __('Transaction Update');
+                                                $message = $notification->data['message'] ?? __('Transaction status updated');
+                                                $url = route('transactions.show', $notification->data['transaction_id']);
+                                            } elseif (isset($notification->data['order_id'])) {
+                                                $notificationType = 'order';
+                                                $iconClass = 'fas fa-shopping-cart';
+                                                $title = __('Order Update');
+                                                $message = $notification->data['message'] ?? __('Order status updated');
+                                                $url = route('orders.show', $notification->data['order_id']);
+                                            } else {
+                                                $notificationType = 'general';
+                                                $iconClass = 'fas fa-info-circle';
+                                                $title = __('General Notification');
+                                                $message = $notification->data['message'] ?? __('New notification');
+                                            }
+                                        @endphp
+                                        
+                                        <div class="notification-item unread" onclick="handleNotificationClick('{{ $notification->id }}', '{{ $url }}')">
+                                            <div class="notification-content">
+                                                <div class="notification-icon {{ $notificationType }}">
+                                                    <i class="{{ $iconClass }}"></i>
+                                                </div>
+                                                <div class="notification-details">
+                                                    <div class="notification-title">{{ $title }}</div>
+                                                    <div class="notification-message">{{ $message }}</div>
+                                                    <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="notification-empty">
+                                        <i class="fas fa-bell-slash"></i>
+                                        <p>{{ __('No new notifications') }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <div class="notification-footer">
+                                <a href="{{ route('notifications.index') }}" class="view-all-notifications">
+                                    {{ __('View all notifications') }}
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- User Profile Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Profile Image -->
+                            <img src="{{ Auth::user()->adminlte_image() }}" alt="Profile Image" class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                            {{ Auth::user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                            <li><a class="dropdown-item" href="{{ route('dashboard') }}">{{ __('adminlte.dashboard') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}">{{ __('adminlte.profile') }}</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    {{ __('adminlte.log_out') }}
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                @endguest
+
+                <!-- Language Dropdown -->
+                <li class="nav-item dropdown language-dropdown">
+                    @php
+                        $currentLanguage = app()->getLocale();
+                    @endphp
+
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownLanguage" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @if($currentLanguage === 'en')
+                            <span class="lang-flag flag-en"></span>
+                            English
+                        @else
+                            <span class="lang-flag flag-ar"></span>
+                            العربية
+                        @endif
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLanguage">
+                        <li>
+                            <a class="dropdown-item {{ $currentLanguage === 'en' ? 'active' : '' }}" href="{{ route('changeLang', 'en') }}">
+                                <span class="lang-flag flag-en"></span>
+                                English
+                                @if($currentLanguage === 'en')
+                                    <i class="fas fa-check ms-auto text-success"></i>
+                                @endif
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ $currentLanguage === 'ar' ? 'active' : '' }}" href="{{ route('changeLang', 'ar') }}">
+                                <span class="lang-flag flag-ar"></span>
+                                العربية
+                                @if($currentLanguage === 'ar')
+                                    <i class="fas fa-check ms-auto text-success"></i>
+                                @endif
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" id="darkModeToggle">
+                        <i class="fas fa-moon"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Logout Form -->
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+    @csrf
+</form>
+
+<!-- Hero Section -->
+<section id="hero-sec" class="hero-section d-flex align-items-center justify-content-center text-center text-white position-relative overflow-hidden">
+    <!-- Gradient Background -->
+    <div class="hero-bg"></div>
+
+    <!-- Content Container -->
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4 text-gradient" data-aos="fade-up" data-aos-duration="1500">
+            {!! __('adminlte.empower_social_influence') !!}
+        </h1>
+        <p class="lead mb-4" data-aos="fade-up" data-aos-duration="2000">
+
+        </p>
+        <div class="container">
+            <div class="row justify-content-center g-2">
+                <!-- Instagram Card -->
+                <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2000">
+                    <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+                        <div class="card-body">
+                            <i class="fab fa-instagram text-danger"></i>
+                            <p class="card-text fs-6">$2.60 <small>/ 1K Followers</small></p>
+                            <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Facebook Card -->
+                <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2200">
+                    <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+                        <div class="card-body">
+                            <i class="fab fa-facebook text-primary"></i>
+                            <p class="card-text fs-6">$2.40 <small>/ 1K Followers</small></p>
+                            <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- TikTok Card -->
+                <div class="col-4 col-md-4" data-aos="zoom-in" data-aos-duration="2400">
+                    <div class="card text-center border-0 shadow-lg" style="background: rgba(255, 255, 255, 0.9); border-radius: 15px;">
+                        <div class="card-body">
+                            <i class="fab fa-tiktok text-dark"></i>
+                            <p class="card-text fs-6">$3.40 <small>/ 1K Followers</small></p>
+                            <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-3 py-2">Order</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check localStorage for theme
+        const savedTheme = localStorage.getItem('theme') || 'light-mode';
+        document.body.classList.add(savedTheme);
+        updateThemeIcon(savedTheme);
+
+        // Theme Toggle
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            const body = document.body;
+            const isDarkMode = body.classList.contains('dark-mode');
+
+            body.classList.toggle('dark-mode', !isDarkMode);
+            const newTheme = isDarkMode ? 'light-mode' : 'dark-mode';
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        // Update theme icon based on the current theme
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('darkModeToggle').querySelector('i');
+            themeIcon.classList.toggle('fa-moon', theme !== 'dark-mode');
+            themeIcon.classList.toggle('fa-sun', theme === 'dark-mode');
+        }
+
+        // Initialize notification system
+        initializeNotifications();
+    });
+
+    // Notification functions
+    function initializeNotifications() {
+        // Poll for new notifications every 30 seconds
+        setInterval(fetchLatestNotifications, 30000);
+    }
+
+    function fetchLatestNotifications() {
+        fetch('/notifications/latest')
+            .then(response => response.json())
+            .then(data => {
+                updateNotificationBadge(data.length);
+                updateNotificationList(data);
+            })
+            .catch(error => console.error('Error fetching notifications:', error));
+    }
+
+    function updateNotificationBadge(count) {
+        const badge = document.querySelector('.notification-badge');
+        if (count > 0) {
+            if (badge) {
+                badge.textContent = count;
+            } else {
+                const newBadge = document.createElement('span');
+                newBadge.className = 'notification-badge';
+                newBadge.textContent = count;
+                document.querySelector('.notification-bell').appendChild(newBadge);
+            }
+        } else {
+            if (badge) {
+                badge.remove();
+            }
+        }
+    }
+
+    function updateNotificationList(notifications) {
+        const notificationList = document.getElementById('notification-list');
+        if (!notificationList) return;
+
+        if (notifications.length === 0) {
+            notificationList.innerHTML = `
+                <div class="notification-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>{{ __('No new notifications') }}</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        notifications.forEach(notification => {
+            const notificationType = getNotificationType(notification);
+            const iconClass = getNotificationIcon(notification);
+            const title = getNotificationTitle(notification);
+            const message = getNotificationMessage(notification);
+            const url = getNotificationUrl(notification);
+
+            html += `
+                <div class="notification-item unread" onclick="handleNotificationClick('${notification.id}', '${url}')">
+                    <div class="notification-content">
+                        <div class="notification-icon ${notificationType}">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div class="notification-details">
+                            <div class="notification-title">${title}</div>
+                            <div class="notification-message">${message}</div>
+                            <div class="notification-time">${formatTime(notification.created_at)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        notificationList.innerHTML = html;
+    }
+
+    function getNotificationType(notification) {
+        if (notification.data.support_ticket_id) return 'message';
+        if (notification.data.ticket_id) return 'ticket';
+        if (notification.data.transaction_id) return 'transaction';
+        if (notification.data.order_id) return 'order';
+        return 'general';
+    }
+
+    function getNotificationIcon(notification) {
+        if (notification.data.support_ticket_id) return 'fas fa-envelope';
+        if (notification.data.ticket_id) return 'fas fa-ticket-alt';
+        if (notification.data.transaction_id) return 'fas fa-dollar-sign';
+        if (notification.data.order_id) return 'fas fa-shopping-cart';
+        return 'fas fa-info-circle';
+    }
+
+    function getNotificationTitle(notification) {
+        if (notification.data.support_ticket_id) return '{{ __("New Message") }}';
+        if (notification.data.ticket_id) return '{{ __("Support Ticket") }}';
+        if (notification.data.transaction_id) return '{{ __("Transaction Update") }}';
+        if (notification.data.order_id) return '{{ __("Order Update") }}';
+        return '{{ __("General Notification") }}';
+    }
+
+    function getNotificationMessage(notification) {
+        return notification.data.message_content || notification.data.message || '{{ __("New notification") }}';
+    }
+
+    function getNotificationUrl(notification) {
+        if (notification.data.support_ticket_id) return `/support/${notification.data.support_ticket_id}`;
+        if (notification.data.ticket_id) return `/support/${notification.data.ticket_id}`;
+        if (notification.data.transaction_id) return `/transactions/${notification.data.transaction_id}`;
+        if (notification.data.order_id) return `/orders/${notification.data.order_id}`;
+        return '#';
+    }
+
+    function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        
+        if (diffInSeconds < 60) return '{{ __("Just now") }}';
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+        return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    }
+
+    function handleNotificationClick(notificationId, url) {
+        // Mark as read
+        fetch(`/notifications/${notificationId}/markAsRead`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Remove the unread class
+                    const notificationItem = event.target.closest('.notification-item');
+                    if (notificationItem) {
+                        notificationItem.classList.remove('unread');
+                    }
+                    
+                    // Navigate to the URL
+                    window.location.href = url;
+                }
+            })
+            .catch(error => console.error('Error marking notification as read:', error));
+    }
+
+    function markAllAsRead() {
+        fetch('/notifications/markAllAsRead', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove unread classes from all notifications
+                document.querySelectorAll('.notification-item.unread').forEach(item => {
+                    item.classList.remove('unread');
+                });
+                
+                // Update badge
+                updateNotificationBadge(0);
+                
+                // Update mark all read button
+                const markAllButton = document.querySelector('.mark-all-read');
+                if (markAllButton) {
+                    markAllButton.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('Error marking all notifications as read:', error));
+    }
+</script>
+<style>
+    /* General Section Title Styling */
+    .platform-title, .achievements-title {
+        font-size: 2.5rem; /* Increased font size for better visibility */
+        font-weight: 700;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        letter-spacing: 1.2px;
+        color: var(--bs-body-color); /* Dynamic color based on theme */
+    }
+
+    .platform-title::after, .achievements-title::after {
+        content: '';
+        display: block;
+        margin: 0 auto;
+        width: 60px;
+        height: 3px;
+        background-color: var(--bs-primary); /* Primary color */
+        margin-top: 10px;
+    }
+
+    /* Stats Box Styling */
+    .stats-box {
+        background-color: var(--bs-body-bg); /* Dynamic background for light/dark mode */
+        border-radius: 15px;
+        text-align: center;
+        padding: 30px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        color: var(--bs-body-color); /* Dynamic text color */
+    }
+
+    .stats-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .stats-title {
+        font-size: 1.8rem; /* Increased font size for titles */
+        font-weight: 700; /* Increased font weight for emphasis */
+        color: var(--bs-body-color); /* Dynamic text color */
+        margin-bottom: 15px;
+    }
+
+    .stats-value {
+        font-size: 2.8rem; /* Increased font size for values */
+        font-weight: 800;
+        color: var(--bs-primary); /* Primary color for values */
+        margin-bottom: 15px;
+    }
+
+    .metric-description {
+        font-size: 1.2rem; /* Increased font size for better readability */
+        font-weight: 600;
+        color: var(--bs-secondary-color); /* Secondary text color */
+        margin-bottom: 10px;
+    }
+
+    /* Icon and Image Styling */
+    .icon-circle, .stat-pic {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+    }
+
+    .icon-circle {
+        width: 100px;
+        height: 100px;
+        font-size: 3.5rem;
+        color: #ffffff; /* Ensure icons are white for contrast */
+    }
+
+    .stat-pic {
+        height: 100px; /* Increased icon size */
+        font-size: 5rem;
+        color: var(--bs-primary); /* Primary color for icons */
+        margin-bottom: 10px;
+    }
+
+    .widget-icon {
+        max-height: 80px; /* Increased icon size */
+        color: var(--bs-body-color); /* Dynamic color based on theme */
+        transition: transform 0.3s ease;
+    }
+
+    .widget-icon:hover {
+        transform: rotate(10deg) scale(1.1);
+    }
+
+    /* Form and Button Styling */
+    .form-floating .form-control:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: none;
+    }
+
+    .form-floating label {
+        color: var(--bs-secondary-color);
+    }
+
+    .position-relative .form-control {
+        padding-right: 3rem; /* Ensure there's space for the icon */
+    }
+
+    .position-absolute i.material-icons {
+        font-size: 1.5rem;
+        color: var(--bs-secondary-color);
+    }
+
+    .btn-primary {
+        transition: background-color 0.3s ease;
+        background-image: linear-gradient(90deg, rgba(0, 123, 255, 1) 0%, rgba(0, 70, 178, 1) 100%);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-image: linear-gradient(90deg, rgba(0, 70, 178, 1) 0%, rgba(0, 123, 255, 1) 100%);
+    }
+
+    /* Card Styling */
+    .card {
+        border-radius: 1rem;
+    }
+
+    .card-body {
+        background-color: var(--bs-body-bg); /* Dynamic background for dark/light mode */
+        color: var(--bs-body-color); /* Dynamic text color for dark/light mode */
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Dark Mode Styles */
+    .dark-mode .stats-box, .dark-mode .card-body {
+        background-color: #343a40; /* Dark mode background */
+        color: #ffffff; /* Light text in dark mode */
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3); /* Slightly darker shadow for dark mode */
+    }
+
+    .dark-mode .achievements-title,
+    .dark-mode .platform-title,
+    .dark-mode .stats-title,
+    .dark-mode .stats-value,
+    .dark-mode .stats-box h3,
+    .dark-mode .metric-description {
+        color: #ffffff; /* White text for contrast in dark mode */
+    }
+
+    .dark-mode .stat-pic, .dark-mode .icon-circle {
+        color: var(--bs-primary); /* Primary color for icons in dark mode */
+    }
+
+    .dark-mode .icon-circle {
+        background-color: #495057; /* Dark mode icon circle background */
+        color: #ffffff; /* White color for icons */
+    }
+
+    .dark-mode .widget-icon {
+        filter: brightness(0) invert(1); /* Invert colors to make icons white in dark mode */
+    }
+
+    .dark-mode .form-floating .form-control {
+        background-color: #495057;
+        color: #ffffff;
+    }
+
+    .dark-mode .form-floating label,
+    .dark-mode .form-check-label {
+        color: #ffffff;
+    }
+
+    .dark-mode .form-check-input {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .dark-mode .position-absolute i.material-icons {
+        color: #ffffff; /* Adjust icon color for dark mode */
+    }
+</style>
