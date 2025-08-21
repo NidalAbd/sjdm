@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'smmcpan' => [
+        'url' => env('SMMP_URL', 'https://smmcpan.com/api/v2'),
+        'key' => env('SMMP_KEY'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

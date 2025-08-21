@@ -5,10 +5,16 @@ namespace App\Services;
 class Api
 {
     /** API URL */
-    public $api_url = 'https://smmcpan.com/api/v2';
+    public $api_url;
 
     /** Your API key */
-    public $api_key = '652b6762b77b4830d240874b653fc317';
+    public $api_key;
+
+    public function __construct()
+    {
+        $this->api_url = config('services.smmcpan.url', 'https://smmcpan.com/api/v2');
+        $this->api_key = config('services.smmcpan.key');
+    }
 
     /** Add order */
     public function order($data)

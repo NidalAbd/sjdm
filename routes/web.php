@@ -187,7 +187,9 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     // Order Management Routes
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('/orders/store', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('/orders/store', [OrderController::class, 'store'])
+        ->middleware('throttle:orders')
+        ->name('orders.store');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
