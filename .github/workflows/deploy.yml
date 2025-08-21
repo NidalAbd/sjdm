@@ -27,19 +27,28 @@ jobs:
 
       - name: Prepare Laravel files
         run: |
-          # Copy all files except those we want to exclude (including vendor)
+          echo "Copying Laravel project files..."
+          # Copy ALL Laravel files and folders
           rsync -av \
             --exclude='node_modules' \
             --exclude='vendor' \
             --exclude='.git' \
             --exclude='deploy_temp' \
-            --exclude='tests' \
             --exclude='.github' \
             --exclude='README.md' \
             --exclude='phpunit.xml' \
             --exclude='vite.config.js' \
             --exclude='package*.json' \
             ./ deploy_temp/
+          
+          echo "Verifying critical folders are copied:"
+          [ -d "deploy_temp/app" ] && echo "✓ app folder copied" || echo "✗ app folder missing"
+          [ -d "deploy_temp/config" ] && echo "✓ config folder copied" || echo "✗ config folder missing"
+          [ -d "deploy_temp/database" ] && echo "✓ database folder copied" || echo "✗ database folder missing"
+          [ -d "deploy_temp/lang" ] && echo "✓ lang folder copied" || echo "✗ lang folder missing"
+          [ -d "deploy_temp/resources" ] && echo "✓ resources folder copied" || echo "✗ resources folder missing"
+          [ -d "deploy_temp/routes" ] && echo "✓ routes folder copied" || echo "✗ routes folder missing"
+          [ -d "deploy_temp/public" ] && echo "✓ public folder copied" || echo "✗ public folder missing"
 
       - name: Setup correct Laravel structure
         run: |
@@ -119,6 +128,12 @@ jobs:
           echo "Current directory: " . __DIR__ . "\n";
           echo "Public path: $publicPath\n";
           echo "Storage path: $storagePath\n";
+
+          // Remove old public folder if it exists (should only have public_html)
+          if (is_dir(__DIR__ . '/public')) {
+              shell_exec('rm -rf ' . __DIR__ . '/public');
+              echo "Removed old 'public' folder (using public_html instead)\n";
+          }
 
           // Clear Laravel caches first (since vendor exists on server)
           echo "Clearing Laravel caches...\n";
@@ -299,15 +314,10 @@ jobs:
             node_modules/**
             vendor/**
             .github/**
-            tests/**
             *.md
             .DS_Store
             Thumbs.db
-            storage/**
-            bootstrap/cache/**
             *.log
-            .env.example
-            composer.lock
             package-lock.json
             yarn.lock
 
