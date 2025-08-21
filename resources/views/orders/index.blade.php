@@ -61,9 +61,7 @@
                         <table class="table table-sm align-middle table-hover table-striped mb-0">
                             <colgroup>
                                 <col style="width: 50px;" />
-                                <col style="width: 150px;" />
-                                <col />
-                                <col style="width: 220px;" />
+                                <col style="width: 180px;" />
                                 <col style="width: 90px;" />
                                 <col style="width: 100px;" />
                                 <col style="width: 95px;" />
@@ -72,14 +70,12 @@
                                 <col style="width: 120px;" />
                                 <col style="width: 120px;" />
                                 <col style="width: 150px;" />
-                                <col style="width: 70px;" />
+                                <col style="width: 120px;" />
                             </colgroup>
                             <thead class="table-light sticky-top shadow-sm">
                                 <tr>
                                     <th>#</th>
                                     <th>{{ __('adminlte.name') }}</th>
-                                    <th>{{ __('adminlte.service_name') }}</th>
-                                    <th>{{ __('adminlte.link') }}</th>
                                     <th class="text-end">{{ __('adminlte.quantity') }}</th>
                                     <th class="text-end">{{ __('adminlte.charge') }}</th>
                                     <th class="text-end">{{ __('adminlte.start_count') }}</th>
@@ -115,33 +111,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <div class="fw-semibold">{{ $order->user->name }}</div>
-                                            <div class="text-muted small">#{{ $order->user->id }} • {{ $order->user->email }}</div>
+                                            <div class="fw-semibold">{{ optional($order->user)->name ?? 'Deleted user' }}</div>
+                                            <div class="text-muted small">#{{ optional($order->user)->id ?? $order->user_id }} • {{ optional($order->user)->email ?? '-' }}</div>
                                         </td>
-                                        <td>
-                                            <button type="button" class="btn btn-link p-0 text-start truncate" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}"
-                                                title="{{ app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en }}">
-                                                @if(app()->getLocale() === 'ar')
-                                                    {{ $order->service->name_ar }}
-                                                @else
-                                                    {{ $order->service->name_en }}
-                                                @endif
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-2 truncate" title="{{ $order->link }}">
-                                                <a href="{{ $order->link }}" target="_blank" class="text-decoration-none">
-                                                    <i class="fas fa-external-link-alt me-1 text-muted"></i>
-                                                    <span class="text-muted">{{ $order->link }}</span>
-                                                </a>
-                                                <button class="btn btn-link btn-sm text-secondary p-0 ms-2" onclick="copyToClipboard('{{ $order->link }}')" title="Copy link">
-                                                    <i class="far fa-copy"></i>
-                                                </button>
-                                                <button class="btn btn-link btn-sm text-secondary p-0 ms-2" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="Details">
-                                                    <i class="fas fa-info-circle"></i>
-                                                </button>
-                                            </div>
-                                        </td>
+                                        
                                         <td class="text-end">{{ $order->quantity }}</td>
                                         <td class="text-end">${{ number_format($order->charge, 2) }}</td>
                                         <td class="text-end">{{ $order->start_count }}</td>
@@ -179,21 +152,28 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <div class="btn-group btn-group-sm" role="group" aria-label="{{ __('adminlte.order_actions') }}">
+                                            <div class="btn-group btn-group-sm action-buttons" role="group" aria-label="{{ __('adminlte.order_actions') }}">
                                                 @can('view_order', $order)
-                                                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="{{ __('adminlte.view_order') }}">
+                                                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="{{ __('adminlte.view_order') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 @endcan
 
+                                                <a href="{{ $order->link }}" target="_blank" class="btn btn-outline-secondary" title="Open link">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                                <button class="btn btn-outline-secondary" onclick="copyToClipboard('{{ $order->link }}')" title="Copy link">
+                                                    <i class="far fa-copy"></i>
+                                                </button>
+
                                                 @if(auth()->user()->hasRole('admin'))
-                                                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
+                                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
                                                         <i class="fas fa-dollar-sign"></i>
                                                     </button>
                                                     @if(!in_array(strtolower($order->status), ['completed','canceled']))
                                                         <form action="{{ route('orders.cancel', $order->id) }}" method="POST">
                                                             @csrf
-                                                            <button class="btn btn-light text-danger" title="Cancel" onclick="return confirm('Cancel this order?')">
+                                                            <button class="btn btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this order?')">
                                                                 <i class="fas fa-ban"></i>
                                                             </button>
                                                         </form>
@@ -205,7 +185,7 @@
                                                         <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button class="btn btn-light text-danger" title="{{ __('adminlte.delete_order') }}" onclick="return confirm('Delete this waiting order and refund full amount?')">
+                                                            <button class="btn btn-outline-danger" title="{{ __('adminlte.delete_order') }}" onclick="return confirm('Delete this waiting order and refund full amount?')">
                                                                 <i class="fas fa-trash-alt"></i>
                                                             </button>
                                                         </form>
@@ -214,12 +194,12 @@
 
                                                 @if(!$order->supportTicket)
                                                     @can('create_ticket')
-                                                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#createTicketModal{{ $order->id }}" title="{{ __('adminlte.create_support_ticket') }}">
+                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#createTicketModal{{ $order->id }}" title="{{ __('adminlte.create_support_ticket') }}">
                                                             <i class="fas fa-headset"></i>
                                                         </button>
                                                     @endcan
                                                 @else
-                                                    <a href="{{ route('support.show', $order->supportTicket->id) }}" class="btn btn-light {{ $hasUnreadMessages ? 'text-warning' : '' }}" title="{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}">
+                                                    <a href="{{ route('support.show', $order->supportTicket->id) }}" class="btn btn-outline-info {{ $hasUnreadMessages ? 'text-warning' : '' }}" title="{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}">
                                                         <i class="fas fa-ticket-alt"></i>
                                                         @if($hasUnreadMessages)
                                                             <span class="badge bg-warning text-dark ms-1">{{ $unreadCount }}</span>
@@ -241,8 +221,8 @@
                                                     <div class="row g-3">
                                                         <div class="col-md-6">
                                                             <div class="small text-muted">User</div>
-                                                            <div class="fw-semibold">{{ $order->user->name }}</div>
-                                                            <div class="text-muted small">#{{ $order->user->id }} • {{ $order->user->email }}</div>
+                                                            <div class="fw-semibold">{{ optional($order->user)->name ?? 'Deleted user' }}</div>
+                                                            <div class="text-muted small">#{{ optional($order->user)->id ?? $order->user_id }} • {{ optional($order->user)->email ?? '-' }}</div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="small text-muted">Date</div>
@@ -250,7 +230,7 @@
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="small text-muted">Service</div>
-                                                            <div class="fw-semibold">{{ app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en }}</div>
+                                                            <div class="fw-semibold">{{ app()->getLocale() === 'ar' ? (optional($order->service)->name_ar ?? '-') : (optional($order->service)->name_en ?? '-') }}</div>
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="small text-muted">Link</div>
@@ -491,7 +471,7 @@
                             </tbody>
                             <tfoot class="table-light">
                                 <tr>
-                                    <th colspan="13" class="text-muted small fw-normal">
+                                    <th colspan="11" class="text-muted small fw-normal">
                                         {{ $orders->firstItem() }}-{{ $orders->lastItem() }} / {{ $orders->total() }}
                                     </th>
                                 </tr>
