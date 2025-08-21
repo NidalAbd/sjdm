@@ -272,18 +272,22 @@ jobs:
 
       - name: Deploy Laravel project files
         id: ftp-deploy
-        # This will deploy to the current FTP directory (./) which should be your domain root
-        # - Core Laravel folders (app, bootstrap, config, etc.) at root level
-        # - public_html/ folder containing web-accessible files
-        # - storage/ folder at root level (not inside public_html)
-        # Note: server-dir: ./ means deploy to current FTP directory, not create nested paths
+        # Deploy to parent directory (../) because FTP starts in public_html
+        # This ensures Laravel folders are at the SAME LEVEL as public_html, not inside it
+        # Structure after deployment:
+        # /domains/smm-followerss.com/
+        #   ├── app/            (Laravel core - same level as public_html)
+        #   ├── bootstrap/      (Laravel core - same level as public_html)
+        #   ├── config/         (Laravel core - same level as public_html)
+        #   ├── storage/        (Laravel storage - same level as public_html)
+        #   └── public_html/    (Web-accessible files only)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: 45.84.207.200
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy_temp/
-          server-dir: ./
+          server-dir: ../
           state-name: .ftp-deploy-sync-state.json
           log-level: verbose
           timeout: 1800
