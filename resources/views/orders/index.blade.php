@@ -70,7 +70,8 @@
                                 <th>{{ __('adminlte.start_count') }}</th>
                                 <th>{{ __('adminlte.remains') }}</th>
                                 <th>{{ __('adminlte.date') }}</th>
-                                <th>{{ __('adminlte.status') }}</th>
+                                <th>{{ __('adminlte.api_status') }}</th>
+                                <th>{{ __('adminlte.system_status') }}</th>
                                 <th>{{ __('adminlte.support_status') }}</th>
                                 <th class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
@@ -113,8 +114,15 @@
                                         <td>{{ $order->start_count }}</td>
                                         <td>{{ $order->remains }}</td>
                                         <td>{{ $order->created_at->format('Y-m-d') }}</td>
-                                        <td>{{ __('adminlte.' . strtolower($order->status)) }}</td>
                                         <td>
+                                            <span class="badge bg-secondary">{{ $order->status }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge {{ $order->system_status === 'refunded' ? 'bg-success' : ($order->system_status === 'canceled' ? 'bg-danger' : 'bg-info') }}">
+                                                {{ $order->system_status ?? '-' }}
+                                            </span>
+                                        </td>
+                                        <td class="support-status-cell">
                                             @if($hasSupportTicket)
                                                 <div class="support-status">
                                                     @if($hasUnreadMessages)
@@ -147,26 +155,39 @@
                                                     </button>
                                                 @endcan
                                                 @can('delete_order', $order)
-                                                    <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-danger btn-sm" type="submit"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="{{ __('adminlte.delete_order') }}">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
+                                                    @if(strtolower($order->status) === 'waiting')
+                                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-danger btn-sm" type="submit"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                    title="{{ __('adminlte.delete_order') }}">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 @endcan
-                                                @if($order->can_refill)
-                                                    <button type="button" class="btn btn-info btn-sm" onclick="checkAndRefill({{ $order->id }})"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('adminlte.refill') }}">
-                                                        <i class="fas fa-sync"></i>
-                                                    </button>
-                                                @endif
-                                                @if($order->can_cancel)
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="checkAndCancel({{ $order->id }})"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('adminlte.cancel') }}">
-                                                        <i class="fas fa-ban"></i>
+
+                                                @if(auth()->user()->hasRole('admin'))
+                                                    @if(!in_array(strtolower($order->status), ['completed','canceled']))
+                                                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <button class="btn btn-outline-danger btn-sm" type="submit" title="Cancel order" onclick="return confirm('Cancel this order?')">
+                                                                <i class="fas fa-ban"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    @php
+                                                        $quantityInt = max(1, (int) $order->quantity);
+                                                        $remainsInt = (int) ($order->remains ?? 0);
+                                                        $suggestedRefund = 0;
+                                                        if (strtolower($order->status) === 'partial') {
+                                                            $suggestedRefund = round($order->charge * ($remainsInt / $quantityInt), 2);
+                                                        }
+                                                    @endphp
+                                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                                            data-bs-target="#refundModal{{ $order->id }}" title="Refund">
+                                                        <i class="fas fa-dollar-sign"></i>
                                                     </button>
                                                 @endif
                                                 <!-- Support Ticket Button with enhanced styling -->
@@ -306,6 +327,48 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Refund Modal -->
+                                    @if(auth()->user()->hasRole('admin'))
+                                    <div class="modal fade" id="refundModal{{ $order->id }}" tabindex="-1" aria-labelledby="refundModalLabel{{ $order->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title" id="refundModalLabel{{ $order->id }}">Refund Order #{{ $order->id }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="mb-2"><strong>Total Paid:</strong> ${{ number_format($order->charge, 2) }}</p>
+                                                    <p class="mb-2"><strong>Quantity:</strong> {{ $order->quantity }} | <strong>Remains:</strong> {{ $order->remains ?? 0 }}</p>
+                                                    @php
+                                                        $quantityInt = max(1, (int) $order->quantity);
+                                                        $remainsInt = (int) ($order->remains ?? 0);
+                                                        $suggestedRefund = 0;
+                                                        $percent = 0;
+                                                        if (strtolower($order->status) === 'partial') {
+                                                            $percent = round(($remainsInt / $quantityInt) * 100, 2);
+                                                            $suggestedRefund = round($order->charge * ($remainsInt / $quantityInt), 2);
+                                                        }
+                                                    @endphp
+                                                    <div class="alert alert-info" role="alert">
+                                                        Suggested refund: <strong>${{ number_format($suggestedRefund, 2) }}</strong>
+                                                        @if($percent)
+                                                            ({{ $percent }}%) based on remains.
+                                                        @endif
+                                                    </div>
+                                                    <form action="{{ route('orders.refund', $order->id) }}" method="POST">
+                                                        @csrf
+                                                        <div class="mb-3">
+                                                            <label for="refundAmount{{ $order->id }}" class="form-label">Refund amount</label>
+                                                            <input type="number" step="0.01" min="0" class="form-control" id="refundAmount{{ $order->id }}" name="amount" value="{{ number_format($suggestedRefund, 2, '.', '') }}" required>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary w-100">Issue refund</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
 
                                     <!-- Modal for creating support tickets for Orders -->
                                     <div class="modal fade" id="createTicketModal{{ $order->id }}" tabindex="-1" role="dialog"

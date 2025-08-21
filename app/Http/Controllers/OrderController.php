@@ -151,7 +151,8 @@ class OrderController extends Controller
         $order->link = $validated['link'];
         $order->quantity = $validated['quantity'];
         $order->charge = $userCharge;  // The amount charged to the user
-        $order->status = 'waiting';  // New status indicating that the order is waiting for API processing
+        $order->status = 'waiting';  // External/API status
+        $order->system_status = 'active'; // Internal system tracking status
         $order->save();
 
         // Deduct the charge from the user's balance
@@ -269,6 +270,10 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         $user = $order->user;
+        // Only allow delete if order is still waiting and not processed
+        if (strtolower($order->status) !== 'waiting') {
+            return redirect()->route('orders.index')->with('error', 'Only orders in waiting status can be deleted.');
+        }
         // Check if the order has a charge and refund it to the user's balance
         if ($order->charge > 0) {
             // Create transaction data
@@ -285,6 +290,57 @@ class OrderController extends Controller
         // Delete the order
         $order->delete();
         return redirect()->route('orders.index')->with('success', 'Order deleted and charge refunded successfully.');
+    }
+
+    public function cancel(Order $order)
+    {
+        // Admin-only guard
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        // Try to cancel via API if api_order_id exists
+        if ($order->api_order_id) {
+            $this->api->cancel([$order->api_order_id]);
+        }
+
+        $order->status = 'Canceled';
+        $order->system_status = 'canceled';
+        $order->save();
+
+        return back()->with('success', 'Order canceled. You can now issue a refund if needed.');
+    }
+
+    public function refund(Request $request, Order $order)
+    {
+        // Admin-only guard
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0'
+        ]);
+
+        $amount = (float) $request->input('amount');
+        if ($amount <= 0) {
+            return back()->with('error', 'Refund amount must be greater than zero.');
+        }
+
+        $user = $order->user;
+        $transactionData = [
+            'type' => 'credit',
+            'amount' => $amount,
+            'status' => 'refunded',
+            'description' => 'Refund for order ID: ' . $order->id,
+            'currency' => 'USD',
+        ];
+        $user->createTransactionAndNotify($transactionData);
+
+        $order->system_status = 'refunded';
+        $order->save();
+
+        return back()->with('success', 'Refund issued successfully.');
     }
 
 

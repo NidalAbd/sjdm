@@ -10,7 +10,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'service_id', 'link', 'quantity', 'runs', 'interval',
+        'service_id', 'link', 'quantity', 'runs', 'interval', 'status', 'system_status', 'charge', 'api_order_id', 'start_count', 'remains'
     ];
     protected $attributes = [
         'start_count' => null,

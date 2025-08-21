@@ -20,8 +20,8 @@ class UpdateOrderStatuses implements ShouldQueue
         Log::info('UpdateOrderStatuses job started.');
 
         try {
-            // Retrieve all orders with 'Pending' status
-            $orders = Order::whereNotIn('status', ['Canceled', 'Completed', 'Partial'])->get();
+            // Retrieve all orders that are not finalized
+            $orders = Order::whereNotIn('status', ['Canceled', 'Completed'])->get();
             Log::info('Found ' . $orders->count() . ' pending orders.');
 
             $orderIds = $orders->pluck('api_order_id')->filter()->toArray(); // Ensure we only get non-null api_order_ids
