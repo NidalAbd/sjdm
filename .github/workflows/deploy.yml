@@ -25,38 +25,6 @@ jobs:
           composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
           composer dump-autoload --optimize
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install npm dependencies
-        run: npm ci --prefer-offline --no-audit
-
-      - name: Build assets
-        run: |
-          if [ -f "webpack.mix.js" ]; then
-            npm run dev
-          elif [ -f "vite.config.mjs" ]; then
-            npm run build
-          else
-            echo "No build tool found, skipping asset build"
-          fi
-
-      - name: Create deployment package
-        run: |
-          # Remove unnecessary files for production
-          rm -rf .git .github node_modules tests storage/framework/cache/* storage/framework/sessions/* storage/framework/views/* storage/logs/* .env.example composer.lock package-lock.json
-          
-          # Create .env file from example if it doesn't exist
-          if [ ! -f .env ]; then
-            cp .env.example .env
-          fi
-          
-          # Set proper permissions
-          chmod -R 755 storage bootstrap/cache
-
       - name: Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -70,9 +38,6 @@ jobs:
             **/.github*
             **/node_modules/**
             **/tests/**
-            **/.env.example
-            **/composer.lock
-            **/package-lock.json
             **/storage/framework/cache/**
             **/storage/framework/sessions/**
             **/storage/framework/views/**
