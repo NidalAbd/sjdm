@@ -14,36 +14,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, openssl, tokenizer, json, fileinfo, gd, zip
-
-      - name: Install Composer dependencies
+      - name: Debug - List files
         run: |
-          # Note: If you get Laravel version conflicts, run 'composer update' locally first
-          composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
+          echo "=== Current directory ==="
+          pwd
+          echo "=== Files in root ==="
+          ls -la
+          echo "=== Composer files ==="
+          ls -la composer.*
 
-      - name: Build assets
+      - name: Debug - Check PHP
         run: |
-          npm ci
-          npm run build
+          echo "=== PHP version ==="
+          php --version
+          echo "=== Composer version ==="
+          composer --version
 
-      - name: Create deployment package
+      - name: Debug - Check dependencies
         run: |
-          # Remove unnecessary files for production
-          rm -rf .git .github node_modules tests storage/framework/cache/* storage/framework/sessions/* storage/framework/views/* storage/logs/* .env.example composer.lock package-lock.json
-          
-          # Create .env file from example if it doesn't exist
-          if [ ! -f .env ]; then
-            cp .env.example .env
-          fi
-          
-          # Set proper permissions
-          chmod -R 755 storage bootstrap/cache
+          echo "=== Composer.json content ==="
+          cat composer.json
+          echo "=== Composer.lock exists ==="
+          ls -la composer.lock
 
-      - name: Deploy to Hostinger via SFTP
+      - name: Simple deploy test
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           username: ${{ secrets.SFTP_USERNAME }}
@@ -56,9 +50,6 @@ jobs:
             .github*
             node_modules/**
             tests/**
-            .env.example
-            composer.lock
-            package-lock.json
             storage/framework/cache/**
             storage/framework/sessions/**
             storage/framework/views/**
