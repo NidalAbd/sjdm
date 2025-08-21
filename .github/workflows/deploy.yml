@@ -45,14 +45,3 @@ jobs:
           ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
           local_path: './'
           remote_path: '/'
-          exclude: |
-            .git*
-            .github*
-            node_modules/**
-            tests/**
-            storage/framework/cache/**
-            storage/framework/sessions/**
-            storage/framework/views/**
-            storage/logs/**
-            storage/app/public/**
-            bootstrap/cache/**
