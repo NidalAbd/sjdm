@@ -132,8 +132,8 @@ jobs:
             APP_KEY="base64:$(openssl rand -base64 32)"
             # Check if APP_KEY line exists
             if grep -q "^APP_KEY=" .env; then
-              # Replace existing empty or invalid APP_KEY
-              sed -i "s/^APP_KEY=.*/APP_KEY=$APP_KEY/" .env
+              # Replace existing empty or invalid APP_KEY using | as delimiter to avoid conflicts with / in base64
+              sed -i "s|^APP_KEY=.*|APP_KEY=$APP_KEY|" .env
             else
               # Add APP_KEY if it doesn't exist
               echo "APP_KEY=$APP_KEY" >> .env
