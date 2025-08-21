@@ -21,7 +21,9 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, openssl, tokenizer, json, fileinfo, gd, zip
 
       - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader --no-interaction
+        run: |
+          # Note: If you get Laravel version conflicts, run 'composer update' locally first
+          composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
       - name: Build assets
         run: |
