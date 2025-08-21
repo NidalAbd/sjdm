@@ -284,8 +284,15 @@ class OrderController extends Controller
                 'description' => 'Refund for deleted order ID: ' . $order->id,
                 'currency' => 'USD', // Adjust currency as needed
             ];
+            // Credit user's balance
+            if ($user) {
+                $user->balance += $order->charge;
+                $user->save();
+            }
             // Refund and notify the user using createTransactionAndNotify
-            $user->createTransactionAndNotify($transactionData);
+            if ($user) {
+                $user->createTransactionAndNotify($transactionData);
+            }
         }
         // Delete the order
         $order->delete();
@@ -335,7 +342,12 @@ class OrderController extends Controller
             'description' => 'Refund for order ID: ' . $order->id,
             'currency' => 'USD',
         ];
-        $user->createTransactionAndNotify($transactionData);
+        // Credit user's balance
+        if ($user) {
+            $user->balance += $amount;
+            $user->save();
+            $user->createTransactionAndNotify($transactionData);
+        }
 
         $order->system_status = 'refunded';
         $order->save();
