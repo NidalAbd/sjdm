@@ -111,6 +111,23 @@ jobs:
           sed -i 's|APP_URL=http://localhost|APP_URL=https://smm-followerss.com|' .env
           sed -i 's/LOG_LEVEL=debug/LOG_LEVEL=error/' .env
           sed -i 's/DB_HOST=127.0.0.1/DB_HOST=localhost/' .env
+          
+          # Generate APP_KEY if it's missing or empty
+          if ! grep -q "^APP_KEY=base64:" .env || [ -z "$(grep '^APP_KEY=' .env | cut -d'=' -f2)" ]; then
+            # Generate a random key (Laravel uses 32 bytes base64 encoded)
+            APP_KEY="base64:$(openssl rand -base64 32)"
+            # Check if APP_KEY line exists
+            if grep -q "^APP_KEY=" .env; then
+              # Replace existing empty or invalid APP_KEY
+              sed -i "s/^APP_KEY=.*/APP_KEY=$APP_KEY/" .env
+            else
+              # Add APP_KEY if it doesn't exist
+              echo "APP_KEY=$APP_KEY" >> .env
+            fi
+            echo "✓ Generated new APP_KEY"
+          else
+            echo "✓ APP_KEY already exists"
+          fi
 
           # Note: Cache clearing will be done on server since vendor folder is not deployed
 
