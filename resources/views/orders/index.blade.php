@@ -114,15 +114,19 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td>{{ $order->user->name }}</td>
                                         <td>
-                                            <div class="truncate" title="{{ app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en }}">
+                                            <div class="fw-semibold">{{ $order->user->name }}</div>
+                                            <div class="text-muted small">#{{ $order->user->id }} • {{ $order->user->email }}</div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-link p-0 text-start truncate" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}"
+                                                title="{{ app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en }}">
                                                 @if(app()->getLocale() === 'ar')
                                                     {{ $order->service->name_ar }}
                                                 @else
                                                     {{ $order->service->name_en }}
                                                 @endif
-                                            </div>
+                                            </button>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2 truncate" title="{{ $order->link }}">
@@ -132,6 +136,9 @@
                                                 </a>
                                                 <button class="btn btn-link btn-sm text-secondary p-0 ms-2" onclick="copyToClipboard('{{ $order->link }}')" title="Copy link">
                                                     <i class="far fa-copy"></i>
+                                                </button>
+                                                <button class="btn btn-link btn-sm text-secondary p-0 ms-2" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="Details">
+                                                    <i class="fas fa-info-circle"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -172,74 +179,119 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <div class="dropdown">
-                                                <button class="btn btn-light btn-sm" type="button" id="actionsDropdown{{ $order->id }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-h"></i>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionsDropdown{{ $order->id }}">
-                                                    @can('view_order', $order)
-                                                        <li>
-                                                            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#viewOrderModal{{ $order->id }}">
-                                                                <i class="fas fa-eye me-2"></i>{{ __('adminlte.view_order') }}
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="{{ __('adminlte.order_actions') }}">
+                                                @can('view_order', $order)
+                                                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="{{ __('adminlte.view_order') }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                @endcan
+
+                                                @if(auth()->user()->hasRole('admin'))
+                                                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
+                                                        <i class="fas fa-dollar-sign"></i>
+                                                    </button>
+                                                    @if(!in_array(strtolower($order->status), ['completed','canceled']))
+                                                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST">
+                                                            @csrf
+                                                            <button class="btn btn-light text-danger" title="Cancel" onclick="return confirm('Cancel this order?')">
+                                                                <i class="fas fa-ban"></i>
                                                             </button>
-                                                        </li>
-                                                    @endcan
+                                                        </form>
+                                                    @endif
+                                                @endif
 
-                                                    @if(auth()->user()->hasRole('admin'))
-                                                        @if(!in_array(strtolower($order->status), ['completed','canceled']))
-                                                            <li>
-                                                                <form action="{{ route('orders.cancel', $order->id) }}" method="POST">
-                                                                    @csrf
-                                                                    <button class="dropdown-item text-danger" onclick="return confirm('Cancel this order?')">
-                                                                        <i class="fas fa-ban me-2"></i>Cancel
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        @endif
-                                                        <li>
-                                                            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}">
-                                                                <i class="fas fa-dollar-sign me-2"></i>Refund
+                                                @can('delete_order', $order)
+                                                    @if(strtolower($order->status) === 'waiting')
+                                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-light text-danger" title="{{ __('adminlte.delete_order') }}" onclick="return confirm('Delete this waiting order and refund full amount?')">
+                                                                <i class="fas fa-trash-alt"></i>
                                                             </button>
-                                                        </li>
+                                                        </form>
                                                     @endif
+                                                @endcan
 
-                                                    @can('delete_order', $order)
-                                                        @if(strtolower($order->status) === 'waiting')
-                                                            <li>
-                                                                <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button class="dropdown-item text-danger" onclick="return confirm('Delete this waiting order and refund full amount?')">
-                                                                        <i class="fas fa-trash-alt me-2"></i>{{ __('adminlte.delete_order') }}
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        @endif
+                                                @if(!$order->supportTicket)
+                                                    @can('create_ticket')
+                                                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#createTicketModal{{ $order->id }}" title="{{ __('adminlte.create_support_ticket') }}">
+                                                            <i class="fas fa-headset"></i>
+                                                        </button>
                                                     @endcan
-
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    @if(!$order->supportTicket)
-                                                        @can('create_ticket')
-                                                            <li>
-                                                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createTicketModal{{ $order->id }}">
-                                                                    <i class="fas fa-headset me-2"></i>{{ __('adminlte.create_support_ticket') }}
-                                                                </button>
-                                                            </li>
-                                                        @endcan
-                                                    @else
-                                                        <li>
-                                                            <a class="dropdown-item {{ $hasUnreadMessages ? 'text-warning' : '' }}" href="{{ route('support.show', $order->supportTicket->id) }}">
-                                                                <i class="fas fa-ticket-alt me-2"></i>{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}
-                                                                @if($hasUnreadMessages)
-                                                                    <span class="badge bg-warning text-dark ms-2">{{ $unreadCount }}</span>
-                                                                @endif
-                                                            </a>
-                                                        </li>
-                                                    @endif
-                                                </ul>
+                                                @else
+                                                    <a href="{{ route('support.show', $order->supportTicket->id) }}" class="btn btn-light {{ $hasUnreadMessages ? 'text-warning' : '' }}" title="{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}">
+                                                        <i class="fas fa-ticket-alt"></i>
+                                                        @if($hasUnreadMessages)
+                                                            <span class="badge bg-warning text-dark ms-1">{{ $unreadCount }}</span>
+                                                        @endif
+                                                    </a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
+                                    <!-- Quick Details Modal -->
+                                    <div class="modal fade" id="orderDetailsModal{{ $order->id }}" tabindex="-1" aria-labelledby="orderDetailsLabel{{ $order->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-secondary text-white">
+                                                    <h5 class="modal-title" id="orderDetailsLabel{{ $order->id }}">Order #{{ $order->id }} Details</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                            <div class="small text-muted">User</div>
+                                                            <div class="fw-semibold">{{ $order->user->name }}</div>
+                                                            <div class="text-muted small">#{{ $order->user->id }} • {{ $order->user->email }}</div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="small text-muted">Date</div>
+                                                            <div class="fw-semibold">{{ $order->created_at->format('Y-m-d H:i') }}</div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="small text-muted">Service</div>
+                                                            <div class="fw-semibold">{{ app()->getLocale() === 'ar' ? $order->service->name_ar : $order->service->name_en }}</div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="small text-muted">Link</div>
+                                                            <a href="{{ $order->link }}" target="_blank" class="text-decoration-none">{{ $order->link }}</a>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="small text-muted">Quantity</div>
+                                                            <div class="fw-semibold">{{ $order->quantity }}</div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="small text-muted">Charge</div>
+                                                            <div class="fw-semibold">${{ number_format($order->charge, 2) }}</div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="small text-muted">Start</div>
+                                                            <div class="fw-semibold">{{ $order->start_count }}</div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="small text-muted">Remains</div>
+                                                            <div class="fw-semibold">{{ $order->remains }}</div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="small text-muted">API Status</div>
+                                                            <span class="badge bg-secondary text-uppercase">{{ $order->status }}</span>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="small text-muted">System Status</div>
+                                                            <span class="badge {{ $order->system_status === 'refunded' ? 'bg-success' : ($order->system_status === 'canceled' ? 'bg-danger' : 'bg-info') }} text-uppercase">{{ $order->system_status ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="small text-muted">API Order ID</div>
+                                                            <div class="fw-semibold">{{ $order->api_order_id ?? '-' }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <!-- View Order Modal -->
                                     <div class="modal fade" id="viewOrderModal{{ $order->id }}" tabindex="-1" aria-labelledby="viewOrderModalLabel{{ $order->id }}" aria-hidden="true">
