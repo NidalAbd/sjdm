@@ -166,9 +166,6 @@
                                                 <a href="{{ $order->link }}" target="_blank" class="btn btn-outline-secondary" title="Open link">
                                                     <i class="fas fa-external-link-alt"></i>
                                                 </a>
-                                                <button class="btn btn-outline-secondary" onclick="copyToClipboard('{{ $order->link }}')" title="Copy link">
-                                                    <i class="far fa-copy"></i>
-                                                </button>
 
                                                 @if(auth()->user()->hasRole('admin'))
                                                     <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
