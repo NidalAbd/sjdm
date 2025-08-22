@@ -81,8 +81,10 @@
                                     <th class="text-end">{{ __('adminlte.start_count') }}</th>
                                     <th class="text-end">{{ __('adminlte.remains') }}</th>
                                 <th>{{ __('adminlte.date') }}</th>
-                                    <th>API</th>
-                                    <th>System</th>
+                                    @if(auth()->user()->hasRole('admin'))
+                                        <th>API</th>
+                                    @endif
+                                    <th>{{ __('adminlte.status') }}</th>
                                 <th>{{ __('adminlte.support_status') }}</th>
                                 <th class="text-center">{{ __('adminlte.actions') }}</th>
                             </tr>
@@ -120,9 +122,11 @@
                                         <td class="text-end">{{ $order->start_count }}</td>
                                         <td class="text-end">{{ $order->remains }}</td>
                                         <td>{{ $order->created_at->format('Y-m-d') }}</td>
+                                        @if(auth()->user()->hasRole('admin'))
                                         <td>
                                             <span class="badge bg-secondary text-uppercase">{{ $order->status }}</span>
                                         </td>
+                                        @endif
                                         <td>
                                             <span class="badge {{ $order->system_status === 'refunded' ? 'bg-success' : ($order->system_status === 'canceled' ? 'bg-danger' : 'bg-info') }} text-uppercase">
                                                 {{ $order->system_status ?? '-' }}
@@ -465,13 +469,15 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="11" class="text-center text-muted">{{ __('adminlte.no_orders_found') }}</td>
+                                    @php $colspan = auth()->user()->hasRole('admin') ? 12 : 11; @endphp
+                                    <td colspan="{{ $colspan }}" class="text-center text-muted">{{ __('adminlte.no_orders_found') }}</td>
                                 </tr>
                             @endif
                             </tbody>
                             <tfoot class="table-light">
                                 <tr>
-                                    <th colspan="11" class="text-muted small fw-normal">
+                                    @php $colspan = auth()->user()->hasRole('admin') ? 12 : 11; @endphp
+                                    <th colspan="{{ $colspan }}" class="text-muted small fw-normal">
                                         {{ $orders->firstItem() }}-{{ $orders->lastItem() }} / {{ $orders->total() }}
                                     </th>
                             </tr>
