@@ -158,7 +158,7 @@
                                         <td class="text-center">
                                             <div class="btn-group btn-group-sm action-buttons" role="group" aria-label="{{ __('adminlte.order_actions') }}">
                                                 @can('view_order', $order)
-                                                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="{{ __('adminlte.view_order') }}">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="{{ __('adminlte.view_order') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 @endcan
@@ -171,13 +171,13 @@
                                                 </button>
 
                                                 @if(auth()->user()->hasRole('admin'))
-                                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
+                                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
                                                         <i class="fas fa-dollar-sign"></i>
                                                     </button>
                                                     @if(!in_array(strtolower($order->status), ['completed','canceled']))
                                                         <form action="{{ route('orders.cancel', $order->id) }}" method="POST">
                                                             @csrf
-                                                            <button class="btn btn-outline-danger" title="Cancel" onclick="return confirm('Cancel this order?')">
+                                                            <button class="btn btn-outline-warning" title="Cancel" onclick="return confirm('Cancel this order?')">
                                                                 <i class="fas fa-ban"></i>
                                                             </button>
                                                         </form>
@@ -514,6 +514,22 @@
     .table-hover tbody tr:hover { background-color: #f8f9fa; }
     .notification-badge { animation: bounce 1s infinite; }
     @keyframes bounce { 0%,20%,50%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-5px);} 60%{transform:translateY(-3px);} }
+    /* Uniform action buttons */
+    .action-buttons { display: inline-flex; gap: 8px; }
+    .action-buttons form { margin: 0; }
+    .action-buttons .btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    .action-buttons .btn i { font-size: 14px; }
+    @media (max-width: 768px) {
+        .action-buttons .btn { width: 32px; height: 32px; }
+    }
 </style>
 @stop
 
