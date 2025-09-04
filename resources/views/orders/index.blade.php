@@ -247,7 +247,7 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <div class="btn-group btn-group-sm action-buttons" role="group" aria-label="{{ __('adminlte.order_actions') }}">
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="{{ __('adminlte.order_actions') }}">
                                                 @can('view_order', $order)
                                                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#orderDetailsModal{{ $order->id }}" title="{{ __('adminlte.view_order') }}">
                                                         <i class="fas fa-eye"></i>
@@ -318,8 +318,7 @@
                                                         </button>
                                                     @endcan
                                                 @else
-                                                    <a href="{{ route('support.show', $order->supportTicket->id) }}" class="btn btn-outline-info {{ $hasUnreadMessages ? 'text-warning' : '' }}" title="{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}">
-                                                        <i class="fas fa-ticket-alt"></i>
+                                                    <a href="{{ route('support.show', $order->supportTicket->id) }}" class="btn btn-outline-info {{ $hasUnreadMessages ? 'text-warning' : '' }}" title="{{ $hasUnreadMessages ? __('adminlte.view_ticket_with_new_messages') : __('adminlte.view_ticket') }}">                                                        <i class="fas fa-ticket-alt"></i>
                                                         @if($hasUnreadMessages)
                                                             <span class="badge bg-warning text-dark ms-1">{{ $unreadCount }}</span>
                                                         @endif
@@ -612,6 +611,164 @@
 @stop
 
 @section('css')
+<style>
+    /* Fix button group styling */
+    .btn-group-sm {
+        display: inline-flex;
+        vertical-align: middle;
+    }
+    
+    .btn-group-sm form {
+        margin: 0;
+        display: inline-flex;
+    }
+    
+    /* Uniform button sizes */
+    .btn-group-sm .btn,
+    .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.875rem !important;
+        line-height: 1.5 !important;
+        border-radius: 0.2rem !important;
+        min-width: 32px !important;
+        height: 31px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* Fix button icons */
+    .btn-group-sm .btn i {
+        font-size: 0.875rem;
+        line-height: 1;
+    }
+    
+    /* Remove Bootstrap 5 button group borders that might cause size issues */
+    .btn-group-sm > .btn:not(:first-child) {
+        margin-left: -1px;
+    }
+    
+    .btn-group-sm > .btn:not(:last-child):not(.dropdown-toggle) {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    
+    .btn-group-sm > .btn:not(:first-child) {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+    }
+    
+    /* Support status styling */
+    .support-status { 
+        text-align: center; 
+    }
+    
+    /* Badge styling */
+    .badge-pill { 
+        border-radius: 50rem; 
+    }
+    
+    /* Notification badge animation */
+    .notification-badge { 
+        animation: pulse 2s infinite; 
+    }
+    
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+    }
+    
+    /* Table styling improvements */
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .table th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .table td {
+        vertical-align: middle;
+    }
+    
+    /* Fix widget uniformity */
+    .small-box {
+        min-height: 150px;
+        position: relative;
+        border-radius: 0.25rem;
+        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    }
+    
+    .small-box .inner {
+        padding: 10px;
+    }
+    
+    .small-box .inner h3 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        white-space: nowrap;
+    }
+    
+    .small-box .inner p {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+    
+    .small-box .icon {
+        font-size: 70px;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        color: rgba(0,0,0,0.15);
+        z-index: 0;
+    }
+    
+    .small-box .small-box-footer {
+        text-align: center;
+        padding: 10px 0;
+        color: rgba(255,255,255,0.8);
+        display: block;
+        z-index: 10;
+        background: rgba(0,0,0,0.1);
+        text-decoration: none;
+        position: relative;
+    }
+    
+    .small-box .small-box-footer:hover {
+        color: #fff;
+        background: rgba(0,0,0,0.15);
+        text-decoration: none;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .btn-group-sm .btn {
+            padding: 0.25rem 0.375rem !important;
+            font-size: 0.75rem !important;
+            min-width: 28px !important;
+            height: 28px !important;
+        }
+        
+        .small-box .inner h3 {
+            font-size: 1.5rem;
+        }
+        
+        .small-box .icon {
+            font-size: 50px;
+        }
+    }
+</style>
 @stop
 
 @section('js')
