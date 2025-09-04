@@ -659,6 +659,203 @@
                     $('.alert').fadeOut();
                 }, 5000);
             }
+
+            // Reset Percentages
+            $('#resetPercentagesBtn').on('click', function() {
+                $('.digit-percentage').val('');
+                $('#percentageInput').val('');
+            });
+
+            // Preview Digit-based Rate Changes
+            $('#previewDigitRatesBtn').on('click', function() {
+                const percentages = {};
+                let hasValues = false;
+                
+                $('.digit-percentage').each(function() {
+                    const range = $(this).data('range');
+                    const value = parseFloat($(this).val()) || 0;
+                    percentages[range] = value;
+                    if (value !== 0) hasValues = true;
+                });
+
+                if (!hasValues) {
+                    alert('{{ __("adminlte.please_enter_percentages") }}');
+                    return;
+                }
+
+                const operation = $('#digitOperationSelect').val();
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> {{ __("adminlte.loading") }}...').prop('disabled', true);
+
+                $.ajax({
+                    url: '{{ route("services.previewDigitRates") }}',
+                    method: 'POST',
+                    data: {
+                        percentages: percentages,
+                        operation: operation,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showPreviewModal(response.preview_data, percentages, operation);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('{{ __("adminlte.error_previewing_changes") }}: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Update Digit-based Rates
+            $('#updateDigitRatesBtn').on('click', function() {
+                const percentages = {};
+                let hasValues = false;
+                
+                $('.digit-percentage').each(function() {
+                    const range = $(this).data('range');
+                    const value = parseFloat($(this).val()) || 0;
+                    percentages[range] = value;
+                    if (value !== 0) hasValues = true;
+                });
+
+                if (!hasValues) {
+                    alert('{{ __("adminlte.please_enter_percentages") }}');
+                    return;
+                }
+
+                const operation = $('#digitOperationSelect').val();
+                
+                if (!confirm('{{ __("adminlte.confirm_digit_update") }}')) {
+                    return;
+                }
+
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> {{ __("adminlte.updating") }}...').prop('disabled', true);
+
+                $.ajax({
+                    url: '{{ route("services.updateDigitRates") }}',
+                    method: 'POST',
+                    data: {
+                        percentages: percentages,
+                        operation: operation,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showAlert('success', response.message);
+                            // Reload the page to show updated rates
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1500);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('{{ __("adminlte.error_updating_digit_rates") }}: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Confirm Digit Rate Changes from Preview
+            $('#confirmDigitRatesBtn').on('click', function() {
+                const percentages = window.previewPercentages;
+                const operation = window.previewOperation;
+                
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> {{ __("adminlte.updating") }}...').prop('disabled', true);
+
+                $.ajax({
+                    url: '{{ route("services.updateDigitRates") }}',
+                    method: 'POST',
+                    data: {
+                        percentages: percentages,
+                        operation: operation,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#previewModal').modal('hide');
+                            showAlert('success', response.message);
+                            // Reload the page to show updated rates
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1500);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('{{ __("adminlte.error_updating_digit_rates") }}: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Show Preview Modal
+            function showPreviewModal(previewData, percentages, operation) {
+                window.previewPercentages = percentages;
+                window.previewOperation = operation;
+                
+                const digitRanges = {
+                    0: '{{ __("adminlte.less_than_0_0001") }}',
+                    1: '{{ __("adminlte.0_0001_to_0_001") }}',
+                    2: '{{ __("adminlte.0_001_to_0_01") }}',
+                    3: '{{ __("adminlte.0_01_to_0_1") }}',
+                    4: '{{ __("adminlte.0_1_to_1") }}',
+                    5: '{{ __("adminlte.1_and_above") }}'
+                };
+
+                let tableHtml = `
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>{{ __("adminlte.service_name") }}</th>
+                                    <th>{{ __("adminlte.digit_range") }}</th>
+                                    <th>{{ __("adminlte.original_cost") }}</th>
+                                    <th>{{ __("adminlte.current_rate") }}</th>
+                                    <th>{{ __("adminlte.percentage") }}</th>
+                                    <th>{{ __("adminlte.new_rate") }}</th>
+                                    <th>{{ __("adminlte.change") }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                previewData.forEach(function(item) {
+                    const changeClass = item.change >= 0 ? 'text-success' : 'text-danger';
+                    const changeIcon = item.change >= 0 ? '▲' : '▼';
+                    
+                    tableHtml += `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td><span class="badge bg-info">${digitRanges[item.digit_range]}</span></td>
+                            <td>$${parseFloat(item.original_cost).toFixed(6)}</td>
+                            <td>$${parseFloat(item.current_rate).toFixed(4)}</td>
+                            <td><span class="badge bg-warning">${item.percentage}%</span></td>
+                            <td>$${parseFloat(item.new_rate).toFixed(4)}</td>
+                            <td class="${changeClass}">${changeIcon} $${Math.abs(item.change).toFixed(4)}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHtml += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                $('#previewContent').html(tableHtml);
+                $('#previewModal').modal('show');
+            }
         });
     </script>
 @stop
