@@ -105,32 +105,115 @@
                                     <h5 class="mb-0"><i class="fas fa-cogs"></i> {{ __('adminlte.bulk_rate_management') }}</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label for="percentageInput" class="form-label">{{ __('adminlte.percentage') }}</label>
-                                            <input type="number" class="form-control" id="percentageInput" placeholder="30" min="-100" max="1000" step="0.01">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label for="operationSelect" class="form-label">{{ __('adminlte.operation') }}</label>
-                                            <select class="form-control" id="operationSelect">
-                                                <option value="increase">{{ __('adminlte.increase') }}</option>
-                                                <option value="decrease">{{ __('adminlte.decrease') }}</option>
-                                                <option value="multiply">{{ __('adminlte.multiply') }}</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button type="button" class="btn btn-primary btn-block" id="updateAllRatesBtn">
-                                                <i class="fas fa-sync-alt"></i> {{ __('adminlte.update_all_rates') }}
-                                            </button>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button type="button" class="btn btn-info btn-block" id="getStatsBtn">
-                                                <i class="fas fa-chart-bar"></i> {{ __('adminlte.get_stats') }}
-                                            </button>
+                                    <!-- Digit-based Rate Management -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <h6 class="text-white mb-3"><i class="fas fa-layer-group"></i> {{ __('adminlte.digit_based_adjustment') }}</h6>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <label class="form-label">{{ __('adminlte.less_than_0_0001') }}</label>
+                                                    <input type="number" class="form-control digit-percentage" data-range="0" placeholder="500" min="-1000" max="10000" step="0.01">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">{{ __('adminlte.0_0001_to_0_001') }}</label>
+                                                    <input type="number" class="form-control digit-percentage" data-range="1" placeholder="400" min="-1000" max="10000" step="0.01">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">{{ __('adminlte.0_001_to_0_01') }}</label>
+                                                    <input type="number" class="form-control digit-percentage" data-range="2" placeholder="300" min="-1000" max="10000" step="0.01">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">{{ __('adminlte.0_01_to_0_1') }}</label>
+                                                    <input type="number" class="form-control digit-percentage" data-range="3" placeholder="200" min="-1000" max="10000" step="0.01">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">{{ __('adminlte.0_1_to_1') }}</label>
+                                                    <input type="number" class="form-control digit-percentage" data-range="4" placeholder="150" min="-1000" max="10000" step="0.01">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">{{ __('adminlte.1_and_above') }}</label>
+                                                    <input type="number" class="form-control digit-percentage" data-range="5" placeholder="30" min="-1000" max="10000" step="0.01">
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col-md-3">
+                                                    <select class="form-control" id="digitOperationSelect">
+                                                        <option value="increase">{{ __('adminlte.increase') }}</option>
+                                                        <option value="decrease">{{ __('adminlte.decrease') }}</option>
+                                                        <option value="multiply">{{ __('adminlte.multiply') }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button type="button" class="btn btn-success btn-block" id="updateDigitRatesBtn">
+                                                        <i class="fas fa-layer-group"></i> {{ __('adminlte.update_by_digits') }}
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button type="button" class="btn btn-warning btn-block" id="previewDigitRatesBtn">
+                                                        <i class="fas fa-eye"></i> {{ __('adminlte.preview_changes') }}
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button type="button" class="btn btn-info btn-block" id="getStatsBtn">
+                                                        <i class="fas fa-chart-bar"></i> {{ __('adminlte.get_stats') }}
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- Simple Percentage Management (Legacy) -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6 class="text-white mb-3"><i class="fas fa-percentage"></i> {{ __('adminlte.simple_percentage') }}</h6>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label for="percentageInput" class="form-label">{{ __('adminlte.percentage') }}</label>
+                                                    <input type="number" class="form-control" id="percentageInput" placeholder="30" min="-100" max="1000" step="0.01">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="operationSelect" class="form-label">{{ __('adminlte.operation') }}</label>
+                                                    <select class="form-control" id="operationSelect">
+                                                        <option value="increase">{{ __('adminlte.increase') }}</option>
+                                                        <option value="decrease">{{ __('adminlte.decrease') }}</option>
+                                                        <option value="multiply">{{ __('adminlte.multiply') }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">&nbsp;</label>
+                                                    <button type="button" class="btn btn-primary btn-block" id="updateAllRatesBtn">
+                                                        <i class="fas fa-sync-alt"></i> {{ __('adminlte.update_all_rates') }}
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">&nbsp;</label>
+                                                    <button type="button" class="btn btn-secondary btn-block" id="resetPercentagesBtn">
+                                                        <i class="fas fa-undo"></i> {{ __('adminlte.reset_percentages') }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Preview Modal -->
+                                    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-warning text-dark">
+                                                    <h5 class="modal-title" id="previewModalLabel">{{ __('adminlte.preview_rate_changes') }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div id="previewContent"></div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('adminlte.cancel') }}</button>
+                                                    <button type="button" class="btn btn-success" id="confirmDigitRatesBtn">{{ __('adminlte.confirm_changes') }}</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row mt-3" id="statsDisplay" style="display: none;">
                                         <div class="col-md-12">
                                             <div class="alert alert-info stats-display">

@@ -1114,4 +1114,124 @@ class ServiceController extends Controller
 
         return response()->json($stats);
     }
+
+    /**
+     * Preview digit-based rate changes
+     */
+    public function previewDigitRates(Request $request)
+    {
+        $request->validate([
+            'percentages' => 'required|array',
+            'percentages.*' => 'numeric|min:-1000|max:10000',
+            'operation' => 'required|in:increase,decrease,multiply'
+        ]);
+
+        $percentages = $request->percentages;
+        $operation = $request->operation;
+        $previewData = [];
+
+        $services = Service::all();
+
+        foreach ($services as $service) {
+            $originalRate = $service->cost;
+            $digitRange = $this->getDigitRange($originalRate);
+            $percentage = $percentages[$digitRange] ?? 0;
+            
+            $newRate = $this->calculateNewRate($originalRate, $percentage, $operation);
+            
+            $previewData[] = [
+                'service_id' => $service->service_id,
+                'name' => app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en,
+                'current_rate' => $service->rate,
+                'original_cost' => $originalRate,
+                'digit_range' => $digitRange,
+                'percentage' => $percentage,
+                'new_rate' => $newRate,
+                'change' => $newRate - $service->rate
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'preview_data' => $previewData
+        ]);
+    }
+
+    /**
+     * Update rates based on digit ranges
+     */
+    public function updateDigitRates(Request $request)
+    {
+        $request->validate([
+            'percentages' => 'required|array',
+            'percentages.*' => 'numeric|min:-1000|max:10000',
+            'operation' => 'required|in:increase,decrease,multiply'
+        ]);
+
+        $percentages = $request->percentages;
+        $operation = $request->operation;
+        $updatedCount = 0;
+        $summary = [];
+
+        $services = Service::all();
+
+        foreach ($services as $service) {
+            $originalRate = $service->cost;
+            $digitRange = $this->getDigitRange($originalRate);
+            $percentage = $percentages[$digitRange] ?? 0;
+            
+            if ($percentage != 0) {
+                $newRate = $this->calculateNewRate($originalRate, $percentage, $operation);
+                $service->update(['rate' => $newRate]);
+                $updatedCount++;
+                
+                if (!isset($summary[$digitRange])) {
+                    $summary[$digitRange] = 0;
+                }
+                $summary[$digitRange]++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Updated rates for $updatedCount services",
+            'updated_count' => $updatedCount,
+            'summary' => $summary
+        ]);
+    }
+
+    /**
+     * Get digit range for a given cost
+     */
+    private function getDigitRange($cost)
+    {
+        if ($cost < 0.0001) return 0; // < 0.0001
+        if ($cost < 0.001) return 1;  // 0.0001 to 0.001
+        if ($cost < 0.01) return 2;    // 0.001 to 0.01
+        if ($cost < 0.1) return 3;     // 0.01 to 0.1
+        if ($cost < 1) return 4;       // 0.1 to 1
+        return 5;                     // 1 and above
+    }
+
+    /**
+     * Calculate new rate based on percentage and operation
+     */
+    private function calculateNewRate($originalRate, $percentage, $operation)
+    {
+        $newRate = $originalRate;
+
+        switch ($operation) {
+            case 'increase':
+                $newRate = $originalRate * (1 + ($percentage / 100));
+                break;
+            case 'decrease':
+                $newRate = $originalRate * (1 - ($percentage / 100));
+                break;
+            case 'multiply':
+                $newRate = $originalRate * ($percentage / 100);
+                break;
+        }
+
+        return max(0, $newRate);
+    }
 }

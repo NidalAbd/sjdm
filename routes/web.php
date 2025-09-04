@@ -215,6 +215,8 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
         Route::put('services/{service}/rate', [ServiceController::class, 'updateRate'])->name('services.updateRate');
         Route::post('services/update-all-rates', [ServiceController::class, 'updateAllRates'])->name('services.updateAllRates');
         Route::get('services/rate-stats', [ServiceController::class, 'getRateStats'])->name('services.rateStats');
+        Route::post('services/preview-digit-rates', [ServiceController::class, 'previewDigitRates'])->name('services.previewDigitRates');
+        Route::post('services/update-digit-rates', [ServiceController::class, 'updateDigitRates'])->name('services.updateDigitRates');
     });
 
     // Transaction Management Routes
