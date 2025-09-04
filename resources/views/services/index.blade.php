@@ -15,6 +15,54 @@
         <div class="col-md-12">
             <div class="card shadow-sm">
                 <div class="card-body">
+                    <!-- Bulk Rate Management Section (Admin Only) -->
+                    @can('assign_role')
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="fas fa-cogs"></i> {{ __('adminlte.bulk_rate_management') }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label for="percentageInput" class="form-label">{{ __('adminlte.percentage') }}</label>
+                                            <input type="number" class="form-control" id="percentageInput" placeholder="30" min="-100" max="1000" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="operationSelect" class="form-label">{{ __('adminlte.operation') }}</label>
+                                            <select class="form-control" id="operationSelect">
+                                                <option value="increase">{{ __('adminlte.increase') }}</option>
+                                                <option value="decrease">{{ __('adminlte.decrease') }}</option>
+                                                <option value="multiply">{{ __('adminlte.multiply') }}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="button" class="btn btn-primary btn-block" id="updateAllRatesBtn">
+                                                <i class="fas fa-sync-alt"></i> {{ __('adminlte.update_all_rates') }}
+                                            </button>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button type="button" class="btn btn-info btn-block" id="getStatsBtn">
+                                                <i class="fas fa-chart-bar"></i> {{ __('adminlte.get_stats') }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3" id="statsDisplay" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-info">
+                                                <div id="statsContent"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endcan
+
                     <!-- Search and Filters Form -->
                     <form id="filterForm" action="{{ route('services.index') }}" method="GET">
                         <div class="row">
@@ -79,7 +127,25 @@
                                     <tr>
                                         <td>{{ $currentLanguage === 'ar' ? $service->name_ar : $service->name_en }}</td>
                                         <td>{{ $currentLanguage === 'ar' ? $service->category_ar : $service->category_en }}</td>
-                                        <td>{{ $service->rate }}</td>
+                                        <td>
+                                            @can('assign_role')
+                                                <div class="rate-editable" data-service-id="{{ $service->service_id }}" data-current-rate="{{ $service->rate }}">
+                                                    <span class="rate-display">${{ number_format($service->rate, 4) }}</span>
+                                                    <input type="number" class="form-control rate-input" style="display: none;" step="0.0001" min="0">
+                                                    <button class="btn btn-sm btn-outline-primary edit-rate-btn" style="display: none;">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-success save-rate-btn" style="display: none;">
+                                                        <i class="fas fa-save"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-secondary cancel-rate-btn" style="display: none;">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            @else
+                                                ${{ number_format($service->rate, 4) }}
+                                            @endcan
+                                        </td>
                                         @can('assign_role')
                                             <td>{{ $service->cost }}</td>
                                         @endcan
@@ -240,6 +306,195 @@
             $('#categorySelect').on('change', function () {
                 $('#filterForm').submit();
             });
+
+            // Inline Rate Editing
+            $('.rate-editable').each(function() {
+                const $container = $(this);
+                const $display = $container.find('.rate-display');
+                const $input = $container.find('.rate-input');
+                const $editBtn = $container.find('.edit-rate-btn');
+                const $saveBtn = $container.find('.save-rate-btn');
+                const $cancelBtn = $container.find('.cancel-rate-btn');
+                const serviceId = $container.data('service-id');
+                const originalRate = $container.data('current-rate');
+
+                // Show edit button on hover
+                $container.hover(
+                    function() {
+                        $editBtn.show();
+                    },
+                    function() {
+                        if (!$input.is(':visible')) {
+                            $editBtn.hide();
+                        }
+                    }
+                );
+
+                // Start editing
+                $editBtn.on('click', function() {
+                    $display.hide();
+                    $editBtn.hide();
+                    $input.val(originalRate).show().focus();
+                    $saveBtn.show();
+                    $cancelBtn.show();
+                });
+
+                // Cancel editing
+                $cancelBtn.on('click', function() {
+                    $input.hide();
+                    $saveBtn.hide();
+                    $cancelBtn.hide();
+                    $display.show();
+                    $editBtn.show();
+                });
+
+                // Save rate
+                $saveBtn.on('click', function() {
+                    const newRate = parseFloat($input.val());
+                    if (isNaN(newRate) || newRate < 0) {
+                        alert('Please enter a valid positive number');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: `/services/${serviceId}/rate`,
+                        method: 'PUT',
+                        data: {
+                            rate: newRate,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $display.text('$' + parseFloat(newRate).toFixed(4));
+                                $container.data('current-rate', newRate);
+                                $input.hide();
+                                $saveBtn.hide();
+                                $cancelBtn.hide();
+                                $display.show();
+                                $editBtn.show();
+                                
+                                // Show success message
+                                showAlert('success', 'Rate updated successfully!');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error updating rate: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                        }
+                    });
+                });
+
+                // Enter key to save
+                $input.on('keypress', function(e) {
+                    if (e.which === 13) {
+                        $saveBtn.click();
+                    }
+                });
+            });
+
+            // Bulk Rate Management
+            $('#updateAllRatesBtn').on('click', function() {
+                const percentage = parseFloat($('#percentageInput').val());
+                const operation = $('#operationSelect').val();
+
+                if (isNaN(percentage)) {
+                    alert('Please enter a valid percentage');
+                    return;
+                }
+
+                if (!confirm(`Are you sure you want to ${operation} all rates by ${percentage}%? This action cannot be undone.`)) {
+                    return;
+                }
+
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> Updating...').prop('disabled', true);
+
+                $.ajax({
+                    url: '{{ route("services.updateAllRates") }}',
+                    method: 'POST',
+                    data: {
+                        percentage: percentage,
+                        operation: operation,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showAlert('success', response.message);
+                            // Reload the page to show updated rates
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1500);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error updating rates: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Get Statistics
+            $('#getStatsBtn').on('click', function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> Loading...').prop('disabled', true);
+
+                $.ajax({
+                    url: '{{ route("services.rateStats") }}',
+                    method: 'GET',
+                    success: function(response) {
+                        const statsHtml = `
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <strong>Total Services:</strong> ${response.total_services}
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Avg Rate:</strong> $${parseFloat(response.avg_rate || 0).toFixed(4)}
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Min Rate:</strong> $${parseFloat(response.min_rate || 0).toFixed(4)}
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Max Rate:</strong> $${parseFloat(response.max_rate || 0).toFixed(4)}
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Avg Cost:</strong> $${parseFloat(response.avg_cost || 0).toFixed(4)}
+                                </div>
+                                <div class="col-md-2">
+                                    <strong>Total Margin:</strong> $${parseFloat(response.total_margin || 0).toFixed(4)}
+                                </div>
+                            </div>
+                        `;
+                        $('#statsContent').html(statsHtml);
+                        $('#statsDisplay').show();
+                    },
+                    error: function(xhr) {
+                        alert('Error loading statistics: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Helper function to show alerts
+            function showAlert(type, message) {
+                const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+                const alertHtml = `
+                    <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                $('.card-body').prepend(alertHtml);
+                
+                // Auto-dismiss after 5 seconds
+                setTimeout(function() {
+                    $('.alert').fadeOut();
+                }, 5000);
+            }
         });
     </script>
 @stop

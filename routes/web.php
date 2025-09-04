@@ -210,6 +210,13 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('/services/filter', [ServiceController::class, 'filter'])->name('services.filter');
     Route::get('/services/getCategories', [ServiceController::class, 'getCategories'])->name('services.getCategories');
 
+    // Rate Management Routes (Admin Only)
+    Route::middleware(['auth', 'can:assign_role'])->group(function () {
+        Route::put('services/{service}/rate', [ServiceController::class, 'updateRate'])->name('services.updateRate');
+        Route::post('services/update-all-rates', [ServiceController::class, 'updateAllRates'])->name('services.updateAllRates');
+        Route::get('services/rate-stats', [ServiceController::class, 'getRateStats'])->name('services.rateStats');
+    });
+
     // Transaction Management Routes
     Route::resource('transactions', TransactionController::class);
 

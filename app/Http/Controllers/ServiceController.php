@@ -1033,4 +1033,85 @@ class ServiceController extends Controller
         $service->delete();
         return redirect()->route('services.index')->with('success', 'Service deleted successfully.');
     }
+
+    /**
+     * Update individual service rate
+     */
+    public function updateRate(Request $request, Service $service)
+    {
+        $request->validate([
+            'rate' => 'required|numeric|min:0',
+        ]);
+
+        $service->update(['rate' => $request->rate]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rate updated successfully',
+            'new_rate' => $service->rate
+        ]);
+    }
+
+    /**
+     * Update rates for all services with percentage adjustment
+     */
+    public function updateAllRates(Request $request)
+    {
+        $request->validate([
+            'percentage' => 'required|numeric|min:-100|max:1000',
+            'operation' => 'required|in:increase,decrease,multiply'
+        ]);
+
+        $percentage = $request->percentage;
+        $operation = $request->operation;
+        $updatedCount = 0;
+
+        $services = Service::all();
+
+        foreach ($services as $service) {
+            $originalRate = $service->cost; // Use cost as the base rate
+            $newRate = $originalRate;
+
+            switch ($operation) {
+                case 'increase':
+                    $newRate = $originalRate * (1 + ($percentage / 100));
+                    break;
+                case 'decrease':
+                    $newRate = $originalRate * (1 - ($percentage / 100));
+                    break;
+                case 'multiply':
+                    $newRate = $originalRate * ($percentage / 100);
+                    break;
+            }
+
+            // Ensure rate is not negative
+            $newRate = max(0, $newRate);
+
+            $service->update(['rate' => $newRate]);
+            $updatedCount++;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Updated rates for $updatedCount services",
+            'updated_count' => $updatedCount
+        ]);
+    }
+
+    /**
+     * Get current rate statistics
+     */
+    public function getRateStats()
+    {
+        $stats = [
+            'total_services' => Service::count(),
+            'avg_rate' => Service::avg('rate'),
+            'min_rate' => Service::min('rate'),
+            'max_rate' => Service::max('rate'),
+            'avg_cost' => Service::avg('cost'),
+            'total_margin' => Service::sum(DB::raw('rate - cost'))
+        ];
+
+        return response()->json($stats);
+    }
 }

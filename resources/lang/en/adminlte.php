@@ -92,6 +92,30 @@ return [
     'bonus_offer_message' => 'SMM Panel Bonus Offer! Earn a $100 bonus by referring 50 verified and active users. To get your referral code, go to your profile settings and share your unique link with friends!',
     'referrals' => 'Referrals',
 
+    // ========================= Rate Management =========================
+    'bulk_rate_management' => 'Bulk Rate Management',
+    'percentage' => 'Percentage',
+    'operation' => 'Operation',
+    'increase' => 'Increase',
+    'decrease' => 'Decrease',
+    'multiply' => 'Multiply',
+    'update_all_rates' => 'Update All Rates',
+    'get_stats' => 'Get Statistics',
+    'rate_updated_successfully' => 'Rate updated successfully!',
+    'rates_updated_successfully' => 'Rates updated successfully!',
+    'confirm_bulk_update' => 'Are you sure you want to {operation} all rates by {percentage}%? This action cannot be undone.',
+    'total_services' => 'Total Services',
+    'avg_rate' => 'Average Rate',
+    'min_rate' => 'Minimum Rate',
+    'max_rate' => 'Maximum Rate',
+    'avg_cost' => 'Average Cost',
+    'total_margin' => 'Total Margin',
+    'enter_valid_percentage' => 'Please enter a valid percentage',
+    'enter_valid_number' => 'Please enter a valid positive number',
+    'error_updating_rate' => 'Error updating rate',
+    'error_updating_rates' => 'Error updating rates',
+    'error_loading_stats' => 'Error loading statistics',
+
     // ========================= Breadcrumbs =========================
     'breadcrumbs' => [
         'users' => 'Users',
