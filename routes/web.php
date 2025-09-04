@@ -194,6 +194,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
     Route::post('orders/{order}/refund', [OrderController::class, 'refund'])->name('orders.refund');
 
     // Admin Service Management Routes

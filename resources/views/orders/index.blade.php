@@ -11,38 +11,94 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card shadow-sm">
-                <div class="card-header">
-                    @if(auth()->user()->hasRole('admin'))
-                        <!-- Admin Widgets Section -->
-                        <div class="row">
-                            <!-- API Balance Widget -->
-                            <x-adminlte-widget 
-                                color="info" 
-                                title="API Balance" 
-                                count="${{ isset($apiBalance) ? number_format($apiBalance, 2) : '—' }}" 
-                                icon="fas fa-wallet" />
-                            
-                            <!-- Sync Status Widget -->
-                            <div class="col-lg-3 col-6">
-                                <div class="small-box bg-primary">
-                                    <div class="inner">
-                                        <h3>Sync</h3>
-                                        <p>Update Order Statuses</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </div>
-                                    <form method="POST" action="{{ route('orders.sync') }}" class="mb-0">
-                                        @csrf
-                                        <button type="submit" class="small-box-footer border-0 bg-transparent text-white w-100">
-                                            Run Now <i class="fas fa-arrow-circle-right"></i>
-                                        </button>
-                                    </form>
+                @if(auth()->user()->hasRole('admin'))
+                <div class="card-header bg-light">
+                    <!-- Admin Widgets Section -->
+                    <div class="row">
+                        <!-- API Balance Widget -->
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    @if(config('services.smmcpan.key'))
+                                        <h3>${{ isset($apiBalance) && $apiBalance !== null ? number_format($apiBalance, 2) : '0.00' }}</h3>
+                                        <p>API Balance</p>
+                                    @else
+                                        <h3>Not Set</h3>
+                                        <p>API Key Missing</p>
+                                    @endif
                                 </div>
+                                <div class="icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">
+                                    @if(config('services.smmcpan.key'))
+                                        Current Balance <i class="fas fa-arrow-circle-right"></i>
+                                    @else
+                                        Configure SMMP_KEY in .env <i class="fas fa-exclamation-triangle"></i>
+                                    @endif
+                                </a>
                             </div>
                         </div>
-                    @endif
+                        
+                        <!-- Sync Status Widget -->
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-primary">
+                                <div class="inner">
+                                    <h3>Sync</h3>
+                                    <p>Update Order Statuses</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-sync-alt"></i>
+                                </div>
+                                <form method="POST" action="{{ route('orders.sync') }}" class="mb-0">
+                                    @csrf
+                                    <button type="submit" class="small-box-footer border-0 bg-transparent text-white w-100" style="text-align: left; padding: 10px;">
+                                        Run Now <i class="fas fa-arrow-circle-right"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Pending Orders Widget -->
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    @php
+                                        $pendingCount = \App\Models\Order::where('status', 'waiting')->count();
+                                    @endphp
+                                    <h3>{{ $pendingCount }}</h3>
+                                    <p>Pending Orders</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <a href="{{ route('orders.index') }}?status=waiting" class="small-box-footer">
+                                    View Pending <i class="fas fa-arrow-circle-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Completed Orders Widget -->
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    @php
+                                        $completedCount = \App\Models\Order::whereIn('status', ['Completed', 'completed'])->count();
+                                    @endphp
+                                    <h3>{{ $completedCount }}</h3>
+                                    <p>Completed Orders</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <a href="{{ route('orders.index') }}?status=completed" class="small-box-footer">
+                                    View Completed <i class="fas fa-arrow-circle-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                @endif
                 <div class="card-body p-0">
                     <!-- Search and Filters Form -->
                     <form id="filterForm" action="{{ route('orders.index') }}" method="GET">
@@ -211,6 +267,16 @@
                                                             $quickSuggestedRefund = round($order->charge * ($remainsInt / $quantityInt), 2);
                                                         }
                                                     @endphp
+                                                    
+                                                    @if(strtolower($order->status) === 'waiting')
+                                                        <form action="{{ route('orders.complete', $order->id) }}" method="POST">
+                                                            @csrf
+                                                            <button class="btn btn-outline-primary" title="Mark as Completed" onclick="return confirm('Mark this order as completed?')">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    
                                                     <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
                                                         <i class="fas fa-dollar-sign"></i>
                                                     </button>

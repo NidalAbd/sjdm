@@ -99,8 +99,10 @@ class OrderController extends Controller
             try {
                 $balanceResponse = $this->api->balance();
                 $apiBalance = $balanceResponse->balance ?? null;
+                Log::info('API Balance fetched: ' . json_encode($balanceResponse));
             } catch (\Throwable $e) {
                 Log::warning('Failed to fetch API balance: ' . $e->getMessage());
+                $apiBalance = 0; // Set to 0 instead of null for display
             }
         }
 
@@ -372,6 +374,30 @@ class OrderController extends Controller
         $order->save();
 
         return back()->with('success', 'Refund issued successfully.');
+    }
+
+    public function complete(Order $order)
+    {
+        // Admin-only guard
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        // Only allow completing waiting orders
+        if (strtolower($order->status) !== 'waiting') {
+            return back()->with('error', 'Only waiting orders can be manually completed.');
+        }
+
+        // Update order status to completed
+        $order->status = 'Completed';
+        $order->system_status = 'completed';
+        $order->start_count = $order->start_count ?? 0;
+        $order->remains = 0; // Set remains to 0 for completed orders
+        $order->save();
+
+        Log::info("Order {$order->id} manually marked as completed by admin user " . auth()->id());
+
+        return back()->with('success', 'Order marked as completed successfully.');
     }
 
 
