@@ -93,8 +93,19 @@ class OrderController extends Controller
         $services = Service::all();
         $translatedPlatforms = array_map(fn($platform) => $platform[$currentLanguage], $this->platforms);
 
+        // Fetch API balance for admins
+        $apiBalance = null;
+        if ($user->hasRole('admin')) {
+            try {
+                $balanceResponse = $this->api->balance();
+                $apiBalance = $balanceResponse->balance ?? null;
+            } catch (\Throwable $e) {
+                Log::warning('Failed to fetch API balance: ' . $e->getMessage());
+            }
+        }
+
         // Pass the data to the view
-        return view('orders.index', compact('orders', 'services', 'translatedPlatforms', 'statuses'))
+        return view('orders.index', compact('orders', 'services', 'translatedPlatforms', 'statuses', 'apiBalance'))
             ->with('platforms', array_keys($this->platforms));
     }
 
@@ -335,6 +346,11 @@ class OrderController extends Controller
         }
 
         $user = $order->user;
+        // Derive refunded percent if possible
+        $refundedPercent = null;
+        if ($order->charge && $order->charge > 0) {
+            $refundedPercent = round(($amount / $order->charge) * 100, 2);
+        }
         $transactionData = [
             'type' => 'credit',
             'amount' => $amount,
@@ -350,6 +366,9 @@ class OrderController extends Controller
         }
 
         $order->system_status = 'refunded';
+        if (!is_null($refundedPercent)) {
+            $order->refunded_percent = $refundedPercent;
+        }
         $order->save();
 
         return back()->with('success', 'Refund issued successfully.');
@@ -358,6 +377,10 @@ class OrderController extends Controller
 
     public function updateOrderStatuses()
     {
+        // Admin-only guard
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
         Log::info('updateOrderStatuses method called.');
         UpdateOrderStatuses::dispatch();
         Log::info('UpdateOrderStatuses job dispatched.');

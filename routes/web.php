@@ -190,6 +190,7 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::post('/orders/store', [OrderController::class, 'store'])
         ->middleware('throttle:orders')
         ->name('orders.store');
+    Route::post('orders/sync', [OrderController::class, 'updateOrderStatuses'])->name('orders.sync');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');

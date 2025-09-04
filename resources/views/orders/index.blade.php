@@ -11,7 +11,39 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-header">
+                    @if(auth()->user()->hasRole('admin'))
+                        <!-- Admin Widgets Section -->
+                        <div class="row">
+                            <!-- API Balance Widget -->
+                            <x-adminlte-widget 
+                                color="info" 
+                                title="API Balance" 
+                                count="${{ isset($apiBalance) ? number_format($apiBalance, 2) : '—' }}" 
+                                icon="fas fa-wallet" />
+                            
+                            <!-- Sync Status Widget -->
+                            <div class="col-lg-3 col-6">
+                                <div class="small-box bg-primary">
+                                    <div class="inner">
+                                        <h3>Sync</h3>
+                                        <p>Update Order Statuses</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </div>
+                                    <form method="POST" action="{{ route('orders.sync') }}" class="mb-0">
+                                        @csrf
+                                        <button type="submit" class="small-box-footer border-0 bg-transparent text-white w-100">
+                                            Run Now <i class="fas fa-arrow-circle-right"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+                <div class="card-body p-0">
                     <!-- Search and Filters Form -->
                     <form id="filterForm" action="{{ route('orders.index') }}" method="GET">
                         <div class="row">
@@ -46,10 +78,10 @@
                                 </div>
                             </div>
                             <div class="col-md-2 mb-2">
-                                <button type="submit" class="btn btn-primary btn-sm btn-block">{{ __('adminlte.search') }}</button>
+                                <button type="submit" class="btn btn-primary btn-block">{{ __('adminlte.search') }}</button>
                             </div>
                             <div class="col-md-2 mb-2">
-                                <a href="{{ route('orders.create') }}" class="btn btn-sm btn-block btn-info">
+                                <a href="{{ route('orders.create') }}" class="btn btn-block btn-info">
                                     {{ __('adminlte.create_order') }}
                                 </a>
                             </div>
@@ -57,8 +89,8 @@
                     </form>
 
                     <!-- Orders Table -->
-                    <div class="orders-table-wrapper mt-4">
-                        <table class="table table-sm align-middle table-hover table-striped mb-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0 text-nowrap">
                             <colgroup>
                                 <col style="width: 50px;" />
                                 <col style="width: 180px;" />
@@ -72,7 +104,7 @@
                                 <col style="width: 150px;" />
                                 <col style="width: 120px;" />
                             </colgroup>
-                            <thead class="table-light sticky-top shadow-sm">
+                            <thead class="thead-light">
                             <tr>
                                 <th>#</th>
                                 <th>{{ __('adminlte.name') }}</th>
@@ -125,6 +157,9 @@
                                         @if(auth()->user()->hasRole('admin'))
                                         <td>
                                             <span class="badge bg-secondary text-uppercase">{{ $order->status }}</span>
+                                            @if(strtolower($order->status) === 'partial')
+                                                <span class="badge bg-warning text-dark ms-1">Partial</span>
+                                            @endif
                                         </td>
                                         @endif
                                         <td>
@@ -168,9 +203,26 @@
                                                 </a>
 
                                                 @if(auth()->user()->hasRole('admin'))
+                                                    @php
+                                                        $quantityInt = max(1, (int) $order->quantity);
+                                                        $remainsInt = (int) ($order->remains ?? 0);
+                                                        $quickSuggestedRefund = 0;
+                                                        if (strtolower($order->status) === 'partial') {
+                                                            $quickSuggestedRefund = round($order->charge * ($remainsInt / $quantityInt), 2);
+                                                        }
+                                                    @endphp
                                                     <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
                                                         <i class="fas fa-dollar-sign"></i>
                                                     </button>
+                                                    @if(strtolower($order->status) === 'partial' && $quickSuggestedRefund > 0)
+                                                        <form action="{{ route('orders.refund', $order->id) }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="amount" value="{{ number_format($quickSuggestedRefund, 2, '.', '') }}">
+                                                            <button class="btn btn-success" title="Apply suggested refund (Partial)">
+                                                                <i class="fas fa-percentage"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                     @if(!in_array(strtolower($order->status), ['completed','canceled']))
                                                         <form action="{{ route('orders.cancel', $order->id) }}" method="POST">
                                                             @csrf
@@ -483,8 +535,8 @@
                     </div>
                 </div>
 
-                <div class="card-footer">
-                    <div class="pagination justify-content-center">
+                <div class="card-footer clearfix">
+                    <div class="float-right">
                         {{ $orders->appends(request()->except('page'))->links() }}
                     </div>
                 </div>
@@ -494,40 +546,6 @@
 @stop
 
 @section('css')
-<style>
-    .orders-table-wrapper {
-        max-height: 70vh;
-        overflow: auto;
-        border-radius: .25rem;
-    }
-    .truncate {
-        max-width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .support-status { text-align: center; }
-    .badge-pill { border-radius: 50rem; }
-    .table-hover tbody tr:hover { background-color: #f8f9fa; }
-    .notification-badge { animation: bounce 1s infinite; }
-    @keyframes bounce { 0%,20%,50%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-5px);} 60%{transform:translateY(-3px);} }
-    /* Uniform action buttons */
-    .action-buttons { display: inline-flex; gap: 8px; }
-    .action-buttons form { margin: 0; }
-    .action-buttons .btn {
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-    }
-    .action-buttons .btn i { font-size: 14px; }
-    @media (max-width: 768px) {
-        .action-buttons .btn { width: 32px; height: 32px; }
-    }
-</style>
 @stop
 
 @section('js')
