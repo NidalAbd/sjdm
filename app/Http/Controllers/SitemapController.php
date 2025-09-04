@@ -152,12 +152,16 @@ class SitemapController extends Controller
     }
 
     /**
-     * Generate robots.txt file - UPDATED to block categories/platforms
+     * Generate robots.txt file - UPDATED to allow service pages
      */
     public function robots()
     {
         $content = "User-agent: *\n";
         $content .= "Allow: /\n";
+        $content .= "Allow: /service/\n";
+        $content .= "Allow: /ar/service/\n";
+        $content .= "Allow: /all-services\n";
+        $content .= "Allow: /ar/all-services\n";
         $content .= "Disallow: /admin/\n";
         $content .= "Disallow: /dashboard/\n";
         $content .= "Disallow: /user/\n";
@@ -168,8 +172,23 @@ class SitemapController extends Controller
         $content .= "Disallow: /platform/\n";          // Block English platforms
         $content .= "Disallow: /ar/category/\n";       // Block Arabic categories
         $content .= "Disallow: /ar/platform/\n";       // Block Arabic platforms
+        $content .= "Disallow: /home\n";               // Block dashboard home
+        $content .= "Disallow: /orders/\n";            // Block order pages
+        $content .= "Disallow: /transactions/\n";      // Block transaction pages
+        $content .= "Disallow: /support/\n";           // Block support pages
+        $content .= "Disallow: /notifications/\n";     // Block notification pages
+        $content .= "Disallow: /points/\n";            // Block points pages
+        $content .= "Disallow: /bonus/\n";             // Block bonus pages
+        $content .= "Disallow: /referrals/\n";        // Block referral pages
+        $content .= "Disallow: /profile/\n";           // Block profile pages
+        $content .= "Disallow: /users/\n";            // Block user management pages
+        $content .= "Disallow: /roles/\n";            // Block role management pages
+        $content .= "Disallow: /permissions/\n";      // Block permission pages
+        $content .= "Disallow: /services/\n";        // Block admin service management
         $content .= "\n";
         $content .= "Sitemap: " . url('/sitemap.xml') . "\n";
+        $content .= "Sitemap: " . url('/sitemap-main.xml') . "\n";
+        $content .= "Sitemap: " . url('/sitemap-services.xml') . "\n";
 
         return response($content, 200)->header('Content-Type', 'text/plain');
     }

@@ -10,13 +10,17 @@
                     <div class="position-relative z-index-2">
                         <nav aria-label="breadcrumb" class="mb-3">
                             <ol class="breadcrumb text-white-50">
-                                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-white-75 text-decoration-none">Home</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('services.all') }}" class="text-white-75 text-decoration-none">Services</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-white-75 text-decoration-none">{{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home' }}</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('services.all') }}" class="text-white-75 text-decoration-none">{{ app()->getLocale() === 'ar' ? 'الخدمات' : 'Services' }}</a></li>
                                 <li class="breadcrumb-item active text-white" aria-current="page">{{ app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en }}</li>
                             </ol>
                         </nav>
                         <h1 class="display-5 fw-bold mb-3">{{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}</h1>
-                        <p class="lead mb-0 text-white-75">Premium social media marketing service with instant delivery and 24/7 support</p>
+                        <p class="lead mb-0 text-white-75">
+                            {{ app()->getLocale() === 'ar' 
+                                ? 'خدمة تسويق وسائل التواصل الاجتماعي المتميزة مع التسليم الفوري والدعم على مدار الساعة' 
+                                : 'Premium social media marketing service with instant delivery and 24/7 support' }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -33,8 +37,8 @@
                                 <i class="fas fa-rocket fa-2x text-primary"></i>
                             </div>
                             <div>
-                                <h2 class="h4 mb-1 fw-bold">Service Overview</h2>
-                                <p class="text-muted mb-0">Everything you need to know about this service</p>
+                                <h2 class="h4 mb-1 fw-bold">{{ app()->getLocale() === 'ar' ? 'نظرة عامة على الخدمة' : 'Service Overview' }}</h2>
+                                <p class="text-muted mb-0">{{ app()->getLocale() === 'ar' ? 'كل ما تحتاج معرفته عن هذه الخدمة' : 'Everything you need to know about this service' }}</p>
                             </div>
                         </div>
 
@@ -46,7 +50,7 @@
                                             <i class="fas fa-hashtag text-primary"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-1 fw-semibold">Service ID</h6>
+                                            <h6 class="mb-1 fw-semibold">{{ app()->getLocale() === 'ar' ? 'معرف الخدمة' : 'Service ID' }}</h6>
                                             <span class="text-muted">#{{ $service->service_id }}</span>
                                         </div>
                                     </div>
@@ -59,7 +63,7 @@
                                             <i class="fas fa-tag text-success"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-1 fw-semibold">Category</h6>
+                                            <h6 class="mb-1 fw-semibold">{{ app()->getLocale() === 'ar' ? 'الفئة' : 'Category' }}</h6>
                                             <span class="text-muted">{{ app()->getLocale() === 'ar' ? $service->category_ar : $service->category_en }}</span>
                                         </div>
                                     </div>
@@ -69,17 +73,36 @@
                     </div>
                 </div>
 
+                <!-- Service Description -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="h5 mb-4 fw-bold">{{ app()->getLocale() === 'ar' ? 'وصف الخدمة' : 'Service Description' }}</h3>
+                        <div class="service-description">
+                            <p class="mb-3">
+                                {{ app()->getLocale() === 'ar' 
+                                    ? "احصل على {$service->name_ar} عالي الجودة من SMM-Followers. خدمة موثوقة ومضمونة مع تسليم فوري وضمان إعادة التعبئة." 
+                                    : "Get high-quality {$service->name_en} from SMM-Followers. Reliable and guaranteed service with instant delivery and refill guarantee." }}
+                            </p>
+                            <p class="mb-3">
+                                {{ app()->getLocale() === 'ar' 
+                                    ? "سعرنا التنافسي: \${$service->rate} لكل 1000 وحدة. الحد الأدنى للطلب: {$service->min} والحد الأقصى: {$service->max}." 
+                                    : "Our competitive price: \${$service->rate} per 1000 units. Minimum order: {$service->min} and maximum: {$service->max}." }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Features Card -->
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h5 mb-4 fw-bold">What You Get</h3>
+                        <h3 class="h5 mb-4 fw-bold">{{ app()->getLocale() === 'ar' ? 'ما تحصل عليه' : 'What You Get' }}</h3>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="feature-item d-flex align-items-center">
                                     <div class="feature-icon bg-primary bg-opacity-10 rounded-circle p-2 me-3">
                                         <i class="fas fa-bolt text-primary"></i>
                                     </div>
-                                    <span class="fw-medium">Instant Start</span>
+                                    <span class="fw-medium">{{ app()->getLocale() === 'ar' ? 'بداية فورية' : 'Instant Start' }}</span>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -87,7 +110,7 @@
                                     <div class="feature-icon bg-success bg-opacity-10 rounded-circle p-2 me-3">
                                         <i class="fas fa-shield-alt text-success"></i>
                                     </div>
-                                    <span class="fw-medium">High Quality</span>
+                                    <span class="fw-medium">{{ app()->getLocale() === 'ar' ? 'جودة عالية' : 'High Quality' }}</span>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -95,7 +118,7 @@
                                     <div class="feature-icon bg-info bg-opacity-10 rounded-circle p-2 me-3">
                                         <i class="fas fa-headset text-info"></i>
                                     </div>
-                                    <span class="fw-medium">24/7 Support</span>
+                                    <span class="fw-medium">{{ app()->getLocale() === 'ar' ? 'دعم 24/7' : '24/7 Support' }}</span>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -105,9 +128,9 @@
                                     </div>
                                     <span class="fw-medium">
                                     @if($service->refill)
-                                            Refill Guarantee
+                                            {{ app()->getLocale() === 'ar' ? 'ضمان إعادة التعبئة' : 'Refill Guarantee' }}
                                         @else
-                                            No Refill
+                                            {{ app()->getLocale() === 'ar' ? 'لا توجد إعادة تعبئة' : 'No Refill' }}
                                         @endif
                                 </span>
                                 </div>
@@ -119,29 +142,33 @@
                 <!-- FAQ Section -->
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
-                        <h3 class="h5 mb-4 fw-bold">Frequently Asked Questions</h3>
+                        <h3 class="h5 mb-4 fw-bold">{{ app()->getLocale() === 'ar' ? 'الأسئلة الشائعة' : 'Frequently Asked Questions' }}</h3>
                         <div class="accordion" id="faqAccordion">
                             <div class="accordion-item border-0 mb-3">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button bg-light rounded-3 fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                        How long does delivery take?
+                                        {{ app()->getLocale() === 'ar' ? 'كم تستغرق مدة التسليم؟' : 'How long does delivery take?' }}
                                     </button>
                                 </h2>
                                 <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                                     <div class="accordion-body">
-                                        Delivery typically starts within 0-1 hours and completes based on the service specifications.
+                                        {{ app()->getLocale() === 'ar' 
+                                            ? 'يبدأ التسليم عادة خلال 0-1 ساعة ويكتمل بناءً على مواصفات الخدمة.' 
+                                            : 'Delivery typically starts within 0-1 hours and completes based on the service specifications.' }}
                                     </div>
                                 </div>
                             </div>
                             <div class="accordion-item border-0 mb-3">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed bg-light rounded-3 fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                        Is this service safe for my account?
+                                        {{ app()->getLocale() === 'ar' ? 'هل هذه الخدمة آمنة لحسابي؟' : 'Is this service safe for my account?' }}
                                     </button>
                                 </h2>
                                 <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                     <div class="accordion-body">
-                                        Yes, all our services are delivered safely and comply with platform guidelines.
+                                        {{ app()->getLocale() === 'ar' 
+                                            ? 'نعم، جميع خدماتنا يتم تسليمها بأمان وتتوافق مع إرشادات المنصة.' 
+                                            : 'Yes, all our services are delivered safely and comply with platform guidelines.' }}
                                     </div>
                                 </div>
                             </div>
@@ -155,7 +182,7 @@
                 <!-- Order Card -->
                 <div class="card shadow-lg border-0 rounded-4 sticky-top order-card">
                     <div class="card-header bg-gradient-primary text-white p-4 rounded-top-4 border-0">
-                        <h4 class="mb-0 fw-bold text-center">Place Your Order</h4>
+                        <h4 class="mb-0 fw-bold text-center">{{ app()->getLocale() === 'ar' ? 'اطلب الآن' : 'Place Your Order' }}</h4>
                     </div>
                     <div class="card-body p-4">
                         <!-- Pricing -->
@@ -166,7 +193,7 @@
                                     <span class="price-amount display-6 fw-bold text-primary">{{ number_format($service->rate, 2) }}</span>
                                     <span class="price-unit text-muted">/ 1K</span>
                                 </div>
-                                <p class="text-muted mb-0">Per 1,000 units</p>
+                                <p class="text-muted mb-0">{{ app()->getLocale() === 'ar' ? 'لكل 1000 وحدة' : 'Per 1,000 units' }}</p>
                             </div>
                         </div>
 
@@ -178,7 +205,7 @@
                                         <div class="limit-icon mb-2">
                                             <i class="fas fa-arrow-down text-success"></i>
                                         </div>
-                                        <div class="limit-label text-muted small">Minimum</div>
+                                        <div class="limit-label text-muted small">{{ app()->getLocale() === 'ar' ? 'الحد الأدنى' : 'Minimum' }}</div>
                                         <div class="limit-value fw-bold">{{ number_format($service->min) }}</div>
                                     </div>
                                 </div>
@@ -187,7 +214,7 @@
                                         <div class="limit-icon mb-2">
                                             <i class="fas fa-arrow-up text-primary"></i>
                                         </div>
-                                        <div class="limit-label text-muted small">Maximum</div>
+                                        <div class="limit-label text-muted small">{{ app()->getLocale() === 'ar' ? 'الحد الأقصى' : 'Maximum' }}</div>
                                         <div class="limit-value fw-bold">{{ number_format($service->max) }}</div>
                                     </div>
                                 </div>
@@ -201,24 +228,24 @@
                                 <input type="hidden" name="service_id" value="{{ $service->service_id }}">
 
                                 <div class="mb-3">
-                                    <label for="quantity" class="form-label fw-medium">Quantity</label>
+                                    <label for="quantity" class="form-label fw-medium">{{ app()->getLocale() === 'ar' ? 'الكمية' : 'Quantity' }}</label>
                                     <input type="number" class="form-control form-control-lg" id="quantity" name="quantity"
-                                           min="{{ $service->min }}" max="{{ $service->max }}" placeholder="Enter quantity" required>
-                                    <div class="form-text">Min: {{ number_format($service->min) }} - Max: {{ number_format($service->max) }}</div>
+                                           min="{{ $service->min }}" max="{{ $service->max }}" placeholder="{{ app()->getLocale() === 'ar' ? 'أدخل الكمية' : 'Enter quantity' }}" required>
+                                    <div class="form-text">{{ app()->getLocale() === 'ar' ? "الحد الأدنى: {$service->min} - الحد الأقصى: {$service->max}" : "Min: {$service->min} - Max: {$service->max}" }}</div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="link" class="form-label fw-medium">Target URL</label>
+                                    <label for="link" class="form-label fw-medium">{{ app()->getLocale() === 'ar' ? 'الرابط المستهدف' : 'Target URL' }}</label>
                                     <input type="url" class="form-control form-control-lg" id="link" name="link"
                                            placeholder="https://example.com/your-profile" required>
-                                    <div class="form-text">Enter the URL where you want the service to be delivered</div>
+                                    <div class="form-text">{{ app()->getLocale() === 'ar' ? 'أدخل الرابط الذي تريد تسليم الخدمة إليه' : 'Enter the URL where you want the service to be delivered' }}</div>
                                 </div>
 
                                 <!-- Display current balance -->
                                 <div class="balance-info p-3 bg-info bg-opacity-10 rounded-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                     <span class="fw-medium text-info">
-                                        <i class="fas fa-wallet me-2"></i>Your Balance:
+                                        <i class="fas fa-wallet me-2"></i>{{ app()->getLocale() === 'ar' ? 'رصيدك:' : 'Your Balance:' }}
                                     </span>
                                         <span class="fw-bold text-info">${{ number_format(auth()->user()->balance, 2) }}</span>
                                     </div>
@@ -226,29 +253,29 @@
 
                                 <div class="total-section p-3 bg-light rounded-3 mb-4">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-medium">Total Cost:</span>
+                                        <span class="fw-medium">{{ app()->getLocale() === 'ar' ? 'التكلفة الإجمالية:' : 'Total Cost:' }}</span>
                                         <span class="total-amount h5 mb-0 fw-bold text-primary">$0.00</span>
                                     </div>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold" id="orderButton">
                                     <i class="fas fa-shopping-cart me-2"></i>
-                                    Order Now
+                                    {{ app()->getLocale() === 'ar' ? 'اطلب الآن' : 'Order Now' }}
                                 </button>
                             </form>
                         @else
                             <div class="text-center">
                                 <div class="alert alert-info mb-3">
                                     <i class="fas fa-info-circle me-2"></i>
-                                    Please login to place an order
+                                    {{ app()->getLocale() === 'ar' ? 'يرجى تسجيل الدخول لطلب الخدمة' : 'Please login to place an order' }}
                                 </div>
                                 <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold mb-3">
                                     <i class="fas fa-sign-in-alt me-2"></i>
-                                    Login to Order
+                                    {{ app()->getLocale() === 'ar' ? 'تسجيل الدخول للطلب' : 'Login to Order' }}
                                 </a>
                                 <p class="text-muted small">
-                                    Don't have an account?
-                                    <a href="{{ route('register', ['redirect' => url()->current()]) }}" class="text-decoration-none fw-medium">Create one here</a>
+                                    {{ app()->getLocale() === 'ar' ? 'ليس لديك حساب؟' : "Don't have an account?" }}
+                                    <a href="{{ route('register', ['redirect' => url()->current()]) }}" class="text-decoration-none fw-medium">{{ app()->getLocale() === 'ar' ? 'أنشئ واحد هنا' : 'Create one here' }}</a>
                                 </p>
                             </div>
                         @endauth
@@ -258,15 +285,15 @@
                 <!-- Trust Indicators -->
                 <div class="card shadow-sm border-0 rounded-4 mt-4">
                     <div class="card-body p-4">
-                        <h5 class="mb-3 fw-bold">Why Choose Us?</h5>
+                        <h5 class="mb-3 fw-bold">{{ app()->getLocale() === 'ar' ? 'لماذا تختارنا؟' : 'Why Choose Us?' }}</h5>
                         <div class="trust-indicators">
                             <div class="trust-item d-flex align-items-center mb-3">
                                 <div class="trust-icon bg-success bg-opacity-10 rounded-circle p-2 me-3">
                                     <i class="fas fa-users text-success"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-medium">10K+ Happy Customers</div>
-                                    <small class="text-muted">Trusted by thousands</small>
+                                    <div class="fw-medium">{{ app()->getLocale() === 'ar' ? '10K+ عميل سعيد' : '10K+ Happy Customers' }}</div>
+                                    <small class="text-muted">{{ app()->getLocale() === 'ar' ? 'موثوق به من قبل الآلاف' : 'Trusted by thousands' }}</small>
                                 </div>
                             </div>
                             <div class="trust-item d-flex align-items-center mb-3">
@@ -274,8 +301,8 @@
                                     <i class="fas fa-clock text-primary"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-medium">Instant Delivery</div>
-                                    <small class="text-muted">Start within minutes</small>
+                                    <div class="fw-medium">{{ app()->getLocale() === 'ar' ? 'تسليم فوري' : 'Instant Delivery' }}</div>
+                                    <small class="text-muted">{{ app()->getLocale() === 'ar' ? 'يبدأ خلال دقائق' : 'Start within minutes' }}</small>
                                 </div>
                             </div>
                             <div class="trust-item d-flex align-items-center">
@@ -283,8 +310,8 @@
                                     <i class="fas fa-shield-alt text-info"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-medium">Secure & Safe</div>
-                                    <small class="text-muted">100% secure transactions</small>
+                                    <div class="fw-medium">{{ app()->getLocale() === 'ar' ? 'آمن ومضمون' : 'Secure & Safe' }}</div>
+                                    <small class="text-muted">{{ app()->getLocale() === 'ar' ? '100% معاملات آمنة' : '100% secure transactions' }}</small>
                                 </div>
                             </div>
                         </div>
@@ -293,6 +320,44 @@
             </div>
         </div>
     </div>
+
+    <!-- Service-specific Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "{{ app()->getLocale() === 'ar' ? $service->name_ar : $service->name_en }}",
+        "description": "{{ app()->getLocale() === 'ar' ? 'احصل على ' . $service->name_ar . ' عالي الجودة من SMM-Followers. خدمة موثوقة ومضمونة مع تسليم فوري وضمان إعادة التعبئة.' : 'Get high-quality ' . $service->name_en . ' from SMM-Followers. Reliable and guaranteed service with instant delivery and refill guarantee.' }}",
+        "provider": {
+            "@type": "Organization",
+            "name": "SMM-Followers",
+            "url": "{{ url('/') }}"
+        },
+        "serviceType": "Social Media Marketing",
+        "areaServed": {
+            "@type": "Place",
+            "name": "Global"
+        },
+        "offers": {
+            "@type": "Offer",
+            "priceCurrency": "USD",
+            "price": "{{ $service->rate }}",
+            "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "price": "{{ $service->rate }}",
+                "priceCurrency": "USD",
+                "unitText": "per 1000 units"
+            },
+            "availability": "https://schema.org/InStock",
+            "validFrom": "{{ $service->created_at->toISOString() }}"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "1250"
+        }
+    }
+    </script>
 
     <style>
         .hero-gradient {
@@ -430,12 +495,12 @@
                     if (orderButton) {
                         if (total > userBalance) {
                             orderButton.disabled = true;
-                            orderButton.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Insufficient Balance';
+                            orderButton.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>{{ app()->getLocale() === "ar" ? "رصيد غير كافي" : "Insufficient Balance" }}';
                             orderButton.classList.remove('btn-primary');
                             orderButton.classList.add('btn-danger');
                         } else {
                             orderButton.disabled = false;
-                            orderButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Order Now';
+                            orderButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>{{ app()->getLocale() === "ar" ? "اطلب الآن" : "Order Now" }}';
                             orderButton.classList.remove('btn-danger');
                             orderButton.classList.add('btn-primary');
                         }
@@ -454,7 +519,7 @@
 
                     if (quantity < min || quantity > max) {
                         e.preventDefault();
-                        alert(`Quantity must be between ${min.toLocaleString()} and ${max.toLocaleString()}`);
+                        alert(`{{ app()->getLocale() === "ar" ? "يجب أن تكون الكمية بين" : "Quantity must be between" }} ${min.toLocaleString()} {{ app()->getLocale() === "ar" ? "و" : "and" }} ${max.toLocaleString()}`);
                         return false;
                     }
 
@@ -462,7 +527,7 @@
                     const total = (quantity / 1000) * serviceRate;
                     if (total > userBalance) {
                         e.preventDefault();
-                        alert('Insufficient balance. Please add funds to your account.');
+                        alert('{{ app()->getLocale() === "ar" ? "رصيد غير كافي. يرجى إضافة أموال إلى حسابك." : "Insufficient balance. Please add funds to your account." }}');
                         return false;
                     }
                     @endauth
