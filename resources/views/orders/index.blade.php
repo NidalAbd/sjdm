@@ -206,7 +206,22 @@
                                         </td>
                                         
                                         <td class="text-end">{{ $order->quantity }}</td>
-                                        <td class="text-end">${{ number_format($order->charge, 2) }}</td>
+                                        <td class="text-end">
+                                            @if($order->system_status === 'refunded' && $order->refunded_percent)
+                                                @php
+                                                    $refundedAmt = ($order->charge * $order->refunded_percent) / 100;
+                                                    $remainingAmt = $order->charge - $refundedAmt;
+                                                @endphp
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" 
+                                                      title="Original: ${{ number_format($order->charge, 2) }} | Refunded: ${{ number_format($refundedAmt, 2) }}">
+                                                    <s class="text-muted">${{ number_format($order->charge, 2) }}</s>
+                                                    <br>
+                                                    <small class="text-success">${{ number_format($remainingAmt, 2) }}</small>
+                                                </span>
+                                            @else
+                                                ${{ number_format($order->charge, 2) }}
+                                            @endif
+                                        </td>
                                         <td class="text-end">{{ $order->start_count }}</td>
                                         <td class="text-end">{{ $order->remains }}</td>
                                         <td>{{ $order->created_at->format('Y-m-d') }}</td>
@@ -222,6 +237,19 @@
                                             <span class="badge {{ $order->system_status === 'refunded' ? 'bg-success' : ($order->system_status === 'canceled' ? 'bg-danger' : 'bg-info') }} text-uppercase">
                                                 {{ $order->system_status ?? '-' }}
                                             </span>
+                                            @if($order->system_status === 'refunded' && $order->refunded_percent)
+                                                <br>
+                                                <small class="text-success">
+                                                    @php
+                                                        $refundedAmount = ($order->charge * $order->refunded_percent) / 100;
+                                                    @endphp
+                                                    ${{ number_format($refundedAmount, 2) }} ({{ number_format($order->refunded_percent, 1) }}%)
+                                                </small>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-check-circle"></i> Refunded
+                                                </small>
+                                            @endif
                                         </td>
                                         <td class="support-status-cell">
                                             @if($hasSupportTicket)
@@ -277,10 +305,12 @@
                                                         </form>
                                                     @endif
                                                     
-                                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
-                                                        <i class="fas fa-dollar-sign"></i>
-                                                    </button>
-                                                    @if(strtolower($order->status) === 'partial' && $quickSuggestedRefund > 0)
+                                                    @if($order->system_status !== 'refunded')
+                                                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#refundModal{{ $order->id }}" title="Refund">
+                                                            <i class="fas fa-dollar-sign"></i>
+                                                        </button>
+                                                    @endif
+                                                    @if(strtolower($order->status) === 'partial' && $quickSuggestedRefund > 0 && $order->system_status !== 'refunded')
                                                         <form action="{{ route('orders.refund', $order->id) }}" method="POST">
                                                             @csrf
                                                             <input type="hidden" name="amount" value="{{ number_format($quickSuggestedRefund, 2, '.', '') }}">
@@ -382,6 +412,21 @@
                                                             <div class="small text-muted">API Order ID</div>
                                                             <div class="fw-semibold">{{ $order->api_order_id ?? '-' }}</div>
                                                         </div>
+                                                        @if($order->system_status === 'refunded' && $order->refunded_percent)
+                                                        <div class="col-md-12 mt-3">
+                                                            <div class="alert alert-success mb-0">
+                                                                <div class="small text-muted">Refund Details</div>
+                                                                @php
+                                                                    $refundedAmount = ($order->charge * $order->refunded_percent) / 100;
+                                                                @endphp
+                                                                <div class="fw-semibold">
+                                                                    <i class="fas fa-check-circle"></i> 
+                                                                    Refunded: ${{ number_format($refundedAmount, 2) }} 
+                                                                    ({{ number_format($order->refunded_percent, 1) }}% of ${{ number_format($order->charge, 2) }})
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -774,6 +819,12 @@
 @section('js')
 <script>
     console.log('Manage Orders page loaded');
+    
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
             const toast = document.createElement('div');

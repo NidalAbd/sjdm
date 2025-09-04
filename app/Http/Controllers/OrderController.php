@@ -338,6 +338,11 @@ class OrderController extends Controller
             abort(403);
         }
 
+        // Check if order is already refunded
+        if ($order->system_status === 'refunded') {
+            return back()->with('error', 'This order has already been refunded.');
+        }
+
         $request->validate([
             'amount' => 'required|numeric|min:0'
         ]);
@@ -345,6 +350,11 @@ class OrderController extends Controller
         $amount = (float) $request->input('amount');
         if ($amount <= 0) {
             return back()->with('error', 'Refund amount must be greater than zero.');
+        }
+        
+        // Check if refund amount exceeds order charge
+        if ($amount > $order->charge) {
+            return back()->with('error', 'Refund amount cannot exceed the original order charge.');
         }
 
         $user = $order->user;
@@ -360,10 +370,14 @@ class OrderController extends Controller
             'description' => 'Refund for order ID: ' . $order->id,
             'currency' => 'USD',
         ];
-        // Credit user's balance
+        // Credit user's balance through transaction
         if ($user) {
+            $oldBalance = $user->balance;
             $user->balance += $amount;
             $user->save();
+            
+            Log::info("Refund processed for order {$order->id}: Amount: $amount, Old Balance: $oldBalance, New Balance: {$user->balance}");
+            
             $user->createTransactionAndNotify($transactionData);
         }
 
