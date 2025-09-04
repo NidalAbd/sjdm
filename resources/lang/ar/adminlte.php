@@ -62,6 +62,32 @@ return [
     'bonus_offer_message' => 'عرض المكافأة! احصل على مكافأة بقيمة 100 دولار من خلال إحالة 50 مستخدمًا نشطًا. احصل على كود الإحالة الخاص بك من إعدادات ملفك الشخصي وشاركه مع أصدقائك!',
     'referrals' => 'الإحالات',
 
+    // ========================= Rate Management =========================
+    'bulk_rate_management' => 'إدارة الأسعار المجمعة',
+    'percentage' => 'النسبة المئوية',
+    'operation' => 'العملية',
+    'increase' => 'زيادة',
+    'decrease' => 'تقليل',
+    'multiply' => 'ضرب',
+    'update_all_rates' => 'تحديث جميع الأسعار',
+    'get_stats' => 'الحصول على الإحصائيات',
+    'rate_updated_successfully' => 'تم تحديث السعر بنجاح!',
+    'rates_updated_successfully' => 'تم تحديث الأسعار بنجاح!',
+    'confirm_bulk_update' => 'هل أنت متأكد من أنك تريد {operation} جميع الأسعار بنسبة {percentage}%؟ لا يمكن التراجع عن هذا الإجراء.',
+    'total_services' => 'إجمالي الخدمات',
+    'avg_rate' => 'متوسط السعر',
+    'min_rate' => 'أقل سعر',
+    'max_rate' => 'أعلى سعر',
+    'avg_cost' => 'متوسط التكلفة',
+    'total_margin' => 'إجمالي الهامش',
+    'enter_valid_percentage' => 'يرجى إدخال نسبة مئوية صحيحة',
+    'enter_valid_number' => 'يرجى إدخال رقم موجب صحيح',
+    'error_updating_rate' => 'خطأ في تحديث السعر',
+    'error_updating_rates' => 'خطأ في تحديث الأسعار',
+    'error_loading_stats' => 'خطأ في تحميل الإحصائيات',
+    'updating' => 'جاري التحديث',
+    'loading' => 'جاري التحميل',
+
     // ========================= Breadcrumbs =========================
     'breadcrumbs' => [
         'users' => 'المستخدمين',

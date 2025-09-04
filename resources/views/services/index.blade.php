@@ -5,6 +5,87 @@
 
 @section('title', __('adminlte.manage_services'))
 
+@section('css')
+<style>
+    .rate-editable {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .rate-editable .rate-input {
+        width: 120px;
+        display: none;
+    }
+    
+    .rate-editable .edit-rate-btn,
+    .rate-editable .save-rate-btn,
+    .rate-editable .cancel-rate-btn {
+        margin-left: 5px;
+        display: none;
+    }
+    
+    .rate-editable:hover .edit-rate-btn {
+        display: inline-block;
+    }
+    
+    .rate-display {
+        font-weight: bold;
+        color: #007bff;
+    }
+    
+    .bulk-rate-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .bulk-rate-section .card-header {
+        background: rgba(255,255,255,0.1);
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .bulk-rate-section .form-control {
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.1);
+        color: white;
+    }
+    
+    .bulk-rate-section .form-control::placeholder {
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .bulk-rate-section .form-control:focus {
+        background: rgba(255,255,255,0.2);
+        border-color: rgba(255,255,255,0.5);
+        color: white;
+        box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+    }
+    
+    .bulk-rate-section .form-label {
+        color: rgba(255,255,255,0.9);
+        font-weight: 600;
+    }
+    
+    .stats-display {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 0.375rem;
+    }
+    
+    .stats-display .row > div {
+        padding: 10px;
+        border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .stats-display .row > div:last-child {
+        border-right: none;
+    }
+    
+    .stats-display strong {
+        color: rgba(255,255,255,0.9);
+    }
+</style>
+@endsection
+
 @section('content_header')
     @include('partials.breadcrumbs')
     <h1 class="text-primary">{{ __('adminlte.manage_services') }}</h1>
@@ -19,7 +100,7 @@
                     @can('assign_role')
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <div class="card border-primary">
+                            <div class="card border-primary bulk-rate-section">
                                 <div class="card-header bg-primary text-white">
                                     <h5 class="mb-0"><i class="fas fa-cogs"></i> {{ __('adminlte.bulk_rate_management') }}</h5>
                                 </div>
@@ -52,7 +133,7 @@
                                     </div>
                                     <div class="row mt-3" id="statsDisplay" style="display: none;">
                                         <div class="col-md-12">
-                                            <div class="alert alert-info">
+                                            <div class="alert alert-info stats-display">
                                                 <div id="statsContent"></div>
                                             </div>
                                         </div>
@@ -352,7 +433,7 @@
                 $saveBtn.on('click', function() {
                     const newRate = parseFloat($input.val());
                     if (isNaN(newRate) || newRate < 0) {
-                        alert('Please enter a valid positive number');
+                        alert('{{ __("adminlte.enter_valid_number") }}');
                         return;
                     }
 
@@ -374,11 +455,11 @@
                                 $editBtn.show();
                                 
                                 // Show success message
-                                showAlert('success', 'Rate updated successfully!');
+                                showAlert('success', '{{ __("adminlte.rate_updated_successfully") }}');
                             }
                         },
                         error: function(xhr) {
-                            alert('Error updating rate: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                            alert('{{ __("adminlte.error_updating_rate") }}: ' + (xhr.responseJSON?.message || 'Unknown error'));
                         }
                     });
                 });
@@ -397,17 +478,17 @@
                 const operation = $('#operationSelect').val();
 
                 if (isNaN(percentage)) {
-                    alert('Please enter a valid percentage');
+                    alert('{{ __("adminlte.enter_valid_percentage") }}');
                     return;
                 }
 
-                if (!confirm(`Are you sure you want to ${operation} all rates by ${percentage}%? This action cannot be undone.`)) {
+                if (!confirm(`{{ __("adminlte.confirm_bulk_update") }}`.replace('{operation}', operation).replace('{percentage}', percentage))) {
                     return;
                 }
 
                 const $btn = $(this);
                 const originalText = $btn.html();
-                $btn.html('<i class="fas fa-spinner fa-spin"></i> Updating...').prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> {{ __("adminlte.updating") }}...').prop('disabled', true);
 
                 $.ajax({
                     url: '{{ route("services.updateAllRates") }}',
@@ -427,7 +508,7 @@
                         }
                     },
                     error: function(xhr) {
-                        alert('Error updating rates: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                        alert('{{ __("adminlte.error_updating_rates") }}: ' + (xhr.responseJSON?.message || 'Unknown error'));
                     },
                     complete: function() {
                         $btn.html(originalText).prop('disabled', false);
@@ -439,7 +520,7 @@
             $('#getStatsBtn').on('click', function() {
                 const $btn = $(this);
                 const originalText = $btn.html();
-                $btn.html('<i class="fas fa-spinner fa-spin"></i> Loading...').prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> {{ __("adminlte.loading") }}...').prop('disabled', true);
 
                 $.ajax({
                     url: '{{ route("services.rateStats") }}',
@@ -448,22 +529,22 @@
                         const statsHtml = `
                             <div class="row">
                                 <div class="col-md-2">
-                                    <strong>Total Services:</strong> ${response.total_services}
+                                    <strong>{{ __("adminlte.total_services") }}:</strong> ${response.total_services}
                                 </div>
                                 <div class="col-md-2">
-                                    <strong>Avg Rate:</strong> $${parseFloat(response.avg_rate || 0).toFixed(4)}
+                                    <strong>{{ __("adminlte.avg_rate") }}:</strong> $${parseFloat(response.avg_rate || 0).toFixed(4)}
                                 </div>
                                 <div class="col-md-2">
-                                    <strong>Min Rate:</strong> $${parseFloat(response.min_rate || 0).toFixed(4)}
+                                    <strong>{{ __("adminlte.min_rate") }}:</strong> $${parseFloat(response.min_rate || 0).toFixed(4)}
                                 </div>
                                 <div class="col-md-2">
-                                    <strong>Max Rate:</strong> $${parseFloat(response.max_rate || 0).toFixed(4)}
+                                    <strong>{{ __("adminlte.max_rate") }}:</strong> $${parseFloat(response.max_rate || 0).toFixed(4)}
                                 </div>
                                 <div class="col-md-2">
-                                    <strong>Avg Cost:</strong> $${parseFloat(response.avg_cost || 0).toFixed(4)}
+                                    <strong>{{ __("adminlte.avg_cost") }}:</strong> $${parseFloat(response.avg_cost || 0).toFixed(4)}
                                 </div>
                                 <div class="col-md-2">
-                                    <strong>Total Margin:</strong> $${parseFloat(response.total_margin || 0).toFixed(4)}
+                                    <strong>{{ __("adminlte.total_margin") }}:</strong> $${parseFloat(response.total_margin || 0).toFixed(4)}
                                 </div>
                             </div>
                         `;
@@ -471,7 +552,7 @@
                         $('#statsDisplay').show();
                     },
                     error: function(xhr) {
-                        alert('Error loading statistics: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                        alert('{{ __("adminlte.error_loading_stats") }}: ' + (xhr.responseJSON?.message || 'Unknown error'));
                     },
                     complete: function() {
                         $btn.html(originalText).prop('disabled', false);

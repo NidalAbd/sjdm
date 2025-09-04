@@ -115,6 +115,8 @@ return [
     'error_updating_rate' => 'Error updating rate',
     'error_updating_rates' => 'Error updating rates',
     'error_loading_stats' => 'Error loading statistics',
+    'updating' => 'Updating',
+    'loading' => 'Loading',
 
     // ========================= Breadcrumbs =========================
     'breadcrumbs' => [
@@ -838,5 +840,10 @@ return [
     'step_get_confirmation_desc' => 'Balance will be added to your account',
     'open_whatsapp' => 'Open WhatsApp',
     'admin_whatsapp_number' => '+971557830054',
+    'error_updating_rate' => 'Error updating rate',
+    'error_updating_rates' => 'Error updating rates',
+    'error_loading_stats' => 'Error loading statistics',
+    'updating' => 'Updating',
+    'loading' => 'Loading',
 
 ];
