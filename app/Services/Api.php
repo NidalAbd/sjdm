@@ -16,7 +16,7 @@ class Api
         $this->api_key = config('services.smmcpan.key');
     }
 
-    /** Add order */
+    /** Add ordaaer */
     public function order($data)
     {
         $post = array_merge(['key' => $this->api_key, 'action' => 'add'], $data);
