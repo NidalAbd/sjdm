@@ -259,7 +259,7 @@ jobs:
           http_code=$(echo "$response" | grep "HTTPSTATUS" | cut -d':' -f2)
 
           if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 404 ]; then
-            echo "✅ Setup script executed (returns 404 after self-deletion, which is expected)"
+            echo "✅ Setup script executed (return 404 after self-deletion, which is expected)"
           else
             echo "⚠️ Setup returned HTTP $http_code - may need manual check"
           fi
