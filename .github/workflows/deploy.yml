@@ -4,38 +4,45 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug - List files
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, json, bcmath, openssl, pdo, tokenizer
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Create deployment package
         run: |
-          echo "=== Current directory ==="
-          pwd
-          echo "=== Filess in root ==="
+          echo "=== Deployment package ready ==="
           ls -la
-          echo "=== Composer files ==="
-          ls -la composer.*
-
-      - name: Debug - Check PHP
-        run: |
-          echo "=== PHP version ==="
-          php --version
-          echo "=== Composer version ==="
-          composer --version
-
-      - name: Debug - Check dependencies
-        run: |
-          echo "=== Composer.json content ==="
-          cat composer.json
-          echo "=== Composer.lock exists ==="
-          ls -la composer.lock
+          echo "=== Public directory ==="
+          ls -la public/
 
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -51,12 +58,22 @@ jobs:
             **/node_modules/**
             **/tests/**
             **/.env
+            **/.env.example
             **/storage/framework/cache/**
             **/storage/framework/sessions/**
             **/storage/framework/views/**
             **/storage/logs/**
-            **/storage/app/public/**
             **/bootstrap/cache/**
+            **/.editorconfig
+            **/.gitignore
+            **/.gitattributes
+            **/phpunit.xml
+            **/package*.json
+            **/vite.config.*
+            **/webpack.mix.js
+            **/resources/js/**
+            **/resources/css/**
+            **/resources/sass/**
           dangerous-clean-slate: false
           log-level: verbose
 
@@ -70,8 +87,7 @@ jobs:
           server-dir: /public_html/
           exclude: |
             **/.git*
-            **/.github*
-            **/node_modules/**
-            **/tests/**
+            **/.gitignore
+            **/hot
           dangerous-clean-slate: false
           log-level: verbose
