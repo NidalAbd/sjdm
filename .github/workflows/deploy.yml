@@ -44,14 +44,22 @@ jobs:
           echo "=== Public directory ==="
           ls -la public/
 
+      - name: Debug FTP Connection
+        run: |
+          echo "Testing FTP connection..."
+          echo "Note: Server address should be hostname only (no ftp:// prefix)"
+          echo "Example: ftp.yourdomain.com or 123.45.67.89"
+
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
           local-dir: ./
-          server-dir: /
+          server-dir: ./
           exclude: |
             **/.git*
             **/.github*
@@ -83,8 +91,10 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
           local-dir: ./public/
-          server-dir: /public_html/
+          server-dir: ./public_html/
           exclude: |
             **/.git*
             **/.gitignore
