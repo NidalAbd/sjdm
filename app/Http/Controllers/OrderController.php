@@ -41,7 +41,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Get the localized field based on the current language.
+     * Get the localized field bawsed on the current language.
      *
      * @param string $field
      * @return string
@@ -351,7 +351,7 @@ class OrderController extends Controller
         if ($amount <= 0) {
             return back()->with('error', 'Refund amount must be greater than zero.');
         }
-        
+
         // Check if refund amount exceeds order charge
         if ($amount > $order->charge) {
             return back()->with('error', 'Refund amount cannot exceed the original order charge.');
@@ -375,9 +375,9 @@ class OrderController extends Controller
             $oldBalance = $user->balance;
             $user->balance += $amount;
             $user->save();
-            
+
             Log::info("Refund processed for order {$order->id}: Amount: $amount, Old Balance: $oldBalance, New Balance: {$user->balance}");
-            
+
             $user->createTransactionAndNotify($transactionData);
         }
 
