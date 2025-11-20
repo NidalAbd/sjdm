@@ -23,13 +23,21 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo, curl, zip, bcmath
           tools: composer:v2
 
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install Composer dependencies
+      - name: Install Composer dependencies (for verification only - not deployed)
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
       - name: Install NPM dependencies
@@ -46,9 +54,10 @@ jobs:
 
       - name: Prepare Laravel files (outside public_html)
         run: |
-          # Copy all Laravel files EXCEPT public folder
+          # Copy all Laravel files EXCEPT public folder and vendor (vendor uploaded manually via SSH)
           rsync -av \
             --exclude='public' \
+            --exclude='vendor' \
             --exclude='node_modules' \
             --exclude='.git' \
             --exclude='deploy_laravel' \
@@ -232,9 +241,13 @@ jobs:
           local-dir: ./deploy_laravel/
           server-dir: ./domains/sjdm.store/
           exclude: |
-            public/**
-            public_html/**
-          log-level: verbose
+            **/.git*
+            **/.git*/**
+            **/vendor/**
+            **/node_modules/**
+            **/public/**
+            **/public_html/**
+          log-level: minimal
 
       - name: Deploy public files to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -246,7 +259,7 @@ jobs:
           protocol: ftp
           local-dir: ./deploy_public/
           server-dir: ./domains/sjdm.store/public_html/
-          log-level: verbose
+          log-level: minimal
 
       - name: Run post-deployment setup
         run: |
