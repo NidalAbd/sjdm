@@ -90,9 +90,11 @@ jobs:
 
       - name: Update index.php for correct paths
         run: |
-          # Update paths in index.php to point to Laravel files one level up from public_html
-          sed -i "s|require __DIR__.'/../vendor/autoload.php';|require __DIR__.'/../vendor/autoload.php';|g" deploy_public/index.php
-          sed -i "s|\$app = require_once __DIR__.'/../bootstrap/app.php';|\$app = require_once __DIR__.'/../bootstrap/app.php';|g" deploy_public/index.php
+          # Update paths in index.php to point to Laravel files in domains/talbna.cloud/
+          # public_html/index.php needs to reference ../domains/talbna.cloud/
+          sed -i "s|__DIR__.'/../vendor/autoload.php'|__DIR__.'/../domains/talbna.cloud/vendor/autoload.php'|g" deploy_public/index.php
+          sed -i "s|__DIR__.'/../bootstrap/app.php'|__DIR__.'/../domains/talbna.cloud/bootstrap/app.php'|g" deploy_public/index.php
+          sed -i "s|__DIR__.'/../storage/framework/maintenance.php'|__DIR__.'/../domains/talbna.cloud/storage/framework/maintenance.php'|g" deploy_public/index.php
 
       - name: Update environment for production
         run: |
@@ -123,8 +125,8 @@ jobs:
           <?php
           echo "Starting post-deployment setup...\n";
 
-          $laravelPath = dirname(__DIR__); // One level up from public_html
-          $publicPath = __DIR__;
+          $laravelPath = dirname(__DIR__) . '/domains/talbna.cloud'; // Laravel files in domains/talbna.cloud/
+          $publicPath = __DIR__; // public_html/
           $storagePath = $laravelPath . '/storage/app/public';
 
           // Change to Laravel directory for artisan commands
@@ -239,7 +241,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./deploy_laravel/
-          server-dir: ../
+          server-dir: domains/talbna.cloud/
           exclude: |
             **/.git*
             **/.git*/**
@@ -258,7 +260,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./deploy_public/
-          server-dir: ../
+          server-dir: public_html/
           log-level: minimal
 
       - name: Run post-deployment setup
