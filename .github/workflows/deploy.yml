@@ -241,7 +241,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./deploy_laravel/
-          server-dir: domains/smm-followerss.com/
+          server-dir: ../domains/smm-followerss.com/
           exclude: |
             **/.git*
             **/.git*/**
@@ -260,7 +260,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./deploy_public/
-          server-dir: public_html/
+          server-dir: ./
           log-level: minimal
 
       - name: Run post-deployment setup
