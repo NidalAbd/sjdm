@@ -239,7 +239,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./deploy_laravel/
-          server-dir: ./domains/sjdm.store/
+          server-dir: .
           exclude: |
             **/.git*
             **/.git*/**
