@@ -241,10 +241,9 @@ jobs:
           port: 21
           protocol: ftp
           # IMPORTANT: FTP root must be set to home directory (not public_html) in Hostinger
-          # If FTP root is public_html/, this will create public_html/domains/smm-followerss.com/
-          # To fix: In Hostinger panel, ensure FTP account root is home directory, not public_html
+          # If FTP root is public_html/, we need to go up one level to access domains/
           local-dir: ./deploy_laravel/
-          server-dir: domains/smm-followerss.com/
+          server-dir: ../domains/smm-followerss.com/
           exclude: |
             **/.git*
             **/.git*/**
@@ -263,7 +262,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./deploy_public/
-          server-dir: public_html/
+          server-dir: ./
           log-level: minimal
 
       - name: Run post-deployment setup
