@@ -258,7 +258,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./deploy_public/
-          server-dir: ./domains/sjdm.store/public_html/
+          server-dir: ./
           log-level: minimal
 
       - name: Run post-deployment setup
