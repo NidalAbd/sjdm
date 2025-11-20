@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('adminlte.dashboard'))
+@section('title', __('adminlte.dasxhboard'))
 
 @section('content_header')
     @include('partials.breadcrumbs')
