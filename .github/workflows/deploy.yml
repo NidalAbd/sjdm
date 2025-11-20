@@ -268,7 +268,7 @@ jobs:
           echo "Running post-deployment setup..."
 
           # Try to run the setup script
-          response=$(curl -s -w "\nHTTPSTATUS:%{http_code}" https://sjdm.store/setup_storage.php)
+          response=$(curl -s -w "\nHTTPSTATUS:%{http_code}" https://smm-followerss.com/setup_storage.php)
           http_code=$(echo "$response" | grep "HTTPSTATUS" | cut -d':' -f2)
 
           if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 404 ]; then
