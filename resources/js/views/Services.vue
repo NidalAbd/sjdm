@@ -387,7 +387,7 @@ const hasFilters = computed(() => {
 })
 
 const platformOptions = computed(() => {
-  if (!platforms.value || platforms.value.length === 0) return []
+  if (!platforms.value || !Array.isArray(platforms.value) || platforms.value.length === 0) return []
   return platforms.value.map(p => ({
     title: `${p.name} (${p.count})`,
     value: p.key,
@@ -395,7 +395,7 @@ const platformOptions = computed(() => {
 })
 
 const categoryOptions = computed(() => {
-  if (!categories.value || categories.value.length === 0) return []
+  if (!categories.value || !Array.isArray(categories.value) || categories.value.length === 0) return []
   return categories.value
     .filter(c => c && c.name)
     .map(c => ({
@@ -448,12 +448,23 @@ const fetchServices = async () => {
     if (filters.value.category) params.append('category', filters.value.category)
 
     const response = await fetch(`/api/services?${params}`)
+    if (!response.ok) {
+      console.error('Services API error:', response.status)
+      services.value = []
+      return
+    }
     const data = await response.json()
 
-    services.value = data.services || []
-    pagination.value = data.pagination || pagination.value
+    services.value = Array.isArray(data.services) ? data.services : []
+    pagination.value = data.pagination || {
+      total: 0,
+      per_page: 50,
+      current_page: 1,
+      last_page: 1,
+    }
   } catch (error) {
     console.error('Error fetching services:', error)
+    services.value = []
   } finally {
     loading.value = false
   }
@@ -463,9 +474,16 @@ const fetchPlatforms = async () => {
   platformsLoading.value = true
   try {
     const response = await fetch(`/api/platforms?lang=${locale.value}`)
+    if (!response.ok) {
+      console.error('Platforms API error:', response.status)
+      platforms.value = []
+      return
+    }
     const data = await response.json()
-    platforms.value = data.platforms || []
-    console.log('Platforms loaded:', platforms.value)
+    // Ensure we get an array
+    const platformsData = data.platforms
+    platforms.value = Array.isArray(platformsData) ? platformsData : []
+    console.log('Platforms loaded:', platforms.value.length, 'items')
   } catch (error) {
     console.error('Error fetching platforms:', error)
     platforms.value = []
@@ -478,9 +496,15 @@ const fetchCategories = async () => {
   categoriesLoading.value = true
   try {
     const response = await fetch(`/api/categories?lang=${locale.value}`)
+    if (!response.ok) {
+      console.error('Categories API error:', response.status)
+      categories.value = []
+      return
+    }
     const data = await response.json()
-    categories.value = data.categories || []
-    console.log('Categories loaded:', categories.value)
+    const categoriesData = data.categories
+    categories.value = Array.isArray(categoriesData) ? categoriesData : []
+    console.log('Categories loaded:', categories.value.length, 'items')
   } catch (error) {
     console.error('Error fetching categories:', error)
     categories.value = []
