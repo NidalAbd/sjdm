@@ -790,8 +790,10 @@
             themeIcon.classList.toggle('fa-sun', theme === 'dark-mode');
         }
 
-        // Initialize notification system
+        // Initialize notification system only for authenticated users
+        @auth
         initializeNotifications();
+        @endauth
     });
 
     // Notification functions
@@ -801,6 +803,7 @@
     }
 
     function fetchLatestNotifications() {
+        @auth
         fetch('/notifications/latest')
             .then(response => response.json())
             .then(data => {
@@ -808,6 +811,7 @@
                 updateNotificationList(data);
             })
             .catch(error => console.error('Error fetching notifications:', error));
+        @endauth
     }
 
     function updateNotificationBadge(count) {

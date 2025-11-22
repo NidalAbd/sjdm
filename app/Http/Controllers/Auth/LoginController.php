@@ -38,4 +38,15 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
+    /**
+     * Get the post-login redirect path.
+     * Always redirect to /home, ignoring any "intended" URL stored in session.
+     * This prevents redirects to API endpoints like /notifications/latest.
+     *
+     * @return string
+     */
+    public function redirectPath()
+    {
+        return '/home';
+    }
 }
