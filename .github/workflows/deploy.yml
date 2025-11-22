@@ -1,4 +1,4 @@
-name: Deploy Laravel to Hostinger
+name: Deploy Laravel to Hostinger - smm-followerss.com
 
 on:
   push:
@@ -8,133 +8,170 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
-
-    environment: production
+    timeout-minutes: 60
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo, curl, zip, bcmath
-          tools: composer:v2
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-
-      - name: Install Composer dependencies (for verification only - not deployed)
-        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
-      - name: Install NPM dependencies
-        run: npm ci
 
       - name: Build assets
-        run: npm run build
-
-      - name: Create deployment structure
         run: |
-          # Create two separate deployment directories
-          mkdir -p deploy_laravel  # For Laravel files (goes to domain root)
-          mkdir -p deploy_public   # For public files (goes to public_html)
+          npm ci
+          npm run build
 
-      - name: Prepare Laravel files (outside public_html)
+      - name: Create deploy folders
         run: |
-          # Copy all Laravel files EXCEPT public folder and vendor (vendor uploaded manually via SSH)
-          rsync -av \
+          mkdir -p deploy_laravel
+          mkdir -p deploy_public
+
+      - name: Prepare deploy_laravel (exclude public & vendor)
+        run: |
+          rsync -av --delete \
             --exclude='public' \
             --exclude='vendor' \
             --exclude='node_modules' \
             --exclude='.git' \
-            --exclude='deploy_laravel' \
-            --exclude='deploy_public' \
-            --exclude='tests' \
             --exclude='.github' \
             --exclude='README.md' \
-            --exclude='phpunit.xml' \
-            --exclude='vite.config.mjs' \
-            --exclude='webpack.mix.js' \
-            --exclude='package*.json' \
-            --exclude='.editorconfig' \
-            --exclude='.gitignore' \
-            --exclude='.gitattributes' \
+            --exclude='.env*' \
+            --exclude='deploy_laravel' \
+            --exclude='deploy_public' \
             ./ deploy_laravel/
+          # Ensure composer.json and composer.lock are included (needed for composer install on server)
+          cp composer.json deploy_laravel/ 2>/dev/null || true
+          cp composer.lock deploy_laravel/ 2>/dev/null || true
 
-      - name: Prepare public files (for public_html)
+      - name: Prepare deploy_public
         run: |
-          # Copy public folder contents to deploy_public
-          cp -r public/* deploy_public/
-          # Copy hidden files if any
-          cp -r public/.[^.]* deploy_public/ 2>/dev/null || true
+          rm -rf deploy_public/*
+          cp -a public/. deploy_public/
+          rm -f deploy_public/storage || true
+          # Verify files are copied
+          echo "Files in deploy_public:"
+          ls -la deploy_public/ | head -20
+          echo "Checking for index.php:"
+          ls -la deploy_public/index.php || echo "WARNING: index.php not found!"
 
-          # Remove any existing storage symlink
-          if [ -L "deploy_public/storage" ]; then
-            rm deploy_public/storage
-          elif [ -d "deploy_public/storage" ]; then
-            rm -rf deploy_public/storage
-          fi
-
-      - name: Update index.php for correct paths
+      - name: Create post-deployment setup script
         run: |
-          # Update paths in index.php to point to Laravel files in domains/smm-followerss.com/
-          # public_html/index.php needs to reference ../domains/smm-followerss.com/
-          sed -i "s|__DIR__.'/../vendor/autoload.php'|__DIR__.'/../domains/smm-followerss.com/vendor/autoload.php'|g" deploy_public/index.php
-          sed -i "s|__DIR__.'/../bootstrap/app.php'|__DIR__.'/../domains/smm-followerss.com/bootstrap/app.php'|g" deploy_public/index.php
-          sed -i "s|__DIR__.'/../storage/framework/maintenance.php'|__DIR__.'/../domains/smm-followerss.com/storage/framework/maintenance.php'|g" deploy_public/index.php
-
-      - name: Update environment for production
-        run: |
-          cd deploy_laravel
-
-          # Copy .env.example to .env if .env doesn't exist
-          if [ ! -f .env ]; then
-            cp .env.example .env
-          fi
-
-          # Update .env for production
-          sed -i 's/APP_ENV=local/APP_ENV=production/' .env
-          sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
-          sed -i 's|APP_URL=http://localhost|APP_URL=https://sjdm.store|' .env
-          sed -i 's/LOG_LEVEL=debug/LOG_LEVEL=error/' .env
-          sed -i 's/DB_HOST=127.0.0.1/DB_HOST=localhost/' .env
-          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=u252000670_sjdm/' .env
-          sed -i 's/DB_USERNAME=root/DB_USERNAME=u252000670_sjdm/' .env
-
-          # Set database password from GitHub secret
-          if [ ! -z "${{ secrets.DB_PASSWORD }}" ]; then
-            sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/" .env
-          fi
-
-      - name: Create post-deployment script
-        run: |
-          cat > deploy_public/setup_storage.php << 'EOF'
+          cat > deploy_public/setup_deployment.php << 'EOF'
           <?php
-          echo "Starting post-deployment setup...\n";
+          /**
+           * Post-deployment script to:
+           * 1. Run composer install/update
+           * 2. Create storage symlink
+           * 3. Clear Laravel caches
+           * This script will be automatically called after deployment
+           *
+           * Access this script via browser: https://smm-followerss.com/setup_deployment.php
+           */
+          error_reporting(E_ALL);
+          ini_set('display_errors', 1);
 
-          $laravelPath = dirname(__DIR__) . '/domains/smm-followerss.com'; // Laravel files in domains/smm-followerss.com/
-          $publicPath = __DIR__; // public_html/
-          $storagePath = $laravelPath . '/storage/app/public';
+          // Output as HTML for browser viewing
+          header('Content-Type: text/html; charset=utf-8');
+          echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Deployment Setup</title>';
+          echo '<style>body{font-family:monospace;background:#1a1a1a;color:#0f0;padding:20px;line-height:1.6;}';
+          echo '.error{color:#f00;}.success{color:#0f0;}.warning{color:#ff0;}</style></head><body>';
+          echo '<h1>🚀 Post-Deployment Setup</h1><pre>';
 
-          // Change to Laravel directory for artisan commands
+          echo "🚀 Starting post-deployment setup...\n\n";
+
+          // Paths relative to public_html
+          // Structure: domains/smm-followerss.com/ (Laravel files) and domains/smm-followerss.com/public_html/ (public files)
+          $publicPath = __DIR__; // domains/smm-followerss.com/public_html/ directory
+          $laravelPath = dirname($publicPath); // domains/smm-followerss.com/ (Laravel root, parent of public_html)
+
+          echo "📁 Public path: $publicPath\n";
+          echo "📁 Laravel path: $laravelPath\n\n";
+
+          // Check if Laravel directory exists
+          if (!is_dir($laravelPath)) {
+              die("❌ ERROR: Laravel directory not found at: $laravelPath\n");
+          }
+
+          // Change to Laravel directory for all operations
           chdir($laravelPath);
 
-          // Clear Laravel caches
-          echo "Clearing Laravel caches...\n";
-          $commands = [
+          // Step 1: Run Composer Install/Update
+          echo "📦 Step 1: Running composer install...\n";
+          if (file_exists('composer.json')) {
+              // Check if composer.phar exists, otherwise use global composer
+              $composerCmd = file_exists('composer.phar')
+                  ? 'php composer.phar'
+                  : 'composer';
+
+              $composerOutput = [];
+              $composerReturn = 0;
+              exec("$composerCmd install --no-dev --optimize-autoloader --no-interaction 2>&1", $composerOutput, $composerReturn);
+
+              if ($composerReturn === 0) {
+                  echo "✅ Composer install completed successfully!\n";
+              } else {
+                  echo "⚠️ Composer install returned code $composerReturn\n";
+                  echo "Output: " . implode("\n", $composerOutput) . "\n";
+                  echo "⚠️ You may need to run 'composer install' manually via SSH\n";
+              }
+          } else {
+              echo "⚠️ composer.json not found, skipping composer install\n";
+          }
+          echo "\n";
+
+          // Step 2: Create storage symlink
+          echo "🔗 Step 2: Creating storage symlink...\n";
+          $storagePath = $laravelPath . '/storage/app/public';
+          $storageLink = $publicPath . '/storage';
+
+          // Create storage/app/public if it doesn't exist
+          if (!is_dir($storagePath)) {
+              if (!mkdir($storagePath, 0755, true)) {
+                  echo "❌ ERROR: Failed to create storage directory: $storagePath\n";
+              } else {
+                  echo "✅ Created storage directory: $storagePath\n";
+              }
+          }
+
+          // Remove existing storage link/directory if it exists
+          if (file_exists($storageLink)) {
+              if (is_link($storageLink)) {
+                  if (unlink($storageLink)) {
+                      echo "✅ Removed existing symlink\n";
+                  }
+              } elseif (is_dir($storageLink)) {
+                  // Try to remove directory contents and then directory
+                  $files = array_diff(scandir($storageLink), array('.', '..'));
+                  foreach ($files as $file) {
+                      @unlink("$storageLink/$file");
+                  }
+                  if (@rmdir($storageLink)) {
+                      echo "✅ Removed existing directory\n";
+                  }
+              } else {
+                  if (@unlink($storageLink)) {
+                      echo "✅ Removed existing file\n";
+                  }
+              }
+          }
+
+          // Create the symlink
+          if (symlink($storagePath, $storageLink)) {
+              echo "✅ Storage symlink created successfully!\n";
+              echo "   Link: $storageLink -> $storagePath\n";
+          } else {
+              echo "❌ Failed to create storage symlink\n";
+              echo "   You may need to create it manually via SSH:\n";
+              echo "   ln -s $storagePath $storageLink\n";
+          }
+          echo "\n";
+
+          // Step 3: Clear Laravel caches
+          echo "🧹 Step 3: Clearing Laravel caches...\n";
+          $cacheCommands = [
               'php artisan config:clear',
               'php artisan cache:clear',
               'php artisan view:clear',
@@ -142,147 +179,144 @@ jobs:
               'php artisan optimize:clear'
           ];
 
-          foreach ($commands as $command) {
-              $output = shell_exec("$command 2>&1");
-              echo "  $command: " . ($output ? trim($output) : 'OK') . "\n";
-          }
-
-          // Remove existing storage link/directory
-          $storageLink = $publicPath . '/storage';
-          if (file_exists($storageLink)) {
-              if (is_link($storageLink)) {
-                  unlink($storageLink);
-                  echo "Removed existing storage symlink\n";
-              } elseif (is_dir($storageLink)) {
-                  // Remove directory recursively
-                  array_map('unlink', glob("$storageLink/*.*"));
-                  rmdir($storageLink);
-                  echo "Removed existing storage directory\n";
+          foreach ($cacheCommands as $command) {
+              $output = [];
+              $return = 0;
+              exec("$command 2>&1", $output, $return);
+              if ($return === 0) {
+                  echo "   ✅ $command\n";
+              } else {
+                  echo "   ⚠️ $command (returned code $return)\n";
               }
           }
+          echo "\n";
 
-          // Create storage directories if they don't exist
-          if (!file_exists($storagePath)) {
-              mkdir($storagePath, 0755, true);
-              echo "Created storage/app/public directory\n";
-          }
+          // Set permissions on storage directory
+          @chmod($storagePath, 0755);
+          @chmod($laravelPath . '/storage', 0755);
+          @chmod($laravelPath . '/bootstrap/cache', 0755);
 
-          // Create the symlink
-          if (symlink($storagePath, $storageLink)) {
-              echo "✅ Storage symlink created successfully!\n";
+          echo "✅ Post-deployment setup completed!\n\n";
+          echo "📝 Note: node_modules are NOT needed on the server.\n";
+          echo "   Only the built assets (in public/build) are deployed.\n";
+          echo "   Assets are built during GitHub Actions workflow.\n\n";
+
+          $success = true;
+          // Check if vendor directory exists
+          if (!is_dir($laravelPath . '/vendor')) {
+              echo "❌ WARNING: vendor directory still not found!\n";
+              echo "   Composer install may have failed.\n";
+              $success = false;
           } else {
-              echo "❌ Failed to create storage symlink\n";
+              echo "✅ Vendor directory exists!\n";
           }
 
-          // Run migrations (optional - remove if not needed)
-          // echo "Running migrations...\n";
-          // shell_exec('php artisan migrate --force');
+          // Check if storage symlink exists
+          if (!is_link($storageLink)) {
+              echo "⚠️ WARNING: Storage symlink not created!\n";
+              $success = false;
+          }
 
-          echo "✅ Post-deployment setup completed!\n";
-
-          // Delete this script after execution for security
-          unlink(__FILE__);
+          echo "\n";
+          if ($success) {
+              echo "✅ All checks passed! Your site should be working now.\n";
+              echo "🔒 This script will be deleted for security...\n";
+              echo "</pre></body></html>";
+              // Delete this script after successful execution
+              if (file_exists(__FILE__)) {
+                  @unlink(__FILE__);
+              }
+          } else {
+              echo "⚠️ Some issues detected. Please review the output above.\n";
+              echo "⚠️ This script will remain available for troubleshooting.\n";
+              echo "⚠️ Delete it manually after fixing issues: " . basename(__FILE__) . "\n";
+              echo "</pre></body></html>";
+          }
           EOF
 
-      - name: Set proper permissions
-        run: |
-          # Laravel files
-          find deploy_laravel -type f -exec chmod 644 {} \;
-          find deploy_laravel -type d -exec chmod 755 {} \;
-          chmod -R 775 deploy_laravel/storage deploy_laravel/bootstrap/cache 2>/dev/null || true
-
-          # Public files
-          find deploy_public -type f -exec chmod 644 {} \;
-          find deploy_public -type d -exec chmod 755 {} \;
-
-      - name: Create .htaccess for public_html
-        run: |
-          cat > deploy_public/.htaccess << 'EOF'
-          <IfModule mod_rewrite.c>
-              <IfModule mod_negotiation.c>
-                  Options -MultiViews -Indexes
-              </IfModule>
-
-              RewriteEngine On
-
-              # Force HTTPS
-              RewriteCond %{HTTPS} off
-              RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-              # Handle Authorization Header
-              RewriteCond %{HTTP:Authorization} .
-              RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-              # Redirect Trailing Slashes If Not A Folder...
-              RewriteCond %{REQUEST_FILENAME} !-d
-              RewriteCond %{REQUEST_URI} (.+)/$
-              RewriteRule ^ %1 [L,R=301]
-
-              # Send Requests To Front Controller...
-              RewriteCond %{REQUEST_FILENAME} !-d
-              RewriteCond %{REQUEST_FILENAME} !-f
-              RewriteRule ^ index.php [L]
-          </IfModule>
-
-          # Security headers
-          <IfModule mod_headers.c>
-              Header set X-Content-Type-Options "nosniff"
-              Header set X-Frame-Options "SAMEORIGIN"
-              Header set X-XSS-Protection "1; mode=block"
-          </IfModule>
-          EOF
-
-      - name: Deploy Laravel files to domain root
+      - name: Deploy Laravel files to domains/smm-followerss.com/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
           protocol: ftp
-          # IMPORTANT: FTP root must be set to home directory (not public_html) in Hostinger
-          # If FTP root is public_html/, we need to go up one level to access domains/
+          security: loose
+          port: 21
           local-dir: ./deploy_laravel/
-          server-dir: ../domains/smm-followerss.com/
+          server-dir: domains/smm-followerss.com/
           exclude: |
-            **/.git*
-            **/.git*/**
-            **/vendor/**
-            **/node_modules/**
-            **/public/**
-            **/public_html/**
+            public/**
+            vendor/**
+            node_modules/**
+            .git/**
+            .github/**
+            deploy_laravel/**
+            deploy_public/**
           log-level: minimal
+          dangerous-clean-slate: false
 
-      - name: Deploy public files to public_html
+      - name: Deploy public files to domains/smm-followerss.com/public_html/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
           protocol: ftp
+          security: loose
+          port: 21
           local-dir: ./deploy_public/
-          server-dir: ./
-          log-level: minimal
+          # Deploy public files inside the domain folder: domains/smm-followerss.com/public_html/
+          server-dir: domains/smm-followerss.com/public_html/
+          log-level: verbose
+          dangerous-clean-slate: false
 
-      - name: Run post-deployment setup
+      - name: Run post-deployment setup (composer install, storage symlink, clear cache)
         run: |
           echo "Waiting for files to sync..."
-          sleep 10
+          sleep 20
           echo "Running post-deployment setup..."
 
-          # Try to run the setup script
-          response=$(curl -s -w "\nHTTPSTATUS:%{http_code}" https://smm-followerss.com/setup_storage.php)
+          # Try to run the setup script via HTTP
+          # The script is at domains/smm-followerss.com/public_html/setup_deployment.php
+          echo "Attempting to access setup script..."
+          response=$(curl -s -w "\nHTTPSTATUS:%{http_code}" --max-time 30 https://smm-followerss.com/setup_deployment.php 2>&1 || echo "HTTPSTATUS:000")
           http_code=$(echo "$response" | grep "HTTPSTATUS" | cut -d':' -f2)
+          body=$(echo "$response" | sed '/HTTPSTATUS/d')
 
+          echo "HTTP Status: $http_code"
+          echo "Response:"
+          echo "$body"
+
+          # 200 = success, 404 = script already deleted itself (also success), 000 = connection failed, 500 = server error (might still work)
           if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 404 ]; then
-            echo "✅ Setup script executed (return 404 after self-deletion, which is expected)"
+            echo "✅ Post-deployment setup completed successfully!"
+          elif [ "$http_code" -eq 500 ]; then
+            echo "⚠️ Server returned 500, but script may have executed. Check the response above."
+            echo "⚠️ If composer install failed, you may need to run it manually via SSH:"
+            echo "   cd domains/smm-followerss.com"
+            echo "   composer install --no-dev --optimize-autoloader"
+            echo "   php artisan storage:link"
+            echo "   php artisan optimize:clear"
+          elif [ "$http_code" -eq 000 ]; then
+            echo "⚠️ Could not connect to server. Please run setup_deployment.php manually:"
+            echo "   1. Via browser: https://smm-followerss.com/setup_deployment.php"
+            echo "   2. Or via SSH:"
+            echo "      cd domains/smm-followerss.com"
+            echo "      composer install --no-dev --optimize-autoloader"
+            echo "      php artisan storage:link"
+            echo "      php artisan optimize:clear"
           else
-            echo "⚠️ Setup returned HTTP $http_code - may need manual check"
+            echo "⚠️ Setup returned HTTP $http_code - check the response above"
+            echo "⚠️ You may need to run setup_deployment.php manually: https://smm-followerss.com/setup_deployment.php"
+            echo "⚠️ Or via SSH:"
+            echo "   cd domains/smm-followerss.com"
+            echo "   composer install --no-dev --optimize-autoloader"
+            echo "   php artisan storage:link"
+            echo "   php artisan optimize:clear"
           fi
 
       - name: Cleanup
-        if: always()
         run: |
           rm -rf deploy_laravel deploy_public
-          echo "✅ Deployment completed!"
+
