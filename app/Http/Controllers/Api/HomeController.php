@@ -14,23 +14,24 @@ use Illuminate\Support\Facades\DB;
 class HomeController extends Controller
 {
     /**
-     * Platform mappings for filtering
+     * Platform mappings for filtering with aliases
      */
     private array $platforms = [
-        'instagram' => ['en' => 'Instagram', 'ar' => 'انستقرام'],
-        'facebook' => ['en' => 'Facebook', 'ar' => 'فيسبوك'],
-        'youtube' => ['en' => 'YouTube', 'ar' => 'يوتيوب'],
-        'twitter' => ['en' => 'Twitter', 'ar' => 'تويتر'],
-        'tiktok' => ['en' => 'TikTok', 'ar' => 'تيك توك'],
-        'telegram' => ['en' => 'Telegram', 'ar' => 'تيليجرام'],
-        'spotify' => ['en' => 'Spotify', 'ar' => 'سبوتيفاي'],
-        'linkedin' => ['en' => 'LinkedIn', 'ar' => 'لينكد إن'],
-        'snapchat' => ['en' => 'Snapchat', 'ar' => 'سناب شات'],
-        'twitch' => ['en' => 'Twitch', 'ar' => 'تويتش'],
-        'discord' => ['en' => 'Discord', 'ar' => 'ديسكورد'],
-        'pinterest' => ['en' => 'Pinterest', 'ar' => 'بينتريست'],
-        'soundcloud' => ['en' => 'SoundCloud', 'ar' => 'ساوند كلاود'],
-        'website' => ['en' => 'Website', 'ar' => 'موقع'],
+        'instagram' => ['en' => 'Instagram', 'ar' => 'انستقرام', 'aliases' => ['instagram', 'insta', 'ig']],
+        'facebook' => ['en' => 'Facebook', 'ar' => 'فيسبوك', 'aliases' => ['facebook', 'fb']],
+        'youtube' => ['en' => 'YouTube', 'ar' => 'يوتيوب', 'aliases' => ['youtube', 'yt']],
+        'twitter' => ['en' => 'Twitter', 'ar' => 'تويتر', 'aliases' => ['twitter', 'x']],
+        'tiktok' => ['en' => 'TikTok', 'ar' => 'تيك توك', 'aliases' => ['tiktok', 'tik tok', 'tt']],
+        'telegram' => ['en' => 'Telegram', 'ar' => 'تيليجرام', 'aliases' => ['telegram', 'tg']],
+        'spotify' => ['en' => 'Spotify', 'ar' => 'سبوتيفاي', 'aliases' => ['spotify']],
+        'linkedin' => ['en' => 'LinkedIn', 'ar' => 'لينكد إن', 'aliases' => ['linkedin']],
+        'snapchat' => ['en' => 'Snapchat', 'ar' => 'سناب شات', 'aliases' => ['snapchat', 'snap']],
+        'twitch' => ['en' => 'Twitch', 'ar' => 'تويتش', 'aliases' => ['twitch']],
+        'discord' => ['en' => 'Discord', 'ar' => 'ديسكورد', 'aliases' => ['discord']],
+        'pinterest' => ['en' => 'Pinterest', 'ar' => 'بينتريست', 'aliases' => ['pinterest']],
+        'soundcloud' => ['en' => 'SoundCloud', 'ar' => 'ساوند كلاود', 'aliases' => ['soundcloud']],
+        'threads' => ['en' => 'Threads', 'ar' => 'ثريدز', 'aliases' => ['threads']],
+        'website' => ['en' => 'Website', 'ar' => 'موقع', 'aliases' => ['website', 'traffic', 'web']],
     ];
 
     /**
@@ -61,10 +62,24 @@ class HomeController extends Controller
             $query->where($categoryField, $request->category);
         }
 
-        // Apply platform filter
+        // Apply platform filter using aliases
         if ($request->filled('platform') && $request->platform !== 'all') {
-            $platformName = $this->platforms[$request->platform][$lang] ?? $request->platform;
-            $query->where($categoryField, 'like', '%' . $platformName . '%');
+            $platformKey = $request->platform;
+            if (isset($this->platforms[$platformKey])) {
+                $platform = $this->platforms[$platformKey];
+                $searchTerms = array_merge(
+                    [$platform['en'], $platform['ar']],
+                    $platform['aliases'] ?? []
+                );
+                $query->where(function ($q) use ($searchTerms, $categoryField, $nameField) {
+                    foreach ($searchTerms as $term) {
+                        $q->orWhere($categoryField, 'like', '%' . $term . '%')
+                          ->orWhere($nameField, 'like', '%' . $term . '%');
+                    }
+                });
+            } else {
+                $query->where($categoryField, 'like', '%' . $platformKey . '%');
+            }
         }
 
         // Apply sorting
@@ -175,12 +190,24 @@ class HomeController extends Controller
     {
         $lang = $request->get('lang', 'en');
         $categoryField = $lang === 'ar' ? 'category_ar' : 'category_en';
+        $nameField = $lang === 'ar' ? 'name_ar' : 'name_en';
 
-        $stats = Cache::remember('platform_stats_' . $lang, 3600, function() use ($lang, $categoryField) {
+        $stats = Cache::remember('platform_stats_' . $lang, 3600, function() use ($lang, $categoryField, $nameField) {
             $platformStats = [];
             foreach ($this->platforms as $key => $platform) {
                 $platformName = $platform[$lang] ?? $key;
-                $count = Service::where($categoryField, 'like', '%' . $platformName . '%')->count();
+                // Search using all aliases plus the localized names
+                $searchTerms = array_merge(
+                    [$platform['en'], $platform['ar']],
+                    $platform['aliases'] ?? []
+                );
+
+                $count = Service::where(function ($q) use ($searchTerms, $categoryField, $nameField) {
+                    foreach ($searchTerms as $term) {
+                        $q->orWhere($categoryField, 'like', '%' . $term . '%')
+                          ->orWhere($nameField, 'like', '%' . $term . '%');
+                    }
+                })->count();
 
                 if ($count > 0) {
                     $platformStats[] = [
@@ -239,6 +266,7 @@ class HomeController extends Controller
             'discord' => 'mdi-discord',
             'pinterest' => 'mdi-pinterest',
             'soundcloud' => 'mdi-soundcloud',
+            'threads' => 'mdi-at',
             'website' => 'mdi-web',
         ];
 
