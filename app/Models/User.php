@@ -166,8 +166,8 @@ class User extends Authenticatable implements MustVerifyEmail
         $profileMedia = $this->media()->where('file_type', 'like', 'image%')->first();
 
         if ($profileMedia) {
-            // For shared hosting with public_html structure
-            $url = asset('storage/app/public/' . $profileMedia->path);
+            // For shared hosting with public_html structure (symlink: storage -> ../storage/app/public)
+            $url = asset('storage/' . $profileMedia->path);
             // Add cache-busting in case CDNs/browsers cache old path
             if (!is_null($profileMedia->updated_at)) {
                 $url .= '?v=' . $profileMedia->updated_at->timestamp;
