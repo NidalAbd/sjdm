@@ -14,6 +14,12 @@ class WelcomeController extends Controller
 {
     public function index()
     {
+        // Return Vue SPA
+        return view('spa');
+    }
+
+    public function indexOld()
+    {
         // Define the date for the last 24 hours
         $last24Hours = Carbon::now()->subDay();
 
@@ -59,39 +65,45 @@ class WelcomeController extends Controller
         return $model::count() + $startingPoint;
     }
 
-    // Other static content methods
+    // Static content methods - return SPA for client-side routing
     public function terms()
     {
-        return view('widgets.terms');
+        return view('spa');
     }
 
     public function faq()
     {
-        return view('widgets.faq');
+        return view('spa');
     }
 
     public function about()
     {
-        return view('widgets.about');
+        return view('spa');
     }
 
     public function howItWorks()
     {
-        return view('widgets.how_it_work');
+        return view('spa');
     }
 
     public function support()
     {
-        return view('widgets.support');
+        return view('widgets.support'); // Keep original for authenticated users
     }
 
     public function privacyPolicy()
     {
-        return view('widgets.privacy-policy');
+        return view('spa');
     }
 
     public function contact()
     {
-        return view('widgets.contact');
+        return view('spa');
+    }
+
+    // SPA catch-all for Vue Router
+    public function spa()
+    {
+        return view('spa');
     }
 }

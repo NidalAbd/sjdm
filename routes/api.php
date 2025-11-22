@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Public API routes for SPA
+Route::get('/services', [HomeController::class, 'services']);
+Route::get('/services/{id}', [HomeController::class, 'service']);
+Route::get('/stats', [HomeController::class, 'stats']);
+Route::get('/categories', [HomeController::class, 'categories']);
+
 // routes/api.php
 use App\Http\Controllers\OrderController;
 
