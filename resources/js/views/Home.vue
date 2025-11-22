@@ -143,7 +143,7 @@
 
                 <v-row v-if="!store.loading">
                     <v-col v-for="service in featuredServices" :key="service.service_id" cols="12" sm="6" lg="4">
-                        <v-card class="service-card h-100" :to="`/service/${service.service_id}`">
+                        <v-card class="service-card h-100" variant="outlined" :to="`/service/${service.service_id}`">
                             <v-card-text class="pa-6">
                                 <div class="d-flex justify-space-between align-start mb-4">
                                     <v-chip size="small" color="primary" variant="flat">
@@ -162,16 +162,16 @@
                                 </div>
                                 <v-row dense>
                                     <v-col cols="6">
-                                        <v-card variant="tonal" class="pa-2 text-center">
+                                        <div class="stat-box pa-2 text-center rounded">
                                             <div class="text-caption text-medium-emphasis">Min</div>
                                             <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
-                                        </v-card>
+                                        </div>
                                     </v-col>
                                     <v-col cols="6">
-                                        <v-card variant="tonal" class="pa-2 text-center">
+                                        <div class="stat-box pa-2 text-center rounded">
                                             <div class="text-caption text-medium-emphasis">Max</div>
                                             <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
-                                        </v-card>
+                                        </div>
                                     </v-col>
                                 </v-row>
                                 <div class="d-flex gap-2 mt-3" v-if="service.refill || service.cancel">
@@ -432,11 +432,17 @@ const faqs = ref([
 
 .service-card {
     cursor: pointer;
+    background: rgb(var(--v-theme-surface));
 }
 
 .service-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(var(--v-theme-primary), 0.2) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    border-color: rgb(var(--v-theme-primary)) !important;
+}
+
+.stat-box {
+    background: rgba(var(--v-theme-on-surface), 0.05);
 }
 
 .faq-card:hover {

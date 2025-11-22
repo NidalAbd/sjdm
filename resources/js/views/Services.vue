@@ -211,7 +211,7 @@
       <!-- Grid View -->
       <v-row v-else-if="viewMode === 'grid' && services.length > 0">
         <v-col v-for="service in services" :key="service.service_id" cols="12" md="6" lg="4">
-          <v-card class="service-card h-100" @click="goToService(service.service_id)">
+          <v-card class="service-card h-100" variant="outlined" @click="goToService(service.service_id)">
             <!-- Header -->
             <div class="service-card-header d-flex justify-space-between align-center pa-4 pb-0">
               <v-chip color="primary" size="small" variant="flat">
@@ -235,16 +235,16 @@
               <!-- Stats -->
               <v-row dense class="mb-3">
                 <v-col cols="6">
-                  <v-card variant="tonal" class="pa-3 text-center">
+                  <div class="stat-box pa-3 text-center rounded">
                     <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأدنى' : 'Min' }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
-                  </v-card>
+                  </div>
                 </v-col>
                 <v-col cols="6">
-                  <v-card variant="tonal" class="pa-3 text-center">
+                  <div class="stat-box pa-3 text-center rounded">
                     <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأقصى' : 'Max' }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
-                  </v-card>
+                  </div>
                 </v-col>
               </v-row>
 
@@ -568,11 +568,17 @@ watch(locale, () => {
   transition: all 0.3s ease;
   border-radius: 16px !important;
   overflow: hidden;
+  background: rgb(var(--v-theme-surface));
 }
 
 .service-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(var(--v-theme-primary), 0.25) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+  border-color: rgb(var(--v-theme-primary)) !important;
+}
+
+.stat-box {
+  background: rgba(var(--v-theme-on-surface), 0.05);
 }
 
 .service-title {
