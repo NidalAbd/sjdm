@@ -120,9 +120,9 @@ Route::group([
     Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy.localized');
     Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact.localized');
 
-    // Service routes with language prefix - UPDATED TO USE NEW LOCALIZED METHODS
-    Route::get('/all-services', [ServiceController::class, 'getAllServicesLocalized'])->name('services.all.localized');
-    Route::get('/service/{serviceId}', [ServiceController::class, 'showServiceLocalized'])
+    // Service routes with language prefix - SPA ROUTES
+    Route::get('/all-services', [WelcomeController::class, 'spa'])->name('services.all.localized');
+    Route::get('/service/{serviceId}', [WelcomeController::class, 'spa'])
         ->name('service.show.localized')
         ->where('serviceId', '[0-9]+');
 });
@@ -140,9 +140,9 @@ Route::get('/support_take', [WelcomeController::class, 'support'])->name('suppor
 Route::get('/privacy-policy', [WelcomeController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/contact-us', [WelcomeController::class, 'contact'])->name('contact');
 
-// Service routes (English - no prefix) - USING ORIGINAL METHODS
-Route::get('/all-services', [ServiceController::class, 'getAllServices'])->name('services.all');
-Route::get('/service/{serviceId}', [ServiceController::class, 'showService'])
+// Service routes (English - no prefix) - SPA ROUTES
+Route::get('/all-services', [WelcomeController::class, 'spa'])->name('services.all');
+Route::get('/service/{serviceId}', [WelcomeController::class, 'spa'])
     ->name('service.show')
     ->where('serviceId', '[0-9]+');
 

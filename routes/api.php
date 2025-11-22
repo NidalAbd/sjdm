@@ -24,6 +24,8 @@ Route::get('/services', [HomeController::class, 'services']);
 Route::get('/services/{id}', [HomeController::class, 'service']);
 Route::get('/stats', [HomeController::class, 'stats']);
 Route::get('/categories', [HomeController::class, 'categories']);
+Route::get('/platforms', [HomeController::class, 'platforms']);
+Route::get('/featured', [HomeController::class, 'featured']);
 
 // routes/api.php
 use App\Http\Controllers\OrderController;

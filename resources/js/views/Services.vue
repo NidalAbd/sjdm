@@ -1,222 +1,587 @@
 <template>
-    <v-container class="py-12">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <v-chip color="primary" variant="tonal" class="mb-4">All Services</v-chip>
-            <h1 class="text-h3 font-weight-bold mb-4">Our SMM Services</h1>
-            <p class="text-h6 text-medium-emphasis">Choose from {{ store.services.length }}+ services</p>
+  <div class="services-page">
+    <!-- Hero Section -->
+    <v-container fluid class="hero-section pa-0">
+      <div class="hero-gradient">
+        <v-container class="py-16">
+          <v-row align="center">
+            <v-col cols="12" lg="8">
+              <h1 class="text-h3 text-md-h2 font-weight-bold text-white mb-4">
+                {{ locale === 'ar' ? 'جميع خدمات SMM' : 'All SMM Services' }}
+              </h1>
+              <p class="text-h6 text-white-darken-1 mb-6">
+                {{ locale === 'ar' ? 'اكتشف مجموعتنا الكاملة من خدمات التسويق عبر وسائل التواصل الاجتماعي' : 'Discover our complete range of social media marketing services' }}
+              </p>
+              <v-chip v-if="hasFilters" color="white" variant="flat" class="px-4 py-2">
+                <v-icon start>mdi-filter</v-icon>
+                {{ pagination.total }} {{ locale === 'ar' ? 'خدمة' : 'services found' }}
+              </v-chip>
+            </v-col>
+            <v-col cols="12" lg="4" class="text-center">
+              <v-card class="hero-stat-card pa-6" color="rgba(255,255,255,0.15)" variant="flat">
+                <div class="text-h2 font-weight-bold text-white">{{ pagination.total || 0 }}</div>
+                <div class="text-subtitle-1 text-white-darken-1">{{ locale === 'ar' ? 'إجمالي الخدمات' : 'Total Services' }}</div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
+    </v-container>
+
+    <v-container class="py-8">
+      <!-- Filters Section -->
+      <v-card class="mb-8" elevation="2">
+        <v-card-text class="pa-6">
+          <v-row>
+            <!-- Search -->
+            <v-col cols="12" md="6" lg="4">
+              <v-text-field
+                v-model="filters.search"
+                :label="locale === 'ar' ? 'البحث في الخدمات' : 'Search Services'"
+                prepend-inner-icon="mdi-magnify"
+                variant="outlined"
+                density="comfortable"
+                clearable
+                hide-details
+                @update:model-value="debouncedSearch"
+              />
+            </v-col>
+
+            <!-- Platform Filter -->
+            <v-col cols="12" md="6" lg="4">
+              <v-select
+                v-model="filters.platform"
+                :items="platformOptions"
+                :label="locale === 'ar' ? 'المنصة' : 'Platform'"
+                prepend-inner-icon="mdi-apps"
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                clearable
+                @update:model-value="fetchServices"
+              />
+            </v-col>
+
+            <!-- Category Filter -->
+            <v-col cols="12" md="6" lg="4">
+              <v-select
+                v-model="filters.category"
+                :items="categoryOptions"
+                :label="locale === 'ar' ? 'الفئة' : 'Category'"
+                prepend-inner-icon="mdi-tag"
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                clearable
+                @update:model-value="fetchServices"
+              />
+            </v-col>
+
+            <!-- Sort By -->
+            <v-col cols="12" md="6" lg="4">
+              <v-select
+                v-model="filters.sortBy"
+                :items="sortOptions"
+                :label="locale === 'ar' ? 'ترتيب حسب' : 'Sort By'"
+                prepend-inner-icon="mdi-sort"
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                @update:model-value="fetchServices"
+              />
+            </v-col>
+
+            <!-- Sort Order -->
+            <v-col cols="12" md="6" lg="4">
+              <v-select
+                v-model="filters.sortOrder"
+                :items="sortOrderOptions"
+                :label="locale === 'ar' ? 'الترتيب' : 'Order'"
+                prepend-inner-icon="mdi-swap-vertical"
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                @update:model-value="fetchServices"
+              />
+            </v-col>
+
+            <!-- Per Page -->
+            <v-col cols="12" md="6" lg="4">
+              <v-select
+                v-model="filters.perPage"
+                :items="perPageOptions"
+                :label="locale === 'ar' ? 'عدد العناصر' : 'Items per page'"
+                prepend-inner-icon="mdi-view-list"
+                variant="outlined"
+                density="comfortable"
+                hide-details
+                @update:model-value="fetchServices"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row class="mt-4">
+            <v-col cols="12">
+              <div class="d-flex flex-wrap gap-3">
+                <v-btn color="primary" size="large" @click="fetchServices" :loading="loading">
+                  <v-icon start>mdi-filter</v-icon>
+                  {{ locale === 'ar' ? 'تطبيق الفلاتر' : 'Apply Filters' }}
+                </v-btn>
+                <v-btn variant="outlined" size="large" @click="clearFilters">
+                  <v-icon start>mdi-close</v-icon>
+                  {{ locale === 'ar' ? 'مسح الفلاتر' : 'Clear Filters' }}
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+
+      <!-- Featured Services -->
+      <div v-if="featured.length > 0 && !hasFilters" class="mb-8">
+        <div class="d-flex align-center mb-4">
+          <v-icon color="amber" class="mr-2">mdi-star</v-icon>
+          <h2 class="text-h5 font-weight-bold">{{ locale === 'ar' ? 'الخدمات المميزة' : 'Featured Services' }}</h2>
         </div>
+        <v-row>
+          <v-col v-for="service in featured" :key="service.service_id" cols="12" md="6" lg="4">
+            <v-card class="featured-card h-100" @click="goToService(service.service_id)">
+              <div class="featured-badge">
+                <v-icon size="20">mdi-star</v-icon>
+              </div>
+              <v-card-text class="text-center text-white">
+                <h3 class="text-subtitle-1 font-weight-bold mb-2">
+                  {{ locale === 'ar' ? service.name_ar : service.name_en }}
+                </h3>
+                <div class="text-h4 font-weight-bold mb-2">${{ Number(service.rate).toFixed(2) }}</div>
+                <div class="text-body-2 opacity-80">{{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}</div>
+                <v-btn color="white" variant="flat" class="mt-4" size="small">
+                  {{ locale === 'ar' ? 'عرض التفاصيل' : 'View Details' }}
+                </v-btn>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
 
-        <!-- Filters -->
-        <v-card class="mb-8 pa-4">
-            <v-row align="center">
-                <v-col cols="12" md="4">
-                    <v-text-field
-                        v-model="search"
-                        label="Search services..."
-                        prepend-inner-icon="mdi-magnify"
-                        clearable
-                        hide-details
-                    ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="4">
-                    <v-select
-                        v-model="selectedCategory"
-                        label="Category"
-                        :items="categories"
-                        prepend-inner-icon="mdi-filter"
-                        clearable
-                        hide-details
-                    ></v-select>
-                </v-col>
-                <v-col cols="12" md="4">
-                    <v-select
-                        v-model="sortBy"
-                        label="Sort by"
-                        :items="sortOptions"
-                        prepend-inner-icon="mdi-sort"
-                        hide-details
-                    ></v-select>
-                </v-col>
-            </v-row>
-        </v-card>
+      <!-- Services Section Header -->
+      <div class="d-flex flex-wrap justify-space-between align-center mb-6">
+        <div>
+          <h2 class="text-h5 font-weight-bold">
+            <template v-if="filters.search">{{ locale === 'ar' ? 'نتائج البحث' : 'Search Results' }}</template>
+            <template v-else-if="filters.platform">{{ filters.platform }} {{ locale === 'ar' ? 'خدمات' : 'Services' }}</template>
+            <template v-else-if="filters.category">{{ filters.category }} {{ locale === 'ar' ? 'خدمات' : 'Services' }}</template>
+            <template v-else>{{ locale === 'ar' ? 'جميع الخدمات' : 'All Services' }}</template>
+          </h2>
+          <p class="text-body-2 text-medium-emphasis">
+            {{ pagination.total }} {{ locale === 'ar' ? 'خدمة متاحة' : 'services available' }}
+          </p>
+        </div>
+        <v-btn-toggle v-model="viewMode" mandatory variant="outlined" divided>
+          <v-btn value="grid" icon="mdi-view-grid" />
+          <v-btn value="list" icon="mdi-view-list" />
+        </v-btn-toggle>
+      </div>
 
-        <!-- Services by Category -->
-        <div v-if="!store.loading">
-            <div v-for="(services, category) in filteredGroupedServices" :key="category" class="mb-8">
-                <div class="d-flex align-center mb-4">
-                    <v-icon color="primary" class="mr-2">mdi-folder</v-icon>
-                    <h2 class="text-h5 font-weight-bold">{{ category }}</h2>
-                    <v-chip size="small" class="ml-2">{{ services.length }}</v-chip>
-                </div>
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center py-16">
+        <v-progress-circular indeterminate color="primary" size="64" />
+        <p class="mt-4 text-medium-emphasis">{{ locale === 'ar' ? 'جاري التحميل...' : 'Loading services...' }}</p>
+      </div>
 
-                <v-row>
-                    <v-col v-for="service in services" :key="service.service_id" cols="12" sm="6" lg="4">
-                        <v-card class="service-card h-100" hover :to="`/service/${service.service_id}`">
-                            <v-card-text class="pa-5">
-                                <div class="d-flex justify-space-between align-start mb-3">
-                                    <v-chip size="x-small" color="secondary" variant="tonal">
-                                        ID: {{ service.service_id }}
-                                    </v-chip>
-                                    <v-chip size="small" color="success" variant="flat">
-                                        ${{ service.rate }}/1K
-                                    </v-chip>
-                                </div>
-
-                                <h3 class="text-subtitle-1 font-weight-bold mb-3 service-name">
-                                    {{ store.locale === 'ar' ? service.name_ar : service.name_en }}
-                                </h3>
-
-                                <v-divider class="mb-3"></v-divider>
-
-                                <div class="d-flex justify-space-between text-caption">
-                                    <div>
-                                        <span class="text-medium-emphasis">Min:</span>
-                                        <span class="font-weight-medium ml-1">{{ formatNumber(service.min) }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-medium-emphasis">Max:</span>
-                                        <span class="font-weight-medium ml-1">{{ formatNumber(service.max) }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex ga-2 mt-3">
-                                    <v-chip v-if="service.refill" size="x-small" color="info" variant="tonal">
-                                        <v-icon start size="small">mdi-refresh</v-icon>
-                                        Refill
-                                    </v-chip>
-                                    <v-chip v-if="service.cancel" size="x-small" color="warning" variant="tonal">
-                                        <v-icon start size="small">mdi-cancel</v-icon>
-                                        Cancel
-                                    </v-chip>
-                                </div>
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                </v-row>
+      <!-- Grid View -->
+      <v-row v-else-if="viewMode === 'grid' && services.length > 0">
+        <v-col v-for="service in services" :key="service.service_id" cols="12" md="6" lg="4">
+          <v-card class="service-card h-100" elevation="2" @click="goToService(service.service_id)">
+            <!-- Header -->
+            <div class="d-flex justify-space-between align-center pa-4 pb-0">
+              <v-chip color="primary" size="small" variant="flat">
+                #{{ service.service_id }}
+              </v-chip>
+              <v-chip color="grey-lighten-2" size="small" variant="flat">
+                {{ service.type }}
+              </v-chip>
             </div>
 
-            <v-alert v-if="Object.keys(filteredGroupedServices).length === 0" type="info" variant="tonal">
-                No services found matching your criteria.
-            </v-alert>
-        </div>
+            <!-- Body -->
+            <v-card-text class="pt-4">
+              <h3 class="text-subtitle-1 font-weight-bold mb-2 service-title">
+                {{ locale === 'ar' ? service.name_ar : service.name_en }}
+              </h3>
+              <div class="text-body-2 text-primary mb-4">
+                <v-icon size="16" class="mr-1">mdi-tag</v-icon>
+                {{ locale === 'ar' ? service.category_ar : service.category_en }}
+              </div>
 
-        <!-- Loading -->
-        <v-row v-else>
-            <v-col v-for="n in 9" :key="n" cols="12" sm="6" lg="4">
-                <v-skeleton-loader type="card" height="180"></v-skeleton-loader>
-            </v-col>
-        </v-row>
+              <!-- Stats -->
+              <v-row dense class="mb-3">
+                <v-col cols="6">
+                  <v-sheet rounded class="pa-3 text-center" color="grey-lighten-4">
+                    <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأدنى' : 'Min' }}</div>
+                    <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
+                  </v-sheet>
+                </v-col>
+                <v-col cols="6">
+                  <v-sheet rounded class="pa-3 text-center" color="grey-lighten-4">
+                    <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأقصى' : 'Max' }}</div>
+                    <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
+                  </v-sheet>
+                </v-col>
+              </v-row>
+
+              <!-- Features -->
+              <div class="d-flex gap-2 mb-3">
+                <v-chip v-if="service.refill" color="success" size="x-small" variant="flat">
+                  <v-icon start size="12">mdi-refresh</v-icon>
+                  {{ locale === 'ar' ? 'إعادة تعبئة' : 'Refill' }}
+                </v-chip>
+                <v-chip v-if="service.cancel" color="warning" size="x-small" variant="flat">
+                  <v-icon start size="12">mdi-close</v-icon>
+                  {{ locale === 'ar' ? 'إلغاء' : 'Cancel' }}
+                </v-chip>
+              </div>
+            </v-card-text>
+
+            <!-- Footer -->
+            <v-divider />
+            <v-card-actions class="pa-4 bg-grey-lighten-5">
+              <div>
+                <span class="text-h6 font-weight-bold text-success">${{ Number(service.rate).toFixed(4) }}</span>
+                <span class="text-caption text-medium-emphasis ml-1">/ 1K</span>
+              </div>
+              <v-spacer />
+              <v-btn color="primary" variant="flat" size="small">
+                {{ locale === 'ar' ? 'اطلب الآن' : 'Order Now' }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- List View -->
+      <v-card v-else-if="viewMode === 'list' && services.length > 0" elevation="2">
+        <v-table>
+          <thead>
+            <tr class="bg-grey-darken-3">
+              <th class="text-white">{{ locale === 'ar' ? 'الخدمة' : 'Service' }}</th>
+              <th class="text-white">{{ locale === 'ar' ? 'الفئة' : 'Category' }}</th>
+              <th class="text-white">{{ locale === 'ar' ? 'السعر' : 'Price' }}</th>
+              <th class="text-white">{{ locale === 'ar' ? 'الحدود' : 'Min/Max' }}</th>
+              <th class="text-white">{{ locale === 'ar' ? 'الميزات' : 'Features' }}</th>
+              <th class="text-white">{{ locale === 'ar' ? 'إجراء' : 'Action' }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="service in services" :key="service.service_id" class="service-row" @click="goToService(service.service_id)">
+              <td>
+                <div class="font-weight-bold">{{ locale === 'ar' ? service.name_ar : service.name_en }}</div>
+                <div class="text-caption text-medium-emphasis">#{{ service.service_id }}</div>
+              </td>
+              <td>
+                <v-chip size="small" color="grey-lighten-2">
+                  {{ locale === 'ar' ? service.category_ar : service.category_en }}
+                </v-chip>
+              </td>
+              <td>
+                <span class="font-weight-bold text-primary">${{ Number(service.rate).toFixed(4) }}</span>
+                <span class="text-caption text-medium-emphasis">/ 1K</span>
+              </td>
+              <td class="text-caption">
+                {{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}
+              </td>
+              <td>
+                <v-chip v-if="service.refill" color="success" size="x-small" class="mr-1">{{ locale === 'ar' ? 'إعادة تعبئة' : 'Refill' }}</v-chip>
+                <v-chip v-if="service.cancel" color="warning" size="x-small">{{ locale === 'ar' ? 'إلغاء' : 'Cancel' }}</v-chip>
+              </td>
+              <td>
+                <v-btn color="primary" size="small" variant="flat">{{ locale === 'ar' ? 'اطلب' : 'Order' }}</v-btn>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+      </v-card>
+
+      <!-- No Results -->
+      <v-card v-else-if="!loading && services.length === 0" class="text-center py-16" elevation="0">
+        <v-icon size="80" color="grey-lighten-1" class="mb-4">mdi-magnify</v-icon>
+        <h3 class="text-h5 text-medium-emphasis mb-2">{{ locale === 'ar' ? 'لم يتم العثور على خدمات' : 'No services found' }}</h3>
+        <p class="text-body-2 text-medium-emphasis mb-6">
+          {{ hasFilters ? (locale === 'ar' ? 'جرب تعديل الفلاتر أو مصطلحات البحث' : 'Try adjusting your filters or search terms') : (locale === 'ar' ? 'لا توجد خدمات متاحة حاليًا' : 'No services are currently available') }}
+        </p>
+        <v-btn v-if="hasFilters" color="primary" @click="clearFilters">
+          {{ locale === 'ar' ? 'عرض جميع الخدمات' : 'View All Services' }}
+        </v-btn>
+      </v-card>
+
+      <!-- Pagination -->
+      <div v-if="services.length > 0 && pagination.last_page > 1" class="d-flex justify-center mt-8">
+        <v-pagination
+          v-model="currentPage"
+          :length="pagination.last_page"
+          :total-visible="7"
+          rounded="circle"
+          @update:model-value="changePage"
+        />
+      </div>
     </v-container>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useAppStore } from '../stores/app'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAppStore } from '@/stores/app'
 
-const store = useAppStore()
-const route = useRoute()
+const router = useRouter()
+const appStore = useAppStore()
 
-const search = ref('')
-const selectedCategory = ref(null)
-const sortBy = ref('name')
+const services = ref([])
+const featured = ref([])
+const platforms = ref([])
+const categories = ref([])
+const loading = ref(false)
+const viewMode = ref('grid')
+const currentPage = ref(1)
 
-const sortOptions = [
-    { title: 'Name (A-Z)', value: 'name' },
-    { title: 'Price (Low to High)', value: 'price_asc' },
-    { title: 'Price (High to Low)', value: 'price_desc' },
-    { title: 'Min Order', value: 'min' },
+const pagination = ref({
+  total: 0,
+  per_page: 50,
+  current_page: 1,
+  last_page: 1,
+})
+
+const filters = ref({
+  search: '',
+  platform: null,
+  category: null,
+  sortBy: 'service_id',
+  sortOrder: 'asc',
+  perPage: 50,
+})
+
+const locale = computed(() => appStore.locale)
+
+const hasFilters = computed(() => {
+  return filters.value.search || filters.value.platform || filters.value.category
+})
+
+const platformOptions = computed(() => {
+  return platforms.value.map(p => ({
+    title: `${p.name} (${p.count})`,
+    value: p.key,
+  }))
+})
+
+const categoryOptions = computed(() => {
+  return categories.value.map(c => ({
+    title: `${c.name} (${c.count})`,
+    value: c.name,
+  }))
+})
+
+const sortOptions = computed(() => [
+  { title: locale.value === 'ar' ? 'رقم الخدمة' : 'Service ID', value: 'service_id' },
+  { title: locale.value === 'ar' ? 'السعر' : 'Price', value: 'rate' },
+  { title: locale.value === 'ar' ? 'الحد الأدنى' : 'Min Order', value: 'min' },
+  { title: locale.value === 'ar' ? 'الحد الأقصى' : 'Max Order', value: 'max' },
+])
+
+const sortOrderOptions = computed(() => [
+  { title: locale.value === 'ar' ? 'تصاعدي' : 'Ascending', value: 'asc' },
+  { title: locale.value === 'ar' ? 'تنازلي' : 'Descending', value: 'desc' },
+])
+
+const perPageOptions = [
+  { title: '25', value: 25 },
+  { title: '50', value: 50 },
+  { title: '100', value: 100 },
 ]
 
-const categories = computed(() => {
-    const cats = [...new Set(store.services.map(s =>
-        store.locale === 'ar' ? s.category_ar : s.category_en
-    ))]
-    return cats.filter(c => c)
-})
-
-const filteredServices = computed(() => {
-    let services = [...store.services]
-
-    // Search filter
-    if (search.value) {
-        const searchLower = search.value.toLowerCase()
-        services = services.filter(s =>
-            s.name_en?.toLowerCase().includes(searchLower) ||
-            s.name_ar?.toLowerCase().includes(searchLower) ||
-            s.service_id.toString().includes(searchLower)
-        )
+let searchTimeout = null
+const debouncedSearch = () => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    if (filters.value.search.length >= 3 || filters.value.search.length === 0) {
+      fetchServices()
     }
-
-    // Category filter
-    if (selectedCategory.value) {
-        services = services.filter(s =>
-            (store.locale === 'ar' ? s.category_ar : s.category_en) === selectedCategory.value
-        )
-    }
-
-    // Sort
-    switch (sortBy.value) {
-        case 'price_asc':
-            services.sort((a, b) => parseFloat(a.rate) - parseFloat(b.rate))
-            break
-        case 'price_desc':
-            services.sort((a, b) => parseFloat(b.rate) - parseFloat(a.rate))
-            break
-        case 'min':
-            services.sort((a, b) => parseInt(a.min) - parseInt(b.min))
-            break
-        default:
-            services.sort((a, b) => (a.name_en || '').localeCompare(b.name_en || ''))
-    }
-
-    return services
-})
-
-const filteredGroupedServices = computed(() => {
-    const grouped = {}
-    filteredServices.value.forEach(service => {
-        const category = store.locale === 'ar' ? service.category_ar : service.category_en
-        if (!grouped[category]) {
-            grouped[category] = []
-        }
-        grouped[category].push(service)
-    })
-    return grouped
-})
-
-const formatNumber = (num) => {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M'
-    if (num >= 1000) return (num / 1000).toFixed(0) + 'K'
-    return num?.toString() || '0'
+  }, 500)
 }
 
+const fetchServices = async () => {
+  loading.value = true
+  try {
+    const params = new URLSearchParams({
+      lang: locale.value,
+      page: currentPage.value,
+      per_page: filters.value.perPage,
+      sort_by: filters.value.sortBy,
+      sort_order: filters.value.sortOrder,
+    })
+
+    if (filters.value.search) params.append('search', filters.value.search)
+    if (filters.value.platform) params.append('platform', filters.value.platform)
+    if (filters.value.category) params.append('category', filters.value.category)
+
+    const response = await fetch(`/api/services?${params}`)
+    const data = await response.json()
+
+    services.value = data.services || []
+    pagination.value = data.pagination || pagination.value
+  } catch (error) {
+    console.error('Error fetching services:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const fetchPlatforms = async () => {
+  try {
+    const response = await fetch(`/api/platforms?lang=${locale.value}`)
+    const data = await response.json()
+    platforms.value = data.platforms || []
+  } catch (error) {
+    console.error('Error fetching platforms:', error)
+  }
+}
+
+const fetchCategories = async () => {
+  try {
+    const response = await fetch(`/api/categories?lang=${locale.value}`)
+    const data = await response.json()
+    categories.value = data.categories || []
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+  }
+}
+
+const fetchFeatured = async () => {
+  try {
+    const response = await fetch(`/api/featured?lang=${locale.value}`)
+    const data = await response.json()
+    featured.value = data.featured || []
+  } catch (error) {
+    console.error('Error fetching featured:', error)
+  }
+}
+
+const clearFilters = () => {
+  filters.value = {
+    search: '',
+    platform: null,
+    category: null,
+    sortBy: 'service_id',
+    sortOrder: 'asc',
+    perPage: 50,
+  }
+  currentPage.value = 1
+  fetchServices()
+}
+
+const changePage = (page) => {
+  currentPage.value = page
+  fetchServices()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const goToService = (id) => {
+  router.push(`/service/${id}`)
+}
+
+const formatNumber = (num) => {
+  return new Intl.NumberFormat().format(num)
+}
+
+// Restore view preference
 onMounted(() => {
-    // Check for platform filter from URL
-    if (route.query.platform) {
-        // Could filter by platform if needed
-    }
+  const savedView = localStorage.getItem('servicesView')
+  if (savedView) viewMode.value = savedView
+
+  fetchServices()
+  fetchPlatforms()
+  fetchCategories()
+  fetchFeatured()
+})
+
+watch(viewMode, (newVal) => {
+  localStorage.setItem('servicesView', newVal)
+})
+
+watch(locale, () => {
+  fetchServices()
+  fetchPlatforms()
+  fetchCategories()
+  fetchFeatured()
 })
 </script>
 
 <style scoped>
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+}
+
+.hero-stat-card {
+  backdrop-filter: blur(10px);
+  border-radius: 16px !important;
+}
+
 .service-card {
-    transition: all 0.3s ease;
-    border: 1px solid rgba(99, 102, 241, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 16px !important;
+  overflow: hidden;
 }
 
 .service-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
 }
 
-.service-name {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    min-height: 48px;
+.service-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.featured-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 16px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4) !important;
+}
+
+.featured-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 50px;
+  height: 50px;
+  background: #ffc107;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.service-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.service-row:hover {
+  background: rgba(102, 126, 234, 0.05);
 }
 </style>
