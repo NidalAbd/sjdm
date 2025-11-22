@@ -46,6 +46,16 @@ require __DIR__.'/../vendor/autoload.php';
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
+/*
+|--------------------------------------------------------------------------
+| Set Public Path for Hostinger (public_html instead of public)
+|--------------------------------------------------------------------------
+*/
+
+$app->bind('path.public', function() {
+    return __DIR__;
+});
+
 $kernel = $app->make(Kernel::class);
 
 $response = $kernel->handle(
