@@ -143,22 +143,46 @@
 
                 <v-row v-if="!store.loading">
                     <v-col v-for="service in featuredServices" :key="service.service_id" cols="12" sm="6" lg="4">
-                        <v-card class="service-card h-100" hover :to="`/service/${service.service_id}`">
+                        <v-card class="service-card h-100" :to="`/service/${service.service_id}`">
                             <v-card-text class="pa-6">
                                 <div class="d-flex justify-space-between align-start mb-4">
-                                    <v-chip size="small" color="primary" variant="tonal">
-                                        {{ service.category_en }}
+                                    <v-chip size="small" color="primary" variant="flat">
+                                        #{{ service.service_id }}
                                     </v-chip>
-                                    <v-chip size="small" color="success">
-                                        ${{ service.rate }}/1K
+                                    <v-chip size="small" color="success" variant="flat">
+                                        ${{ Number(service.rate).toFixed(4) }}/1K
                                     </v-chip>
                                 </div>
-                                <h3 class="text-subtitle-1 font-weight-bold mb-2 service-name">
-                                    {{ service.name_en }}
+                                <h3 class="text-subtitle-1 font-weight-bold mb-3 service-name">
+                                    {{ store.locale === 'ar' ? service.name_ar : service.name_en }}
                                 </h3>
-                                <div class="d-flex justify-space-between text-caption text-medium-emphasis">
-                                    <span>Min: {{ service.min }}</span>
-                                    <span>Max: {{ service.max }}</span>
+                                <div class="text-body-2 text-primary mb-3">
+                                    <v-icon size="14" class="mr-1">mdi-tag</v-icon>
+                                    {{ store.locale === 'ar' ? service.category_ar : service.category_en }}
+                                </div>
+                                <v-row dense>
+                                    <v-col cols="6">
+                                        <v-card variant="tonal" class="pa-2 text-center">
+                                            <div class="text-caption text-medium-emphasis">Min</div>
+                                            <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
+                                        </v-card>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-card variant="tonal" class="pa-2 text-center">
+                                            <div class="text-caption text-medium-emphasis">Max</div>
+                                            <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                                <div class="d-flex gap-2 mt-3" v-if="service.refill || service.cancel">
+                                    <v-chip v-if="service.refill" color="success" size="x-small" variant="flat">
+                                        <v-icon start size="12">mdi-refresh</v-icon>
+                                        Refill
+                                    </v-chip>
+                                    <v-chip v-if="service.cancel" color="warning" size="x-small" variant="flat">
+                                        <v-icon start size="12">mdi-close</v-icon>
+                                        Cancel
+                                    </v-chip>
                                 </div>
                             </v-card-text>
                         </v-card>
@@ -299,6 +323,10 @@ const handleLogin = () => {
 
 const featuredServices = computed(() => store.services.slice(0, 6))
 
+const formatNumber = (num) => {
+    return new Intl.NumberFormat().format(num)
+}
+
 const stats = ref([
     { value: '10K+', label: 'Active Users', icon: 'mdi-account-group', color: 'primary' },
     { value: '500+', label: 'Services', icon: 'mdi-view-grid', color: 'success' },
@@ -395,15 +423,20 @@ const faqs = ref([
 
 .stat-card, .platform-card, .service-card, .step-card, .faq-card {
     transition: all 0.3s ease;
+    border-radius: 16px !important;
 }
 
 .stat-card:hover, .platform-card:hover, .step-card:hover {
     transform: translateY(-4px);
 }
 
+.service-card {
+    cursor: pointer;
+}
+
 .service-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+    box-shadow: 0 20px 40px rgba(var(--v-theme-primary), 0.2) !important;
 }
 
 .faq-card:hover {

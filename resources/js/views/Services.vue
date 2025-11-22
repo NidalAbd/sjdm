@@ -52,14 +52,24 @@
               <v-select
                 v-model="filters.platform"
                 :items="platformOptions"
+                item-title="title"
+                item-value="value"
                 :label="locale === 'ar' ? 'المنصة' : 'Platform'"
                 prepend-inner-icon="mdi-apps"
                 variant="outlined"
                 density="comfortable"
                 hide-details
                 clearable
+                :loading="platformsLoading"
+                :disabled="platformOptions.length === 0"
                 @update:model-value="fetchServices"
-              />
+              >
+                <template v-slot:no-data>
+                  <v-list-item>
+                    <v-list-item-title>{{ locale === 'ar' ? 'لا توجد منصات' : 'No platforms available' }}</v-list-item-title>
+                  </v-list-item>
+                </template>
+              </v-select>
             </v-col>
 
             <!-- Category Filter -->
@@ -67,14 +77,23 @@
               <v-select
                 v-model="filters.category"
                 :items="categoryOptions"
+                item-title="title"
+                item-value="value"
                 :label="locale === 'ar' ? 'الفئة' : 'Category'"
                 prepend-inner-icon="mdi-tag"
                 variant="outlined"
                 density="comfortable"
                 hide-details
                 clearable
+                :loading="categoriesLoading"
                 @update:model-value="fetchServices"
-              />
+              >
+                <template v-slot:no-data>
+                  <v-list-item>
+                    <v-list-item-title>{{ locale === 'ar' ? 'لا توجد فئات' : 'No categories available' }}</v-list-item-title>
+                  </v-list-item>
+                </template>
+              </v-select>
             </v-col>
 
             <!-- Sort By -->
@@ -170,7 +189,7 @@
           <h2 class="text-h5 font-weight-bold">
             <template v-if="filters.search">{{ locale === 'ar' ? 'نتائج البحث' : 'Search Results' }}</template>
             <template v-else-if="filters.platform">{{ filters.platform }} {{ locale === 'ar' ? 'خدمات' : 'Services' }}</template>
-            <template v-else-if="filters.category">{{ filters.category }} {{ locale === 'ar' ? 'خدمات' : 'Services' }}</template>
+            <template v-else-if="filters.category">{{ filters.category }}</template>
             <template v-else>{{ locale === 'ar' ? 'جميع الخدمات' : 'All Services' }}</template>
           </h2>
           <p class="text-body-2 text-medium-emphasis">
@@ -192,14 +211,14 @@
       <!-- Grid View -->
       <v-row v-else-if="viewMode === 'grid' && services.length > 0">
         <v-col v-for="service in services" :key="service.service_id" cols="12" md="6" lg="4">
-          <v-card class="service-card h-100" elevation="2" @click="goToService(service.service_id)">
+          <v-card class="service-card h-100" @click="goToService(service.service_id)">
             <!-- Header -->
-            <div class="d-flex justify-space-between align-center pa-4 pb-0">
+            <div class="service-card-header d-flex justify-space-between align-center pa-4 pb-0">
               <v-chip color="primary" size="small" variant="flat">
                 #{{ service.service_id }}
               </v-chip>
-              <v-chip color="grey-lighten-2" size="small" variant="flat">
-                {{ service.type }}
+              <v-chip size="small" variant="tonal">
+                {{ service.type || 'Default' }}
               </v-chip>
             </div>
 
@@ -216,21 +235,21 @@
               <!-- Stats -->
               <v-row dense class="mb-3">
                 <v-col cols="6">
-                  <v-sheet rounded class="pa-3 text-center" color="grey-lighten-4">
+                  <v-card variant="tonal" class="pa-3 text-center">
                     <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأدنى' : 'Min' }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
-                  </v-sheet>
+                  </v-card>
                 </v-col>
                 <v-col cols="6">
-                  <v-sheet rounded class="pa-3 text-center" color="grey-lighten-4">
+                  <v-card variant="tonal" class="pa-3 text-center">
                     <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأقصى' : 'Max' }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
-                  </v-sheet>
+                  </v-card>
                 </v-col>
               </v-row>
 
               <!-- Features -->
-              <div class="d-flex gap-2 mb-3">
+              <div class="d-flex gap-2 flex-wrap">
                 <v-chip v-if="service.refill" color="success" size="x-small" variant="flat">
                   <v-icon start size="12">mdi-refresh</v-icon>
                   {{ locale === 'ar' ? 'إعادة تعبئة' : 'Refill' }}
@@ -244,7 +263,7 @@
 
             <!-- Footer -->
             <v-divider />
-            <v-card-actions class="pa-4 bg-grey-lighten-5">
+            <v-card-actions class="pa-4">
               <div>
                 <span class="text-h6 font-weight-bold text-success">${{ Number(service.rate).toFixed(4) }}</span>
                 <span class="text-caption text-medium-emphasis ml-1">/ 1K</span>
@@ -259,16 +278,16 @@
       </v-row>
 
       <!-- List View -->
-      <v-card v-else-if="viewMode === 'list' && services.length > 0" elevation="2">
-        <v-table>
+      <v-card v-else-if="viewMode === 'list' && services.length > 0">
+        <v-table hover>
           <thead>
-            <tr class="bg-grey-darken-3">
-              <th class="text-white">{{ locale === 'ar' ? 'الخدمة' : 'Service' }}</th>
-              <th class="text-white">{{ locale === 'ar' ? 'الفئة' : 'Category' }}</th>
-              <th class="text-white">{{ locale === 'ar' ? 'السعر' : 'Price' }}</th>
-              <th class="text-white">{{ locale === 'ar' ? 'الحدود' : 'Min/Max' }}</th>
-              <th class="text-white">{{ locale === 'ar' ? 'الميزات' : 'Features' }}</th>
-              <th class="text-white">{{ locale === 'ar' ? 'إجراء' : 'Action' }}</th>
+            <tr>
+              <th>{{ locale === 'ar' ? 'الخدمة' : 'Service' }}</th>
+              <th>{{ locale === 'ar' ? 'الفئة' : 'Category' }}</th>
+              <th>{{ locale === 'ar' ? 'السعر' : 'Price' }}</th>
+              <th>{{ locale === 'ar' ? 'الحدود' : 'Min/Max' }}</th>
+              <th>{{ locale === 'ar' ? 'الميزات' : 'Features' }}</th>
+              <th>{{ locale === 'ar' ? 'إجراء' : 'Action' }}</th>
             </tr>
           </thead>
           <tbody>
@@ -278,12 +297,12 @@
                 <div class="text-caption text-medium-emphasis">#{{ service.service_id }}</div>
               </td>
               <td>
-                <v-chip size="small" color="grey-lighten-2">
+                <v-chip size="small" variant="tonal">
                   {{ locale === 'ar' ? service.category_ar : service.category_en }}
                 </v-chip>
               </td>
               <td>
-                <span class="font-weight-bold text-primary">${{ Number(service.rate).toFixed(4) }}</span>
+                <span class="font-weight-bold text-success">${{ Number(service.rate).toFixed(4) }}</span>
                 <span class="text-caption text-medium-emphasis">/ 1K</span>
               </td>
               <td class="text-caption">
@@ -302,8 +321,8 @@
       </v-card>
 
       <!-- No Results -->
-      <v-card v-else-if="!loading && services.length === 0" class="text-center py-16" elevation="0">
-        <v-icon size="80" color="grey-lighten-1" class="mb-4">mdi-magnify</v-icon>
+      <v-card v-else-if="!loading && services.length === 0" class="text-center py-16" variant="flat">
+        <v-icon size="80" color="grey" class="mb-4">mdi-magnify</v-icon>
         <h3 class="text-h5 text-medium-emphasis mb-2">{{ locale === 'ar' ? 'لم يتم العثور على خدمات' : 'No services found' }}</h3>
         <p class="text-body-2 text-medium-emphasis mb-6">
           {{ hasFilters ? (locale === 'ar' ? 'جرب تعديل الفلاتر أو مصطلحات البحث' : 'Try adjusting your filters or search terms') : (locale === 'ar' ? 'لا توجد خدمات متاحة حاليًا' : 'No services are currently available') }}
@@ -340,6 +359,8 @@ const featured = ref([])
 const platforms = ref([])
 const categories = ref([])
 const loading = ref(false)
+const platformsLoading = ref(false)
+const categoriesLoading = ref(false)
 const viewMode = ref('grid')
 const currentPage = ref(1)
 
@@ -366,6 +387,7 @@ const hasFilters = computed(() => {
 })
 
 const platformOptions = computed(() => {
+  if (!platforms.value || platforms.value.length === 0) return []
   return platforms.value.map(p => ({
     title: `${p.name} (${p.count})`,
     value: p.key,
@@ -373,10 +395,13 @@ const platformOptions = computed(() => {
 })
 
 const categoryOptions = computed(() => {
-  return categories.value.map(c => ({
-    title: `${c.name} (${c.count})`,
-    value: c.name,
-  }))
+  if (!categories.value || categories.value.length === 0) return []
+  return categories.value
+    .filter(c => c && c.name)
+    .map(c => ({
+      title: `${c.name} (${c.count})`,
+      value: c.name,
+    }))
 })
 
 const sortOptions = computed(() => [
@@ -435,22 +460,32 @@ const fetchServices = async () => {
 }
 
 const fetchPlatforms = async () => {
+  platformsLoading.value = true
   try {
     const response = await fetch(`/api/platforms?lang=${locale.value}`)
     const data = await response.json()
     platforms.value = data.platforms || []
+    console.log('Platforms loaded:', platforms.value)
   } catch (error) {
     console.error('Error fetching platforms:', error)
+    platforms.value = []
+  } finally {
+    platformsLoading.value = false
   }
 }
 
 const fetchCategories = async () => {
+  categoriesLoading.value = true
   try {
     const response = await fetch(`/api/categories?lang=${locale.value}`)
     const data = await response.json()
     categories.value = data.categories || []
+    console.log('Categories loaded:', categories.value)
   } catch (error) {
     console.error('Error fetching categories:', error)
+    categories.value = []
+  } finally {
+    categoriesLoading.value = false
   }
 }
 
@@ -537,7 +572,7 @@ watch(locale, () => {
 
 .service-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 15px 35px rgba(var(--v-theme-primary), 0.25) !important;
 }
 
 .service-title {
@@ -582,6 +617,6 @@ watch(locale, () => {
 }
 
 .service-row:hover {
-  background: rgba(102, 126, 234, 0.05);
+  background: rgba(var(--v-theme-primary), 0.05);
 }
 </style>
