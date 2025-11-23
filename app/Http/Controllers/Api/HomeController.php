@@ -161,22 +161,48 @@ class HomeController extends Controller
     }
 
     /**
-     * Get categories with counts
+     * Get categories with counts, optionally filtered by platform
      */
     public function categories(Request $request): JsonResponse
     {
         $lang = $request->get('lang', 'en');
         $categoryField = $lang === 'ar' ? 'category_ar' : 'category_en';
+        $nameField = $lang === 'ar' ? 'name_ar' : 'name_en';
+        $platformKey = $request->get('platform');
 
-        $categories = Cache::remember('categories_' . $lang, 3600, function() use ($categoryField) {
-            return DB::table('services')
+        // If platform is specified, get categories for that platform only
+        if ($platformKey && isset($this->platforms[$platformKey])) {
+            $platform = $this->platforms[$platformKey];
+            $searchTerms = array_merge(
+                [$platform['en'], $platform['ar']],
+                $platform['aliases'] ?? []
+            );
+
+            $categories = DB::table('services')
                 ->select($categoryField . ' as name', DB::raw('COUNT(*) as count'))
+                ->where(function ($q) use ($searchTerms, $categoryField, $nameField) {
+                    foreach ($searchTerms as $term) {
+                        $q->orWhere($categoryField, 'like', '%' . $term . '%')
+                          ->orWhere($nameField, 'like', '%' . $term . '%');
+                    }
+                })
                 ->whereNotNull($categoryField)
                 ->where($categoryField, '!=', '')
                 ->groupBy($categoryField)
                 ->orderBy($categoryField)
                 ->get();
-        });
+        } else {
+            // No platform filter, get all categories (cached)
+            $categories = Cache::remember('categories_' . $lang, 3600, function() use ($categoryField) {
+                return DB::table('services')
+                    ->select($categoryField . ' as name', DB::raw('COUNT(*) as count'))
+                    ->whereNotNull($categoryField)
+                    ->where($categoryField, '!=', '')
+                    ->groupBy($categoryField)
+                    ->orderBy($categoryField)
+                    ->get();
+            });
+        }
 
         return response()->json([
             'categories' => $categories,

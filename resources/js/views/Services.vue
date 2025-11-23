@@ -62,7 +62,7 @@
                 clearable
                 :loading="platformsLoading"
                 :disabled="platformOptions.length === 0"
-                @update:model-value="fetchServices"
+                @update:model-value="onPlatformChange"
               >
                 <template v-slot:no-data>
                   <v-list-item>
@@ -492,10 +492,14 @@ const fetchPlatforms = async () => {
   }
 }
 
-const fetchCategories = async () => {
+const fetchCategories = async (platform = null) => {
   categoriesLoading.value = true
   try {
-    const response = await fetch(`/api/categories?lang=${locale.value}`)
+    let url = `/api/categories?lang=${locale.value}`
+    if (platform) {
+      url += `&platform=${platform}`
+    }
+    const response = await fetch(url)
     if (!response.ok) {
       console.error('Categories API error:', response.status)
       categories.value = []
@@ -523,6 +527,15 @@ const fetchFeatured = async () => {
   }
 }
 
+const onPlatformChange = (platform) => {
+  // Clear selected category when platform changes
+  filters.value.category = null
+  // Fetch categories filtered by the selected platform
+  fetchCategories(platform)
+  // Fetch services with the new platform filter
+  fetchServices()
+}
+
 const clearFilters = () => {
   filters.value = {
     search: '',
@@ -533,6 +546,8 @@ const clearFilters = () => {
     perPage: 50,
   }
   currentPage.value = 1
+  // Fetch all categories (no platform filter)
+  fetchCategories()
   fetchServices()
 }
 
