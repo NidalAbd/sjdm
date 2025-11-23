@@ -123,7 +123,7 @@
 
                 <v-row>
                     <v-col v-for="platform in platforms" :key="platform.name" cols="6" sm="4" md="2">
-                        <v-card class="platform-card text-center pa-4" hover :to="`/all-services?platform=${platform.name}`">
+                        <v-card class="platform-card text-center pa-4" hover :to="`/all-services?platform=${platform.key}`">
                             <v-icon :color="platform.color" size="48" class="mb-2">{{ platform.icon }}</v-icon>
                             <div class="text-subtitle-2 font-weight-medium">{{ platform.name }}</div>
                         </v-card>
@@ -335,12 +335,12 @@ const stats = ref([
 ])
 
 const platforms = ref([
-    { name: 'Instagram', icon: 'mdi-instagram', color: '#E4405F' },
-    { name: 'TikTok', icon: 'mdi-music-note', color: '#000000' },
-    { name: 'YouTube', icon: 'mdi-youtube', color: '#FF0000' },
-    { name: 'Facebook', icon: 'mdi-facebook', color: '#1877F2' },
-    { name: 'Twitter', icon: 'mdi-twitter', color: '#1DA1F2' },
-    { name: 'Telegram', icon: 'mdi-telegram', color: '#0088cc' },
+    { key: 'instagram', name: 'Instagram', icon: 'mdi-instagram', color: '#E4405F' },
+    { key: 'tiktok', name: 'TikTok', icon: 'mdi-music-note', color: '#000000' },
+    { key: 'youtube', name: 'YouTube', icon: 'mdi-youtube', color: '#FF0000' },
+    { key: 'facebook', name: 'Facebook', icon: 'mdi-facebook', color: '#1877F2' },
+    { key: 'twitter', name: 'Twitter', icon: 'mdi-twitter', color: '#1DA1F2' },
+    { key: 'telegram', name: 'Telegram', icon: 'mdi-telegram', color: '#0088cc' },
 ])
 
 const steps = ref([

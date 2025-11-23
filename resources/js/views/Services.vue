@@ -348,10 +348,11 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 
 const router = useRouter()
+const route = useRoute()
 const appStore = useAppStore()
 
 const services = ref([])
@@ -530,6 +531,10 @@ const fetchFeatured = async () => {
 const onPlatformChange = (platform) => {
   // Clear selected category when platform changes
   filters.value.category = null
+  // Update URL query parameter
+  router.replace({
+    query: platform ? { platform } : {}
+  })
   // Fetch categories filtered by the selected platform
   fetchCategories(platform)
   // Fetch services with the new platform filter
@@ -546,6 +551,8 @@ const clearFilters = () => {
     perPage: 50,
   }
   currentPage.value = 1
+  // Clear URL query parameters
+  router.replace({ query: {} })
   // Fetch all categories (no platform filter)
   fetchCategories()
   fetchServices()
@@ -565,14 +572,25 @@ const formatNumber = (num) => {
   return new Intl.NumberFormat().format(num)
 }
 
-// Restore view preference
-onMounted(() => {
+// Restore view preference and apply URL query parameters
+onMounted(async () => {
   const savedView = localStorage.getItem('servicesView')
   if (savedView) viewMode.value = savedView
 
+  // Fetch platforms first
+  await fetchPlatforms()
+
+  // Check for platform query parameter from URL
+  const platformFromUrl = route.query.platform
+  if (platformFromUrl) {
+    filters.value.platform = platformFromUrl
+    // Fetch categories filtered by the selected platform
+    await fetchCategories(platformFromUrl)
+  } else {
+    await fetchCategories()
+  }
+
   fetchServices()
-  fetchPlatforms()
-  fetchCategories()
   fetchFeatured()
 })
 
@@ -580,10 +598,20 @@ watch(viewMode, (newVal) => {
   localStorage.setItem('servicesView', newVal)
 })
 
+// Watch for URL query parameter changes (browser navigation)
+watch(() => route.query.platform, (newPlatform) => {
+  if (newPlatform !== filters.value.platform) {
+    filters.value.platform = newPlatform || null
+    filters.value.category = null
+    fetchCategories(newPlatform || null)
+    fetchServices()
+  }
+})
+
 watch(locale, () => {
   fetchServices()
   fetchPlatforms()
-  fetchCategories()
+  fetchCategories(filters.value.platform)
   fetchFeatured()
 })
 </script>
