@@ -167,7 +167,6 @@ class HomeController extends Controller
     {
         $lang = $request->get('lang', 'en');
         $categoryField = $lang === 'ar' ? 'category_ar' : 'category_en';
-        $nameField = $lang === 'ar' ? 'name_ar' : 'name_en';
         $platformKey = $request->get('platform');
 
         // If platform is specified, get categories for that platform only
@@ -180,10 +179,10 @@ class HomeController extends Controller
 
             $categories = DB::table('services')
                 ->select($categoryField . ' as name', DB::raw('COUNT(*) as count'))
-                ->where(function ($q) use ($searchTerms, $categoryField, $nameField) {
+                ->where(function ($q) use ($searchTerms, $categoryField) {
                     foreach ($searchTerms as $term) {
-                        $q->orWhere($categoryField, 'like', '%' . $term . '%')
-                          ->orWhere($nameField, 'like', '%' . $term . '%');
+                        // Only search in category field for accurate category filtering
+                        $q->orWhere($categoryField, 'like', '%' . $term . '%');
                     }
                 })
                 ->whereNotNull($categoryField)
