@@ -3,8 +3,8 @@ import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from 'vuetify'
 import { themeColors } from '../stores/app'
 
-const storedThemeColor = localStorage.getItem('themeColor') || 'blue'
-const themeColor = themeColors[storedThemeColor] || themeColors.blue
+const storedThemeColor = localStorage.getItem('themeColor') || 'indigo'
+const themeColor = themeColors[storedThemeColor] || themeColors.indigo
 
 const lightTheme = {
     dark: false,
@@ -12,16 +12,15 @@ const lightTheme = {
         primary: themeColor.primary,
         secondary: '#64748b',
         accent: '#f59e0b',
-        success: '#16a34a',
+        success: '#10b981',
         warning: '#f59e0b',
-        error: '#dc2626',
-        info: '#2563eb',
-        background: '#f8fafc',
+        error: '#ef4444',
+        info: '#3b82f6',
+        background: '#f5f5f5',
         surface: '#ffffff',
-        'surface-variant': '#f1f5f9',
-        'surface-bright': '#ffffff',
-        'on-background': '#0f172a',
-        'on-surface': '#1e293b',
+        'surface-variant': '#f0f0f0',
+        'on-background': '#111111',
+        'on-surface': '#222222',
         'on-primary': '#ffffff',
     }
 }
@@ -32,16 +31,15 @@ const darkTheme = {
         primary: themeColor.primaryDark,
         secondary: '#94a3b8',
         accent: '#fbbf24',
-        success: '#4ade80',
+        success: '#34d399',
         warning: '#fbbf24',
         error: '#f87171',
         info: '#60a5fa',
-        background: '#0a0e1a',
-        surface: '#111827',
-        'surface-variant': '#1e293b',
-        'surface-bright': '#1e293b',
-        'on-background': '#f1f5f9',
-        'on-surface': '#e2e8f0',
+        background: '#09090b',
+        surface: '#18181b',
+        'surface-variant': '#27272a',
+        'on-background': '#fafafa',
+        'on-surface': '#e4e4e7',
         'on-primary': '#ffffff',
     }
 }
@@ -58,28 +56,37 @@ const vuetify = createVuetify({
         VBtn: {
             rounded: 'lg',
             elevation: 0,
+            density: 'comfortable',
         },
         VCard: {
             rounded: 'xl',
             elevation: 0,
-            border: true,
+            color: 'surface',
         },
         VTextField: {
             variant: 'outlined',
             density: 'compact',
             hideDetails: 'auto',
+            color: 'primary',
         },
         VSelect: {
             variant: 'outlined',
             density: 'compact',
             hideDetails: 'auto',
+            color: 'primary',
+        },
+        VTextarea: {
+            variant: 'outlined',
+            density: 'compact',
+            hideDetails: 'auto',
+            color: 'primary',
         },
         VChip: {
             rounded: 'lg',
             size: 'small',
         },
         VDialog: {
-            rounded: 'xl',
+            maxWidth: 600,
         },
         VNavigationDrawer: {
             elevation: 0,
@@ -87,14 +94,11 @@ const vuetify = createVuetify({
         VAppBar: {
             elevation: 0,
         },
-        VDataTable: {
-            hover: true,
-        },
     },
 })
 
 export function updateThemeColors(colorKey) {
-    const color = themeColors[colorKey] || themeColors.blue
+    const color = themeColors[colorKey] || themeColors.indigo
     if (vuetify.theme.themes.value) {
         vuetify.theme.themes.value.light.colors.primary = color.primary
         vuetify.theme.themes.value.dark.colors.primary = color.primaryDark
