@@ -50,19 +50,21 @@
                 </v-badge>
             </v-btn>
 
-            <!-- Language Selector -->
-            <v-menu>
+            <!-- Language Selector - Dynamic -->
+            <v-menu max-height="400">
                 <template v-slot:activator="{ props }">
                     <v-btn icon variant="text" v-bind="props">
                         <v-icon>mdi-translate</v-icon>
                     </v-btn>
                 </template>
                 <v-list density="compact" nav>
-                    <v-list-item @click="changeLanguage('en')" :active="store.locale === 'en'">
-                        <v-list-item-title>English</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="changeLanguage('ar')" :active="store.locale === 'ar'">
-                        <v-list-item-title>العربية</v-list-item-title>
+                    <v-list-item
+                        v-for="lang in store.languages"
+                        :key="lang.code"
+                        @click="changeLanguage(lang.code)"
+                        :active="store.locale === lang.code"
+                    >
+                        <v-list-item-title>{{ lang.native_name }}</v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
@@ -198,13 +200,13 @@ const rail = ref(false)
 const notifications = ref([])
 const snackbar = ref({ show: false, text: '', color: 'success' })
 
-// RTL support
-const isRtl = computed(() => store.locale === 'ar')
+// RTL support - dynamic from API
+const isRtl = computed(() => store.isRTL)
 
 // Sync i18n locale with store
 watch(() => store.locale, (newLocale) => {
     locale.value = newLocale
-    document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.dir = store.isRTL ? 'rtl' : 'ltr'
     document.documentElement.lang = newLocale
 }, { immediate: true })
 
@@ -238,6 +240,7 @@ const adminMenuItems = [
     { key: 'paymentMethods', titleKey: 'nav.paymentMethods', icon: 'mdi-credit-card-outline', to: '/admin/payment-methods' },
     { key: 'fetchAr', titleKey: 'nav.fetchServicesAr', icon: 'mdi-sync', to: '/admin/services/fetch-ar' },
     { key: 'fetchEn', titleKey: 'nav.fetchServicesEn', icon: 'mdi-sync', to: '/admin/services/fetch-en' },
+    { key: 'languages', titleKey: 'nav.languages', icon: 'mdi-translate', to: '/admin/languages' },
 ]
 
 // Breadcrumbs

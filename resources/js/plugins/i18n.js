@@ -326,6 +326,7 @@ const messages = {
             paymentMethods: 'Payment Methods',
             fetchServicesAr: 'Fetch Services AR',
             fetchServicesEn: 'Fetch Services EN',
+            languages: 'Languages',
             profile: 'Profile',
             logout: 'Logout',
             admin: 'Admin',

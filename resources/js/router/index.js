@@ -190,6 +190,13 @@ const adminRoutes = [
                 component: () => import('../views/admin/FetchServices.vue'),
                 meta: { title: 'Fetch Services EN - SJDM', breadcrumb: 'Fetch Services EN', requiresAdmin: true, language: 'en' }
             },
+            // Languages & Translations (Admin only)
+            {
+                path: 'languages',
+                name: 'AdminLanguages',
+                component: () => import('../views/admin/Languages.vue'),
+                meta: { title: 'Languages - SJDM', breadcrumb: 'Languages', requiresAdmin: true }
+            },
             // SEO Dashboard (Admin only)
             {
                 path: 'seo',

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Language;
 use App\Models\Translation;
+use App\Services\AutoTranslationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
 class LanguageApiController extends Controller
@@ -47,6 +49,72 @@ class LanguageApiController extends Controller
             'direction' => $language->direction,
             'translations' => $translations,
         ]);
+    }
+
+    /**
+     * Admin: List all languages with translation counts
+     */
+    public function adminIndex(): JsonResponse
+    {
+        $languages = Language::ordered()->get();
+
+        $languagesData = $languages->map(function ($lang) {
+            return array_merge($lang->toArray(), [
+                'translations_count' => Translation::where('locale', $lang->code)->count(),
+            ]);
+        });
+
+        $totalTranslations = Translation::count();
+
+        return response()->json([
+            'languages' => $languagesData,
+            'stats' => ['total' => $totalTranslations],
+        ]);
+    }
+
+    /**
+     * Admin: Toggle language active status
+     */
+    public function toggle(string $code): JsonResponse
+    {
+        $language = Language::where('code', $code)->first();
+        if (!$language) return response()->json(['error' => 'Language not found'], 404);
+
+        $language->is_active = !$language->is_active;
+        $language->save();
+
+        return response()->json(['success' => true, 'is_active' => $language->is_active]);
+    }
+
+    /**
+     * Admin: Seed base EN/AR translations
+     */
+    public function seed(): JsonResponse
+    {
+        Artisan::call('translations:seed');
+
+        $enCount = Translation::where('locale', 'en')->count();
+        $arCount = Translation::where('locale', 'ar')->count();
+
+        return response()->json([
+            'success' => true,
+            'en_count' => $enCount,
+            'ar_count' => $arCount,
+        ]);
+    }
+
+    /**
+     * Admin: Auto-translate to a specific language
+     */
+    public function translate(string $code): JsonResponse
+    {
+        $language = Language::where('code', $code)->first();
+        if (!$language) return response()->json(['error' => 'Language not found'], 404);
+
+        $service = new AutoTranslationService();
+        $result = $service->translateTier1($code, $language->name);
+
+        return response()->json($result);
     }
 
     public function checkUpdates(Request $request, string $locale): JsonResponse

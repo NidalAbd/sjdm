@@ -208,6 +208,12 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::put('/permissions/{permission}', [App\Http\Controllers\Api\Admin\PermissionApiController::class, 'update']);
         Route::delete('/permissions/{permission}', [App\Http\Controllers\Api\Admin\PermissionApiController::class, 'destroy']);
 
+        // Languages & Translations Management
+        Route::get('/languages', [App\Http\Controllers\Api\LanguageApiController::class, 'adminIndex']);
+        Route::patch('/languages/{code}/toggle', [App\Http\Controllers\Api\LanguageApiController::class, 'toggle']);
+        Route::post('/languages/seed', [App\Http\Controllers\Api\LanguageApiController::class, 'seed']);
+        Route::post('/languages/{code}/translate', [App\Http\Controllers\Api\LanguageApiController::class, 'translate']);
+
         // Payment Methods Management
         Route::get('/payment-methods', [App\Http\Controllers\Api\Admin\PaymentMethodApiController::class, 'index']);
         Route::post('/payment-methods', [App\Http\Controllers\Api\Admin\PaymentMethodApiController::class, 'store']);
