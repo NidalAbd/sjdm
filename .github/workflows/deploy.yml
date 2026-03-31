@@ -259,9 +259,9 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          security: loose
+          protocol: ftps
           port: 21
+          timeout: 120000
           local-dir: ./deploy_laravel/
           server-dir: domains/smm-followerss.com/
           exclude: |
@@ -281,11 +281,10 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          security: loose
+          protocol: ftps
           port: 21
+          timeout: 120000
           local-dir: ./deploy_public/
-          # Deploy public files inside the domain folder: domains/smm-followerss.com/public_html/
           server-dir: domains/smm-followerss.com/public_html/
           log-level: verbose
           dangerous-clean-slate: false
