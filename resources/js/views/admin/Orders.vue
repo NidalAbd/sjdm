@@ -1,83 +1,61 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-shopping</v-icon>
-                <span>Manage Orders</span>
-                <v-spacer></v-spacer>
-                <v-btn color="primary" to="/admin/orders/create" prepend-icon="mdi-plus">
+        <!-- Page Header -->
+        <div class="d-flex align-center justify-space-between mb-4">
+            <div>
+                <h1 class="text-h5 font-weight-bold">Orders</h1>
+                <p class="text-caption text-medium-emphasis mb-0">Manage and track all orders</p>
+            </div>
+            <div class="d-flex ga-2">
+                <v-btn v-if="authStore.isAdmin" variant="tonal" @click="syncOrders" :loading="syncing" prepend-icon="mdi-sync" size="small">
+                    Sync
+                </v-btn>
+                <v-btn color="primary" to="/admin/orders/create" prepend-icon="mdi-plus" size="small">
                     New Order
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </div>
+        </div>
 
-        <!-- Admin Widgets -->
+        <!-- Stats Row -->
         <v-row v-if="authStore.isAdmin" class="mb-4">
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="info" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-h4 font-weight-bold">${{ apiBalance }}</div>
-                                <div class="text-caption">API Balance</div>
-                            </div>
-                            <v-icon size="40" class="opacity-60">mdi-wallet</v-icon>
+            <v-col cols="6" md="4">
+                <v-card variant="outlined" class="h-100">
+                    <v-card-text class="pa-4">
+                        <div class="d-flex align-center justify-space-between mb-2">
+                            <v-avatar color="info" variant="tonal" size="36" rounded="lg"><v-icon size="18">mdi-wallet</v-icon></v-avatar>
                         </div>
+                        <div class="text-h5 font-weight-bold stat-value">${{ apiBalance }}</div>
+                        <div class="text-caption text-medium-emphasis">API Balance</div>
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="primary" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-h5 font-weight-bold">Sync Orders</div>
-                                <div class="text-caption">Update Status</div>
-                            </div>
-                            <v-btn
-                                icon
-                                variant="tonal"
-                                color="white"
-                                @click="syncOrders"
-                                :loading="syncing"
-                            >
-                                <v-icon>mdi-sync</v-icon>
-                            </v-btn>
+            <v-col cols="6" md="4">
+                <v-card variant="outlined" class="h-100">
+                    <v-card-text class="pa-4">
+                        <div class="d-flex align-center justify-space-between mb-2">
+                            <v-avatar color="warning" variant="tonal" size="36" rounded="lg"><v-icon size="18">mdi-clock</v-icon></v-avatar>
                         </div>
+                        <div class="text-h5 font-weight-bold stat-value">{{ pendingCount }}</div>
+                        <div class="text-caption text-medium-emphasis">Pending</div>
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="warning" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-h4 font-weight-bold">{{ pendingCount }}</div>
-                                <div class="text-caption">Pending Orders</div>
-                            </div>
-                            <v-icon size="40" class="opacity-60">mdi-clock</v-icon>
+            <v-col cols="12" md="4">
+                <v-card variant="outlined" class="h-100">
+                    <v-card-text class="pa-4">
+                        <div class="d-flex align-center justify-space-between mb-2">
+                            <v-avatar color="success" variant="tonal" size="36" rounded="lg"><v-icon size="18">mdi-check-circle</v-icon></v-avatar>
                         </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="success" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-h4 font-weight-bold">{{ completedCount }}</div>
-                                <div class="text-caption">Completed Orders</div>
-                            </div>
-                            <v-icon size="40" class="opacity-60">mdi-check-circle</v-icon>
-                        </div>
+                        <div class="text-h5 font-weight-bold stat-value">{{ completedCount }}</div>
+                        <div class="text-caption text-medium-emphasis">Completed</div>
                     </v-card-text>
                 </v-card>
             </v-col>
         </v-row>
 
         <!-- Filters -->
-        <v-card class="mb-4">
-            <v-card-text>
+        <v-card class="mb-4" variant="outlined">
+            <v-card-text class="pa-3">
                 <v-row>
                     <v-col cols="12" sm="6" md="3">
                         <v-text-field
@@ -342,9 +320,9 @@
         <!-- Order Details Dialog -->
         <v-dialog v-model="orderDialog" max-width="700">
             <v-card v-if="selectedOrder">
-                <v-card-title class="bg-primary text-white">
-                    <v-icon class="mr-2">mdi-shopping</v-icon>
-                    Order #{{ selectedOrder.id }} Details
+                <v-card-title>
+                    <v-icon class="mr-2" size="20">mdi-shopping</v-icon>
+                    Order #{{ selectedOrder.id }}
                 </v-card-title>
                 <v-card-text class="pa-4">
                     <v-row>
@@ -420,8 +398,8 @@
         <!-- Refund Dialog -->
         <v-dialog v-model="refundDialog" max-width="500">
             <v-card v-if="selectedOrder">
-                <v-card-title class="bg-success text-white">
-                    <v-icon class="mr-2">mdi-cash-refund</v-icon>
+                <v-card-title>
+                    <v-icon class="mr-2" size="20" color="success">mdi-cash-refund</v-icon>
                     Refund Order #{{ selectedOrder.id }}
                 </v-card-title>
                 <v-card-text class="pa-4">
@@ -461,8 +439,8 @@
         <!-- Create Ticket Dialog -->
         <v-dialog v-model="ticketDialog" max-width="500">
             <v-card v-if="selectedOrder">
-                <v-card-title class="bg-info text-white">
-                    <v-icon class="mr-2">mdi-headset</v-icon>
+                <v-card-title>
+                    <v-icon class="mr-2" size="20" color="info">mdi-headset</v-icon>
                     Create Support Ticket
                 </v-card-title>
                 <v-card-text class="pa-4">
