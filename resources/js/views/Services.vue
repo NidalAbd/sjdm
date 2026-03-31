@@ -1,36 +1,34 @@
 <template>
-  <div class="services-page">
+  <div>
     <!-- Hero Section -->
-    <v-container fluid class="hero-section pa-0">
-      <div class="hero-gradient">
-        <v-container class="py-16">
-          <v-row align="center">
-            <v-col cols="12" lg="8">
-              <h1 class="text-h3 text-md-h2 font-weight-bold text-white mb-4">
-                {{ $t('servicesPage.allSmmServices') }}
-              </h1>
-              <p class="text-h6 text-white-darken-1 mb-6">
-                {{ $t('servicesPage.discoverServices') }}
-              </p>
-              <v-chip v-if="hasFilters" color="white" variant="flat" class="px-4 py-2">
-                <v-icon start>mdi-filter</v-icon>
-                {{ pagination.total }} {{ $t('servicesPage.servicesFound') }}
-              </v-chip>
-            </v-col>
-            <v-col cols="12" lg="4" class="text-center">
-              <v-card class="hero-stat-card pa-6" color="rgba(255,255,255,0.15)" variant="flat">
-                <div class="text-h2 font-weight-bold text-white">{{ pagination.total || 0 }}</div>
-                <div class="text-subtitle-1 text-white-darken-1">{{ $t('servicesPage.totalServices') }}</div>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-    </v-container>
+    <div :style="{ background: store.gradientStyle }" class="section-padding">
+      <v-container>
+        <v-row align="center">
+          <v-col cols="12" lg="8">
+            <h1 class="text-h4 font-weight-bold text-white mb-4">
+              {{ $t('servicesPage.allSmmServices') }}
+            </h1>
+            <p class="text-body-2 text-white mb-6" style="opacity: 0.85">
+              {{ $t('servicesPage.discoverServices') }}
+            </p>
+            <v-chip v-if="hasFilters" color="white" variant="flat" class="px-4 py-2">
+              <v-icon start>mdi-filter</v-icon>
+              {{ pagination.total }} {{ $t('servicesPage.servicesFound') }}
+            </v-chip>
+          </v-col>
+          <v-col cols="12" lg="4" class="text-center">
+            <v-card variant="outlined" class="pa-6" style="border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1)">
+              <div class="text-h4 font-weight-bold text-white">{{ pagination.total || 0 }}</div>
+              <div class="text-body-2 text-white" style="opacity: 0.85">{{ $t('servicesPage.totalServices') }}</div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
 
     <v-container class="py-8">
       <!-- Filters Section -->
-      <v-card class="mb-8" elevation="2">
+      <v-card variant="outlined" class="mb-8">
         <v-card-text class="pa-6">
           <v-row>
             <!-- Search -->
@@ -142,11 +140,11 @@
           <v-row class="mt-4">
             <v-col cols="12">
               <div class="d-flex flex-wrap gap-3">
-                <v-btn color="primary" size="large" @click="fetchServices" :loading="loading">
+                <v-btn color="primary" size="default" @click="fetchServices" :loading="loading">
                   <v-icon start>mdi-filter</v-icon>
                   {{ $t('servicesPage.applyFilters') }}
                 </v-btn>
-                <v-btn variant="outlined" size="large" @click="clearFilters">
+                <v-btn variant="outlined" size="default" @click="clearFilters">
                   <v-icon start>mdi-close</v-icon>
                   {{ $t('servicesPage.clearFilters') }}
                 </v-btn>
@@ -164,16 +162,22 @@
         </div>
         <v-row>
           <v-col v-for="service in featured" :key="service.service_id" cols="12" md="6" lg="4">
-            <v-card class="featured-card h-100" @click="goToService(service.service_id)">
-              <div class="featured-badge">
+            <v-card
+              variant="outlined"
+              class="h-100 hover-lift"
+              :style="{ background: store.gradientStyle }"
+              @click="goToService(service.service_id)"
+              style="cursor: pointer; position: relative; overflow: hidden"
+            >
+              <div style="position: absolute; top: -10px; right: -10px; width: 50px; height: 50px; background: #ffc107; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000">
                 <v-icon size="20">mdi-star</v-icon>
               </div>
               <v-card-text class="text-center text-white">
                 <h3 class="text-subtitle-1 font-weight-bold mb-2">
-                  {{ locale === 'ar' ? service.name_ar : service.name_en }}
+                  {{ service.name || service.name_en }}
                 </h3>
                 <div class="text-h4 font-weight-bold mb-2">${{ Number(service.rate).toFixed(2) }}</div>
-                <div class="text-body-2 opacity-80">{{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}</div>
+                <div class="text-body-2" style="opacity: 0.8">{{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}</div>
                 <v-btn color="white" variant="flat" class="mt-4" size="small">
                   {{ $t('servicesPage.viewDetails') }}
                 </v-btn>
@@ -211,9 +215,9 @@
       <!-- Grid View -->
       <v-row v-else-if="viewMode === 'grid' && services.length > 0">
         <v-col v-for="service in services" :key="service.service_id" cols="12" md="6" lg="4">
-          <v-card class="service-card h-100" variant="outlined" @click="goToService(service.service_id)">
+          <v-card class="h-100 hover-lift" variant="outlined" @click="goToService(service.service_id)" style="cursor: pointer">
             <!-- Header -->
-            <div class="service-card-header d-flex justify-space-between align-center pa-4 pb-0">
+            <div class="d-flex justify-space-between align-center pa-4 pb-0">
               <v-chip color="primary" size="small" variant="flat">
                 #{{ service.service_id }}
               </v-chip>
@@ -224,27 +228,27 @@
 
             <!-- Body -->
             <v-card-text class="pt-4">
-              <h3 class="text-subtitle-1 font-weight-bold mb-2 service-title">
-                {{ locale === 'ar' ? service.name_ar : service.name_en }}
+              <h3 class="text-subtitle-1 font-weight-bold mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4">
+                {{ service.name || service.name_en }}
               </h3>
               <div class="text-body-2 text-primary mb-4">
                 <v-icon size="16" class="mr-1">mdi-tag</v-icon>
-                {{ locale === 'ar' ? service.category_ar : service.category_en }}
+                {{ service.category || service.category_en }}
               </div>
 
               <!-- Stats -->
               <v-row dense class="mb-3">
                 <v-col cols="6">
-                  <div class="stat-box pa-3 text-center rounded">
+                  <v-sheet rounded class="pa-3 text-center" color="surface-variant">
                     <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.min') }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
-                  </div>
+                  </v-sheet>
                 </v-col>
                 <v-col cols="6">
-                  <div class="stat-box pa-3 text-center rounded">
+                  <v-sheet rounded class="pa-3 text-center" color="surface-variant">
                     <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.max') }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
-                  </div>
+                  </v-sheet>
                 </v-col>
               </v-row>
 
@@ -278,7 +282,7 @@
       </v-row>
 
       <!-- List View -->
-      <v-card v-else-if="viewMode === 'list' && services.length > 0">
+      <v-card v-else-if="viewMode === 'list' && services.length > 0" variant="outlined">
         <v-table hover>
           <thead>
             <tr>
@@ -291,14 +295,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="service in services" :key="service.service_id" class="service-row" @click="goToService(service.service_id)">
+            <tr v-for="service in services" :key="service.service_id" style="cursor: pointer" @click="goToService(service.service_id)">
               <td>
-                <div class="font-weight-bold">{{ locale === 'ar' ? service.name_ar : service.name_en }}</div>
+                <div class="font-weight-bold">{{ service.name || service.name_en }}</div>
                 <div class="text-caption text-medium-emphasis">#{{ service.service_id }}</div>
               </td>
               <td>
                 <v-chip size="small" variant="tonal">
-                  {{ locale === 'ar' ? service.category_ar : service.category_en }}
+                  {{ service.category || service.category_en }}
                 </v-chip>
               </td>
               <td>
@@ -321,7 +325,7 @@
       </v-card>
 
       <!-- No Results -->
-      <v-card v-else-if="!loading && services.length === 0" class="text-center py-16" variant="flat">
+      <v-card v-else-if="!loading && services.length === 0" class="text-center py-16" variant="outlined">
         <v-icon size="80" color="grey" class="mb-4">mdi-magnify</v-icon>
         <h3 class="text-h5 text-medium-emphasis mb-2">{{ $t('servicesPage.noServices') }}</h3>
         <p class="text-body-2 text-medium-emphasis mb-6">
@@ -356,7 +360,15 @@ import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
 const { t, locale: i18nLocale } = useI18n()
 const router = useRouter()
 const route = useRoute()
-const appStore = useAppStore()
+const store = useAppStore()
+
+// heroBg computed
+const heroBg = computed(() => {
+    const c = store.currentThemeColor
+    const p = store.isDark ? c.primaryDark : c.primary
+    const r = parseInt(p.slice(1,3),16), g = parseInt(p.slice(3,5),16), b = parseInt(p.slice(5,7),16)
+    return `linear-gradient(135deg, rgba(${r},${g},${b}, 0.06) 0%, transparent 60%)`
+})
 
 // SEO Configuration
 const seoConfig = computed(() => {
@@ -391,7 +403,7 @@ const filters = ref({
   perPage: 50,
 })
 
-const locale = computed(() => appStore.locale)
+const locale = computed(() => store.locale)
 
 const hasFilters = computed(() => {
   return filters.value.search || filters.value.platform || filters.value.category
@@ -625,81 +637,3 @@ watch(locale, () => {
   fetchFeatured()
 })
 </script>
-
-<style scoped>
-.hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.hero-gradient {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
-}
-
-.hero-stat-card {
-  backdrop-filter: blur(10px);
-  border-radius: 16px !important;
-}
-
-.service-card {
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 16px !important;
-  overflow: hidden;
-  background: rgb(var(--v-theme-surface));
-}
-
-.service-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
-  border-color: rgb(var(--v-theme-primary)) !important;
-}
-
-.stat-box {
-  background: rgba(var(--v-theme-on-surface), 0.05);
-}
-
-.service-title {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
-}
-
-.featured-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 16px !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.featured-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4) !important;
-}
-
-.featured-badge {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 50px;
-  height: 50px;
-  background: #ffc107;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-}
-
-.service-row {
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.service-row:hover {
-  background: rgba(var(--v-theme-primary), 0.05);
-}
-</style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="service-details-page">
+  <div>
     <!-- Breadcrumbs -->
     <v-container class="py-4">
       <v-breadcrumbs :items="breadcrumbs" class="px-0">
@@ -13,22 +13,22 @@
       <v-row v-if="service && !loading">
         <v-col cols="12" lg="8">
           <!-- Service Info Card -->
-          <v-card class="mb-6" elevation="2">
+          <v-card variant="outlined" class="mb-6">
             <v-card-text class="pa-8">
               <div class="d-flex flex-wrap align-center gap-2 mb-4">
                 <v-chip color="primary" variant="flat">
                   #{{ service.service_id }}
                 </v-chip>
-                <v-chip color="grey-lighten-2" variant="flat">
-                  {{ locale === 'ar' ? service.category_ar : service.category_en }}
+                <v-chip variant="tonal">
+                  {{ service.category || service.category_en }}
                 </v-chip>
-                <v-chip color="grey-lighten-2" variant="flat">
+                <v-chip variant="tonal">
                   {{ service.type || 'Default' }}
                 </v-chip>
               </div>
 
-              <h1 class="text-h4 text-md-h3 font-weight-bold mb-4">
-                {{ locale === 'ar' ? service.name_ar : service.name_en }}
+              <h1 class="text-h4 font-weight-bold mb-4">
+                {{ service.name || service.name_en }}
               </h1>
 
               <v-divider class="my-6" />
@@ -36,26 +36,26 @@
               <!-- Stats Grid -->
               <v-row>
                 <v-col cols="6" sm="3">
-                  <v-sheet rounded class="pa-4 text-center" color="success-lighten-5">
-                    <div class="text-caption text-medium-emphasis mb-1">{{ locale === 'ar' ? 'السعر لكل 1000' : 'Price / 1K' }}</div>
+                  <v-sheet rounded class="pa-4 text-center" color="surface-variant">
+                    <div class="text-caption text-medium-emphasis mb-1">{{ $t('servicesPage.price') }}</div>
                     <div class="text-h5 font-weight-bold text-success">${{ Number(service.rate).toFixed(4) }}</div>
                   </v-sheet>
                 </v-col>
                 <v-col cols="6" sm="3">
-                  <v-sheet rounded class="pa-4 text-center" color="primary-lighten-5">
-                    <div class="text-caption text-medium-emphasis mb-1">{{ locale === 'ar' ? 'الحد الأدنى' : 'Min Order' }}</div>
+                  <v-sheet rounded class="pa-4 text-center" color="surface-variant">
+                    <div class="text-caption text-medium-emphasis mb-1">{{ $t('servicesPage.min') }}</div>
                     <div class="text-h5 font-weight-bold text-primary">{{ formatNumber(service.min) }}</div>
                   </v-sheet>
                 </v-col>
                 <v-col cols="6" sm="3">
-                  <v-sheet rounded class="pa-4 text-center" color="primary-lighten-5">
-                    <div class="text-caption text-medium-emphasis mb-1">{{ locale === 'ar' ? 'الحد الأقصى' : 'Max Order' }}</div>
+                  <v-sheet rounded class="pa-4 text-center" color="surface-variant">
+                    <div class="text-caption text-medium-emphasis mb-1">{{ $t('servicesPage.max') }}</div>
                     <div class="text-h5 font-weight-bold text-primary">{{ formatNumber(service.max) }}</div>
                   </v-sheet>
                 </v-col>
                 <v-col cols="6" sm="3">
-                  <v-sheet rounded class="pa-4 text-center" color="grey-lighten-4">
-                    <div class="text-caption text-medium-emphasis mb-1">{{ locale === 'ar' ? 'النوع' : 'Type' }}</div>
+                  <v-sheet rounded class="pa-4 text-center" color="surface-variant">
+                    <div class="text-caption text-medium-emphasis mb-1">{{ $t('servicesPage.type') || 'Type' }}</div>
                     <div class="text-h6 font-weight-bold text-capitalize">{{ service.type || 'Default' }}</div>
                   </v-sheet>
                 </v-col>
@@ -64,36 +64,36 @@
               <v-divider class="my-6" />
 
               <!-- Features -->
-              <h3 class="text-h6 font-weight-bold mb-4">{{ locale === 'ar' ? 'الميزات' : 'Features' }}</h3>
+              <h3 class="text-h6 font-weight-bold mb-4">{{ $t('servicesPage.features') || 'Features' }}</h3>
               <div class="d-flex flex-wrap gap-3">
                 <v-chip v-if="service.refill" color="success" variant="flat" size="large">
                   <v-icon start>mdi-refresh</v-icon>
-                  {{ locale === 'ar' ? 'إعادة تعبئة متاحة' : 'Refill Available' }}
+                  {{ $t('services.refillAvailable') || 'Refill Available' }}
                 </v-chip>
                 <v-chip v-if="service.cancel" color="warning" variant="flat" size="large">
                   <v-icon start>mdi-close-circle</v-icon>
-                  {{ locale === 'ar' ? 'إلغاء متاح' : 'Cancellation Available' }}
+                  {{ $t('services.cancelAvailable') || 'Cancellation Available' }}
                 </v-chip>
                 <v-chip color="info" variant="flat" size="large">
                   <v-icon start>mdi-lightning-bolt</v-icon>
-                  {{ locale === 'ar' ? 'بداية فورية' : 'Instant Start' }}
+                  {{ $t('services.instantStart') || 'Instant Start' }}
                 </v-chip>
                 <v-chip color="purple" variant="flat" size="large">
                   <v-icon start>mdi-shield-check</v-icon>
-                  {{ locale === 'ar' ? 'آمن 100%' : '100% Safe' }}
+                  {{ $t('services.safe') || '100% Safe' }}
                 </v-chip>
               </div>
             </v-card-text>
           </v-card>
 
           <!-- Description Card -->
-          <v-card class="mb-6" elevation="2">
+          <v-card variant="outlined" class="mb-6">
             <v-card-title class="text-h6 font-weight-bold pa-6 pb-2">
               <v-icon start color="primary">mdi-information</v-icon>
-              {{ locale === 'ar' ? 'وصف الخدمة' : 'Service Description' }}
+              {{ $t('servicesPage.serviceDescription') || 'Service Description' }}
             </v-card-title>
             <v-card-text class="pa-6 pt-0">
-              <p class="text-body-1 mb-4">
+              <p class="text-body-2 mb-4">
                 {{ locale === 'ar'
                   ? 'هذه الخدمة توفر تفاعلاً عالي الجودة لحسابك على وسائل التواصل الاجتماعي. تبدأ الطلبات عادةً في غضون 0-15 دقيقة وتكتمل بناءً على الكمية المطلوبة.'
                   : 'This service provides high-quality engagement for your social media account. Orders typically start within 0-15 minutes and complete based on the quantity ordered.'
@@ -114,11 +114,11 @@
           <div v-if="relatedServices.length > 0">
             <h2 class="text-h5 font-weight-bold mb-4">
               <v-icon start color="primary">mdi-link-variant</v-icon>
-              {{ locale === 'ar' ? 'خدمات مشابهة' : 'Related Services' }}
+              {{ $t('servicesPage.relatedServices') || 'Related Services' }}
             </h2>
             <v-row>
               <v-col v-for="related in relatedServices" :key="related.service_id" cols="12" sm="6">
-                <v-card class="related-card h-100" elevation="1" @click="goToService(related.service_id)">
+                <v-card variant="outlined" class="h-100 hover-lift" @click="goToService(related.service_id)" style="cursor: pointer">
                   <v-card-text class="pa-4">
                     <div class="d-flex justify-space-between align-start mb-2">
                       <v-chip size="x-small" color="primary" variant="flat">
@@ -126,15 +126,15 @@
                       </v-chip>
                       <span class="text-success font-weight-bold">${{ Number(related.rate).toFixed(4) }}/1K</span>
                     </div>
-                    <h4 class="text-subtitle-2 font-weight-bold mb-2 related-title">
-                      {{ locale === 'ar' ? related.name_ar : related.name_en }}
+                    <h4 class="text-subtitle-2 font-weight-bold mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">
+                      {{ related.name || related.name_en }}
                     </h4>
                     <div class="d-flex gap-2">
                       <v-chip v-if="related.refill" size="x-small" color="success" variant="tonal">
-                        {{ locale === 'ar' ? 'إعادة تعبئة' : 'Refill' }}
+                        {{ $t('services.refill') }}
                       </v-chip>
                       <v-chip v-if="related.cancel" size="x-small" color="warning" variant="tonal">
-                        {{ locale === 'ar' ? 'إلغاء' : 'Cancel' }}
+                        {{ $t('common.cancel') }}
                       </v-chip>
                     </div>
                   </v-card-text>
@@ -146,23 +146,23 @@
 
         <v-col cols="12" lg="4">
           <!-- Order Card -->
-          <v-card class="sticky-card" elevation="3">
-            <div class="order-header pa-4">
+          <v-card variant="outlined" style="position: sticky; top: 80px">
+            <div :style="{ background: store.gradientStyle }" class="pa-4 d-flex align-center">
               <v-icon start color="white">mdi-cart</v-icon>
-              <span class="text-h6 font-weight-bold text-white">{{ locale === 'ar' ? 'اطلب الآن' : 'Place Order' }}</span>
+              <span class="text-h6 font-weight-bold text-white">{{ $t('servicesPage.placeOrder') || 'Place Order' }}</span>
             </div>
             <v-card-text class="pa-6">
               <v-alert type="info" variant="tonal" class="mb-6" density="compact">
                 <template v-slot:prepend>
                   <v-icon>mdi-login</v-icon>
                 </template>
-                {{ locale === 'ar' ? 'سجل الدخول لتقديم الطلبات' : 'Login to place orders' }}
+                {{ $t('servicesPage.loginToOrder') || 'Login to place orders' }}
               </v-alert>
 
               <v-text-field
                 v-model="orderForm.link"
-                :label="locale === 'ar' ? 'الرابط' : 'Link'"
-                :placeholder="locale === 'ar' ? 'أدخل رابط الملف الشخصي / المنشور' : 'Enter your profile/post link'"
+                :label="$t('servicesPage.link') || 'Link'"
+                :placeholder="$t('servicesPage.linkPlaceholder') || 'Enter your profile/post link'"
                 prepend-inner-icon="mdi-link"
                 variant="outlined"
                 density="comfortable"
@@ -171,14 +171,14 @@
 
               <v-text-field
                 v-model="orderForm.quantity"
-                :label="locale === 'ar' ? 'الكمية' : 'Quantity'"
+                :label="$t('servicesPage.quantity') || 'Quantity'"
                 type="number"
                 :min="service.min"
                 :max="service.max"
                 prepend-inner-icon="mdi-numeric"
                 variant="outlined"
                 density="comfortable"
-                :hint="`${locale === 'ar' ? 'الحد الأدنى' : 'Min'}: ${formatNumber(service.min)} - ${locale === 'ar' ? 'الحد الأقصى' : 'Max'}: ${formatNumber(service.max)}`"
+                :hint="`${$t('servicesPage.min') || 'Min'}: ${formatNumber(service.min)} - ${$t('servicesPage.max') || 'Max'}: ${formatNumber(service.max)}`"
                 persistent-hint
                 class="mb-4"
               />
@@ -186,22 +186,22 @@
               <v-divider class="my-4" />
 
               <div class="d-flex justify-space-between mb-2">
-                <span class="text-medium-emphasis">{{ locale === 'ar' ? 'السعر لكل 1000:' : 'Price per 1000:' }}</span>
+                <span class="text-medium-emphasis">{{ $t('servicesPage.pricePer1000') || 'Price per 1000:' }}</span>
                 <span class="font-weight-bold">${{ Number(service.rate).toFixed(4) }}</span>
               </div>
               <div class="d-flex justify-space-between mb-4">
-                <span class="text-medium-emphasis">{{ locale === 'ar' ? 'المجموع:' : 'Total:' }}</span>
+                <span class="text-medium-emphasis">{{ $t('servicesPage.total') || 'Total:' }}</span>
                 <span class="text-h5 font-weight-bold text-primary">${{ calculatedPrice }}</span>
               </div>
 
-              <v-btn color="primary" size="x-large" block href="/login" class="mb-4">
+              <v-btn color="primary" size="large" block href="/login" class="mb-4">
                 <v-icon start>mdi-login</v-icon>
-                {{ locale === 'ar' ? 'تسجيل الدخول للطلب' : 'Login to Order' }}
+                {{ $t('servicesPage.loginToOrderBtn') || 'Login to Order' }}
               </v-btn>
 
               <p class="text-caption text-medium-emphasis text-center">
-                {{ locale === 'ar' ? 'ليس لديك حساب؟' : "Don't have an account?" }}
-                <a href="/register" class="text-primary font-weight-bold">{{ locale === 'ar' ? 'سجل الآن' : 'Sign up' }}</a>
+                {{ $t('servicesPage.noAccount') || "Don't have an account?" }}
+                <a href="/register" class="text-primary font-weight-bold">{{ $t('servicesPage.signUp') || 'Sign up' }}</a>
               </p>
             </v-card-text>
           </v-card>
@@ -219,12 +219,12 @@
       </v-row>
 
       <!-- Not Found -->
-      <v-card v-else class="text-center py-16" elevation="0">
+      <v-card v-else class="text-center py-16" variant="outlined">
         <v-icon size="80" color="error-lighten-2" class="mb-4">mdi-alert-circle</v-icon>
-        <h2 class="text-h5 text-medium-emphasis mb-4">{{ locale === 'ar' ? 'الخدمة غير موجودة' : 'Service not found' }}</h2>
+        <h2 class="text-h5 text-medium-emphasis mb-4">{{ $t('servicesPage.serviceNotFound') || 'Service not found' }}</h2>
         <v-btn color="primary" to="/all-services">
           <v-icon start>mdi-arrow-left</v-icon>
-          {{ locale === 'ar' ? 'تصفح جميع الخدمات' : 'Browse all services' }}
+          {{ $t('servicesPage.browseAll') || 'Browse all services' }}
         </v-btn>
       </v-card>
     </v-container>
@@ -239,7 +239,15 @@ import { useHead } from '@vueuse/head'
 
 const route = useRoute()
 const router = useRouter()
-const appStore = useAppStore()
+const store = useAppStore()
+
+// heroBg computed
+const heroBg = computed(() => {
+    const c = store.currentThemeColor
+    const p = store.isDark ? c.primaryDark : c.primary
+    const r = parseInt(p.slice(1,3),16), g = parseInt(p.slice(3,5),16), b = parseInt(p.slice(5,7),16)
+    return `linear-gradient(135deg, rgba(${r},${g},${b}, 0.06) 0%, transparent 60%)`
+})
 
 const service = ref(null)
 const relatedServices = ref([])
@@ -252,12 +260,12 @@ const orderForm = ref({
   quantity: 100
 })
 
-const locale = computed(() => appStore.locale)
+const locale = computed(() => store.locale)
 
 const breadcrumbs = computed(() => [
   { title: locale.value === 'ar' ? 'الرئيسية' : 'Home', to: '/' },
   { title: locale.value === 'ar' ? 'الخدمات' : 'Services', to: '/all-services' },
-  { title: service.value ? (locale.value === 'ar' ? service.value.category_ar : service.value.category_en) : '...', disabled: true },
+  { title: service.value ? (service.value.category || service.value.category_en) : '...', disabled: true },
   { title: service.value ? `#${service.value.service_id}` : '...', disabled: true },
 ])
 
@@ -321,8 +329,8 @@ const goToService = (id) => {
 const productStructuredData = computed(() => {
   if (!service.value) return null
 
-  const serviceName = locale.value === 'ar' ? service.value.name_ar : service.value.name_en
-  const categoryName = locale.value === 'ar' ? service.value.category_ar : service.value.category_en
+  const serviceName = service.value.name || service.value.name_en
+  const categoryName = service.value.category || service.value.category_en
 
   return {
     '@context': 'https://schema.org',
@@ -412,8 +420,8 @@ const productStructuredData = computed(() => {
 const breadcrumbStructuredData = computed(() => {
   if (!service.value) return null
 
-  const categoryName = locale.value === 'ar' ? service.value.category_ar : service.value.category_en
-  const serviceName = locale.value === 'ar' ? service.value.name_ar : service.value.name_en
+  const categoryName = service.value.category || service.value.category_en
+  const serviceName = service.value.name || service.value.name_en
 
   return {
     '@context': 'https://schema.org',
@@ -455,8 +463,8 @@ const seoHead = computed(() => {
     }
   }
 
-  const serviceName = locale.value === 'ar' ? service.value.name_ar : service.value.name_en
-  const categoryName = locale.value === 'ar' ? service.value.category_ar : service.value.category_en
+  const serviceName = service.value.name || service.value.name_en
+  const categoryName = service.value.category || service.value.category_en
   const title = `${serviceName} | SMM Panel`
   const description = locale.value === 'ar'
     ? `اشترِ ${serviceName} بأرخص الأسعار. السعر: $${Number(service.value.rate).toFixed(4)}/1000. توصيل فوري، دعم على مدار الساعة.`
@@ -511,35 +519,3 @@ onMounted(fetchService)
 watch(() => route.params.id, fetchService)
 watch(locale, fetchService)
 </script>
-
-<style scoped>
-.sticky-card {
-  position: sticky;
-  top: 80px;
-}
-
-.order-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-}
-
-.related-card {
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid #e0e0e0;
-}
-
-.related-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
-  border-color: #667eea;
-}
-
-.related-title {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>
