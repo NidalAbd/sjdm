@@ -16,14 +16,11 @@ class AutoTranslationService
 
     /**
      * Tier 1: Translate UI strings from translations table
+     * Tries OpenAI first, falls back to Google Translate free API
      */
     public function translateTier1(string $targetLocale, string $targetLanguageName): array
     {
         $apiKey = config('services.openai.key', '');
-        if (empty($apiKey)) {
-            // Fallback to Google Translate free API
-            return $this->translateTier1Google($targetLocale);
-        }
 
         $sourceLocale = 'en';
         $sourceTranslations = Translation::where('locale', $sourceLocale)->get();
@@ -48,25 +45,52 @@ class AutoTranslationService
             return ['success' => true, 'total' => $total, 'completed' => $completed, 'errors' => 0];
         }
 
-        $batches = array_chunk($toTranslate, $this->batchSize, true);
+        // Try OpenAI first if key exists
+        $useOpenAI = !empty($apiKey);
+        if ($useOpenAI) {
+            // Test if OpenAI works with a small batch first
+            $testBatch = array_slice($toTranslate, 0, 1, true);
+            $testResult = $this->translateBatchOpenAI($testBatch, $targetLanguageName, $apiKey);
+            if ($testResult === null) {
+                Log::info("OpenAI failed, falling back to Google Translate for {$targetLocale}");
+                $useOpenAI = false;
+            }
+        }
 
-        foreach ($batches as $batch) {
-            $translated = $this->translateBatchOpenAI($batch, $targetLanguageName, $apiKey);
-
-            if ($translated) {
-                foreach ($translated as $compositeKey => $translatedText) {
-                    if ($translatedText) {
-                        [$grp, $key] = explode('.', $compositeKey, 2);
-                        Translation::setTranslation($targetLocale, $grp, $key, $translatedText);
-                        $completed++;
-                    } else {
-                        $errors++;
-                        $completed++;
+        if ($useOpenAI) {
+            $batches = array_chunk($toTranslate, $this->batchSize, true);
+            foreach ($batches as $batch) {
+                $translated = $this->translateBatchOpenAI($batch, $targetLanguageName, $apiKey);
+                if ($translated) {
+                    foreach ($translated as $compositeKey => $translatedText) {
+                        if ($translatedText) {
+                            [$grp, $key] = explode('.', $compositeKey, 2);
+                            Translation::setTranslation($targetLocale, $grp, $key, $translatedText);
+                            $completed++;
+                        } else {
+                            $errors++;
+                            $completed++;
+                        }
                     }
+                } else {
+                    $errors += count($batch);
+                    $completed += count($batch);
                 }
-            } else {
-                $errors += count($batch);
-                $completed += count($batch);
+            }
+        } else {
+            // Use Google Translate free API
+            $translationService = new TranslationService();
+            foreach ($toTranslate as $compositeKey => $value) {
+                $translated = $translationService->translate($value, $targetLocale, 'en');
+                if ($translated) {
+                    [$grp, $key] = explode('.', $compositeKey, 2);
+                    Translation::setTranslation($targetLocale, $grp, $key, $translated);
+                    $completed++;
+                } else {
+                    $errors++;
+                    $completed++;
+                }
+                usleep(100000); // 100ms delay
             }
         }
 
