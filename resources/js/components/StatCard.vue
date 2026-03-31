@@ -1,79 +1,24 @@
 <template>
-    <v-card
-        :to="to"
-        :color="color"
-        variant="flat"
-        class="stat-card h-100"
-        hover
-    >
-        <v-card-text class="d-flex align-center justify-space-between">
-            <div>
-                <div class="text-h4 font-weight-bold text-white mb-1">
-                    {{ value }}
-                </div>
-                <div class="text-body-2 text-white opacity-80">
-                    {{ title }}
-                </div>
+    <v-card :to="to" class="stat-card h-100 hover-lift" variant="outlined">
+        <v-card-text class="pa-4">
+            <div class="d-flex align-center justify-space-between mb-3">
+                <v-avatar :color="color" variant="tonal" size="40" rounded="lg">
+                    <v-icon size="20">{{ icon }}</v-icon>
+                </v-avatar>
+                <v-icon v-if="to" size="16" class="text-medium-emphasis">mdi-arrow-top-right</v-icon>
             </div>
-            <v-avatar :color="iconBgColor" size="56">
-                <v-icon :color="iconColor" size="28">{{ icon }}</v-icon>
-            </v-avatar>
+            <div class="text-h5 font-weight-bold stat-value mb-1">{{ value }}</div>
+            <div class="text-caption text-medium-emphasis">{{ title }}</div>
         </v-card-text>
-        <v-card-actions v-if="to" class="stat-card-footer px-4 py-2">
-            <span class="text-caption text-white opacity-80">View Details</span>
-            <v-spacer></v-spacer>
-            <v-icon size="small" color="white" class="opacity-80">mdi-arrow-right</v-icon>
-        </v-card-actions>
     </v-card>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-
-const props = defineProps({
-    title: {
-        type: String,
-        required: true
-    },
-    value: {
-        type: [String, Number],
-        required: true
-    },
-    icon: {
-        type: String,
-        default: 'mdi-chart-box'
-    },
-    color: {
-        type: String,
-        default: 'primary'
-    },
-    to: {
-        type: String,
-        default: null
-    }
-})
-
-const iconBgColor = computed(() => {
-    return `rgba(255, 255, 255, 0.2)`
-})
-
-const iconColor = computed(() => {
-    return 'white'
+defineProps({
+    title: { type: String, required: true },
+    value: { type: [String, Number], required: true },
+    icon: { type: String, default: 'mdi-chart-box' },
+    color: { type: String, default: 'primary' },
+    to: { type: String, default: null },
 })
 </script>
-
-<style scoped>
-.stat-card {
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-}
-
-.stat-card-footer {
-    background: rgba(0, 0, 0, 0.1);
-}
-</style>
