@@ -4,15 +4,15 @@ import axios from 'axios'
 
 // Available theme colors - only primary color changes, backgrounds stay neutral
 export const themeColors = {
-    blue: { name: 'Blue', primary: '#3b82f6', primaryDark: '#60a5fa' },
-    indigo: { name: 'Indigo', primary: '#6366f1', primaryDark: '#818cf8' },
-    purple: { name: 'Purple', primary: '#8b5cf6', primaryDark: '#a78bfa' },
-    pink: { name: 'Pink', primary: '#ec4899', primaryDark: '#f472b6' },
-    red: { name: 'Red', primary: '#ef4444', primaryDark: '#f87171' },
-    orange: { name: 'Orange', primary: '#f97316', primaryDark: '#fb923c' },
-    green: { name: 'Green', primary: '#22c55e', primaryDark: '#4ade80' },
-    teal: { name: 'Teal', primary: '#14b8a6', primaryDark: '#2dd4bf' },
-    cyan: { name: 'Cyan', primary: '#06b6d4', primaryDark: '#22d3ee' },
+    blue: { name: 'Blue', primary: '#3b82f6', primaryDark: '#60a5fa', gradient: '#8b5cf6' },
+    indigo: { name: 'Indigo', primary: '#6366f1', primaryDark: '#818cf8', gradient: '#a855f7' },
+    purple: { name: 'Purple', primary: '#8b5cf6', primaryDark: '#a78bfa', gradient: '#ec4899' },
+    pink: { name: 'Pink', primary: '#ec4899', primaryDark: '#f472b6', gradient: '#f43f5e' },
+    red: { name: 'Red', primary: '#ef4444', primaryDark: '#f87171', gradient: '#f97316' },
+    orange: { name: 'Orange', primary: '#f97316', primaryDark: '#fb923c', gradient: '#eab308' },
+    green: { name: 'Green', primary: '#22c55e', primaryDark: '#4ade80', gradient: '#14b8a6' },
+    teal: { name: 'Teal', primary: '#14b8a6', primaryDark: '#2dd4bf', gradient: '#06b6d4' },
+    cyan: { name: 'Cyan', primary: '#06b6d4', primaryDark: '#22d3ee', gradient: '#3b82f6' },
 }
 
 export const useAppStore = defineStore('app', {
@@ -47,6 +47,12 @@ export const useAppStore = defineStore('app', {
         currentThemeColor: (state) => themeColors[state.themeColor] || themeColors.blue,
         primaryColor: (state) => (themeColors[state.themeColor] || themeColors.blue).primary,
         primaryDarkColor: (state) => (themeColors[state.themeColor] || themeColors.blue).primaryDark,
+        gradientColor: (state) => (themeColors[state.themeColor] || themeColors.blue).gradient,
+        gradientStyle: (state) => {
+            const c = themeColors[state.themeColor] || themeColors.blue
+            const p = state.theme === 'dark' ? c.primaryDark : c.primary
+            return `linear-gradient(135deg, ${p}, ${c.gradient})`
+        },
 
         groupedServices: (state) => {
             const grouped = {}

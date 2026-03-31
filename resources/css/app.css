@@ -1,0 +1,58 @@
+/* ============================================
+   SJDM Design System - Performance First
+   Zero backdrop-filter, zero heavy animations
+   ============================================ */
+
+/* Smooth scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.5); }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* RTL */
+.rtl { direction: rtl; }
+
+/* Fast page transition - opacity only */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.15s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* Card hover - minimal, GPU-accelerated */
+.hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.hover-lift:hover { transform: translateY(-2px); }
+
+/* Gradient text utility */
+.gradient-text {
+    background: linear-gradient(135deg, var(--v-theme-primary), #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Section spacing */
+.section-padding { padding: 64px 0; }
+@media (max-width: 960px) { .section-padding { padding: 40px 0; } }
+
+/* Stat number animation */
+.stat-value { font-variant-numeric: tabular-nums; }
+
+/* Admin sidebar active item accent */
+.v-navigation-drawer .v-list-item--active {
+    border-inline-start: 3px solid rgb(var(--v-theme-primary));
+}
+
+/* Clean table header */
+.v-data-table th {
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.05em !important;
+    font-weight: 600 !important;
+}
+
+/* Mobile-friendly touch targets */
+@media (max-width: 600px) {
+    .v-btn { min-height: 40px; }
+    .v-list-item { min-height: 44px; }
+}
