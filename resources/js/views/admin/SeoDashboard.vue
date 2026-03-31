@@ -25,7 +25,7 @@
         <!-- Stats Cards -->
         <v-row class="mb-6">
             <v-col cols="12" sm="6" md="3">
-                <v-card class="stat-card h-100">
+                <v-card class="hover-lift h-100">
                     <v-card-text class="text-center py-6">
                         <v-icon color="primary" size="48" class="mb-2">mdi-key-variant</v-icon>
                         <div class="text-h3 font-weight-bold">{{ stats.totalKeywords }}</div>
@@ -34,7 +34,7 @@
                 </v-card>
             </v-col>
             <v-col cols="12" sm="6" md="3">
-                <v-card class="stat-card h-100">
+                <v-card class="hover-lift h-100">
                     <v-card-text class="text-center py-6">
                         <v-icon color="success" size="48" class="mb-2">mdi-cursor-default-click</v-icon>
                         <div class="text-h3 font-weight-bold">{{ formatNumber(stats.totalClicks) }}</div>
@@ -43,7 +43,7 @@
                 </v-card>
             </v-col>
             <v-col cols="12" sm="6" md="3">
-                <v-card class="stat-card h-100">
+                <v-card class="hover-lift h-100">
                     <v-card-text class="text-center py-6">
                         <v-icon color="info" size="48" class="mb-2">mdi-eye</v-icon>
                         <div class="text-h3 font-weight-bold">{{ formatNumber(stats.totalImpressions) }}</div>
@@ -52,7 +52,7 @@
                 </v-card>
             </v-col>
             <v-col cols="12" sm="6" md="3">
-                <v-card class="stat-card h-100">
+                <v-card class="hover-lift h-100">
                     <v-card-text class="text-center py-6">
                         <v-icon color="warning" size="48" class="mb-2">mdi-chart-line</v-icon>
                         <div class="text-h3 font-weight-bold">{{ stats.averagePosition }}</div>
@@ -625,18 +625,3 @@ onMounted(async () => {
     ])
 })
 </script>
-
-<style scoped>
-.stat-card {
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-}
-
-.chart-container {
-    position: relative;
-}
-</style>

@@ -404,15 +404,3 @@ onMounted(() => {
     return () => clearInterval(interval)
 })
 </script>
-
-<style scoped>
-.messages-container {
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.message-content {
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-</style>
