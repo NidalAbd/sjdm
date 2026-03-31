@@ -1,5 +1,19 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import axios from 'axios'
+
+// Available theme colors - only primary color changes, backgrounds stay neutral
+export const themeColors = {
+    blue: { name: 'Blue', primary: '#3b82f6', primaryDark: '#60a5fa' },
+    indigo: { name: 'Indigo', primary: '#6366f1', primaryDark: '#818cf8' },
+    purple: { name: 'Purple', primary: '#8b5cf6', primaryDark: '#a78bfa' },
+    pink: { name: 'Pink', primary: '#ec4899', primaryDark: '#f472b6' },
+    red: { name: 'Red', primary: '#ef4444', primaryDark: '#f87171' },
+    orange: { name: 'Orange', primary: '#f97316', primaryDark: '#fb923c' },
+    green: { name: 'Green', primary: '#22c55e', primaryDark: '#4ade80' },
+    teal: { name: 'Teal', primary: '#14b8a6', primaryDark: '#2dd4bf' },
+    cyan: { name: 'Cyan', primary: '#06b6d4', primaryDark: '#22d3ee' },
+}
 
 export const useAppStore = defineStore('app', {
     state: () => ({
@@ -13,17 +27,31 @@ export const useAppStore = defineStore('app', {
         },
         loading: false,
         theme: localStorage.getItem('theme') || 'dark',
+        themeColor: localStorage.getItem('themeColor') || 'blue',
         locale: localStorage.getItem('locale') || 'en',
+        // Dynamic translations from API
+        apiTranslations: {},
+        translationsLoaded: false,
+        // Available languages from API
+        languages: [],
+        languagesLoaded: false,
     }),
 
     getters: {
         isDark: (state) => state.theme === 'dark',
         isArabic: (state) => state.locale === 'ar',
+        isRTL: (state) => {
+            const lang = state.languages.find(l => l.code === state.locale)
+            return lang ? lang.direction === 'rtl' : state.locale === 'ar'
+        },
+        currentThemeColor: (state) => themeColors[state.themeColor] || themeColors.blue,
+        primaryColor: (state) => (themeColors[state.themeColor] || themeColors.blue).primary,
+        primaryDarkColor: (state) => (themeColors[state.themeColor] || themeColors.blue).primaryDark,
 
         groupedServices: (state) => {
             const grouped = {}
             state.services.forEach(service => {
-                const category = state.locale === 'ar' ? service.category_ar : service.category_en
+                const category = service.category || service.category_en || ''
                 if (!grouped[category]) {
                     grouped[category] = []
                 }
@@ -38,13 +66,46 @@ export const useAppStore = defineStore('app', {
     },
 
     actions: {
+        async fetchLanguages() {
+            try {
+                const response = await axios.get('/api/languages')
+                if (response.data.success) {
+                    this.languages = response.data.languages
+                    this.languagesLoaded = true
+                }
+            } catch (error) {
+                console.error('Error fetching languages:', error)
+            }
+        },
+
+        async loadTranslations(locale) {
+            try {
+                const response = await axios.get(`/api/translations/${locale}`)
+                if (response.data.success) {
+                    this.apiTranslations = response.data.translations
+                    this.translationsLoaded = true
+                }
+            } catch (error) {
+                console.error('Error loading translations:', error)
+                this.apiTranslations = {}
+            }
+        },
+
+        // Dynamic translation function - checks API translations first, then falls back to vue-i18n
+        dt(key) {
+            if (this.apiTranslations && this.apiTranslations[key]) {
+                return this.apiTranslations[key]
+            }
+            return null // Let vue-i18n handle fallback
+        },
+
         async fetchServices() {
             this.loading = true
             try {
-                const response = await axios.get('/api/services')
+                const response = await axios.get('/api/services', { params: { lang: this.locale } })
                 this.services = response.data.services || response.data
                 this.categories = [...new Set(this.services.map(s =>
-                    this.locale === 'ar' ? s.category_ar : s.category_en
+                    s.category || s.category_en || ''
                 ))]
             } catch (error) {
                 console.error('Error fetching services:', error)
@@ -86,11 +147,19 @@ export const useAppStore = defineStore('app', {
             localStorage.setItem('theme', theme)
         },
 
-        setLocale(locale) {
+        async setLocale(locale) {
             this.locale = locale
             localStorage.setItem('locale', locale)
-            // Refresh services to get correct language
+            // Load translations from API for the new locale
+            await this.loadTranslations(locale)
             this.fetchServices()
-        }
+        },
+
+        setThemeColor(colorKey) {
+            if (themeColors[colorKey]) {
+                this.themeColor = colorKey
+                localStorage.setItem('themeColor', colorKey)
+            }
+        },
     }
 })

@@ -24,8 +24,9 @@ use Illuminate\Support\Facades\Route;
 // =============================================
 
 Route::get('lang/{lang}', function ($lang) {
-    // Validate language
-    if (!in_array($lang, ['en', 'ar'])) {
+    // Validate against all 17 supported languages
+    $supported = array_keys(config('app.available_locales', ['en' => 'English']));
+    if (!in_array($lang, $supported)) {
         abort(404);
     }
 
@@ -42,22 +43,26 @@ Route::get('lang/{lang}', function ($lang) {
     $referer = request()->headers->get('referer');
     $currentPath = '';
 
+    $localePattern = implode('|', array_diff($supported, ['en']));
+
     if ($referer) {
-        // Extract path from referer URL
         $parsed = parse_url($referer);
         $currentPath = isset($parsed['path']) ? trim($parsed['path'], '/') : '';
 
         // Remove existing language prefix
-        $currentPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)\//', '', $currentPath);
-        $currentPath = preg_replace('/^(ar|es|fr|de|ru|zh|hi|pt)$/', '', $currentPath);
+        $currentPath = preg_replace('/^(' . $localePattern . ')\//', '', $currentPath);
+        $currentPath = preg_replace('/^(' . $localePattern . ')$/', '', $currentPath);
+    }
+
+    // Admin routes: don't add language prefix
+    if (str_starts_with($currentPath, 'admin')) {
+        return redirect(url($currentPath ?: '/'));
     }
 
     // Build redirect URL
     if ($lang === 'en') {
-        // English: no prefix
         $redirectUrl = $currentPath ? url($currentPath) : url('/');
     } else {
-        // Other languages: add prefix
         $redirectUrl = $currentPath ? url($lang . '/' . $currentPath) : url($lang);
     }
 
@@ -104,7 +109,7 @@ Route::middleware(['handle.auth.redirects'])->group(function () {
 
 Route::group([
     'prefix' => '{locale}',
-    'where' => ['locale' => 'ar|es|fr|de|ru|zh|hi|pt'],
+    'where' => ['locale' => 'ar|es|fr|de|ru|zh|hi|pt|ja|ko|tr|it|pl|nl|vi|th'],
     'middleware' => 'setlocale'
 ], function () {
 
@@ -150,7 +155,11 @@ Route::get('/service/{serviceId}', [WelcomeController::class, 'spa'])
 // HOME AND DASHBOARD ROUTES
 // =============================================
 
-Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
+// Redirect /home to Vue admin dashboard
+Route::get('/home', function () {
+    return redirect('/admin/dashboard');
+})->name('dashboard')->middleware('auth');
+
 Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
@@ -266,4 +275,15 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
     Route::patch('payment-methods/{paymentMethod}/toggle-status', [\App\Http\Controllers\PaymentMethodController::class, 'toggleStatus'])->name('payment-methods.toggle-status');
     Route::post('payment-methods/bulk-action', [\App\Http\Controllers\PaymentMethodController::class, 'bulkAction'])->name('payment-methods.bulk-action');
 
+});
+
+// =============================================
+// ADMIN SPA ROUTES (Vue Dashboard)
+// =============================================
+
+Route::middleware(['auth', 'check.banned'])->group(function () {
+    // Admin SPA catch-all - serves Vue app for all /admin/* routes
+    Route::get('/admin/{any?}', [WelcomeController::class, 'spa'])
+        ->where('any', '.*')
+        ->name('admin.spa');
 });

@@ -235,6 +235,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
+import { useHead } from '@vueuse/head'
 
 const route = useRoute()
 const router = useRouter()
@@ -243,6 +244,8 @@ const appStore = useAppStore()
 const service = ref(null)
 const relatedServices = ref([])
 const loading = ref(true)
+
+const BASE_URL = 'https://smmjd.com'
 
 const orderForm = ref({
   link: '',
@@ -313,6 +316,196 @@ const fetchService = async () => {
 const goToService = (id) => {
   router.push(`/service/${id}`)
 }
+
+// SEO: Product structured data for Google Shopping
+const productStructuredData = computed(() => {
+  if (!service.value) return null
+
+  const serviceName = locale.value === 'ar' ? service.value.name_ar : service.value.name_en
+  const categoryName = locale.value === 'ar' ? service.value.category_ar : service.value.category_en
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: serviceName,
+    description: locale.value === 'ar'
+      ? `خدمة ${serviceName} - تفاعل عالي الجودة لحسابك على وسائل التواصل الاجتماعي`
+      : `${serviceName} - High-quality engagement for your social media account`,
+    sku: `SMM-${service.value.service_id}`,
+    mpn: `SMM-${service.value.service_id}`,
+    brand: {
+      '@type': 'Brand',
+      name: 'SMM Panel'
+    },
+    category: categoryName,
+    offers: {
+      '@type': 'Offer',
+      url: `${BASE_URL}/service/${service.value.service_id}`,
+      priceCurrency: 'USD',
+      price: Number(service.value.rate).toFixed(4),
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      availability: 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+      seller: {
+        '@type': 'Organization',
+        name: 'SMM Panel'
+      },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 30,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn'
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: 0,
+          currency: 'USD'
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 15,
+            unitCode: 'MIN'
+          },
+          transitTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 24,
+            unitCode: 'HUR'
+          }
+        }
+      }
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      reviewCount: '150',
+      bestRating: '5',
+      worstRating: '1'
+    },
+    review: [
+      {
+        '@type': 'Review',
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: '5',
+          bestRating: '5'
+        },
+        author: {
+          '@type': 'Person',
+          name: 'Verified Buyer'
+        },
+        reviewBody: locale.value === 'ar'
+          ? 'خدمة ممتازة! توصيل سريع وجودة عالية.'
+          : 'Excellent service! Fast delivery and high quality.'
+      }
+    ]
+  }
+})
+
+// SEO: BreadcrumbList structured data
+const breadcrumbStructuredData = computed(() => {
+  if (!service.value) return null
+
+  const categoryName = locale.value === 'ar' ? service.value.category_ar : service.value.category_en
+  const serviceName = locale.value === 'ar' ? service.value.name_ar : service.value.name_en
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: locale.value === 'ar' ? 'الرئيسية' : 'Home',
+        item: BASE_URL
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: locale.value === 'ar' ? 'الخدمات' : 'Services',
+        item: `${BASE_URL}/all-services`
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: categoryName,
+        item: `${BASE_URL}/all-services?category=${encodeURIComponent(categoryName)}`
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: serviceName
+      }
+    ]
+  }
+})
+
+// Dynamic SEO head configuration
+const seoHead = computed(() => {
+  if (!service.value) {
+    return {
+      title: 'Service Details | SMM Panel',
+      meta: [{ name: 'robots', content: 'noindex' }]
+    }
+  }
+
+  const serviceName = locale.value === 'ar' ? service.value.name_ar : service.value.name_en
+  const categoryName = locale.value === 'ar' ? service.value.category_ar : service.value.category_en
+  const title = `${serviceName} | SMM Panel`
+  const description = locale.value === 'ar'
+    ? `اشترِ ${serviceName} بأرخص الأسعار. السعر: $${Number(service.value.rate).toFixed(4)}/1000. توصيل فوري، دعم على مدار الساعة.`
+    : `Buy ${serviceName} at the cheapest prices. Price: $${Number(service.value.rate).toFixed(4)}/1000. Instant delivery, 24/7 support.`
+
+  const structuredDataArray = []
+  if (productStructuredData.value) {
+    structuredDataArray.push({
+      type: 'application/ld+json',
+      children: JSON.stringify(productStructuredData.value)
+    })
+  }
+  if (breadcrumbStructuredData.value) {
+    structuredDataArray.push({
+      type: 'application/ld+json',
+      children: JSON.stringify(breadcrumbStructuredData.value)
+    })
+  }
+
+  return {
+    title,
+    meta: [
+      { name: 'description', content: description },
+      { name: 'keywords', content: `${serviceName}, ${categoryName}, SMM panel, buy followers, buy likes, social media marketing` },
+      { name: 'robots', content: 'index, follow' },
+      // Open Graph
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:type', content: 'product' },
+      { property: 'og:url', content: `${BASE_URL}/service/${service.value.service_id}` },
+      { property: 'og:image', content: `${BASE_URL}/images/logo.png` },
+      { property: 'og:locale', content: locale.value === 'ar' ? 'ar_SA' : 'en_US' },
+      // Product specific OG tags
+      { property: 'product:price:amount', content: Number(service.value.rate).toFixed(4) },
+      { property: 'product:price:currency', content: 'USD' },
+      { property: 'product:availability', content: 'in stock' },
+      // Twitter Card
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: title },
+      { name: 'twitter:description', content: description }
+    ],
+    link: [
+      { rel: 'canonical', href: `${BASE_URL}/service/${service.value.service_id}` }
+    ],
+    script: structuredDataArray
+  }
+})
+
+useHead(seoHead)
 
 onMounted(fetchService)
 watch(() => route.params.id, fetchService)

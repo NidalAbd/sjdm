@@ -7,20 +7,20 @@
           <v-row align="center">
             <v-col cols="12" lg="8">
               <h1 class="text-h3 text-md-h2 font-weight-bold text-white mb-4">
-                {{ locale === 'ar' ? 'جميع خدمات SMM' : 'All SMM Services' }}
+                {{ $t('servicesPage.allSmmServices') }}
               </h1>
               <p class="text-h6 text-white-darken-1 mb-6">
-                {{ locale === 'ar' ? 'اكتشف مجموعتنا الكاملة من خدمات التسويق عبر وسائل التواصل الاجتماعي' : 'Discover our complete range of social media marketing services' }}
+                {{ $t('servicesPage.discoverServices') }}
               </p>
               <v-chip v-if="hasFilters" color="white" variant="flat" class="px-4 py-2">
                 <v-icon start>mdi-filter</v-icon>
-                {{ pagination.total }} {{ locale === 'ar' ? 'خدمة' : 'services found' }}
+                {{ pagination.total }} {{ $t('servicesPage.servicesFound') }}
               </v-chip>
             </v-col>
             <v-col cols="12" lg="4" class="text-center">
               <v-card class="hero-stat-card pa-6" color="rgba(255,255,255,0.15)" variant="flat">
                 <div class="text-h2 font-weight-bold text-white">{{ pagination.total || 0 }}</div>
-                <div class="text-subtitle-1 text-white-darken-1">{{ locale === 'ar' ? 'إجمالي الخدمات' : 'Total Services' }}</div>
+                <div class="text-subtitle-1 text-white-darken-1">{{ $t('servicesPage.totalServices') }}</div>
               </v-card>
             </v-col>
           </v-row>
@@ -37,7 +37,7 @@
             <v-col cols="12" md="6" lg="4">
               <v-text-field
                 v-model="filters.search"
-                :label="locale === 'ar' ? 'البحث في الخدمات' : 'Search Services'"
+                :label="$t('servicesPage.searchPlaceholder')"
                 prepend-inner-icon="mdi-magnify"
                 variant="outlined"
                 density="comfortable"
@@ -54,7 +54,7 @@
                 :items="platformOptions"
                 item-title="title"
                 item-value="value"
-                :label="locale === 'ar' ? 'المنصة' : 'Platform'"
+                :label="$t('servicesPage.platform')"
                 prepend-inner-icon="mdi-apps"
                 variant="outlined"
                 density="comfortable"
@@ -66,7 +66,7 @@
               >
                 <template v-slot:no-data>
                   <v-list-item>
-                    <v-list-item-title>{{ locale === 'ar' ? 'لا توجد منصات' : 'No platforms available' }}</v-list-item-title>
+                    <v-list-item-title>{{ $t('servicesPage.noPlatforms') }}</v-list-item-title>
                   </v-list-item>
                 </template>
               </v-select>
@@ -79,7 +79,7 @@
                 :items="categoryOptions"
                 item-title="title"
                 item-value="value"
-                :label="locale === 'ar' ? 'الفئة' : 'Category'"
+                :label="$t('servicesPage.category')"
                 prepend-inner-icon="mdi-tag"
                 variant="outlined"
                 density="comfortable"
@@ -90,7 +90,7 @@
               >
                 <template v-slot:no-data>
                   <v-list-item>
-                    <v-list-item-title>{{ locale === 'ar' ? 'لا توجد فئات' : 'No categories available' }}</v-list-item-title>
+                    <v-list-item-title>{{ $t('servicesPage.noCategories') }}</v-list-item-title>
                   </v-list-item>
                 </template>
               </v-select>
@@ -101,7 +101,7 @@
               <v-select
                 v-model="filters.sortBy"
                 :items="sortOptions"
-                :label="locale === 'ar' ? 'ترتيب حسب' : 'Sort By'"
+                :label="$t('servicesPage.sortBy')"
                 prepend-inner-icon="mdi-sort"
                 variant="outlined"
                 density="comfortable"
@@ -115,7 +115,7 @@
               <v-select
                 v-model="filters.sortOrder"
                 :items="sortOrderOptions"
-                :label="locale === 'ar' ? 'الترتيب' : 'Order'"
+                :label="$t('servicesPage.order')"
                 prepend-inner-icon="mdi-swap-vertical"
                 variant="outlined"
                 density="comfortable"
@@ -129,7 +129,7 @@
               <v-select
                 v-model="filters.perPage"
                 :items="perPageOptions"
-                :label="locale === 'ar' ? 'عدد العناصر' : 'Items per page'"
+                :label="$t('servicesPage.itemsPerPage')"
                 prepend-inner-icon="mdi-view-list"
                 variant="outlined"
                 density="comfortable"
@@ -144,11 +144,11 @@
               <div class="d-flex flex-wrap gap-3">
                 <v-btn color="primary" size="large" @click="fetchServices" :loading="loading">
                   <v-icon start>mdi-filter</v-icon>
-                  {{ locale === 'ar' ? 'تطبيق الفلاتر' : 'Apply Filters' }}
+                  {{ $t('servicesPage.applyFilters') }}
                 </v-btn>
                 <v-btn variant="outlined" size="large" @click="clearFilters">
                   <v-icon start>mdi-close</v-icon>
-                  {{ locale === 'ar' ? 'مسح الفلاتر' : 'Clear Filters' }}
+                  {{ $t('servicesPage.clearFilters') }}
                 </v-btn>
               </div>
             </v-col>
@@ -160,7 +160,7 @@
       <div v-if="featured.length > 0 && !hasFilters" class="mb-8">
         <div class="d-flex align-center mb-4">
           <v-icon color="amber" class="mr-2">mdi-star</v-icon>
-          <h2 class="text-h5 font-weight-bold">{{ locale === 'ar' ? 'الخدمات المميزة' : 'Featured Services' }}</h2>
+          <h2 class="text-h5 font-weight-bold">{{ $t('servicesPage.featuredServices') }}</h2>
         </div>
         <v-row>
           <v-col v-for="service in featured" :key="service.service_id" cols="12" md="6" lg="4">
@@ -175,7 +175,7 @@
                 <div class="text-h4 font-weight-bold mb-2">${{ Number(service.rate).toFixed(2) }}</div>
                 <div class="text-body-2 opacity-80">{{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}</div>
                 <v-btn color="white" variant="flat" class="mt-4" size="small">
-                  {{ locale === 'ar' ? 'عرض التفاصيل' : 'View Details' }}
+                  {{ $t('servicesPage.viewDetails') }}
                 </v-btn>
               </v-card-text>
             </v-card>
@@ -187,13 +187,13 @@
       <div class="d-flex flex-wrap justify-space-between align-center mb-6">
         <div>
           <h2 class="text-h5 font-weight-bold">
-            <template v-if="filters.search">{{ locale === 'ar' ? 'نتائج البحث' : 'Search Results' }}</template>
-            <template v-else-if="filters.platform">{{ filters.platform }} {{ locale === 'ar' ? 'خدمات' : 'Services' }}</template>
+            <template v-if="filters.search">{{ $t('servicesPage.searchResults') }}</template>
+            <template v-else-if="filters.platform">{{ filters.platform }} {{ $t('publicNav.services') }}</template>
             <template v-else-if="filters.category">{{ filters.category }}</template>
-            <template v-else>{{ locale === 'ar' ? 'جميع الخدمات' : 'All Services' }}</template>
+            <template v-else>{{ $t('servicesPage.allServices') }}</template>
           </h2>
           <p class="text-body-2 text-medium-emphasis">
-            {{ pagination.total }} {{ locale === 'ar' ? 'خدمة متاحة' : 'services available' }}
+            {{ pagination.total }} {{ $t('servicesPage.servicesAvailable') }}
           </p>
         </div>
         <v-btn-toggle v-model="viewMode" mandatory variant="outlined" divided>
@@ -205,7 +205,7 @@
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-16">
         <v-progress-circular indeterminate color="primary" size="64" />
-        <p class="mt-4 text-medium-emphasis">{{ locale === 'ar' ? 'جاري التحميل...' : 'Loading services...' }}</p>
+        <p class="mt-4 text-medium-emphasis">{{ $t('servicesPage.loadingServices') }}</p>
       </div>
 
       <!-- Grid View -->
@@ -236,13 +236,13 @@
               <v-row dense class="mb-3">
                 <v-col cols="6">
                   <div class="stat-box pa-3 text-center rounded">
-                    <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأدنى' : 'Min' }}</div>
+                    <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.min') }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
                   </div>
                 </v-col>
                 <v-col cols="6">
                   <div class="stat-box pa-3 text-center rounded">
-                    <div class="text-caption text-medium-emphasis">{{ locale === 'ar' ? 'الحد الأقصى' : 'Max' }}</div>
+                    <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.max') }}</div>
                     <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
                   </div>
                 </v-col>
@@ -252,11 +252,11 @@
               <div class="d-flex gap-2 flex-wrap">
                 <v-chip v-if="service.refill" color="success" size="x-small" variant="flat">
                   <v-icon start size="12">mdi-refresh</v-icon>
-                  {{ locale === 'ar' ? 'إعادة تعبئة' : 'Refill' }}
+                  {{ $t('services.refill') }}
                 </v-chip>
                 <v-chip v-if="service.cancel" color="warning" size="x-small" variant="flat">
                   <v-icon start size="12">mdi-close</v-icon>
-                  {{ locale === 'ar' ? 'إلغاء' : 'Cancel' }}
+                  {{ $t('common.cancel') }}
                 </v-chip>
               </div>
             </v-card-text>
@@ -270,7 +270,7 @@
               </div>
               <v-spacer />
               <v-btn color="primary" variant="flat" size="small">
-                {{ locale === 'ar' ? 'اطلب الآن' : 'Order Now' }}
+                {{ $t('servicesPage.orderNow') }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -282,12 +282,12 @@
         <v-table hover>
           <thead>
             <tr>
-              <th>{{ locale === 'ar' ? 'الخدمة' : 'Service' }}</th>
-              <th>{{ locale === 'ar' ? 'الفئة' : 'Category' }}</th>
-              <th>{{ locale === 'ar' ? 'السعر' : 'Price' }}</th>
-              <th>{{ locale === 'ar' ? 'الحدود' : 'Min/Max' }}</th>
-              <th>{{ locale === 'ar' ? 'الميزات' : 'Features' }}</th>
-              <th>{{ locale === 'ar' ? 'إجراء' : 'Action' }}</th>
+              <th>{{ $t('servicesPage.service') }}</th>
+              <th>{{ $t('servicesPage.category') }}</th>
+              <th>{{ $t('servicesPage.price') }}</th>
+              <th>{{ $t('servicesPage.minMax') }}</th>
+              <th>{{ $t('servicesPage.features') }}</th>
+              <th>{{ $t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -309,11 +309,11 @@
                 {{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}
               </td>
               <td>
-                <v-chip v-if="service.refill" color="success" size="x-small" class="mr-1">{{ locale === 'ar' ? 'إعادة تعبئة' : 'Refill' }}</v-chip>
-                <v-chip v-if="service.cancel" color="warning" size="x-small">{{ locale === 'ar' ? 'إلغاء' : 'Cancel' }}</v-chip>
+                <v-chip v-if="service.refill" color="success" size="x-small" class="mr-1">{{ $t('services.refill') }}</v-chip>
+                <v-chip v-if="service.cancel" color="warning" size="x-small">{{ $t('common.cancel') }}</v-chip>
               </td>
               <td>
-                <v-btn color="primary" size="small" variant="flat">{{ locale === 'ar' ? 'اطلب' : 'Order' }}</v-btn>
+                <v-btn color="primary" size="small" variant="flat">{{ $t('servicesPage.order') }}</v-btn>
               </td>
             </tr>
           </tbody>
@@ -323,12 +323,12 @@
       <!-- No Results -->
       <v-card v-else-if="!loading && services.length === 0" class="text-center py-16" variant="flat">
         <v-icon size="80" color="grey" class="mb-4">mdi-magnify</v-icon>
-        <h3 class="text-h5 text-medium-emphasis mb-2">{{ locale === 'ar' ? 'لم يتم العثور على خدمات' : 'No services found' }}</h3>
+        <h3 class="text-h5 text-medium-emphasis mb-2">{{ $t('servicesPage.noServices') }}</h3>
         <p class="text-body-2 text-medium-emphasis mb-6">
-          {{ hasFilters ? (locale === 'ar' ? 'جرب تعديل الفلاتر أو مصطلحات البحث' : 'Try adjusting your filters or search terms') : (locale === 'ar' ? 'لا توجد خدمات متاحة حاليًا' : 'No services are currently available') }}
+          {{ hasFilters ? $t('servicesPage.tryDifferent') : $t('servicesPage.noServicesAvailable') }}
         </p>
         <v-btn v-if="hasFilters" color="primary" @click="clearFilters">
-          {{ locale === 'ar' ? 'عرض جميع الخدمات' : 'View All Services' }}
+          {{ $t('servicesPage.viewAllServices') }}
         </v-btn>
       </v-card>
 
@@ -350,10 +350,20 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
+import { useI18n } from 'vue-i18n'
+import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
 
+const { t, locale: i18nLocale } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const appStore = useAppStore()
+
+// SEO Configuration
+const seoConfig = computed(() => {
+    const config = i18nLocale.value === 'ar' ? { ...seoConfigs.services, ...seoConfigsAr.services } : seoConfigs.services
+    return config
+})
+useSeo(seoConfig.value)
 
 const services = ref([])
 const featured = ref([])
@@ -406,15 +416,15 @@ const categoryOptions = computed(() => {
 })
 
 const sortOptions = computed(() => [
-  { title: locale.value === 'ar' ? 'رقم الخدمة' : 'Service ID', value: 'service_id' },
-  { title: locale.value === 'ar' ? 'السعر' : 'Price', value: 'rate' },
-  { title: locale.value === 'ar' ? 'الحد الأدنى' : 'Min Order', value: 'min' },
-  { title: locale.value === 'ar' ? 'الحد الأقصى' : 'Max Order', value: 'max' },
+  { title: t('servicesPage.serviceId'), value: 'service_id' },
+  { title: t('servicesPage.price'), value: 'rate' },
+  { title: t('servicesPage.minOrder'), value: 'min' },
+  { title: t('servicesPage.maxOrder'), value: 'max' },
 ])
 
 const sortOrderOptions = computed(() => [
-  { title: locale.value === 'ar' ? 'تصاعدي' : 'Ascending', value: 'asc' },
-  { title: locale.value === 'ar' ? 'تنازلي' : 'Descending', value: 'desc' },
+  { title: t('servicesPage.ascending'), value: 'asc' },
+  { title: t('servicesPage.descending'), value: 'desc' },
 ])
 
 const perPageOptions = [

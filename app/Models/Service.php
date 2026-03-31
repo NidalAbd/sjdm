@@ -18,10 +18,11 @@ class Service extends Model
 
     protected $fillable = [
         'service_id',
-        'name_en',   // Added for English name
-        'name_ar',   // Added for Arabic name
-        'category_en', // Added for English category
-        'category_ar', // Added for Arabic category
+        'name_en',
+        'name_ar',
+        'category_en',
+        'category_ar',
+        'translations',
         'type',
         'rate',
         'cost',
@@ -31,10 +32,38 @@ class Service extends Model
         'cancel',
     ];
 
+    protected $casts = [
+        'translations' => 'array',
+        'refill' => 'boolean',
+        'cancel' => 'boolean',
+    ];
+
     public function getRouteKeyName()
     {
         return 'service_id';
     }
 
+    /**
+     * Get the service name for a given language
+     */
+    public function getTranslatedName(string $lang = 'en'): string
+    {
+        if ($lang === 'en') return $this->name_en ?? '';
+        if ($lang === 'ar') return $this->name_ar ?? '';
 
+        $translations = $this->translations;
+        return $translations['name'][$lang] ?? $this->name_en ?? '';
+    }
+
+    /**
+     * Get the service category for a given language
+     */
+    public function getTranslatedCategory(string $lang = 'en'): string
+    {
+        if ($lang === 'en') return $this->category_en ?? '';
+        if ($lang === 'ar') return $this->category_ar ?? '';
+
+        $translations = $this->translations;
+        return $translations['category'][$lang] ?? $this->category_en ?? '';
+    }
 }

@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "ext-curl": "*",
+        "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.2",
         "jeroennoten/laravel-adminlte": "^3.13",
         "laravel/framework": "^10.0",

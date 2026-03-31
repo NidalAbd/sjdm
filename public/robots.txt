@@ -1,2 +1,32 @@
+# SMM Panel - Robots.txt
+# https://smmjd.com
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Allow crawling of public pages
+Allow: /
+Allow: /all-services
+Allow: /about-us
+Allow: /contact-us
+Allow: /faq
+Allow: /how-it-works
+Allow: /privacy-policy
+
+# Disallow admin and authenticated areas
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /orders
+Disallow: /profile
+Disallow: /support
+Disallow: /transactions
+Disallow: /services
+Disallow: /api/
+Disallow: /storage/
+Disallow: /build/
+
+# Sitemap location
+Sitemap: https://smmjd.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1

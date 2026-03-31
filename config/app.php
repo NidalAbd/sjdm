@@ -86,7 +86,22 @@ return [
 
     'available_locales' => [
         'en' => 'English',
-        'ar' => 'Arabic',
+        'zh' => '中文',
+        'hi' => 'हिन्दी',
+        'es' => 'Español',
+        'fr' => 'Français',
+        'ar' => 'العربية',
+        'pt' => 'Português',
+        'ru' => 'Русский',
+        'ja' => '日本語',
+        'de' => 'Deutsch',
+        'ko' => '한국어',
+        'tr' => 'Türkçe',
+        'it' => 'Italiano',
+        'pl' => 'Polski',
+        'nl' => 'Nederlands',
+        'vi' => 'Tiếng Việt',
+        'th' => 'ไทย',
     ],
 
     /*

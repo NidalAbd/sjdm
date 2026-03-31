@@ -6,13 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\TranslationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
+    /**
+     * All supported language codes
+     */
+    private array $supportedLangs;
+
+    public function __construct()
+    {
+        $this->supportedLangs = array_keys(config('app.available_locales', ['en' => 'English']));
+    }
+
     /**
      * Platform mappings for filtering with aliases
      */
@@ -35,31 +47,78 @@ class HomeController extends Controller
     ];
 
     /**
+     * Resolve language fields - for en/ar use dedicated columns, for others use JSON translations
+     */
+    private function resolveLanguage(string $lang): array
+    {
+        if ($lang === 'ar') {
+            return ['nameField' => 'name_ar', 'categoryField' => 'category_ar', 'useJson' => false];
+        }
+        if ($lang === 'en') {
+            return ['nameField' => 'name_en', 'categoryField' => 'category_en', 'useJson' => false];
+        }
+        // For other languages, we still query by en columns but transform output from JSON
+        return ['nameField' => 'name_en', 'categoryField' => 'category_en', 'useJson' => true, 'lang' => $lang];
+    }
+
+    /**
+     * Transform a service to include translated name/category
+     */
+    private function transformService($service, string $lang): array
+    {
+        $data = $service instanceof \Illuminate\Database\Eloquent\Model ? $service->toArray() : (array) $service;
+
+        if (!in_array($lang, ['en', 'ar'])) {
+            $translations = is_string($data['translations'] ?? null) ? json_decode($data['translations'], true) : ($data['translations'] ?? []);
+            $data['name'] = $translations['name'][$lang] ?? $data['name_en'] ?? '';
+            $data['category'] = $translations['category'][$lang] ?? $data['category_en'] ?? '';
+        } else {
+            $data['name'] = $lang === 'ar' ? ($data['name_ar'] ?? '') : ($data['name_en'] ?? '');
+            $data['category'] = $lang === 'ar' ? ($data['category_ar'] ?? '') : ($data['category_en'] ?? '');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get validated language from request
+     */
+    private function getLang(Request $request): string
+    {
+        $lang = $request->get('lang', 'en');
+        return in_array($lang, $this->supportedLangs) ? $lang : 'en';
+    }
+
+    /**
      * Get all services with filtering, sorting, and pagination
      */
     public function services(Request $request): JsonResponse
     {
         $query = Service::query();
-        $lang = $request->get('lang', 'en');
+        $lang = $this->getLang($request);
+        $resolved = $this->resolveLanguage($lang);
+        $nameField = $resolved['nameField'];
+        $categoryField = $resolved['categoryField'];
 
-        // Define fields based on language
-        $nameField = $lang === 'ar' ? 'name_ar' : 'name_en';
-        $categoryField = $lang === 'ar' ? 'category_ar' : 'category_en';
-
-        // Apply search filter
+        // Apply search filter (always search in en columns for consistency)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search, $nameField, $categoryField) {
+            $query->where(function ($q) use ($search) {
                 $q->orWhere('service_id', 'like', '%' . $search . '%')
-                    ->orWhere($nameField, 'like', '%' . $search . '%')
-                    ->orWhere($categoryField, 'like', '%' . $search . '%')
+                    ->orWhere('name_en', 'like', '%' . $search . '%')
+                    ->orWhere('category_en', 'like', '%' . $search . '%')
+                    ->orWhere('name_ar', 'like', '%' . $search . '%')
+                    ->orWhere('category_ar', 'like', '%' . $search . '%')
                     ->orWhere('type', 'like', '%' . $search . '%');
             });
         }
 
-        // Apply category filter
+        // Apply category filter (use English category for DB query)
         if ($request->filled('category') && $request->category !== 'all') {
-            $query->where($categoryField, $request->category);
+            $query->where(function ($q) use ($request) {
+                $q->where('category_en', $request->category)
+                  ->orWhere('category_ar', $request->category);
+            });
         }
 
         // Apply platform filter using aliases
@@ -71,21 +130,23 @@ class HomeController extends Controller
                     [$platform['en'], $platform['ar']],
                     $platform['aliases'] ?? []
                 );
-                $query->where(function ($q) use ($searchTerms, $categoryField, $nameField) {
+                $query->where(function ($q) use ($searchTerms) {
                     foreach ($searchTerms as $term) {
-                        $q->orWhere($categoryField, 'like', '%' . $term . '%')
-                          ->orWhere($nameField, 'like', '%' . $term . '%');
+                        $q->orWhere('category_en', 'like', '%' . $term . '%')
+                          ->orWhere('name_en', 'like', '%' . $term . '%')
+                          ->orWhere('category_ar', 'like', '%' . $term . '%')
+                          ->orWhere('name_ar', 'like', '%' . $term . '%');
                     }
                 });
             } else {
-                $query->where($categoryField, 'like', '%' . $platformKey . '%');
+                $query->where('category_en', 'like', '%' . $platformKey . '%');
             }
         }
 
         // Apply sorting
         $sortBy = $request->get('sort_by', 'service_id');
         $sortOrder = $request->get('sort_order', 'asc');
-        $allowedSortFields = ['service_id', 'rate', 'min', 'max', 'created_at', $nameField, $categoryField];
+        $allowedSortFields = ['service_id', 'rate', 'min', 'max', 'created_at', 'name_en', 'category_en'];
         $allowedSortOrders = ['asc', 'desc'];
 
         if (in_array($sortBy, $allowedSortFields) && in_array($sortOrder, $allowedSortOrders)) {
@@ -94,15 +155,16 @@ class HomeController extends Controller
             $query->orderBy('service_id', 'asc');
         }
 
-        // Get total count before pagination
         $totalCount = $query->count();
 
-        // Pagination
         $perPage = $request->get('per_page', 50);
         $services = $query->paginate($perPage);
 
+        // Transform services with translated names
+        $transformedServices = collect($services->items())->map(fn($s) => $this->transformService($s, $lang))->values();
+
         return response()->json([
-            'services' => $services->items(),
+            'services' => $transformedServices,
             'pagination' => [
                 'total' => $services->total(),
                 'per_page' => $services->perPage(),
@@ -120,25 +182,23 @@ class HomeController extends Controller
      */
     public function service($id, Request $request): JsonResponse
     {
-        $lang = $request->get('lang', 'en');
-        $categoryField = $lang === 'ar' ? 'category_ar' : 'category_en';
-        $nameField = $lang === 'ar' ? 'name_ar' : 'name_en';
-
+        $lang = $this->getLang($request);
         $service = Service::where('service_id', $id)->first();
 
         if (!$service) {
             return response()->json(['error' => 'Service not found'], 404);
         }
 
-        // Get related services
-        $relatedServices = Service::where($categoryField, $service->$categoryField)
+        // Get related services using English category for matching
+        $relatedServices = Service::where('category_en', $service->category_en)
             ->where('service_id', '!=', $service->service_id)
-            ->select(['service_id', 'name_en', 'name_ar', 'category_en', 'category_ar', 'rate', 'min', 'max', 'type', 'refill', 'cancel'])
+            ->select(['service_id', 'name_en', 'name_ar', 'category_en', 'category_ar', 'translations', 'rate', 'min', 'max', 'type', 'refill', 'cancel'])
             ->limit(6)
-            ->get();
+            ->get()
+            ->map(fn($s) => $this->transformService($s, $lang));
 
         return response()->json([
-            'service' => $service,
+            'service' => $this->transformService($service, $lang),
             'related_services' => $relatedServices,
         ]);
     }
@@ -165,11 +225,10 @@ class HomeController extends Controller
      */
     public function categories(Request $request): JsonResponse
     {
-        $lang = $request->get('lang', 'en');
-        $categoryField = $lang === 'ar' ? 'category_ar' : 'category_en';
+        $lang = $this->getLang($request);
+        // Always query by English category for consistency, then translate in output
         $platformKey = $request->get('platform');
 
-        // If platform is specified, get categories for that platform only
         if ($platformKey && isset($this->platforms[$platformKey])) {
             $platform = $this->platforms[$platformKey];
             $searchTerms = array_merge(
@@ -178,28 +237,40 @@ class HomeController extends Controller
             );
 
             $categories = DB::table('services')
-                ->select($categoryField . ' as name', DB::raw('COUNT(*) as count'))
-                ->where(function ($q) use ($searchTerms, $categoryField) {
+                ->select('category_en as name', DB::raw('COUNT(*) as count'))
+                ->where(function ($q) use ($searchTerms) {
                     foreach ($searchTerms as $term) {
-                        // Only search in category field for accurate category filtering
-                        $q->orWhere($categoryField, 'like', '%' . $term . '%');
+                        $q->orWhere('category_en', 'like', '%' . $term . '%')
+                          ->orWhere('category_ar', 'like', '%' . $term . '%');
                     }
                 })
-                ->whereNotNull($categoryField)
-                ->where($categoryField, '!=', '')
-                ->groupBy($categoryField)
-                ->orderBy($categoryField)
+                ->whereNotNull('category_en')
+                ->where('category_en', '!=', '')
+                ->groupBy('category_en')
+                ->orderBy('category_en')
                 ->get();
         } else {
-            // No platform filter, get all categories (cached)
-            $categories = Cache::remember('categories_' . $lang, 3600, function() use ($categoryField) {
+            $categories = Cache::remember('categories_en_all', 3600, function() {
                 return DB::table('services')
-                    ->select($categoryField . ' as name', DB::raw('COUNT(*) as count'))
-                    ->whereNotNull($categoryField)
-                    ->where($categoryField, '!=', '')
-                    ->groupBy($categoryField)
-                    ->orderBy($categoryField)
+                    ->select('category_en as name', DB::raw('COUNT(*) as count'))
+                    ->whereNotNull('category_en')
+                    ->where('category_en', '!=', '')
+                    ->groupBy('category_en')
+                    ->orderBy('category_en')
                     ->get();
+            });
+        }
+
+        // If not English, translate category names from stored translations
+        if (!in_array($lang, ['en'])) {
+            $categories = $categories->map(function ($cat) use ($lang) {
+                $catName = $cat->name;
+                // Try to find a service with this category and get its translated category
+                $service = Service::where('category_en', $catName)->whereNotNull('translations')->first();
+                if ($service) {
+                    $cat->name = $service->getTranslatedCategory($lang);
+                }
+                return $cat;
             });
         }
 
@@ -213,43 +284,47 @@ class HomeController extends Controller
      */
     public function platforms(Request $request): JsonResponse
     {
-        $lang = $request->get('lang', 'en');
-        $categoryField = $lang === 'ar' ? 'category_ar' : 'category_en';
-        $nameField = $lang === 'ar' ? 'name_ar' : 'name_en';
+        $lang = $this->getLang($request);
 
-        $stats = Cache::remember('platform_stats_' . $lang, 3600, function() use ($lang, $categoryField, $nameField) {
+        $stats = Cache::remember('platform_stats_all', 3600, function() {
             $platformStats = [];
             foreach ($this->platforms as $key => $platform) {
-                $platformName = $platform[$lang] ?? $key;
-                // Search using all aliases plus the localized names
                 $searchTerms = array_merge(
                     [$platform['en'], $platform['ar']],
                     $platform['aliases'] ?? []
                 );
 
-                $count = Service::where(function ($q) use ($searchTerms, $categoryField, $nameField) {
+                $count = Service::where(function ($q) use ($searchTerms) {
                     foreach ($searchTerms as $term) {
-                        $q->orWhere($categoryField, 'like', '%' . $term . '%')
-                          ->orWhere($nameField, 'like', '%' . $term . '%');
+                        $q->orWhere('category_en', 'like', '%' . $term . '%')
+                          ->orWhere('name_en', 'like', '%' . $term . '%')
+                          ->orWhere('category_ar', 'like', '%' . $term . '%')
+                          ->orWhere('name_ar', 'like', '%' . $term . '%');
                     }
                 })->count();
 
                 if ($count > 0) {
                     $platformStats[] = [
                         'key' => $key,
-                        'name' => $platformName,
+                        'name_en' => $platform['en'],
+                        'name_ar' => $platform['ar'],
                         'count' => $count,
                         'icon' => $this->getPlatformIcon($key),
                     ];
                 }
             }
-            // Sort by count descending
             usort($platformStats, fn($a, $b) => $b['count'] - $a['count']);
             return $platformStats;
         });
 
+        // Add localized name based on current language
+        $localizedStats = collect($stats)->map(function ($p) use ($lang) {
+            $p['name'] = in_array($lang, ['ar']) ? $p['name_ar'] : $p['name_en'];
+            return $p;
+        })->values();
+
         return response()->json([
-            'platforms' => $stats,
+            'platforms' => $localizedStats,
         ]);
     }
 
@@ -258,17 +333,31 @@ class HomeController extends Controller
      */
     public function featured(Request $request): JsonResponse
     {
-        $lang = $request->get('lang', 'en');
+        $lang = $this->getLang($request);
 
-        $featured = Cache::remember('featured_services_' . $lang, 3600, function() {
+        $featured = Cache::remember('featured_services_all', 3600, function() {
             return Service::where('rate', '<', 5)
                 ->orderBy('rate', 'asc')
                 ->limit(6)
-                ->get(['service_id', 'name_en', 'name_ar', 'category_en', 'category_ar', 'rate', 'min', 'max', 'type', 'refill', 'cancel']);
+                ->get(['service_id', 'name_en', 'name_ar', 'category_en', 'category_ar', 'translations', 'rate', 'min', 'max', 'type', 'refill', 'cancel']);
         });
 
+        $transformed = $featured->map(fn($s) => $this->transformService($s, $lang));
+
         return response()->json([
-            'featured' => $featured,
+            'featured' => $transformed,
+        ]);
+    }
+
+    /**
+     * Get supported languages list for frontend
+     */
+    public function languages(): JsonResponse
+    {
+        return response()->json([
+            'languages' => TranslationService::LANGUAGE_NAMES,
+            'supported' => TranslationService::getSupportedLanguageCodes(),
+            'rtl' => TranslationService::RTL_LANGUAGES,
         ]);
     }
 

@@ -4,10 +4,10 @@
         <section class="py-16 bg-surface">
             <v-container>
                 <div class="text-center">
-                    <v-chip color="primary" variant="tonal" class="mb-4">About Us</v-chip>
-                    <h1 class="text-h2 font-weight-bold mb-4">Who We Are</h1>
+                    <v-chip color="primary" variant="tonal" class="mb-4">{{ $t('about.title') }}</v-chip>
+                    <h1 class="text-h2 font-weight-bold mb-4">{{ $t('about.whoWeAre') }}</h1>
                     <p class="text-h6 text-medium-emphasis mx-auto" style="max-width: 700px;">
-                        We are a leading SMM panel providing high-quality social media marketing services at the most affordable prices.
+                        {{ $t('about.whoWeAreDesc') }}
                     </p>
                 </div>
             </v-container>
@@ -18,24 +18,24 @@
             <v-container>
                 <v-row align="center">
                     <v-col cols="12" md="6">
-                        <h2 class="text-h3 font-weight-bold mb-4">Our Story</h2>
+                        <h2 class="text-h3 font-weight-bold mb-4">{{ $t('about.ourStory') }}</h2>
                         <p class="text-body-1 text-medium-emphasis mb-4">
-                            Founded with a mission to democratize social media growth, we've helped thousands of businesses, influencers, and individuals achieve their online goals.
+                            {{ $t('about.ourStoryDesc1') }}
                         </p>
                         <p class="text-body-1 text-medium-emphasis mb-4">
-                            Our platform connects you with the most reliable and cost-effective SMM services in the market, backed by cutting-edge technology and dedicated support.
+                            {{ $t('about.ourStoryDesc2') }}
                         </p>
                         <v-btn color="primary" to="/all-services">
-                            Explore Services
+                            {{ $t('about.exploreServices') }}
                             <v-icon end>mdi-arrow-right</v-icon>
                         </v-btn>
                     </v-col>
                     <v-col cols="12" md="6">
                         <v-row>
-                            <v-col v-for="stat in aboutStats" :key="stat.label" cols="6">
+                            <v-col v-for="stat in aboutStats" :key="stat.labelKey" cols="6">
                                 <v-card class="pa-6 text-center" variant="outlined">
                                     <div class="text-h3 font-weight-bold text-primary">{{ stat.value }}</div>
-                                    <div class="text-body-2 text-medium-emphasis">{{ stat.label }}</div>
+                                    <div class="text-body-2 text-medium-emphasis">{{ $t(stat.labelKey) }}</div>
                                 </v-card>
                             </v-col>
                         </v-row>
@@ -48,14 +48,14 @@
         <section class="py-16 bg-surface">
             <v-container>
                 <div class="text-center mb-12">
-                    <h2 class="text-h3 font-weight-bold mb-4">Our Values</h2>
+                    <h2 class="text-h3 font-weight-bold mb-4">{{ $t('about.ourValues') }}</h2>
                 </div>
                 <v-row>
-                    <v-col v-for="value in values" :key="value.title" cols="12" md="4">
+                    <v-col v-for="value in values" :key="value.titleKey" cols="12" md="4">
                         <v-card class="pa-8 text-center h-100" variant="flat">
                             <v-icon :color="value.color" size="56" class="mb-4">{{ value.icon }}</v-icon>
-                            <h3 class="text-h6 font-weight-bold mb-2">{{ value.title }}</h3>
-                            <p class="text-body-2 text-medium-emphasis">{{ value.description }}</p>
+                            <h3 class="text-h6 font-weight-bold mb-2">{{ $t(value.titleKey) }}</h3>
+                            <p class="text-body-2 text-medium-emphasis">{{ $t(value.descKey) }}</p>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -66,9 +66,9 @@
         <section class="py-16">
             <v-container>
                 <v-card class="pa-12 text-center" color="primary">
-                    <h2 class="text-h3 font-weight-bold text-white mb-4">Ready to Grow?</h2>
-                    <p class="text-h6 text-white mb-8" style="opacity: 0.9;">Join thousands of satisfied customers today</p>
-                    <v-btn size="x-large" color="white" href="/register">Get Started Free</v-btn>
+                    <h2 class="text-h3 font-weight-bold text-white mb-4">{{ $t('home.readyToGrow') }}</h2>
+                    <p class="text-h6 text-white mb-8" style="opacity: 0.9;">{{ $t('about.joinCustomers') }}</p>
+                    <v-btn size="x-large" color="white" href="/register">{{ $t('home.getStarted') }}</v-btn>
                 </v-card>
             </v-container>
         </section>
@@ -76,18 +76,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
+
+const { locale } = useI18n()
+
+// SEO Configuration
+const seoConfig = computed(() => {
+    const config = locale.value === 'ar' ? { ...seoConfigs.about, ...seoConfigsAr.about } : seoConfigs.about
+    return config
+})
+useSeo(seoConfig.value)
 
 const aboutStats = ref([
-    { value: '10K+', label: 'Happy Customers' },
-    { value: '500+', label: 'Services' },
-    { value: '1M+', label: 'Orders Delivered' },
-    { value: '24/7', label: 'Support' },
+    { value: '10K+', labelKey: 'about.happyCustomers' },
+    { value: '500+', labelKey: 'about.services' },
+    { value: '1M+', labelKey: 'about.ordersDelivered' },
+    { value: '24/7', labelKey: 'about.support' },
 ])
 
 const values = ref([
-    { title: 'Quality', icon: 'mdi-star', color: 'warning', description: 'We deliver only the highest quality services that meet your expectations.' },
-    { title: 'Speed', icon: 'mdi-lightning-bolt', color: 'info', description: 'Fast delivery times with most orders starting within minutes.' },
-    { title: 'Support', icon: 'mdi-headset', color: 'success', description: '24/7 customer support to help you with any questions or issues.' },
+    { titleKey: 'about.quality', icon: 'mdi-star', color: 'warning', descKey: 'about.qualityDesc' },
+    { titleKey: 'about.speed', icon: 'mdi-lightning-bolt', color: 'info', descKey: 'about.speedDesc' },
+    { titleKey: 'about.supportTitle', icon: 'mdi-headset', color: 'success', descKey: 'about.supportDesc' },
 ])
 </script>

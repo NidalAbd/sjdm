@@ -11,36 +11,36 @@
                         </v-chip>
 
                         <h1 class="text-h2 text-md-h1 font-weight-black mb-4">
-                            Grow Your <span class="text-primary">Social Media</span> Instantly
+                            {{ $t('home.heroTitle') }} <span class="text-primary">{{ $t('home.heroTitleHighlight') }}</span>
                         </h1>
 
                         <p class="text-h6 text-medium-emphasis mb-6" style="line-height: 1.7;">
-                            The cheapest SMM panel for Instagram, TikTok, YouTube, Facebook followers, likes, views and more. Starting at just <strong class="text-primary">$0.01</strong>
+                            {{ $t('home.heroDescription') }}
                         </p>
 
                         <div class="d-flex flex-wrap ga-3 mb-8">
                             <div class="d-flex align-center">
                                 <v-icon color="success" class="mr-2">mdi-check-circle</v-icon>
-                                <span>Instant Delivery</span>
+                                <span>{{ $t('home.instantDelivery') }}</span>
                             </div>
                             <div class="d-flex align-center">
                                 <v-icon color="success" class="mr-2">mdi-check-circle</v-icon>
-                                <span>24/7 Support</span>
+                                <span>{{ $t('home.support247') }}</span>
                             </div>
                             <div class="d-flex align-center">
                                 <v-icon color="success" class="mr-2">mdi-check-circle</v-icon>
-                                <span>Cheapest Prices</span>
+                                <span>{{ $t('home.bestPrices') }}</span>
                             </div>
                         </div>
 
                         <div class="d-flex flex-wrap ga-3">
                             <v-btn size="x-large" color="primary" to="/all-services" class="px-8">
                                 <v-icon start>mdi-view-grid</v-icon>
-                                View All Services
+                                {{ $t('home.viewServices') }}
                             </v-btn>
                             <v-btn size="x-large" variant="outlined" href="/register" class="px-8">
                                 <v-icon start>mdi-account-plus</v-icon>
-                                Get Started Free
+                                {{ $t('home.getStarted') }}
                             </v-btn>
                         </div>
                     </v-col>
@@ -50,14 +50,14 @@
                         <v-card class="pa-6 quick-signin-card">
                             <div class="text-center mb-6">
                                 <v-icon size="48" color="primary" class="mb-2">mdi-account-circle</v-icon>
-                                <h3 class="text-h5 font-weight-bold">Quick Sign In</h3>
-                                <p class="text-body-2 text-medium-emphasis">Access your dashboard instantly</p>
+                                <h3 class="text-h5 font-weight-bold">{{ $t('home.quickSignIn') }}</h3>
+                                <p class="text-body-2 text-medium-emphasis">{{ $t('home.accessDashboard') }}</p>
                             </div>
 
                             <v-form @submit.prevent="handleLogin">
                                 <v-text-field
                                     v-model="loginForm.email"
-                                    label="Email Address"
+                                    :label="$t('contact.email')"
                                     type="email"
                                     prepend-inner-icon="mdi-email"
                                     class="mb-2"
@@ -66,7 +66,7 @@
 
                                 <v-text-field
                                     v-model="loginForm.password"
-                                    label="Password"
+                                    :label="$t('home.password')"
                                     :type="showPassword ? 'text' : 'password'"
                                     prepend-inner-icon="mdi-lock"
                                     :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
@@ -77,13 +77,13 @@
 
                                 <v-btn type="submit" color="primary" size="large" block :loading="loginLoading">
                                     <v-icon start>mdi-login</v-icon>
-                                    Sign In
+                                    {{ $t('publicNav.signIn') }}
                                 </v-btn>
                             </v-form>
 
                             <div class="text-center mt-4">
-                                <span class="text-body-2 text-medium-emphasis">Don't have an account?</span>
-                                <a href="/register" class="text-primary text-decoration-none ml-1 font-weight-medium">Sign Up</a>
+                                <span class="text-body-2 text-medium-emphasis">{{ $t('home.noAccount') }}</span>
+                                <a href="/register" class="text-primary text-decoration-none ml-1 font-weight-medium">{{ $t('publicNav.signUp') }}</a>
                             </div>
                         </v-card>
                     </v-col>
@@ -105,7 +105,7 @@
                         <v-card variant="flat" class="text-center pa-6 stat-card">
                             <v-icon :color="stat.color" size="40" class="mb-2">{{ stat.icon }}</v-icon>
                             <div class="text-h4 font-weight-bold">{{ stat.value }}</div>
-                            <div class="text-body-2 text-medium-emphasis">{{ stat.label }}</div>
+                            <div class="text-body-2 text-medium-emphasis">{{ $t(stat.labelKey) }}</div>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -116,9 +116,9 @@
         <section class="py-16">
             <v-container>
                 <div class="text-center mb-12">
-                    <v-chip color="primary" variant="tonal" class="mb-4">Platforms</v-chip>
-                    <h2 class="text-h3 font-weight-bold mb-4">All Social Media Platforms</h2>
-                    <p class="text-h6 text-medium-emphasis">Boost your presence on any platform</p>
+                    <v-chip color="primary" variant="tonal" class="mb-4">{{ $t('home.allPlatforms') }}</v-chip>
+                    <h2 class="text-h3 font-weight-bold mb-4">{{ $t('home.platformsWeSupport') }}</h2>
+                    <p class="text-h6 text-medium-emphasis">{{ $t('home.platformsDesc') }}</p>
                 </div>
 
                 <v-row>
@@ -136,9 +136,9 @@
         <section id="services" class="py-16 bg-surface">
             <v-container>
                 <div class="text-center mb-12">
-                    <v-chip color="primary" variant="tonal" class="mb-4">Services</v-chip>
-                    <h2 class="text-h3 font-weight-bold mb-4">Popular Services</h2>
-                    <p class="text-h6 text-medium-emphasis">Most ordered services by our customers</p>
+                    <v-chip color="primary" variant="tonal" class="mb-4">{{ $t('publicNav.services') }}</v-chip>
+                    <h2 class="text-h3 font-weight-bold mb-4">{{ $t('home.popularServices') }}</h2>
+                    <p class="text-h6 text-medium-emphasis">{{ $t('home.popularServicesDesc') }}</p>
                 </div>
 
                 <v-row v-if="!store.loading">
@@ -163,13 +163,13 @@
                                 <v-row dense>
                                     <v-col cols="6">
                                         <div class="stat-box pa-2 text-center rounded">
-                                            <div class="text-caption text-medium-emphasis">Min</div>
+                                            <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.min') }}</div>
                                             <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
                                         </div>
                                     </v-col>
                                     <v-col cols="6">
                                         <div class="stat-box pa-2 text-center rounded">
-                                            <div class="text-caption text-medium-emphasis">Max</div>
+                                            <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.max') }}</div>
                                             <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
                                         </div>
                                     </v-col>
@@ -177,11 +177,11 @@
                                 <div class="d-flex gap-2 mt-3" v-if="service.refill || service.cancel">
                                     <v-chip v-if="service.refill" color="success" size="x-small" variant="flat">
                                         <v-icon start size="12">mdi-refresh</v-icon>
-                                        Refill
+                                        {{ $t('services.refill') }}
                                     </v-chip>
                                     <v-chip v-if="service.cancel" color="warning" size="x-small" variant="flat">
                                         <v-icon start size="12">mdi-close</v-icon>
-                                        Cancel
+                                        {{ $t('common.cancel') }}
                                     </v-chip>
                                 </div>
                             </v-card-text>
@@ -197,7 +197,7 @@
 
                 <div class="text-center mt-8">
                     <v-btn size="large" color="primary" to="/all-services">
-                        View All Services
+                        {{ $t('home.viewServices') }}
                         <v-icon end>mdi-arrow-right</v-icon>
                     </v-btn>
                 </div>
@@ -208,8 +208,8 @@
         <section class="py-16">
             <v-container>
                 <div class="text-center mb-12">
-                    <v-chip color="primary" variant="tonal" class="mb-4">How It Works</v-chip>
-                    <h2 class="text-h3 font-weight-bold mb-4">3 Simple Steps</h2>
+                    <v-chip color="primary" variant="tonal" class="mb-4">{{ $t('publicNav.howItWorks') }}</v-chip>
+                    <h2 class="text-h3 font-weight-bold mb-4">{{ $t('home.threeSimpleSteps') }}</h2>
                 </div>
 
                 <v-row>
@@ -218,8 +218,8 @@
                             <v-avatar color="primary" size="64" class="mb-4">
                                 <span class="text-h4 font-weight-bold">{{ i + 1 }}</span>
                             </v-avatar>
-                            <h3 class="text-h6 font-weight-bold mb-2">{{ step.title }}</h3>
-                            <p class="text-body-2 text-medium-emphasis">{{ step.description }}</p>
+                            <h3 class="text-h6 font-weight-bold mb-2">{{ $t(step.titleKey) }}</h3>
+                            <p class="text-body-2 text-medium-emphasis">{{ $t(step.descKey) }}</p>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -230,22 +230,22 @@
         <section class="py-16 bg-surface">
             <v-container>
                 <div class="text-center mb-12">
-                    <v-chip color="primary" variant="tonal" class="mb-4">FAQ</v-chip>
-                    <h2 class="text-h3 font-weight-bold mb-4">Common Questions</h2>
+                    <v-chip color="primary" variant="tonal" class="mb-4">{{ $t('publicNav.faq') }}</v-chip>
+                    <h2 class="text-h3 font-weight-bold mb-4">{{ $t('home.commonQuestions') }}</h2>
                 </div>
 
                 <v-row justify="center">
                     <v-col cols="12" lg="10">
                         <v-row>
-                            <v-col v-for="(faq, i) in faqs.slice(0, 4)" :key="i" cols="12" md="6">
+                            <v-col v-for="(faq, i) in faqs" :key="i" cols="12" md="6">
                                 <v-card class="faq-card h-100 pa-6" variant="outlined" hover>
                                     <div class="d-flex align-start mb-4">
                                         <v-avatar color="primary" variant="tonal" size="40" class="mr-4 flex-shrink-0">
                                             <v-icon>mdi-help</v-icon>
                                         </v-avatar>
-                                        <h3 class="text-subtitle-1 font-weight-bold">{{ faq.question }}</h3>
+                                        <h3 class="text-subtitle-1 font-weight-bold">{{ $t(faq.questionKey) }}</h3>
                                     </div>
-                                    <p class="text-body-2 text-medium-emphasis pl-14">{{ faq.answer }}</p>
+                                    <p class="text-body-2 text-medium-emphasis pl-14">{{ $t(faq.answerKey) }}</p>
                                 </v-card>
                             </v-col>
                         </v-row>
@@ -254,7 +254,7 @@
 
                 <div class="text-center mt-8">
                     <v-btn size="large" variant="outlined" to="/faq">
-                        View All FAQs
+                        {{ $t('home.viewAllFaqs') }}
                         <v-icon end>mdi-arrow-right</v-icon>
                     </v-btn>
                 </div>
@@ -265,13 +265,13 @@
         <section class="py-16">
             <v-container>
                 <v-card class="pa-12 text-center cta-card" color="primary">
-                    <h2 class="text-h3 font-weight-bold text-white mb-4">Ready to Grow?</h2>
+                    <h2 class="text-h3 font-weight-bold text-white mb-4">{{ $t('home.readyToGrow') }}</h2>
                     <p class="text-h6 text-white mb-8" style="opacity: 0.9;">
-                        Join thousands of satisfied customers and boost your social media today
+                        {{ $t('home.readyToGrowDesc') }}
                     </p>
                     <v-btn size="x-large" color="white" href="/register">
                         <v-icon start>mdi-rocket-launch</v-icon>
-                        Get Started Now
+                        {{ $t('home.getStartedNow') }}
                     </v-btn>
                 </v-card>
             </v-container>
@@ -281,9 +281,19 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/app'
+import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
 
 const store = useAppStore()
+const { locale } = useI18n()
+
+// SEO Configuration
+const seoConfig = computed(() => {
+    const config = locale.value === 'ar' ? { ...seoConfigs.home, ...seoConfigsAr.home } : seoConfigs.home
+    return config
+})
+useSeo(seoConfig.value)
 const showPassword = ref(false)
 const loginLoading = ref(false)
 
@@ -328,10 +338,10 @@ const formatNumber = (num) => {
 }
 
 const stats = ref([
-    { value: '10K+', label: 'Active Users', icon: 'mdi-account-group', color: 'primary' },
-    { value: '500+', label: 'Services', icon: 'mdi-view-grid', color: 'success' },
-    { value: '1M+', label: 'Orders Completed', icon: 'mdi-check-circle', color: 'warning' },
-    { value: '24/7', label: 'Support', icon: 'mdi-headset', color: 'info' },
+    { value: '10K+', labelKey: 'home.activeUsers', icon: 'mdi-account-group', color: 'primary' },
+    { value: '500+', labelKey: 'home.servicesCount', icon: 'mdi-view-grid', color: 'success' },
+    { value: '1M+', labelKey: 'home.ordersCompleted', icon: 'mdi-check-circle', color: 'warning' },
+    { value: '24/7', labelKey: 'home.support', icon: 'mdi-headset', color: 'info' },
 ])
 
 const platforms = ref([
@@ -344,16 +354,16 @@ const platforms = ref([
 ])
 
 const steps = ref([
-    { title: 'Create Account', description: 'Sign up for free and add funds to your account using your preferred payment method.' },
-    { title: 'Choose Service', description: 'Browse our wide range of services and select the one that fits your needs.' },
-    { title: 'Get Results', description: 'Place your order and watch your social media grow instantly!' },
+    { titleKey: 'howItWorks.step1Title', descKey: 'howItWorks.step1Desc' },
+    { titleKey: 'howItWorks.step2Title', descKey: 'howItWorks.step2Desc' },
+    { titleKey: 'home.getResultsTitle', descKey: 'home.getResultsDesc' },
 ])
 
 const faqs = ref([
-    { question: 'How fast is the delivery?', answer: 'Most orders start within 0-15 minutes and complete within a few hours depending on the quantity.' },
-    { question: 'Is it safe to use?', answer: 'Yes! We use safe methods and never ask for your password. Your account security is our priority.' },
-    { question: 'What payment methods do you accept?', answer: 'We accept credit cards, PayPal, cryptocurrency, and various local payment methods.' },
-    { question: 'Do you offer refunds?', answer: 'Yes, we offer full refunds if we fail to deliver your order. Contact our 24/7 support for assistance.' },
+    { questionKey: 'home.faq1Question', answerKey: 'home.faq1Answer' },
+    { questionKey: 'home.faq2Question', answerKey: 'home.faq2Answer' },
+    { questionKey: 'home.faq3Question', answerKey: 'home.faq3Answer' },
+    { questionKey: 'home.faq4Question', answerKey: 'home.faq4Answer' },
 ])
 </script>
 

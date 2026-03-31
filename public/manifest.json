@@ -1,0 +1,29 @@
+{
+    "name": "SMM Panel - Best Social Media Marketing Services",
+    "short_name": "SMM Panel",
+    "description": "The cheapest SMM panel for Instagram, TikTok, YouTube, Facebook followers, likes, views and more. Instant delivery, 24/7 support.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#ffffff",
+    "theme_color": "#6366f1",
+    "icons": [
+        {
+            "src": "/images/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["social", "business", "marketing"],
+    "lang": "en",
+    "dir": "ltr",
+    "prefer_related_applications": false
+}

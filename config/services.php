@@ -35,4 +35,27 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | SEO Services
+    |--------------------------------------------------------------------------
+    */
+
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+    ],
+
+    'google_search_console' => [
+        'site_url' => env('GSC_SITE_URL', 'https://smmjd.com'),
+        'credentials_path' => env('GSC_CREDENTIALS_PATH'),
+    ],
+
+    'serpapi' => [
+        'key' => env('SERPAPI_KEY'),
+    ],
+
+    'google_trends' => [
+        'enabled' => env('GOOGLE_TRENDS_ENABLED', true),
+    ],
+
 ];
