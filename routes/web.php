@@ -294,5 +294,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/permissions', fn() => redirect('/permissions'));
     Route::get('/admin/payment-methods', fn() => redirect('/payment-methods'));
     Route::get('/admin/profile', fn() => redirect('/profile/settings'));
-    Route::get('/admin/languages', fn() => redirect('/home')); // Languages managed via API
+    Route::get('/admin/languages', fn() => view('languages'))->name('languages.index');
 });
