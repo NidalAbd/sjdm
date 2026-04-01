@@ -28,7 +28,21 @@ const showSnackbar = (text, color = 'success') => {
 }
 provide('showSnackbar', showSnackbar)
 
+// Sync Vuetify theme with AdminLTE dark mode
+const syncTheme = () => {
+    const isDark = document.body.classList.contains('dark-mode')
+    store.theme = isDark ? 'dark' : 'light'
+    localStorage.setItem('theme', store.theme)
+}
+
 onMounted(async () => {
+    // Detect AdminLTE dark mode
+    syncTheme()
+
+    // Watch for AdminLTE dark mode toggle
+    const observer = new MutationObserver(() => syncTheme())
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] })
+
     await authStore.fetchUser()
     await store.fetchLanguages()
     updateThemeColors(store.themeColor)
