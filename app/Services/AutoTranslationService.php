@@ -29,7 +29,11 @@ class AutoTranslationService
         $errors = 0;
 
         // Check which already exist
-        $existing = Translation::where('locale', $targetLocale)->pluck('value', DB::raw("CONCAT(`group`, '.', `key`)"))->toArray();
+        $existingRows = Translation::where('locale', $targetLocale)->get();
+        $existing = [];
+        foreach ($existingRows as $row) {
+            $existing["{$row->group}.{$row->key}"] = $row->value;
+        }
 
         $toTranslate = [];
         foreach ($sourceTranslations as $trans) {
@@ -109,7 +113,11 @@ class AutoTranslationService
         $completed = 0;
         $errors = 0;
 
-        $existing = Translation::where('locale', $targetLocale)->pluck('value', DB::raw("CONCAT(`group`, '.', `key`)"))->toArray();
+        $existingRows = Translation::where('locale', $targetLocale)->get();
+        $existing = [];
+        foreach ($existingRows as $row) {
+            $existing["{$row->group}.{$row->key}"] = $row->value;
+        }
 
         foreach ($sourceTranslations as $trans) {
             $compositeKey = "{$trans->group}.{$trans->key}";
