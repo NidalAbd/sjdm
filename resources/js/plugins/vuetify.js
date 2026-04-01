@@ -35,11 +35,11 @@ const darkTheme = {
         warning: '#fbbf24',
         error: '#f87171',
         info: '#60a5fa',
-        background: '#09090b',
-        surface: '#18181b',
-        'surface-variant': '#27272a',
-        'on-background': '#fafafa',
-        'on-surface': '#e4e4e7',
+        background: '#343a40',
+        surface: '#3d444b',
+        'surface-variant': '#454d55',
+        'on-background': '#e9ecef',
+        'on-surface': '#dee2e6',
         'on-primary': '#ffffff',
     }
 }
