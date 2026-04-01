@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class TranslateServices extends Command
 {
-    protected $signature = 'services:translate {--force : Re-translate all} {--limit=0 : Limit services} {--batch=20 : Services per OpenAI batch}';
-    protected $description = 'Auto-translate service names/categories to all languages using OpenAI';
+    protected $signature = 'services:translate {--force : Re-translate all} {--limit=0 : Limit services} {--batch=10 : Services per batch}';
+    protected $description = 'Translate service names/categories to all 15 languages in ONE OpenAI call per batch';
 
     public function handle()
     {
@@ -21,7 +21,7 @@ class TranslateServices extends Command
         $apiKey = config('services.openai.key');
 
         if (empty($apiKey)) {
-            $this->error('No OpenAI API key found. Add OPENAI_API_KEY to .env');
+            $this->error('No OPENAI_API_KEY in .env');
             return 1;
         }
 
@@ -34,57 +34,108 @@ class TranslateServices extends Command
 
         $total = $query->count();
         if ($total === 0) {
-            $this->info('All services already translated. Use --force to redo.');
+            $this->info('All services already translated.');
             return 0;
         }
 
         $count = $limit > 0 ? min($limit, $total) : $total;
-        $this->info("Translating {$count} services via OpenAI (batch size: {$batchSize})...");
+        $this->info("Translating {$count} services (batch: {$batchSize}, all 15 langs per call)...");
 
-        $languages = array_diff(array_keys(TranslationService::SUPPORTED_LANGUAGES), ['en', 'ar']);
-        $langNames = TranslationService::SUPPORTED_LANGUAGES;
+        $langs = ['es','fr','de','pt','ru','zh','ja','ko','hi','tr','it','pl','nl','vi','th'];
         $processed = 0;
         $failed = 0;
         $bar = $this->output->createProgressBar($count);
         $bar->start();
 
-        $query->orderBy('service_id')->chunkById($batchSize, function ($services) use ($apiKey, $languages, $langNames, &$processed, &$failed, $bar, $count) {
+        $query->orderBy('service_id')->chunkById($batchSize, function ($services) use ($apiKey, $langs, &$processed, &$failed, $bar, $count) {
             if ($processed >= $count) return false;
 
-            // Build batch: collect all names and categories
-            $nameBatch = [];
-            $catBatch = [];
+            // Build input: {service_id: "name | category"}
+            $input = [];
             foreach ($services as $svc) {
                 $name = $svc->name_en ?: $svc->name_ar ?: '';
                 $cat = $svc->category_en ?: $svc->category_ar ?: '';
-                if ($name) $nameBatch[$svc->service_id] = $name;
-                if ($cat) $catBatch[$svc->service_id] = $cat;
+                if ($name || $cat) {
+                    $input[(string)$svc->service_id] = $name . ' ||| ' . $cat;
+                }
             }
 
-            // Translate names batch
-            $nameTranslations = $this->translateBatch($nameBatch, $languages, $apiKey);
-            // Translate categories batch
-            $catTranslations = $this->translateBatch($catBatch, $languages, $apiKey);
+            if (empty($input)) {
+                foreach ($services as $svc) { $bar->advance(); $processed++; }
+                return;
+            }
 
-            // Save results
-            foreach ($services as $svc) {
-                $translations = ['name' => ['en' => $svc->name_en, 'ar' => $svc->name_ar], 'category' => ['en' => $svc->category_en, 'ar' => $svc->category_ar]];
+            // One API call: translate all services to all 15 languages at once
+            $langList = implode(', ', $langs);
+            $json = json_encode($input, JSON_UNESCAPED_UNICODE);
 
-                foreach ($languages as $lang) {
-                    $translations['name'][$lang] = $nameTranslations[$svc->service_id][$lang] ?? $svc->name_en;
-                    $translations['category'][$lang] = $catTranslations[$svc->service_id][$lang] ?? $svc->category_en;
+            try {
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Content-Type' => 'application/json',
+                ])->timeout(180)->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-4o-mini',
+                    'messages' => [
+                        ['role' => 'system', 'content' => "You translate SMM service names. Input has format: {id: \"name ||| category\"}. Output must be: {id: {lang: \"translated_name ||| translated_category\"}} for these languages: {$langList}. Return ONLY valid JSON. No markdown."],
+                        ['role' => 'user', 'content' => $json],
+                    ],
+                    'temperature' => 0.2,
+                    'max_tokens' => 16384,
+                ]);
+
+                if ($response->successful()) {
+                    $content = $response->json('choices.0.message.content', '');
+                    $content = preg_replace('/^```(?:json)?\s*\n?/m', '', $content);
+                    $content = preg_replace('/\n?```\s*$/m', '', $content);
+                    $result = json_decode(trim($content), true);
+
+                    if (is_array($result)) {
+                        foreach ($services as $svc) {
+                            $translations = [
+                                'name' => ['en' => $svc->name_en, 'ar' => $svc->name_ar],
+                                'category' => ['en' => $svc->category_en, 'ar' => $svc->category_ar],
+                            ];
+
+                            $svcResult = $result[(string)$svc->service_id] ?? null;
+                            if (is_array($svcResult)) {
+                                foreach ($langs as $lang) {
+                                    $val = $svcResult[$lang] ?? null;
+                                    if ($val && str_contains($val, '|||')) {
+                                        [$tName, $tCat] = array_map('trim', explode('|||', $val, 2));
+                                        $translations['name'][$lang] = $tName;
+                                        $translations['category'][$lang] = $tCat;
+                                    } else {
+                                        $translations['name'][$lang] = $val ?? $svc->name_en;
+                                        $translations['category'][$lang] = $svc->category_en;
+                                    }
+                                }
+                            } else {
+                                foreach ($langs as $lang) {
+                                    $translations['name'][$lang] = $svc->name_en;
+                                    $translations['category'][$lang] = $svc->category_en;
+                                }
+                            }
+
+                            try {
+                                $svc->translations = $translations;
+                                $svc->save();
+                                $processed++;
+                            } catch (\Exception $e) { $failed++; }
+
+                            $bar->advance();
+                            if ($processed >= $count) return;
+                        }
+                    } else {
+                        // Parse failed
+                        foreach ($services as $svc) { $failed++; $bar->advance(); }
+                    }
+                } else {
+                    Log::warning('OpenAI translate failed: ' . $response->status() . ' ' . substr($response->body(), 0, 200));
+                    foreach ($services as $svc) { $failed++; $bar->advance(); }
                 }
-
-                try {
-                    $svc->translations = $translations;
-                    $svc->save();
-                    $processed++;
-                } catch (\Exception $e) {
-                    $failed++;
-                }
-                $bar->advance();
-
-                if ($processed >= $count) break;
+            } catch (\Exception $e) {
+                Log::warning('Service translate error: ' . $e->getMessage());
+                foreach ($services as $svc) { $failed++; $bar->advance(); }
             }
         }, 'service_id');
 
@@ -92,61 +143,5 @@ class TranslateServices extends Command
         $this->newLine(2);
         $this->info("Done! Processed: {$processed}, Failed: {$failed}");
         return 0;
-    }
-
-    private function translateBatch(array $items, array $languages, string $apiKey): array
-    {
-        if (empty($items)) return [];
-
-        $results = [];
-        foreach ($items as $id => $text) {
-            $results[$id] = [];
-        }
-
-        // Send one OpenAI request per language (batch all service texts together)
-        foreach ($languages as $lang) {
-            $langName = TranslationService::SUPPORTED_LANGUAGES[$lang] ?? $lang;
-
-            // Build JSON to translate
-            $toTranslate = [];
-            foreach ($items as $id => $text) {
-                $toTranslate[(string)$id] = $text;
-            }
-
-            try {
-                $json = json_encode($toTranslate, JSON_UNESCAPED_UNICODE);
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $apiKey,
-                    'Content-Type' => 'application/json',
-                ])->timeout(120)->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-4o-mini',
-                    'messages' => [
-                        ['role' => 'system', 'content' => "Translate JSON values from English to {$langName}. Keep keys same. Return only valid JSON."],
-                        ['role' => 'user', 'content' => $json],
-                    ],
-                    'temperature' => 0.3,
-                    'max_tokens' => 8192,
-                ]);
-
-                if ($response->successful()) {
-                    $content = $response->json('choices.0.message.content', '');
-                    $content = preg_replace('/^```(?:json)?\s*\n?/m', '', $content);
-                    $content = preg_replace('/\n?```\s*$/m', '', $content);
-                    $translated = json_decode(trim($content), true);
-
-                    if (is_array($translated)) {
-                        foreach ($translated as $id => $value) {
-                            if (isset($results[(int)$id])) {
-                                $results[(int)$id][$lang] = $value;
-                            }
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::warning("Service translate batch failed for {$lang}: " . $e->getMessage());
-            }
-        }
-
-        return $results;
     }
 }
