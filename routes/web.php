@@ -276,9 +276,23 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
 });
 
 // =============================================
-// ADMIN ROUTES - AdminLTE Blade Templates
+// ADMIN REDIRECTS (old Vue SPA URLs → AdminLTE Blade URLs)
 // =============================================
-// Admin panel uses AdminLTE Blade views (not Vue SPA)
-// All admin routes are handled by the protected routes above
-// (users, orders, services, transactions, support, etc.)
-// The AdminLTE sidebar menu is configured in config/adminlte.php
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', fn() => redirect('/home'));
+    Route::get('/admin/orders', fn() => redirect('/orders'));
+    Route::get('/admin/orders/create', fn() => redirect('/orders/create'));
+    Route::get('/admin/services', fn() => redirect('/services'));
+    Route::get('/admin/users', fn() => redirect('/users'));
+    Route::get('/admin/transactions', fn() => redirect('/transactions'));
+    Route::get('/admin/transactions/create', fn() => redirect('/transactions/create'));
+    Route::get('/admin/support', fn() => redirect('/support'));
+    Route::get('/admin/notifications', fn() => redirect('/notifications'));
+    Route::get('/admin/referrals', fn() => redirect('/referrals'));
+    Route::get('/admin/points', fn() => redirect('/points'));
+    Route::get('/admin/roles', fn() => redirect('/roles'));
+    Route::get('/admin/permissions', fn() => redirect('/permissions'));
+    Route::get('/admin/payment-methods', fn() => redirect('/payment-methods'));
+    Route::get('/admin/profile', fn() => redirect('/profile/settings'));
+    Route::get('/admin/languages', fn() => redirect('/home')); // Languages managed via API
+});
