@@ -9,40 +9,7 @@
         </PageHeader>
 
         <!-- Stats Cards -->
-        <v-row class="mb-4">
-            <v-col cols="6" sm="3">
-                <v-card color="info" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <div class="text-h4 font-weight-bold">{{ stats.totalUsers }}</div>
-                        <div class="text-caption">Total Users</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="6" sm="3">
-                <v-card color="success" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <div class="text-h4 font-weight-bold">{{ stats.verifiedUsers }}</div>
-                        <div class="text-caption">Verified</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="6" sm="3">
-                <v-card color="warning" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <div class="text-h4 font-weight-bold">{{ stats.unverifiedUsers }}</div>
-                        <div class="text-caption">Unverified</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="6" sm="3">
-                <v-card color="purple" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <div class="text-h4 font-weight-bold">${{ formatNumber(stats.totalBalance) }}</div>
-                        <div class="text-caption">Total Balance</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <StatsRow :stats="statsData" />
 
         <!-- Filters -->
         <v-card class="mb-4">
@@ -433,9 +400,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import axios from 'axios'
 import PageHeader from '../../components/PageHeader.vue'
+import StatsRow from '../../components/StatsRow.vue'
 
 const showSnackbar = inject('showSnackbar')
 
@@ -453,6 +421,13 @@ const stats = ref({
     unverifiedUsers: 0,
     totalBalance: 0,
 })
+
+const statsData = computed(() => [
+    { value: stats.value.totalUsers, label: 'Total Users', icon: 'mdi-account-multiple', color: 'info' },
+    { value: stats.value.verifiedUsers, label: 'Verified', icon: 'mdi-account-check', color: 'success' },
+    { value: stats.value.unverifiedUsers, label: 'Unverified', icon: 'mdi-account-alert', color: 'warning' },
+    { value: '$' + formatNumber(stats.value.totalBalance), label: 'Total Balance', icon: 'mdi-cash', color: 'purple' },
+])
 
 // Filters
 const filters = ref({

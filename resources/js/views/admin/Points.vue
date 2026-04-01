@@ -4,35 +4,7 @@
         </PageHeader>
 
         <!-- Points Overview -->
-        <v-row class="mb-4">
-            <v-col cols="12" sm="4">
-                <v-card color="warning" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <v-icon size="40" class="mb-2">mdi-star</v-icon>
-                        <div class="text-h4 font-weight-bold">{{ stats.totalPoints }}</div>
-                        <div class="text-caption">Total Points</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="4">
-                <v-card color="success" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <v-icon size="40" class="mb-2">mdi-cash</v-icon>
-                        <div class="text-h4 font-weight-bold">${{ formatNumber(stats.pointsValue) }}</div>
-                        <div class="text-caption">Points Value</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="4">
-                <v-card color="info" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <v-icon size="40" class="mb-2">mdi-gift</v-icon>
-                        <div class="text-h4 font-weight-bold">{{ stats.redeemablePoints }}</div>
-                        <div class="text-caption">Redeemable</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <StatsRow :stats="statsData" />
 
         <!-- Redeem Points -->
         <v-card class="mb-4">
@@ -172,9 +144,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import axios from 'axios'
 import PageHeader from '../../components/PageHeader.vue'
+import StatsRow from '../../components/StatsRow.vue'
 
 const showSnackbar = inject('showSnackbar')
 
@@ -190,6 +163,12 @@ const stats = ref({
     pointsValue: 0,
     redeemablePoints: 0,
 })
+
+const statsData = computed(() => [
+    { value: stats.value.totalPoints, label: 'Total Points', icon: 'mdi-star', color: 'warning' },
+    { value: '$' + formatNumber(stats.value.pointsValue), label: 'Points Value', icon: 'mdi-cash', color: 'success' },
+    { value: stats.value.redeemablePoints, label: 'Redeemable', icon: 'mdi-gift', color: 'info' },
+])
 
 // Table headers
 const headers = [

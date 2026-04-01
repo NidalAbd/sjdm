@@ -23,44 +23,7 @@
         </div>
 
         <!-- Stats Cards -->
-        <v-row class="mb-6">
-            <v-col cols="12" sm="6" md="3">
-                <v-card class="hover-lift h-100">
-                    <v-card-text class="text-center py-6">
-                        <v-icon color="primary" size="48" class="mb-2">mdi-key-variant</v-icon>
-                        <div class="text-h3 font-weight-bold">{{ stats.totalKeywords }}</div>
-                        <div class="text-body-2 text-medium-emphasis">{{ $t('seo.totalKeywords') }}</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card class="hover-lift h-100">
-                    <v-card-text class="text-center py-6">
-                        <v-icon color="success" size="48" class="mb-2">mdi-cursor-default-click</v-icon>
-                        <div class="text-h3 font-weight-bold">{{ formatNumber(stats.totalClicks) }}</div>
-                        <div class="text-body-2 text-medium-emphasis">{{ $t('seo.totalClicks') }}</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card class="hover-lift h-100">
-                    <v-card-text class="text-center py-6">
-                        <v-icon color="info" size="48" class="mb-2">mdi-eye</v-icon>
-                        <div class="text-h3 font-weight-bold">{{ formatNumber(stats.totalImpressions) }}</div>
-                        <div class="text-body-2 text-medium-emphasis">{{ $t('seo.totalImpressions') }}</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card class="hover-lift h-100">
-                    <v-card-text class="text-center py-6">
-                        <v-icon color="warning" size="48" class="mb-2">mdi-chart-line</v-icon>
-                        <div class="text-h3 font-weight-bold">{{ stats.averagePosition }}</div>
-                        <div class="text-body-2 text-medium-emphasis">{{ $t('seo.avgPosition') }}</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <StatsRow :stats="statsData" />
 
         <!-- Performance Chart -->
         <v-row class="mb-6">
@@ -255,6 +218,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Chart from 'chart.js/auto'
+import StatsRow from '../../components/StatsRow.vue'
 
 const { t } = useI18n()
 
@@ -265,6 +229,13 @@ const syncingTrends = ref(false)
 const chartPeriod = ref('30')
 const performanceChart = ref(null)
 let chartInstance = null
+
+const statsData = computed(() => [
+    { value: stats.value.totalKeywords, label: t('seo.totalKeywords'), icon: 'mdi-key-variant', color: 'primary' },
+    { value: formatNumber(stats.value.totalClicks), label: t('seo.totalClicks'), icon: 'mdi-cursor-default-click', color: 'success' },
+    { value: formatNumber(stats.value.totalImpressions), label: t('seo.totalImpressions'), icon: 'mdi-eye', color: 'info' },
+    { value: stats.value.averagePosition, label: t('seo.avgPosition'), icon: 'mdi-chart-line', color: 'warning' },
+])
 
 const stats = ref({
     totalKeywords: 0,

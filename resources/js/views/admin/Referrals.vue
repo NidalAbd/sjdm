@@ -4,35 +4,7 @@
         </PageHeader>
 
         <!-- Stats -->
-        <v-row class="mb-4">
-            <v-col cols="12" sm="4">
-                <v-card color="primary" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <v-icon size="40" class="mb-2">mdi-account-multiple</v-icon>
-                        <div class="text-h4 font-weight-bold">{{ stats.totalReferrals }}</div>
-                        <div class="text-caption">Total Referrals</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="4">
-                <v-card color="success" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <v-icon size="40" class="mb-2">mdi-account-check</v-icon>
-                        <div class="text-h4 font-weight-bold">{{ stats.activeReferrals }}</div>
-                        <div class="text-caption">Active Referrals</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="4">
-                <v-card color="warning" variant="flat">
-                    <v-card-text class="text-white text-center">
-                        <v-icon size="40" class="mb-2">mdi-cash</v-icon>
-                        <div class="text-h4 font-weight-bold">${{ formatNumber(stats.totalEarnings) }}</div>
-                        <div class="text-caption">Total Earnings</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <StatsRow :stats="statsData" />
 
         <!-- Referral Link Card -->
         <v-card class="mb-4">
@@ -194,6 +166,7 @@ import { ref, computed, onMounted, inject } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import axios from 'axios'
 import PageHeader from '../../components/PageHeader.vue'
+import StatsRow from '../../components/StatsRow.vue'
 
 const authStore = useAuthStore()
 const showSnackbar = inject('showSnackbar')
@@ -207,6 +180,12 @@ const stats = ref({
     activeReferrals: 0,
     totalEarnings: 0,
 })
+
+const statsData = computed(() => [
+    { value: stats.value.totalReferrals, label: 'Total Referrals', icon: 'mdi-account-multiple', color: 'primary' },
+    { value: stats.value.activeReferrals, label: 'Active Referrals', icon: 'mdi-account-check', color: 'success' },
+    { value: '$' + formatNumber(stats.value.totalEarnings), label: 'Total Earnings', icon: 'mdi-cash', color: 'warning' },
+])
 
 const referralLink = computed(() => {
     const code = authStore.user?.referral_code

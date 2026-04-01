@@ -9,60 +9,7 @@
         </PageHeader>
 
         <!-- Stats Cards -->
-        <v-row class="mb-4">
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="primary" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-caption">Total Methods</div>
-                                <div class="text-h5 font-weight-bold">{{ paymentMethods.length }}</div>
-                            </div>
-                            <v-icon size="40" opacity="0.5">mdi-credit-card-multiple</v-icon>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="success" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-caption">Active</div>
-                                <div class="text-h5 font-weight-bold">{{ activeMethods }}</div>
-                            </div>
-                            <v-icon size="40" opacity="0.5">mdi-check-circle</v-icon>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="warning" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-caption">Inactive</div>
-                                <div class="text-h5 font-weight-bold">{{ inactiveMethods }}</div>
-                            </div>
-                            <v-icon size="40" opacity="0.5">mdi-pause-circle</v-icon>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" sm="6" md="3">
-                <v-card color="info" variant="flat">
-                    <v-card-text class="text-white">
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div class="text-caption">With Bonus</div>
-                                <div class="text-h5 font-weight-bold">{{ methodsWithBonus }}</div>
-                            </div>
-                            <v-icon size="40" opacity="0.5">mdi-gift</v-icon>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <StatsRow :stats="statsData" />
 
         <v-card>
             <v-data-table
@@ -451,6 +398,7 @@
 import { ref, computed, onMounted, inject } from 'vue'
 import axios from 'axios'
 import PageHeader from '../../components/PageHeader.vue'
+import StatsRow from '../../components/StatsRow.vue'
 
 const showSnackbar = inject('showSnackbar')
 
@@ -520,6 +468,13 @@ const availableColors = [
     { title: 'Pink', value: 'pink' },
     { title: 'Grey', value: 'grey' },
 ]
+
+const statsData = computed(() => [
+    { value: paymentMethods.value.length, label: 'Total Methods', icon: 'mdi-credit-card-multiple', color: 'primary' },
+    { value: activeMethods.value, label: 'Active', icon: 'mdi-check-circle', color: 'success' },
+    { value: inactiveMethods.value, label: 'Inactive', icon: 'mdi-pause-circle', color: 'warning' },
+    { value: methodsWithBonus.value, label: 'With Bonus', icon: 'mdi-gift', color: 'info' },
+])
 
 // Computed
 const activeMethods = computed(() => paymentMethods.value.filter(m => m.is_active).length)
