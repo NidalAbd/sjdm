@@ -6,7 +6,6 @@
                 <button class="topbar-toggle" @click="drawer = !drawer">
                     <v-icon size="20">mdi-menu</v-icon>
                 </button>
-                <span class="topbar-brand d-none d-sm-inline">{{ $t('header.panel') }}</span>
             </div>
             <div class="topbar-right">
                 <div class="topbar-balance">
@@ -248,7 +247,6 @@ onUnmounted(() => { window.removeEventListener('resize', handleResize) })
     color: inherit; transition: background 0.15s ease;
 }
 .topbar-toggle:hover { background: rgba(var(--v-theme-on-surface), 0.1); }
-.topbar-brand { font-size: 0.95rem; font-weight: 700; }
 .topbar-balance {
     display: flex; align-items: center;
     font-size: 0.8rem; font-weight: 700; color: rgb(var(--v-theme-success));
