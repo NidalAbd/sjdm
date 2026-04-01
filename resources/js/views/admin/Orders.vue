@@ -1,57 +1,13 @@
 <template>
     <div>
-        <!-- Page Header -->
-        <div class="d-flex align-center justify-space-between mb-4">
-            <div>
-                <h1 class="text-h5 font-weight-bold">Orders</h1>
-                <p class="text-caption text-medium-emphasis mb-0">Manage and track all orders</p>
-            </div>
-            <div class="d-flex ga-2">
-                <v-btn v-if="authStore.isAdmin" variant="tonal" @click="syncOrders" :loading="syncing" prepend-icon="mdi-sync" size="small">
-                    Sync
-                </v-btn>
-                <v-btn color="primary" to="/admin/orders/create" prepend-icon="mdi-plus" size="small">
-                    New Order
-                </v-btn>
-            </div>
-        </div>
+        <PageHeader title="Orders" subtitle="Manage and track all orders" icon="mdi-shopping">
+            <template #actions>
+                <v-btn v-if="authStore.isAdmin" variant="tonal" @click="syncOrders" :loading="syncing" prepend-icon="mdi-sync" size="small">Sync</v-btn>
+                <v-btn color="primary" to="/admin/orders/create" prepend-icon="mdi-plus" size="small">New Order</v-btn>
+            </template>
+        </PageHeader>
 
-        <!-- Stats Row -->
-        <v-row v-if="authStore.isAdmin" class="mb-4">
-            <v-col cols="6" md="4">
-                <v-card variant="outlined" class="h-100">
-                    <v-card-text class="pa-4">
-                        <div class="d-flex align-center justify-space-between mb-2">
-                            <v-avatar color="info" variant="tonal" size="36" rounded="lg"><v-icon size="18">mdi-wallet</v-icon></v-avatar>
-                        </div>
-                        <div class="text-h5 font-weight-bold stat-value">${{ apiBalance }}</div>
-                        <div class="text-caption text-medium-emphasis">API Balance</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="6" md="4">
-                <v-card variant="outlined" class="h-100">
-                    <v-card-text class="pa-4">
-                        <div class="d-flex align-center justify-space-between mb-2">
-                            <v-avatar color="warning" variant="tonal" size="36" rounded="lg"><v-icon size="18">mdi-clock</v-icon></v-avatar>
-                        </div>
-                        <div class="text-h5 font-weight-bold stat-value">{{ pendingCount }}</div>
-                        <div class="text-caption text-medium-emphasis">Pending</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-            <v-col cols="12" md="4">
-                <v-card variant="outlined" class="h-100">
-                    <v-card-text class="pa-4">
-                        <div class="d-flex align-center justify-space-between mb-2">
-                            <v-avatar color="success" variant="tonal" size="36" rounded="lg"><v-icon size="18">mdi-check-circle</v-icon></v-avatar>
-                        </div>
-                        <div class="text-h5 font-weight-bold stat-value">{{ completedCount }}</div>
-                        <div class="text-caption text-medium-emphasis">Completed</div>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+        <StatsRow v-if="authStore.isAdmin" :stats="orderStats" />
 
         <!-- Filters -->
         <v-card class="mb-4" variant="outlined">
@@ -472,9 +428,17 @@
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue'
 import { useAuthStore } from '../../stores/auth'
+import PageHeader from '../../components/PageHeader.vue'
+import StatsRow from '../../components/StatsRow.vue'
 import axios from 'axios'
 
 const authStore = useAuthStore()
+
+const orderStats = computed(() => [
+    { value: '$' + apiBalance.value, label: 'API Balance', icon: 'mdi-wallet', color: 'info' },
+    { value: String(pendingCount.value), label: 'Pending', icon: 'mdi-clock', color: 'warning' },
+    { value: String(completedCount.value), label: 'Completed', icon: 'mdi-check-circle', color: 'success' },
+])
 const showSnackbar = inject('showSnackbar')
 
 // Data

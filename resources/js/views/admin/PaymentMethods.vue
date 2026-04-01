@@ -1,15 +1,12 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-credit-card-settings</v-icon>
-                <span>Payment Methods</span>
-                <v-spacer></v-spacer>
+        <PageHeader title="Payment Methods" subtitle="Manage payment gateways" icon="mdi-credit-card">
+            <template #actions>
                 <v-btn color="primary" @click="openCreateDialog" prepend-icon="mdi-plus">
                     Add Payment Method
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </template>
+        </PageHeader>
 
         <!-- Stats Cards -->
         <v-row class="mb-4">
@@ -194,7 +191,7 @@
         <!-- Create/Edit Dialog -->
         <v-dialog v-model="dialog" max-width="700" persistent>
             <v-card>
-                <v-card-title class="bg-primary text-white">
+                <v-card-title>
                     <v-icon class="mr-2">{{ editMode ? 'mdi-pencil' : 'mdi-plus' }}</v-icon>
                     {{ editMode ? 'Edit Payment Method' : 'Add Payment Method' }}
                 </v-card-title>
@@ -367,7 +364,7 @@
         <!-- View Dialog -->
         <v-dialog v-model="viewDialog" max-width="500">
             <v-card v-if="selectedMethod">
-                <v-card-title class="bg-info text-white d-flex align-center">
+                <v-card-title class="d-flex align-center">
                     <v-avatar :color="selectedMethod.color || 'grey'" size="40" class="mr-3">
                         <v-icon color="white">{{ selectedMethod.icon || 'mdi-credit-card' }}</v-icon>
                     </v-avatar>
@@ -453,6 +450,7 @@
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const showSnackbar = inject('showSnackbar')
 

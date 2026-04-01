@@ -1,15 +1,12 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-headset</v-icon>
-                <span>Support Tickets</span>
-                <v-spacer></v-spacer>
+        <PageHeader title="Support" subtitle="Manage support tickets" icon="mdi-headset">
+            <template #actions>
                 <v-btn color="primary" @click="openCreateDialog" prepend-icon="mdi-plus">
                     New Ticket
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </template>
+        </PageHeader>
 
         <!-- Filters -->
         <v-card class="mb-4">
@@ -188,7 +185,7 @@
         <!-- Create Ticket Dialog -->
         <v-dialog v-model="createDialog" max-width="600">
             <v-card>
-                <v-card-title class="bg-primary text-white">
+                <v-card-title>
                     <v-icon class="mr-2">mdi-plus</v-icon>
                     Create Support Ticket
                 </v-card-title>
@@ -231,6 +228,7 @@
 import { ref, onMounted, inject } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const authStore = useAuthStore()
 const showSnackbar = inject('showSnackbar')

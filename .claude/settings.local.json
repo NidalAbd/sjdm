@@ -25,7 +25,10 @@
       "Bash(php -l routes/api.php)",
       "Bash(scp:*)",
       "Bash(npm list:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(php -l database/migrations/2026_04_01_000002_add_missing_columns.php)",
+      "Bash(php -l app/Http/Controllers/Api/Admin/ServiceApiController.php)",
+      "Bash(find /c/Users/Nidal.Abd/PhpstormProjects/sjdm/resources/js/views -name \"*.vue\" -type f -exec wc -l {} +)"
     ],
     "deny": [],
     "ask": []

@@ -1,11 +1,7 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center">
-                <v-icon class="mr-2">mdi-account-group</v-icon>
-                Referral Program
-            </v-card-title>
-        </v-card>
+        <PageHeader title="Referrals" subtitle="Your referral program" icon="mdi-account-group">
+        </PageHeader>
 
         <!-- Stats -->
         <v-row class="mb-4">
@@ -197,6 +193,7 @@
 import { ref, computed, onMounted, inject } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const authStore = useAuthStore()
 const showSnackbar = inject('showSnackbar')

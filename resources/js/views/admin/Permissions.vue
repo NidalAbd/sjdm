@@ -1,15 +1,12 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-lock</v-icon>
-                <span>Manage Permissions</span>
-                <v-spacer></v-spacer>
+        <PageHeader title="Permissions" subtitle="Manage permissions" icon="mdi-lock">
+            <template #actions>
                 <v-btn color="primary" @click="openCreateDialog" prepend-icon="mdi-plus">
                     Add Permission
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </template>
+        </PageHeader>
 
         <v-card>
             <v-data-table
@@ -68,7 +65,7 @@
         <!-- Create/Edit Dialog -->
         <v-dialog v-model="dialog" max-width="500">
             <v-card>
-                <v-card-title class="bg-primary text-white">
+                <v-card-title>
                     <v-icon class="mr-2">{{ editMode ? 'mdi-pencil' : 'mdi-plus' }}</v-icon>
                     {{ editMode ? 'Edit Permission' : 'Create Permission' }}
                 </v-card-title>
@@ -104,6 +101,7 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const showSnackbar = inject('showSnackbar')
 

@@ -1,11 +1,7 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center">
-                <v-icon class="mr-2">mdi-star-circle</v-icon>
-                Points & Rewards
-            </v-card-title>
-        </v-card>
+        <PageHeader title="Points" subtitle="Your points & rewards" icon="mdi-star">
+        </PageHeader>
 
         <!-- Points Overview -->
         <v-row class="mb-4">
@@ -178,6 +174,7 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const showSnackbar = inject('showSnackbar')
 

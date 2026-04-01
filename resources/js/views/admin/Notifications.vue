@@ -1,13 +1,10 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-bell</v-icon>
-                <span>Notifications</span>
-                <v-chip v-if="unreadCount > 0" color="error" size="small" class="ml-2">
+        <PageHeader title="Notifications" subtitle="Your notifications" icon="mdi-bell">
+            <template #actions>
+                <v-chip v-if="unreadCount > 0" color="error" size="small" class="mr-2">
                     {{ unreadCount }} unread
                 </v-chip>
-                <v-spacer></v-spacer>
                 <v-btn
                     v-if="unreadCount > 0"
                     color="primary"
@@ -18,8 +15,8 @@
                 >
                     Mark All as Read
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </template>
+        </PageHeader>
 
         <!-- Notifications List -->
         <v-card>
@@ -94,6 +91,7 @@
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const showSnackbar = inject('showSnackbar')
 

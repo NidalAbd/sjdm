@@ -1,15 +1,12 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-account-multiple</v-icon>
-                <span>Manage Users</span>
-                <v-spacer></v-spacer>
+        <PageHeader title="Users" subtitle="Manage user accounts" icon="mdi-account-multiple">
+            <template #actions>
                 <v-btn color="primary" @click="openCreateDialog" prepend-icon="mdi-plus">
                     Add User
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </template>
+        </PageHeader>
 
         <!-- Stats Cards -->
         <v-row class="mb-4">
@@ -221,7 +218,7 @@
         <!-- User Details Dialog -->
         <v-dialog v-model="viewDialog" max-width="700">
             <v-card v-if="selectedUser">
-                <v-card-title class="bg-primary text-white">
+                <v-card-title>
                     <v-icon class="mr-2">mdi-account</v-icon>
                     User Details - #{{ selectedUser.id }}
                 </v-card-title>
@@ -299,7 +296,7 @@
         <!-- Edit User Dialog -->
         <v-dialog v-model="editDialog" max-width="600">
             <v-card v-if="editForm">
-                <v-card-title class="bg-warning text-white">
+                <v-card-title>
                     <v-icon class="mr-2">mdi-pencil</v-icon>
                     Edit User
                 </v-card-title>
@@ -346,7 +343,7 @@
         <!-- Add Balance Dialog -->
         <v-dialog v-model="balanceDialog" max-width="500">
             <v-card v-if="selectedUser">
-                <v-card-title class="bg-success text-white">
+                <v-card-title>
                     <v-icon class="mr-2">mdi-cash-plus</v-icon>
                     Add Balance
                 </v-card-title>
@@ -389,7 +386,7 @@
         <!-- Create User Dialog -->
         <v-dialog v-model="createDialog" max-width="600">
             <v-card>
-                <v-card-title class="bg-primary text-white">
+                <v-card-title>
                     <v-icon class="mr-2">mdi-account-plus</v-icon>
                     Create User
                 </v-card-title>
@@ -438,6 +435,7 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const showSnackbar = inject('showSnackbar')
 

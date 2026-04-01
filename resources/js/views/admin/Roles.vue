@@ -1,15 +1,12 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-shield-account</v-icon>
-                <span>Manage Roles</span>
-                <v-spacer></v-spacer>
+        <PageHeader title="Roles" subtitle="Manage user roles" icon="mdi-shield-account">
+            <template #actions>
                 <v-btn color="primary" @click="openCreateDialog" prepend-icon="mdi-plus">
                     Add Role
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </template>
+        </PageHeader>
 
         <v-card>
             <v-data-table
@@ -81,7 +78,7 @@
         <!-- Create/Edit Dialog -->
         <v-dialog v-model="dialog" max-width="600">
             <v-card>
-                <v-card-title class="bg-primary text-white">
+                <v-card-title>
                     <v-icon class="mr-2">{{ editMode ? 'mdi-pencil' : 'mdi-plus' }}</v-icon>
                     {{ editMode ? 'Edit Role' : 'Create Role' }}
                 </v-card-title>
@@ -124,7 +121,7 @@
         <!-- View Dialog -->
         <v-dialog v-model="viewDialog" max-width="500">
             <v-card v-if="selectedRole">
-                <v-card-title class="bg-info text-white">
+                <v-card-title>
                     <v-icon class="mr-2">mdi-shield-account</v-icon>
                     {{ selectedRole.name }}
                 </v-card-title>
@@ -156,6 +153,7 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const showSnackbar = inject('showSnackbar')
 

@@ -1,15 +1,12 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-cash-multiple</v-icon>
-                <span>Transactions</span>
-                <v-spacer></v-spacer>
+        <PageHeader title="Transactions" subtitle="View all transactions" icon="mdi-swap-horizontal">
+            <template #actions>
                 <v-btn color="success" to="/admin/transactions/create" prepend-icon="mdi-plus">
                     Add Balance
                 </v-btn>
-            </v-card-title>
-        </v-card>
+            </template>
+        </PageHeader>
 
         <!-- Filters -->
         <v-card class="mb-4">
@@ -151,7 +148,7 @@
         <!-- Transaction Details Dialog -->
         <v-dialog v-model="transactionDialog" max-width="600">
             <v-card v-if="selectedTransaction">
-                <v-card-title class="bg-primary text-white">
+                <v-card-title>
                     <v-icon class="mr-2">mdi-cash</v-icon>
                     Transaction #{{ selectedTransaction.id }}
                 </v-card-title>
@@ -217,6 +214,7 @@
 import { ref, onMounted, inject } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const authStore = useAuthStore()
 const showSnackbar = inject('showSnackbar')

@@ -1,11 +1,7 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center">
-                <v-icon class="mr-2">mdi-cog</v-icon>
-                Profile Settings
-            </v-card-title>
-        </v-card>
+        <PageHeader title="Profile" subtitle="Account settings" icon="mdi-account">
+        </PageHeader>
 
         <v-row>
             <!-- Profile Information -->
@@ -232,6 +228,7 @@
 import { ref, computed, onMounted, inject } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import axios from 'axios'
+import PageHeader from '../../components/PageHeader.vue'
 
 const authStore = useAuthStore()
 const showSnackbar = inject('showSnackbar')
