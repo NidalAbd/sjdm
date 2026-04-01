@@ -6,10 +6,10 @@
     <div id="admin-app"></div>
 @stop
 
-@section('css')
+@push('css')
     @vite(['resources/css/admin.css'])
-@stop
+@endpush
 
-@section('js')
+@push('js')
     @vite(['resources/js/admin.js'])
-@stop
+@endpush
