@@ -74,7 +74,7 @@ return array(
     'classes_content' => 'container-fluid',  // Use 'container-fluid' for full width
     'classes_sidebar' => 'sidebar-dark-primary',
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => 'navbar-dark navbar-gray-dark',
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container-fluid',  // Already set correctly
 
