@@ -61,35 +61,45 @@
             </div>
         </header>
 
-        <!-- Sidebar -->
-        <aside class="admin-sidebar" :class="{ 'collapsed': !drawer, 'rail': rail }">
+        <!-- Sidebar (AdminLTE style) -->
+        <aside class="admin-sidebar" :class="{ 'collapsed': !drawer }">
+            <!-- Brand -->
             <div class="sidebar-brand">
-                <v-avatar size="32" rounded="lg">
+                <v-avatar size="34" rounded="lg" color="primary">
                     <v-img src="/images/logo.png"></v-img>
                 </v-avatar>
-                <span v-if="!rail" class="sidebar-brand-text">SJDM</span>
-                <button v-if="!rail" class="sidebar-collapse-btn" @click="rail = true">
-                    <v-icon size="16">mdi-chevron-left</v-icon>
-                </button>
+                <div class="sidebar-brand-info">
+                    <span class="sidebar-brand-name">SJDM Panel</span>
+                    <span class="sidebar-brand-role">{{ isAdmin ? 'Admin' : 'User' }}</span>
+                </div>
             </div>
 
-            <nav class="sidebar-nav" @click="rail && (rail = false)">
-                <div class="sidebar-section">
-                    <router-link v-for="item in mainMenuItems" :key="item.key" :to="item.to" class="sidebar-item" :class="{ active: isActive(item.to) }">
-                        <v-icon size="20">{{ item.icon }}</v-icon>
-                        <span v-if="!rail" class="sidebar-item-text">{{ $t(item.titleKey) }}</span>
-                    </router-link>
+            <!-- User Info -->
+            <div class="sidebar-user">
+                <v-avatar size="40" color="primary">
+                    <v-img v-if="user?.avatar" :src="user.avatar"></v-img>
+                    <span v-else class="text-white text-body-2">{{ user?.name?.charAt(0) || 'U' }}</span>
+                </v-avatar>
+                <div class="sidebar-user-info">
+                    <span class="sidebar-user-name">{{ user?.name || 'User' }}</span>
+                    <span class="sidebar-user-balance">${{ formatBalance(user?.balance) }}</span>
                 </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-label">NAVIGATION</div>
+                <router-link v-for="item in mainMenuItems" :key="item.key" :to="item.to" class="sidebar-item" :class="{ active: isActive(item.to) }" @click="isMobile && (drawer = false)">
+                    <v-icon size="18" class="sidebar-item-icon">{{ item.icon }}</v-icon>
+                    <span class="sidebar-item-text">{{ $t(item.titleKey) }}</span>
+                </router-link>
 
                 <template v-if="isAdmin">
-                    <div class="sidebar-divider"></div>
-                    <div v-if="!rail" class="sidebar-label">{{ $t('nav.admin') }}</div>
-                    <div class="sidebar-section">
-                        <router-link v-for="item in adminMenuItems" :key="item.key" :to="item.to" class="sidebar-item" :class="{ active: isActive(item.to) }">
-                            <v-icon size="20">{{ item.icon }}</v-icon>
-                            <span v-if="!rail" class="sidebar-item-text">{{ $t(item.titleKey) }}</span>
-                        </router-link>
-                    </div>
+                    <div class="sidebar-label">{{ $t('nav.admin') }}</div>
+                    <router-link v-for="item in adminMenuItems" :key="item.key" :to="item.to" class="sidebar-item" :class="{ active: isActive(item.to) }" @click="isMobile && (drawer = false)">
+                        <v-icon size="18" class="sidebar-item-icon">{{ item.icon }}</v-icon>
+                        <span class="sidebar-item-text">{{ $t(item.titleKey) }}</span>
+                    </router-link>
                 </template>
             </nav>
         </aside>
@@ -98,7 +108,7 @@
         <div v-if="drawer && isMobile" class="sidebar-overlay" @click="drawer = false"></div>
 
         <!-- Main Content -->
-        <main class="admin-main" :class="{ 'sidebar-open': drawer && !rail, 'sidebar-rail': rail }">
+        <main class="admin-main" :class="{ 'sidebar-open': drawer }">
             <router-view v-slot="{ Component }">
                 <transition name="fade" mode="out-in">
                     <component :is="Component" />
@@ -133,14 +143,13 @@ const route = useRoute()
 const router = useRouter()
 
 const drawer = ref(window.innerWidth >= 1024)
-const rail = ref(false)
 const isMobile = ref(window.innerWidth < 1024)
 const notifications = ref([])
 const snackbar = ref({ show: false, text: '', color: 'success' })
 
 const handleResize = () => {
     isMobile.value = window.innerWidth < 1024
-    if (isMobile.value) { drawer.value = false; rail.value = false }
+    if (isMobile.value) { drawer.value = false }
 }
 
 watch(() => store.locale, (newLocale) => {
@@ -263,52 +272,70 @@ onUnmounted(() => { window.removeEventListener('resize', handleResize) })
 .topbar-user:hover { background: rgba(var(--v-theme-on-surface), 0.07); }
 .topbar-username { font-size: 0.82rem; font-weight: 600; }
 
-/* Sidebar */
+/* Sidebar - AdminLTE style */
 .admin-sidebar {
     position: fixed;
     top: 52px;
     left: 0;
     bottom: 0;
-    width: 240px;
-    background: rgb(var(--v-theme-surface));
-    border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    width: 260px;
+    background: #1a1f2e;
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 1000;
-    transition: width 0.2s ease, transform 0.2s ease;
+    transition: transform 0.25s ease;
 }
-.admin-sidebar.rail { width: 64px; }
+.v-theme--light .admin-sidebar { background: #2c3344; }
 .admin-sidebar.collapsed { transform: translateX(-100%); }
+
+/* Brand */
 .sidebar-brand {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 16px; border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 18px;
+    background: rgba(0,0,0,0.15);
 }
-.sidebar-brand-text { font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; }
-.sidebar-collapse-btn {
-    margin-left: auto; width: 24px; height: 24px; border-radius: 6px; border: none;
-    background: rgba(var(--v-theme-on-surface), 0.05); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; color: inherit;
+.sidebar-brand-info { display: flex; flex-direction: column; }
+.sidebar-brand-name { font-size: 0.95rem; font-weight: 700; color: #fff; }
+.sidebar-brand-role { font-size: 0.65rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* User */
+.sidebar-user {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
 }
-.sidebar-nav { padding: 8px; }
-.sidebar-section { display: flex; flex-direction: column; gap: 2px; }
-.sidebar-divider { height: 1px; background: rgba(var(--v-border-color), var(--v-border-opacity)); margin: 8px 0; }
+.sidebar-user-info { display: flex; flex-direction: column; }
+.sidebar-user-name { font-size: 0.82rem; font-weight: 600; color: #fff; }
+.sidebar-user-balance { font-size: 0.72rem; color: #4ade80; font-weight: 600; }
+
+/* Nav */
+.sidebar-nav { padding: 8px 10px; }
 .sidebar-label {
-    font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.08em; opacity: 0.35; padding: 8px 12px 4px;
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.3);
+    padding: 16px 12px 6px; margin-top: 4px;
 }
 .sidebar-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px; border-radius: 10px; text-decoration: none;
-    color: inherit; opacity: 0.65; font-size: 0.82rem; font-weight: 500;
-    transition: all 0.12s ease; white-space: nowrap;
+    padding: 9px 14px; border-radius: 6px; text-decoration: none;
+    color: rgba(255,255,255,0.65); font-size: 0.82rem; font-weight: 400;
+    transition: all 0.15s ease; white-space: nowrap;
+    margin-bottom: 2px;
 }
-.sidebar-item:hover { opacity: 1; background: rgba(var(--v-theme-on-surface), 0.05); }
+.sidebar-item:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+}
 .sidebar-item.active {
-    opacity: 1; background: rgba(var(--v-theme-primary), 0.1);
-    color: rgb(var(--v-theme-primary)); font-weight: 600;
-    border-inline-start: 3px solid rgb(var(--v-theme-primary));
-    padding-inline-start: 9px;
+    color: #fff;
+    background: rgb(var(--v-theme-primary));
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(var(--v-theme-primary), 0.3);
 }
+.sidebar-item.active .sidebar-item-icon { color: #fff !important; }
+.sidebar-item-icon { opacity: 0.7; }
+.sidebar-item:hover .sidebar-item-icon { opacity: 1; }
+.sidebar-item.active .sidebar-item-icon { opacity: 1; }
 .sidebar-item-text { overflow: hidden; text-overflow: ellipsis; }
 
 /* Overlay */
@@ -325,14 +352,12 @@ onUnmounted(() => { window.removeEventListener('resize', handleResize) })
     min-height: calc(100vh - 52px);
     transition: margin-left 0.2s ease;
 }
-.admin-main.sidebar-open { margin-left: 240px; }
-.admin-main.sidebar-rail { margin-left: 64px; }
+.admin-main.sidebar-open { margin-left: 260px; }
 
 /* RTL */
-.rtl .admin-sidebar { left: auto; right: 0; border-right: none; border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); }
+.rtl .admin-sidebar { left: auto; right: 0; }
 .rtl .admin-sidebar.collapsed { transform: translateX(100%); }
-.rtl .admin-main.sidebar-open { margin-left: 0; margin-right: 240px; }
-.rtl .admin-main.sidebar-rail { margin-left: 0; margin-right: 64px; }
+.rtl .admin-main.sidebar-open { margin-left: 0; margin-right: 260px; }
 
 /* Mobile */
 @media (max-width: 1023px) {
