@@ -33,7 +33,11 @@ class ServiceApiController extends Controller
         }
 
         if ($request->filled('platform')) {
-            $query->where('platform', $request->platform);
+            $platform = $request->platform;
+            $query->where(function ($q) use ($platform) {
+                $q->where('category_en', 'like', "%{$platform}%")
+                  ->orWhere('name_en', 'like', "%{$platform}%");
+            });
         }
 
         if ($request->filled('is_active')) {
@@ -53,7 +57,6 @@ class ServiceApiController extends Controller
             'inactive' => Service::where('is_active', false)->count(),
             'with_refill' => Service::where('refill', true)->count(),
             'categories' => Service::distinct('category_en')->count('category_en'),
-            'platforms' => Service::distinct('platform')->whereNotNull('platform')->count('platform'),
         ];
 
         // Get unique categories
@@ -63,10 +66,10 @@ class ServiceApiController extends Controller
             ->sort()
             ->values();
 
-        // Get unique platforms
-        $platforms = Service::distinct()
-            ->whereNotNull('platform')
-            ->pluck('platform')
+        // Get platforms from category names (extract platform keywords)
+        $platforms = collect(['Instagram', 'TikTok', 'YouTube', 'Facebook', 'Twitter', 'Telegram', 'Spotify', 'Snapchat', 'Discord', 'Twitch', 'LinkedIn', 'Pinterest'])->filter(function ($p) {
+            return Service::where('category_en', 'like', "%{$p}%")->orWhere('name_en', 'like', "%{$p}%")->exists();
+        })
             ->sort()
             ->values();
 
@@ -99,13 +102,12 @@ class ServiceApiController extends Controller
             'name_ar' => 'nullable|string|max:255',
             'category_en' => 'required|string|max:255',
             'category_ar' => 'nullable|string|max:255',
-            'description_en' => 'nullable|string',
-            'description_ar' => 'nullable|string',
+            'description' => 'nullable|string',
             'rate' => 'required|numeric|min:0',
             'api_rate' => 'nullable|numeric|min:0',
             'min' => 'required|integer|min:1',
             'max' => 'required|integer|min:1',
-            'platform' => 'nullable|string|max:100',
+            // platform is derived from category, not a DB column
             'type' => 'nullable|string|max:100',
             'refill' => 'nullable|boolean',
             'dripfeed' => 'nullable|boolean',
@@ -119,15 +121,11 @@ class ServiceApiController extends Controller
             'name_ar' => $request->name_ar,
             'category_en' => $request->category_en,
             'category_ar' => $request->category_ar,
-            'description_en' => $request->description_en,
-            'description_ar' => $request->description_ar,
+            'description' => $request->description,
             'rate' => $request->rate,
             'api_rate' => $request->api_rate ?? $request->rate,
             'min' => $request->min,
             'max' => $request->max,
-            'original_min' => $request->min,
-            'original_max' => $request->max,
-            'platform' => $request->platform,
             'type' => $request->type,
             'refill' => $request->refill ?? false,
             'dripfeed' => $request->dripfeed ?? false,
@@ -150,13 +148,12 @@ class ServiceApiController extends Controller
             'name_ar' => 'nullable|string|max:255',
             'category_en' => 'sometimes|string|max:255',
             'category_ar' => 'nullable|string|max:255',
-            'description_en' => 'nullable|string',
-            'description_ar' => 'nullable|string',
+            'description' => 'nullable|string',
             'rate' => 'sometimes|numeric|min:0',
             'api_rate' => 'nullable|numeric|min:0',
             'min' => 'sometimes|integer|min:1',
             'max' => 'sometimes|integer|min:1',
-            'platform' => 'nullable|string|max:100',
+            // platform is derived from category, not a DB column
             'type' => 'nullable|string|max:100',
             'refill' => 'nullable|boolean',
             'dripfeed' => 'nullable|boolean',
@@ -166,8 +163,8 @@ class ServiceApiController extends Controller
 
         $service->fill($request->only([
             'name_en', 'name_ar', 'category_en', 'category_ar',
-            'description_en', 'description_ar', 'rate', 'api_rate',
-            'min', 'max', 'platform', 'type', 'refill', 'dripfeed',
+            'description', 'rate', 'api_rate',
+            'min', 'max', 'type', 'refill', 'dripfeed',
             'cancel', 'is_active'
         ]));
         $service->save();
@@ -229,7 +226,11 @@ class ServiceApiController extends Controller
         $query = Service::query();
 
         if ($request->filled('platform')) {
-            $query->where('platform', $request->platform);
+            $platform = $request->platform;
+            $query->where(function ($q) use ($platform) {
+                $q->where('category_en', 'like', "%{$platform}%")
+                  ->orWhere('name_en', 'like', "%{$platform}%");
+            });
         }
 
         if ($request->filled('category')) {
