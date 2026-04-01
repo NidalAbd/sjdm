@@ -155,8 +155,10 @@ Route::get('/service/{serviceId}', [WelcomeController::class, 'spa'])
 // HOME AND DASHBOARD ROUTES
 // =============================================
 
-// Dashboard - uses AdminLTE Blade template
-Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
+// Redirect /home to Vue admin dashboard
+Route::get('/home', function () {
+    return redirect('/admin/dashboard');
+})->name('dashboard')->middleware('auth');
 
 Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
@@ -276,23 +278,10 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
 });
 
 // =============================================
-// ADMIN REDIRECTS (old Vue SPA URLs → AdminLTE Blade URLs)
+// ADMIN SPA ROUTES (Vue Dashboard)
 // =============================================
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', fn() => redirect('/home'));
-    Route::get('/admin/orders', fn() => redirect('/orders'));
-    Route::get('/admin/orders/create', fn() => redirect('/orders/create'));
-    Route::get('/admin/services', fn() => redirect('/services'));
-    Route::get('/admin/users', fn() => redirect('/users'));
-    Route::get('/admin/transactions', fn() => redirect('/transactions'));
-    Route::get('/admin/transactions/create', fn() => redirect('/transactions/create'));
-    Route::get('/admin/support', fn() => redirect('/support'));
-    Route::get('/admin/notifications', fn() => redirect('/notifications'));
-    Route::get('/admin/referrals', fn() => redirect('/referrals'));
-    Route::get('/admin/points', fn() => redirect('/points'));
-    Route::get('/admin/roles', fn() => redirect('/roles'));
-    Route::get('/admin/permissions', fn() => redirect('/permissions'));
-    Route::get('/admin/payment-methods', fn() => redirect('/payment-methods'));
-    Route::get('/admin/profile', fn() => redirect('/profile/settings'));
-    Route::get('/admin/languages', fn() => view('languages'))->name('languages.index');
+Route::middleware(['auth', 'check.banned'])->group(function () {
+    Route::get('/admin/{any?}', [WelcomeController::class, 'spa'])
+        ->where('any', '.*')
+        ->name('admin.spa');
 });
