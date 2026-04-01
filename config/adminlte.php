@@ -98,7 +98,7 @@ return array(
 
 
     'use_route_url' => false,
-    'dashboard_url' => '/home',
+    'dashboard_url' => '/admin/dashboard',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -135,12 +135,11 @@ return array(
         ),
 
         array(
-            'text' =>'home', // Use translation key with __() function
-            'url'  => '/', // Relative URL to the home page
-            'icon' => 'fas fa-home', // Font Awesome icon class
-            'topnav_center' => true, // Position the link in the center of the top navigation
-            'can' => 'create_order', // Permission check for displaying the item
-            'icon_color' => 'primary', // Set predefined icon color
+            'text' =>'home',
+            'url'  => '/',
+            'icon' => 'fas fa-home',
+            'icon_color' => 'primary',
+            'target' => '_blank',
         ),
 
 
@@ -153,43 +152,43 @@ return array(
             'icon_color'   => 'primary', // Set predefined color
             'submenu' => array(
                 array(
-                    'text' => 'users', // Use translation key
-                    'url'  => 'users',
+                    'text' => 'users',
+                    'url'  => 'admin/users',
                     'icon' => 'fas fa-fw fa-user',
                     'can'  => 'view_any_user',
-                    'icon_color'   => 'success', // Set predefined color
+                    'icon_color'   => 'success',
                 ),
                 array(
-                    'text' => 'roles', // Use translation key
-                    'url'  => 'roles',
+                    'text' => 'roles',
+                    'url'  => 'admin/roles',
                     'icon' => 'fas fa-fw fa-user-shield',
                     'can'  => 'view_any_role',
-                    'icon_color'   => 'info', // Set predefined color
+                    'icon_color'   => 'info',
                 ),
                 array(
-                    'text' => 'permissions', // Use translation key
-                    'url'  => 'permissions',
+                    'text' => 'permissions',
+                    'url'  => 'admin/permissions',
                     'icon' => 'fas fa-fw fa-lock',
                     'can'  => 'view_any_permission',
-                    'icon_color'   => 'warning', // Set predefined color
+                    'icon_color'   => 'warning',
                 ),
                 array(
-                    'text' => 'payment_methods', // Use translation key
-                    'url'  => 'payment-methods',
+                    'text' => 'payment_methods',
+                    'url'  => 'admin/payment-methods',
                     'icon' => 'fas fa-fw fa-credit-card',
-                    'can'  => 'add_balance', // Use existing permission for admin access
-                    'icon_color'   => 'purple', // Set predefined color
+                    'can'  => 'add_balance',
+                    'icon_color'   => 'purple',
                 ),
                 array(
-                    'text' => 'fetch services ar', // Use translation key
-                    'url'  => 'services/fetch-ar',
+                    'text' => 'fetch services ar',
+                    'url'  => 'admin/services/fetch-ar',
                     'icon' => 'fas fa-sync-alt',
                     'can'  => 'fetch_services',
-                    'icon_color'   => 'info', // Set predefined color
+                    'icon_color'   => 'info',
                 ),
                 array(
-                    'text' => 'fetch_ services en',
-                    'url'  => 'services/fetch-en',
+                    'text' => 'fetch services en',
+                    'url'  => 'admin/services/fetch-en',
                     'icon' => 'fas fa-sync-alt',
                     'can'  => 'fetch_services',
                     'icon_color'   => 'info',
@@ -206,77 +205,67 @@ return array(
 
         // Flattened main items
         array(
-            'text' => 'add_order', // Use translation key
-            'url'  => 'orders/create', // Just the relative URL
+            'text' => 'add_order',
+            'url'  => 'admin/orders/create',
             'icon' => 'fas fa-cart-plus',
-            'topnav_center' => true,
             'can'  => 'create_order',
-            'icon_color'   => 'primary', // Set predefined color
+            'icon_color'   => 'primary',
         ),
-
         array(
-            'text' => 'orders', // Use translation key
-            'url'  => 'orders', // Just the relative URL
+            'text' => 'orders',
+            'url'  => 'admin/orders',
             'icon' => 'fas fa-shopping-cart',
-            'topnav_center' => true,
             'can'  => 'view_orders',
-            'icon_color'   => 'success', // Set predefined color
+            'icon_color'   => 'success',
         ),
         array(
-            'text' => 'services', // Use translation key
-            'url'  => 'services',
+            'text' => 'services',
+            'url'  => 'admin/services',
             'icon' => 'fas fa-tools',
-            'topnav_center' => true,
             'can'  => 'view_anyServices_services',
-            'icon_color'   => 'info', // Set predefined color
+            'icon_color'   => 'info',
         ),
         array(
-            'text' => 'add_balance', // Use translation key
-            'url'  => 'transactions/create', // Just the relative URL
+            'text' => 'add_balance',
+            'url'  => 'admin/transactions/create',
             'icon' => 'fab fa-stripe',
-            'topnav_center' => true,
             'can'  => 'view_balance',
-            'icon_color'   => 'purple', // Set predefined color
+            'icon_color'   => 'purple',
         ),
         array(
-            'text' => 'transactions', // Use translation key
-            'url'  => 'transactions', // Just the relative URL
+            'text' => 'transactions',
+            'url'  => 'admin/transactions',
             'icon' => 'fas fa-comments-dollar',
-            'topnav_center' => true,
             'can'  => 'view_any_transaction',
-            'icon_color'   => 'warning', // Set predefined color
+            'icon_color'   => 'warning',
         ),
         array(
-            'text' => 'support', // Use translation key
-            'url'  => 'support',
+            'text' => 'support',
+            'url'  => 'admin/support',
             'icon' => 'fas fa-headset',
-            'topnav_center' => true,
             'can'  => 'view_support',
-            'icon_color'   => 'danger', // Set predefined color
+            'icon_color'   => 'danger',
         ),
         array(
-            'text' => 'notifications', // Use translation key
-            'url'  => 'notifications',
+            'text' => 'notifications',
+            'url'  => 'admin/notifications',
             'icon' => 'fas fa-bell',
-            'topnav_center' => true,
             'can'  => 'view_support',
-            'icon_color'   => 'warning', // Set predefined color
+            'icon_color'   => 'warning',
         ),
         array(
-            'text' => 'referral', // Use translation key for referral
-            'url'  => '/referrals', // URL for referral
-            'icon' => 'fas fa-user-friends', // Icon for referral
-            'topnav_center' => true, // Display in top navigation center
-            'can'  => 'view_support', // Permission for viewing referral
-            'icon_color' => 'success', // Set predefined color
+            'text' => 'referral',
+            'url'  => 'admin/referrals',
+            'icon' => 'fas fa-user-friends',
+            'can'  => 'view_support',
+            'icon_color' => 'success',
         ),
         array(
-            'text' => 'Points', // Label for the menu item (can be translated using a translation key)
-            'url'  => 'points', // URL for the points page (route name or actual URL)
-            'icon' => 'fas fa-coins', // FontAwesome icon for the points menu
-            'topnav_center' => true, // Display in the center of the top navigation
-            'can'  => 'view_support', // Permission required to see the menu item (you'll need a policy or gate for this)
-            'icon_color' => 'warning', // Set color for the icon (Bootstrap predefined colors)
+            'text' => 'Points',
+            'url'  => 'admin/points',
+            'icon' => 'fas fa-coins',
+            'can'  => 'view_support',
+            'icon_color' => 'warning',
         ),
 
 

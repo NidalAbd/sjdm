@@ -278,10 +278,10 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
 });
 
 // =============================================
-// ADMIN SPA ROUTES (Vue Dashboard)
+// ADMIN ROUTES - AdminLTE shell + Vue content
 // =============================================
 Route::middleware(['auth', 'check.banned'])->group(function () {
-    Route::get('/admin/{any?}', [WelcomeController::class, 'spa'])
-        ->where('any', '.*')
-        ->name('admin.spa');
+    Route::get('/admin/{any?}', function () {
+        return view('admin');
+    })->where('any', '.*')->name('admin.spa');
 });
