@@ -155,10 +155,8 @@ Route::get('/service/{serviceId}', [WelcomeController::class, 'spa'])
 // HOME AND DASHBOARD ROUTES
 // =============================================
 
-// Redirect /home to Vue admin dashboard
-Route::get('/home', function () {
-    return redirect('/admin/dashboard');
-})->name('dashboard')->middleware('auth');
+// Dashboard - uses AdminLTE Blade template
+Route::get('/home', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 
 Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
@@ -278,12 +276,9 @@ Route::middleware(['auth', 'check.banned'])->group(function () {
 });
 
 // =============================================
-// ADMIN SPA ROUTES (Vue Dashboard)
+// ADMIN ROUTES - AdminLTE Blade Templates
 // =============================================
-
-Route::middleware(['auth', 'check.banned'])->group(function () {
-    // Admin SPA catch-all - serves Vue app for all /admin/* routes
-    Route::get('/admin/{any?}', [WelcomeController::class, 'spa'])
-        ->where('any', '.*')
-        ->name('admin.spa');
-});
+// Admin panel uses AdminLTE Blade views (not Vue SPA)
+// All admin routes are handled by the protected routes above
+// (users, orders, services, transactions, support, etc.)
+// The AdminLTE sidebar menu is configured in config/adminlte.php

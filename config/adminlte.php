@@ -56,6 +56,8 @@ return array(
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => true,
     'layout_dark_mode' => true,
+    'layout_fixed_sidebar' => true,
+    'layout_fixed_navbar' => true,
 
     'classes_auth_card' => 'card-outline card-primary',
     'classes_auth_header' => '',
@@ -96,7 +98,7 @@ return array(
 
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => '/home',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -186,11 +188,18 @@ return array(
                     'icon_color'   => 'info', // Set predefined color
                 ),
                 array(
-                    'text' => 'fetch_ services en', // Use translation key
+                    'text' => 'fetch_ services en',
                     'url'  => 'services/fetch-en',
                     'icon' => 'fas fa-sync-alt',
                     'can'  => 'fetch_services',
-                    'icon_color'   => 'info', // Set predefined color
+                    'icon_color'   => 'info',
+                ),
+                array(
+                    'text' => 'Languages',
+                    'url'  => 'admin/languages',
+                    'icon' => 'fas fa-language',
+                    'can'  => 'add_balance',
+                    'icon_color'   => 'teal',
                 ),
             ),
         ),
