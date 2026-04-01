@@ -109,28 +109,7 @@
 
                 <v-row v-if="!store.loading">
                     <v-col v-for="service in featuredServices" :key="service.service_id" cols="12" sm="6" lg="4">
-                        <v-card class="h-100 hover-lift" :to="`/service/${service.service_id}`">
-                            <v-card-text class="pa-4">
-                                <div class="d-flex justify-space-between align-center mb-3">
-                                    <v-chip size="x-small" color="primary" variant="tonal">#{{ service.service_id }}</v-chip>
-                                    <v-chip size="x-small" color="success" variant="flat">${{ Number(service.rate).toFixed(4) }}/1K</v-chip>
-                                </div>
-                                <h3 class="text-body-1 font-weight-bold mb-2 line-clamp-2">
-                                    {{ getServiceName(service) }}
-                                </h3>
-                                <div class="text-caption text-primary mb-3">
-                                    <v-icon size="12" class="mr-1">mdi-tag</v-icon>
-                                    {{ getServiceCategory(service) }}
-                                </div>
-                                <div class="d-flex ga-2 flex-wrap">
-                                    <v-chip size="x-small" variant="tonal">Min: {{ formatNumber(service.min) }}</v-chip>
-                                    <v-chip size="x-small" variant="tonal">Max: {{ formatNumber(service.max) }}</v-chip>
-                                    <v-chip v-if="service.refill" size="x-small" variant="tonal" color="success">
-                                        <v-icon start size="10">mdi-refresh</v-icon>Refill
-                                    </v-chip>
-                                </div>
-                            </v-card-text>
-                        </v-card>
+                        <ServiceCard :service="service" />
                     </v-col>
                 </v-row>
                 <v-row v-else>
@@ -211,18 +190,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useAppStore } from '../stores/app'
+import ServiceCard from '../components/ServiceCard.vue'
 
 const store = useAppStore()
 const showPassword = ref(false)
 const loginLoading = ref(false)
 const loginForm = ref({ email: '', password: '' })
-
-const getServiceName = (service) => {
-    return service.name || service.name_en || service.name_ar || ''
-}
-const getServiceCategory = (service) => {
-    return service.category || service.category_en || service.category_ar || ''
-}
 
 const handleLogin = () => {
     loginLoading.value = true
