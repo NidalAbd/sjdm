@@ -72,7 +72,7 @@ return array(
     'classes_content_wrapper' => '',  // You can leave this as an empty string
     'classes_content_header' => '',   // You can leave this as an empty string
     'classes_content' => 'container-fluid',  // Use 'container-fluid' for full width
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar' => 'sidebar-dark-primary',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
