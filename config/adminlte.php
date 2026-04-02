@@ -35,8 +35,8 @@ return array(
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => array(
-            'path' => 'images/sjdm_logo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'path' => 'images/logo.png',
+            'alt' => 'SJDM Loading',
             'effect' => 'animation__shake',
             'width' => 60,
             'height' => 60,
