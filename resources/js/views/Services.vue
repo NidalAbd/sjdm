@@ -1,202 +1,198 @@
 <template>
   <div>
     <!-- Hero Section -->
-    <div :style="{ background: store.gradientStyle }" class="section-padding">
+    <section class="hero" :style="{ background: store.gradientStyle }">
       <v-container>
         <v-row align="center">
           <v-col cols="12" lg="8">
-            <h1 class="text-h4 font-weight-bold text-white mb-4">
+            <span class="hero-badge">
+              <v-icon size="16">mdi-storefront</v-icon>
               {{ $t('servicesPage.allSmmServices') }}
-            </h1>
-            <p class="text-body-2 text-white mb-6" style="opacity: 0.85">
-              {{ $t('servicesPage.discoverServices') }}
-            </p>
-            <v-chip v-if="hasFilters" color="white" variant="flat" class="px-4 py-2">
-              <v-icon start>mdi-filter</v-icon>
-              {{ pagination.total }} {{ $t('servicesPage.servicesFound') }}
-            </v-chip>
+            </span>
+            <h1 class="hero-title">{{ $t('servicesPage.allSmmServices') }}</h1>
+            <p class="hero-desc">{{ $t('servicesPage.discoverServices') }}</p>
+            <div v-if="hasFilters" class="hero-actions">
+              <v-chip color="white" variant="flat" class="px-4 py-2">
+                <v-icon start>mdi-filter</v-icon>
+                {{ pagination.total }} {{ $t('servicesPage.servicesFound') }}
+              </v-chip>
+            </div>
           </v-col>
           <v-col cols="12" lg="4" class="text-center">
-            <v-card variant="outlined" class="pa-6" style="border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1)">
-              <div class="text-h4 font-weight-bold text-white">{{ pagination.total || 0 }}</div>
-              <div class="text-body-2 text-white" style="opacity: 0.85">{{ $t('servicesPage.totalServices') }}</div>
-            </v-card>
+            <div class="card" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); text-align: center; padding: 2rem;">
+              <div style="font-size: 2.5rem; font-weight: 800; color: #fff;">{{ pagination.total || 0 }}</div>
+              <div style="color: rgba(255,255,255,0.85); font-size: 0.875rem;">{{ $t('servicesPage.totalServices') }}</div>
+            </div>
           </v-col>
         </v-row>
       </v-container>
-    </div>
+    </section>
 
     <v-container class="py-8">
       <!-- Filters Section -->
-      <v-card variant="outlined" class="mb-8">
-        <v-card-text class="pa-6">
-          <v-row>
-            <!-- Search -->
-            <v-col cols="12" md="6" lg="4">
-              <v-text-field
-                v-model="filters.search"
-                :label="$t('servicesPage.searchPlaceholder')"
-                prepend-inner-icon="mdi-magnify"
-                variant="outlined"
-                density="comfortable"
-                clearable
-                hide-details
-                @update:model-value="debouncedSearch"
-              />
-            </v-col>
+      <div class="card filter-bar">
+        <v-row>
+          <!-- Search -->
+          <v-col cols="12" md="6" lg="4">
+            <v-text-field
+              v-model="filters.search"
+              :label="$t('servicesPage.searchPlaceholder')"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              density="comfortable"
+              clearable
+              hide-details
+              @update:model-value="debouncedSearch"
+            />
+          </v-col>
 
-            <!-- Platform Filter -->
-            <v-col cols="12" md="6" lg="4">
-              <v-select
-                v-model="filters.platform"
-                :items="platformOptions"
-                item-title="title"
-                item-value="value"
-                :label="$t('servicesPage.platform')"
-                prepend-inner-icon="mdi-apps"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                clearable
-                :loading="platformsLoading"
-                :disabled="platformOptions.length === 0"
-                @update:model-value="onPlatformChange"
-              >
-                <template v-slot:no-data>
-                  <v-list-item>
-                    <v-list-item-title>{{ $t('servicesPage.noPlatforms') }}</v-list-item-title>
-                  </v-list-item>
-                </template>
-              </v-select>
-            </v-col>
+          <!-- Platform Filter -->
+          <v-col cols="12" md="6" lg="4">
+            <v-select
+              v-model="filters.platform"
+              :items="platformOptions"
+              item-title="title"
+              item-value="value"
+              :label="$t('servicesPage.platform')"
+              prepend-inner-icon="mdi-apps"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              clearable
+              :loading="platformsLoading"
+              :disabled="platformOptions.length === 0"
+              @update:model-value="onPlatformChange"
+            >
+              <template v-slot:no-data>
+                <v-list-item>
+                  <v-list-item-title>{{ $t('servicesPage.noPlatforms') }}</v-list-item-title>
+                </v-list-item>
+              </template>
+            </v-select>
+          </v-col>
 
-            <!-- Category Filter -->
-            <v-col cols="12" md="6" lg="4">
-              <v-select
-                v-model="filters.category"
-                :items="categoryOptions"
-                item-title="title"
-                item-value="value"
-                :label="$t('servicesPage.category')"
-                prepend-inner-icon="mdi-tag"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                clearable
-                :loading="categoriesLoading"
-                @update:model-value="fetchServices"
-              >
-                <template v-slot:no-data>
-                  <v-list-item>
-                    <v-list-item-title>{{ $t('servicesPage.noCategories') }}</v-list-item-title>
-                  </v-list-item>
-                </template>
-              </v-select>
-            </v-col>
+          <!-- Category Filter -->
+          <v-col cols="12" md="6" lg="4">
+            <v-select
+              v-model="filters.category"
+              :items="categoryOptions"
+              item-title="title"
+              item-value="value"
+              :label="$t('servicesPage.category')"
+              prepend-inner-icon="mdi-tag"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              clearable
+              :loading="categoriesLoading"
+              @update:model-value="fetchServices"
+            >
+              <template v-slot:no-data>
+                <v-list-item>
+                  <v-list-item-title>{{ $t('servicesPage.noCategories') }}</v-list-item-title>
+                </v-list-item>
+              </template>
+            </v-select>
+          </v-col>
 
-            <!-- Sort By -->
-            <v-col cols="12" md="6" lg="4">
-              <v-select
-                v-model="filters.sortBy"
-                :items="sortOptions"
-                :label="$t('servicesPage.sortBy')"
-                prepend-inner-icon="mdi-sort"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                @update:model-value="fetchServices"
-              />
-            </v-col>
+          <!-- Sort By -->
+          <v-col cols="12" md="6" lg="4">
+            <v-select
+              v-model="filters.sortBy"
+              :items="sortOptions"
+              :label="$t('servicesPage.sortBy')"
+              prepend-inner-icon="mdi-sort"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              @update:model-value="fetchServices"
+            />
+          </v-col>
 
-            <!-- Sort Order -->
-            <v-col cols="12" md="6" lg="4">
-              <v-select
-                v-model="filters.sortOrder"
-                :items="sortOrderOptions"
-                :label="$t('servicesPage.order')"
-                prepend-inner-icon="mdi-swap-vertical"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                @update:model-value="fetchServices"
-              />
-            </v-col>
+          <!-- Sort Order -->
+          <v-col cols="12" md="6" lg="4">
+            <v-select
+              v-model="filters.sortOrder"
+              :items="sortOrderOptions"
+              :label="$t('servicesPage.order')"
+              prepend-inner-icon="mdi-swap-vertical"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              @update:model-value="fetchServices"
+            />
+          </v-col>
 
-            <!-- Per Page -->
-            <v-col cols="12" md="6" lg="4">
-              <v-select
-                v-model="filters.perPage"
-                :items="perPageOptions"
-                :label="$t('servicesPage.itemsPerPage')"
-                prepend-inner-icon="mdi-view-list"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                @update:model-value="fetchServices"
-              />
-            </v-col>
-          </v-row>
+          <!-- Per Page -->
+          <v-col cols="12" md="6" lg="4">
+            <v-select
+              v-model="filters.perPage"
+              :items="perPageOptions"
+              :label="$t('servicesPage.itemsPerPage')"
+              prepend-inner-icon="mdi-view-list"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              @update:model-value="fetchServices"
+            />
+          </v-col>
+        </v-row>
 
-          <v-row class="mt-4">
-            <v-col cols="12">
-              <div class="d-flex flex-wrap gap-3">
-                <v-btn color="primary" size="default" @click="fetchServices" :loading="loading">
-                  <v-icon start>mdi-filter</v-icon>
-                  {{ $t('servicesPage.applyFilters') }}
-                </v-btn>
-                <v-btn variant="outlined" size="default" @click="clearFilters">
-                  <v-icon start>mdi-close</v-icon>
-                  {{ $t('servicesPage.clearFilters') }}
-                </v-btn>
-              </div>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <v-btn color="primary" size="default" @click="fetchServices" :loading="loading">
+            <v-icon start>mdi-filter</v-icon>
+            {{ $t('servicesPage.applyFilters') }}
+          </v-btn>
+          <v-btn variant="outlined" size="default" @click="clearFilters">
+            <v-icon start>mdi-close</v-icon>
+            {{ $t('servicesPage.clearFilters') }}
+          </v-btn>
+        </div>
+      </div>
 
       <!-- Featured Services -->
       <div v-if="featured.length > 0 && !hasFilters" class="mb-8">
-        <div class="d-flex align-center mb-4">
-          <v-icon color="amber" class="mr-2">mdi-star</v-icon>
-          <h2 class="text-h5 font-weight-bold">{{ $t('servicesPage.featuredServices') }}</h2>
+        <div class="section-header">
+          <h2 class="heading-lg">
+            <v-icon color="amber" class="mr-2">mdi-star</v-icon>
+            {{ $t('servicesPage.featuredServices') }}
+          </h2>
         </div>
-        <v-row>
-          <v-col v-for="service in featured" :key="service.service_id" cols="12" md="6" lg="4">
-            <v-card
-              variant="outlined"
-              class="h-100 hover-lift"
-              :style="{ background: store.gradientStyle }"
-              @click="goToService(service.service_id)"
-              style="cursor: pointer; position: relative; overflow: hidden"
-            >
-              <div style="position: absolute; top: -10px; right: -10px; width: 50px; height: 50px; background: #ffc107; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000">
-                <v-icon size="20">mdi-star</v-icon>
-              </div>
-              <v-card-text class="text-center text-white">
-                <h3 class="text-subtitle-1 font-weight-bold mb-2">
-                  {{ service.name || service.name_en }}
-                </h3>
-                <div class="text-h4 font-weight-bold mb-2">${{ Number(service.rate).toFixed(2) }}</div>
-                <div class="text-body-2" style="opacity: 0.8">{{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}</div>
-                <v-btn color="white" variant="flat" class="mt-4" size="small">
-                  {{ $t('servicesPage.viewDetails') }}
-                </v-btn>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+        <div class="services-grid">
+          <router-link
+            v-for="service in featured"
+            :key="service.service_id"
+            :to="`/service/${service.service_id}`"
+            class="svc"
+            :style="{ background: store.gradientStyle, color: '#fff' }"
+          >
+            <div class="svc-top">
+              <span class="svc-id">#{{ service.service_id }}</span>
+              <span class="svc-price">${{ formatPrice(service.rate) }}<small>/1K</small></span>
+            </div>
+            <div class="svc-name" style="color: #fff;">{{ service.name || service.name_en }}</div>
+            <div class="svc-bottom">
+              <span class="svc-range">{{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}</span>
+            </div>
+            <div style="text-align: center; margin-top: 0.5rem;">
+              <v-btn color="white" variant="flat" size="small">
+                {{ $t('servicesPage.viewDetails') }}
+              </v-btn>
+            </div>
+          </router-link>
+        </div>
       </div>
 
       <!-- Services Section Header -->
       <div class="d-flex flex-wrap justify-space-between align-center mb-6">
         <div>
-          <h2 class="text-h5 font-weight-bold">
+          <h2 class="heading-lg">
             <template v-if="filters.search">{{ $t('servicesPage.searchResults') }}</template>
             <template v-else-if="filters.platform">{{ filters.platform }} {{ $t('publicNav.services') }}</template>
             <template v-else-if="filters.category">{{ filters.category }}</template>
             <template v-else>{{ $t('servicesPage.allServices') }}</template>
           </h2>
-          <p class="text-body-2 text-medium-emphasis">
+          <p class="text-muted">
             {{ pagination.total }} {{ $t('servicesPage.servicesAvailable') }}
           </p>
         </div>
@@ -208,81 +204,40 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-16">
-        <v-progress-circular indeterminate color="primary" size="64" />
-        <p class="mt-4 text-medium-emphasis">{{ $t('servicesPage.loadingServices') }}</p>
+        <v-skeleton-loader type="card" class="mb-4" />
+        <v-skeleton-loader type="card" class="mb-4" />
+        <p class="text-muted mt-4">{{ $t('servicesPage.loadingServices') }}</p>
       </div>
 
       <!-- Grid View -->
-      <v-row v-else-if="viewMode === 'grid' && services.length > 0">
-        <v-col v-for="service in services" :key="service.service_id" cols="12" md="6" lg="4">
-          <v-card class="h-100 hover-lift" variant="outlined" @click="goToService(service.service_id)" style="cursor: pointer">
-            <!-- Header -->
-            <div class="d-flex justify-space-between align-center pa-4 pb-0">
-              <v-chip color="primary" size="small" variant="flat">
-                #{{ service.service_id }}
-              </v-chip>
-              <v-chip size="small" variant="tonal">
-                {{ service.type || 'Default' }}
-              </v-chip>
+      <div v-else-if="viewMode === 'grid' && services.length > 0" class="services-grid">
+        <router-link
+          v-for="service in services"
+          :key="service.service_id"
+          :to="`/service/${service.service_id}`"
+          class="svc"
+        >
+          <div class="svc-top">
+            <span class="svc-id">#{{ service.service_id }}</span>
+            <span class="svc-price">${{ formatPrice(service.rate) }}<small>/1K</small></span>
+          </div>
+          <div class="svc-name">{{ service.name || service.name_en }}</div>
+          <div class="svc-cat">
+            <v-icon size="12">mdi-tag</v-icon>
+            {{ service.category || service.category_en }}
+          </div>
+          <div class="svc-bottom">
+            <span class="svc-range">{{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}</span>
+            <div class="svc-badges">
+              <span v-if="service.refill" class="svc-badge svc-badge-ok">{{ $t('services.refill') }}</span>
+              <span v-if="service.cancel" class="svc-badge svc-badge-warn">{{ $t('common.cancel') }}</span>
             </div>
-
-            <!-- Body -->
-            <v-card-text class="pt-4">
-              <h3 class="text-subtitle-1 font-weight-bold mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4">
-                {{ service.name || service.name_en }}
-              </h3>
-              <div class="text-body-2 text-primary mb-4">
-                <v-icon size="16" class="mr-1">mdi-tag</v-icon>
-                {{ service.category || service.category_en }}
-              </div>
-
-              <!-- Stats -->
-              <v-row dense class="mb-3">
-                <v-col cols="6">
-                  <v-sheet rounded class="pa-3 text-center" color="surface-variant">
-                    <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.min') }}</div>
-                    <div class="text-body-2 font-weight-bold">{{ formatNumber(service.min) }}</div>
-                  </v-sheet>
-                </v-col>
-                <v-col cols="6">
-                  <v-sheet rounded class="pa-3 text-center" color="surface-variant">
-                    <div class="text-caption text-medium-emphasis">{{ $t('servicesPage.max') }}</div>
-                    <div class="text-body-2 font-weight-bold">{{ formatNumber(service.max) }}</div>
-                  </v-sheet>
-                </v-col>
-              </v-row>
-
-              <!-- Features -->
-              <div class="d-flex gap-2 flex-wrap">
-                <v-chip v-if="service.refill" color="success" size="x-small" variant="flat">
-                  <v-icon start size="12">mdi-refresh</v-icon>
-                  {{ $t('services.refill') }}
-                </v-chip>
-                <v-chip v-if="service.cancel" color="warning" size="x-small" variant="flat">
-                  <v-icon start size="12">mdi-close</v-icon>
-                  {{ $t('common.cancel') }}
-                </v-chip>
-              </div>
-            </v-card-text>
-
-            <!-- Footer -->
-            <v-divider />
-            <v-card-actions class="pa-4">
-              <div>
-                <span class="text-h6 font-weight-bold text-success">${{ Number(service.rate).toFixed(4) }}</span>
-                <span class="text-caption text-medium-emphasis ml-1">/ 1K</span>
-              </div>
-              <v-spacer />
-              <v-btn color="primary" variant="flat" size="small">
-                {{ $t('servicesPage.orderNow') }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
+          </div>
+        </router-link>
+      </div>
 
       <!-- List View -->
-      <v-card v-else-if="viewMode === 'list' && services.length > 0" variant="outlined">
+      <div v-else-if="viewMode === 'list' && services.length > 0" class="card" style="overflow-x: auto;">
         <v-table hover>
           <thead>
             <tr>
@@ -298,7 +253,7 @@
             <tr v-for="service in services" :key="service.service_id" style="cursor: pointer" @click="goToService(service.service_id)">
               <td>
                 <div class="font-weight-bold">{{ service.name || service.name_en }}</div>
-                <div class="text-caption text-medium-emphasis">#{{ service.service_id }}</div>
+                <div class="text-muted" style="font-size: 0.75rem;">#{{ service.service_id }}</div>
               </td>
               <td>
                 <v-chip size="small" variant="tonal">
@@ -306,10 +261,10 @@
                 </v-chip>
               </td>
               <td>
-                <span class="font-weight-bold text-success">${{ Number(service.rate).toFixed(4) }}</span>
-                <span class="text-caption text-medium-emphasis">/ 1K</span>
+                <span class="font-weight-bold" style="color: var(--color-success);">${{ formatPrice(service.rate) }}</span>
+                <span class="text-muted" style="font-size: 0.75rem;">/ 1K</span>
               </td>
-              <td class="text-caption">
+              <td style="font-size: 0.75rem;">
                 {{ formatNumber(service.min) }} - {{ formatNumber(service.max) }}
               </td>
               <td>
@@ -322,19 +277,19 @@
             </tr>
           </tbody>
         </v-table>
-      </v-card>
+      </div>
 
       <!-- No Results -->
-      <v-card v-else-if="!loading && services.length === 0" class="text-center py-16" variant="outlined">
+      <div v-else-if="!loading && services.length === 0" class="card text-center" style="padding: 4rem 2rem;">
         <v-icon size="80" color="grey" class="mb-4">mdi-magnify</v-icon>
-        <h3 class="text-h5 text-medium-emphasis mb-2">{{ $t('servicesPage.noServices') }}</h3>
-        <p class="text-body-2 text-medium-emphasis mb-6">
+        <h3 class="heading-md mb-2">{{ $t('servicesPage.noServices') }}</h3>
+        <p class="text-muted mb-6">
           {{ hasFilters ? $t('servicesPage.tryDifferent') : $t('servicesPage.noServicesAvailable') }}
         </p>
         <v-btn v-if="hasFilters" color="primary" @click="clearFilters">
           {{ $t('servicesPage.viewAllServices') }}
         </v-btn>
-      </v-card>
+      </div>
 
       <!-- Pagination -->
       <div v-if="services.length > 0 && pagination.last_page > 1" class="d-flex justify-center mt-8">
@@ -353,7 +308,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '../stores/app'
 import { useI18n } from 'vue-i18n'
 import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
 
@@ -361,14 +316,6 @@ const { t, locale: i18nLocale } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const store = useAppStore()
-
-// heroBg computed
-const heroBg = computed(() => {
-    const c = store.currentThemeColor
-    const p = store.isDark ? c.primaryDark : c.primary
-    const r = parseInt(p.slice(1,3),16), g = parseInt(p.slice(3,5),16), b = parseInt(p.slice(5,7),16)
-    return `linear-gradient(135deg, rgba(${r},${g},${b}, 0.06) 0%, transparent 60%)`
-})
 
 // SEO Configuration
 const seoConfig = computed(() => {
@@ -445,6 +392,14 @@ const perPageOptions = [
   { title: '100', value: 100 },
 ]
 
+const formatPrice = (r) => {
+  const n = Number(r)
+  if (n < 0.001) return n.toFixed(7)
+  if (n < 0.01) return n.toFixed(5)
+  if (n < 1) return n.toFixed(4)
+  return n.toFixed(2)
+}
+
 let searchTimeout = null
 const debouncedSearch = () => {
   clearTimeout(searchTimeout)
@@ -503,7 +458,6 @@ const fetchPlatforms = async () => {
       return
     }
     const data = await response.json()
-    // Ensure we get an array
     const platformsData = data.platforms
     platforms.value = Array.isArray(platformsData) ? platformsData : []
     console.log('Platforms loaded:', platforms.value.length, 'items')
@@ -551,15 +505,11 @@ const fetchFeatured = async () => {
 }
 
 const onPlatformChange = (platform) => {
-  // Clear selected category when platform changes
   filters.value.category = null
-  // Update URL query parameter
   router.replace({
     query: platform ? { platform } : {}
   })
-  // Fetch categories filtered by the selected platform
   fetchCategories(platform)
-  // Fetch services with the new platform filter
   fetchServices()
 }
 
@@ -573,9 +523,7 @@ const clearFilters = () => {
     perPage: 50,
   }
   currentPage.value = 1
-  // Clear URL query parameters
   router.replace({ query: {} })
-  // Fetch all categories (no platform filter)
   fetchCategories()
   fetchServices()
 }
@@ -599,14 +547,11 @@ onMounted(async () => {
   const savedView = localStorage.getItem('servicesView')
   if (savedView) viewMode.value = savedView
 
-  // Fetch platforms first
   await fetchPlatforms()
 
-  // Check for platform query parameter from URL
   const platformFromUrl = route.query.platform
   if (platformFromUrl) {
     filters.value.platform = platformFromUrl
-    // Fetch categories filtered by the selected platform
     await fetchCategories(platformFromUrl)
   } else {
     await fetchCategories()
@@ -620,7 +565,6 @@ watch(viewMode, (newVal) => {
   localStorage.setItem('servicesView', newVal)
 })
 
-// Watch for URL query parameter changes (browser navigation)
 watch(() => route.query.platform, (newPlatform) => {
   if (newPlatform !== filters.value.platform) {
     filters.value.platform = newPlatform || null
