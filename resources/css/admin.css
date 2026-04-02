@@ -68,6 +68,17 @@
 }
 
 /* ============================================
+   Admin Common Classes
+   ============================================ */
+.bg-gradient {
+    background: linear-gradient(135deg, rgb(var(--v-theme-primary)), rgb(var(--v-theme-info))) !important;
+}
+.bulk-rate-card { overflow: hidden; }
+.edit-btn { transition: transform 0.15s ease; }
+.edit-btn:hover { transform: scale(1.05); }
+.category-chip { cursor: pointer; }
+
+/* ============================================
    Order Create Page
    ============================================ */
 .order-page { max-width: 1400px; margin: 0 auto; }
