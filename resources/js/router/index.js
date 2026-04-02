@@ -1,55 +1,46 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Public routes
+// Page components
+const Home = () => import('../views/Home.vue')
+const Services = () => import('../views/Services.vue')
+const ServiceDetails = () => import('../views/ServiceDetails.vue')
+const About = () => import('../views/About.vue')
+const Contact = () => import('../views/Contact.vue')
+const FAQ = () => import('../views/FAQ.vue')
+const PrivacyPolicy = () => import('../views/PrivacyPolicy.vue')
+const HowItWorks = () => import('../views/HowItWorks.vue')
+
+// Route definitions (shared between default and localized)
+const pageRoutes = [
+    { path: '', name: 'Home', component: Home, meta: { title: 'Best SMM Panel' } },
+    { path: 'all-services', name: 'Services', component: Services, meta: { title: 'All Services' } },
+    { path: 'service/:id', name: 'ServiceDetails', component: ServiceDetails, meta: { title: 'Service Details' } },
+    { path: 'about', name: 'About', component: About, meta: { title: 'About Us' } },
+    { path: 'contact-us', name: 'Contact', component: Contact, meta: { title: 'Contact Us' } },
+    { path: 'faq', name: 'FAQ', component: FAQ, meta: { title: 'FAQ' } },
+    { path: 'privacy-policy', name: 'PrivacyPolicy', component: PrivacyPolicy, meta: { title: 'Privacy Policy' } },
+    { path: 'how-it-works', name: 'HowItWorks', component: HowItWorks, meta: { title: 'How It Works' } },
+    { path: 'terms-and-conditions', name: 'Terms', component: PrivacyPolicy, meta: { title: 'Terms' } },
+]
+
+// Generate routes: default (/) + all 16 locale prefixes (/:locale/)
+const locales = ['ar','es','fr','de','ru','zh','hi','pt','ja','ko','tr','it','pl','nl','vi','th']
+
 const publicRoutes = [
-    {
-        path: '/',
-        name: 'Home',
-        component: () => import('../views/Home.vue'),
-        meta: { title: 'Best SMM Panel - Buy Instagram, TikTok, YouTube Followers' }
-    },
-    {
-        path: '/all-services',
-        name: 'Services',
-        component: () => import('../views/Services.vue'),
-        meta: { title: 'All Services - SMM Panel' }
-    },
-    {
-        path: '/service/:id',
-        name: 'ServiceDetails',
-        component: () => import('../views/ServiceDetails.vue'),
-        meta: { title: 'Service Details - SMM Panel' }
-    },
-    {
-        path: '/about',
-        name: 'About',
-        component: () => import('../views/About.vue'),
-        meta: { title: 'About Us - SMM Panel' }
-    },
-    {
-        path: '/contact-us',
-        name: 'Contact',
-        component: () => import('../views/Contact.vue'),
-        meta: { title: 'Contact Us - SMM Panel' }
-    },
-    {
-        path: '/faq',
-        name: 'FAQ',
-        component: () => import('../views/FAQ.vue'),
-        meta: { title: 'FAQ - SMM Panel' }
-    },
-    {
-        path: '/privacy-policy',
-        name: 'PrivacyPolicy',
-        component: () => import('../views/PrivacyPolicy.vue'),
-        meta: { title: 'Privacy Policy - SMM Panel' }
-    },
-    {
-        path: '/how-it-works',
-        name: 'HowItWorks',
-        component: () => import('../views/HowItWorks.vue'),
-        meta: { title: 'How It Works - SMM Panel' }
-    },
+    // Default English routes (no prefix)
+    ...pageRoutes.map(r => ({
+        ...r,
+        path: '/' + r.path,
+        name: r.name,
+    })),
+    // Localized routes (/:locale/path)
+    ...locales.flatMap(locale =>
+        pageRoutes.map(r => ({
+            ...r,
+            path: '/' + locale + (r.path ? '/' + r.path : ''),
+            name: r.name + '_' + locale,
+        }))
+    ),
 ]
 
 // Admin/Dashboard routes (protected)

@@ -1,495 +1,149 @@
 <template>
-  <div>
-    <!-- Breadcrumbs -->
-    <v-container class="py-4">
-      <v-breadcrumbs :items="breadcrumbs" class="px-0">
-        <template v-slot:divider>
-          <v-icon>mdi-chevron-right</v-icon>
-        </template>
-      </v-breadcrumbs>
-    </v-container>
-
-    <v-container class="pb-12">
-      <v-row v-if="service && !loading">
-        <v-col cols="12" lg="8">
-          <!-- Service Info -->
-          <div class="card mb-6" style="padding: 2rem;">
-            <div class="d-flex flex-wrap align-center gap-2 mb-4">
-              <v-chip color="primary" variant="flat">
-                #{{ service.service_id }}
-              </v-chip>
-              <v-chip variant="tonal">
-                {{ service.category || service.category_en }}
-              </v-chip>
-              <v-chip variant="tonal">
-                {{ service.type || 'Default' }}
-              </v-chip>
+    <div>
+        <v-container class="py-6">
+            <div v-if="loading" style="text-align:center;padding:80px 0;">
+                <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
             </div>
 
-            <h1 class="heading-xl mb-4">{{ service.name || service.name_en }}</h1>
-
-            <hr style="border: none; border-top: 1px solid var(--v-border-color, rgba(0,0,0,0.12)); margin: 1.5rem 0;" />
-
-            <!-- Stats Bar -->
-            <div class="stats-bar">
-              <div class="stats-bar-item">
-                <span class="stats-bar-label">{{ $t('servicesPage.price') }}</span>
-                <span class="stats-bar-value" style="color: var(--color-success);">${{ formatPrice(service.rate) }}</span>
-              </div>
-              <div class="stats-bar-item">
-                <span class="stats-bar-label">{{ $t('servicesPage.min') }}</span>
-                <span class="stats-bar-value">{{ formatNumber(service.min) }}</span>
-              </div>
-              <div class="stats-bar-item">
-                <span class="stats-bar-label">{{ $t('servicesPage.max') }}</span>
-                <span class="stats-bar-value">{{ formatNumber(service.max) }}</span>
-              </div>
-              <div class="stats-bar-item">
-                <span class="stats-bar-label">{{ $t('servicesPage.type') || 'Type' }}</span>
-                <span class="stats-bar-value" style="text-transform: capitalize;">{{ service.type || 'Default' }}</span>
-              </div>
+            <div v-else-if="!service" class="card" style="text-align:center;padding:60px 24px;">
+                <v-icon size="48" style="opacity:0.2;">mdi-alert-circle</v-icon>
+                <h2 class="heading-md" style="margin-top:12px;">Service not found</h2>
+                <v-btn color="primary" to="/all-services" class="mt-4">{{ $t('servicesPage.allServices') }}</v-btn>
             </div>
 
-            <hr style="border: none; border-top: 1px solid var(--v-border-color, rgba(0,0,0,0.12)); margin: 1.5rem 0;" />
+            <v-row v-else>
+                <v-col cols="12" md="8">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;opacity:0.5;margin-bottom:16px;">
+                        <router-link to="/" style="color:inherit;text-decoration:none;">{{ $t('publicNav.home') }}</router-link>
+                        <v-icon size="12">mdi-chevron-right</v-icon>
+                        <router-link to="/all-services" style="color:inherit;text-decoration:none;">{{ $t('publicNav.services') }}</router-link>
+                        <v-icon size="12">mdi-chevron-right</v-icon>
+                        <span>#{{ service.service_id }}</span>
+                    </div>
 
-            <!-- Features -->
-            <h3 class="heading-md mb-4">{{ $t('servicesPage.features') || 'Features' }}</h3>
-            <div class="d-flex flex-wrap gap-3">
-              <span v-if="service.refill" class="feature-chip">
-                <v-icon size="16">mdi-refresh</v-icon>
-                {{ $t('services.refillAvailable') || 'Refill Available' }}
-              </span>
-              <span v-if="service.cancel" class="feature-chip">
-                <v-icon size="16">mdi-close-circle</v-icon>
-                {{ $t('services.cancelAvailable') || 'Cancellation Available' }}
-              </span>
-              <span class="feature-chip">
-                <v-icon size="16">mdi-lightning-bolt</v-icon>
-                {{ $t('services.instantStart') || 'Instant Start' }}
-              </span>
-              <span class="feature-chip">
-                <v-icon size="16">mdi-shield-check</v-icon>
-                {{ $t('services.safe') || '100% Safe' }}
-              </span>
-            </div>
-          </div>
+                    <div class="card" style="margin-bottom:16px;">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                            <span style="font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:6px;background:rgba(var(--v-theme-primary),0.1);color:rgb(var(--v-theme-primary));">#{{ service.service_id }}</span>
+                            <span style="font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:6px;background:rgba(var(--v-theme-on-surface),0.06);">{{ service.type || 'Default' }}</span>
+                        </div>
 
-          <!-- Description -->
-          <div class="card mb-6" style="padding: 2rem;">
-            <h3 class="heading-md mb-4">
-              <v-icon start color="primary">mdi-information</v-icon>
-              {{ $t('servicesPage.serviceDescription') || 'Service Description' }}
-            </h3>
-            <p class="text-muted mb-4">
-              {{ locale === 'ar'
-                ? 'هذه الخدمة توفر تفاعلاً عالي الجودة لحسابك على وسائل التواصل الاجتماعي. تبدأ الطلبات عادةً في غضون 0-15 دقيقة وتكتمل بناءً على الكمية المطلوبة.'
-                : 'This service provides high-quality engagement for your social media account. Orders typically start within 0-15 minutes and complete based on the quantity ordered.'
-              }}
-            </p>
-            <ul style="list-style: none; padding: 0; margin: 0;">
-              <li v-for="(item, i) in descriptionPoints" :key="i" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0;">
-                <v-icon color="success" size="small">mdi-check-circle</v-icon>
-                <span>{{ item }}</span>
-              </li>
-            </ul>
-          </div>
+                        <h1 class="heading-lg" style="margin-bottom:8px;">{{ serviceName }}</h1>
+                        <p style="font-size:0.82rem;color:rgb(var(--v-theme-primary));margin-bottom:20px;">
+                            <v-icon size="14">mdi-tag</v-icon> {{ serviceCategory }}
+                        </p>
 
-          <!-- Related Services -->
-          <div v-if="relatedServices.length > 0">
-            <h2 class="heading-lg mb-4">
-              <v-icon start color="primary">mdi-link-variant</v-icon>
-              {{ $t('servicesPage.relatedServices') || 'Related Services' }}
-            </h2>
-            <div class="services-grid" style="grid-template-columns: repeat(2, 1fr);">
-              <router-link
-                v-for="related in relatedServices"
-                :key="related.service_id"
-                :to="`/service/${related.service_id}`"
-                class="svc"
-              >
-                <div class="svc-top">
-                  <span class="svc-id">#{{ related.service_id }}</span>
-                  <span class="svc-price">${{ formatPrice(related.rate) }}<small>/1K</small></span>
-                </div>
-                <div class="svc-name">{{ related.name || related.name_en }}</div>
-                <div class="svc-bottom">
-                  <div class="svc-badges">
-                    <span v-if="related.refill" class="svc-badge svc-badge-ok">{{ $t('services.refill') }}</span>
-                    <span v-if="related.cancel" class="svc-badge svc-badge-warn">{{ $t('common.cancel') }}</span>
-                  </div>
-                </div>
-              </router-link>
-            </div>
-          </div>
-        </v-col>
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+                            <div class="card" style="text-align:center;padding:14px 8px;">
+                                <div class="label">{{ $t('servicesPage.price') }}</div>
+                                <div style="font-size:1.1rem;font-weight:800;color:rgb(var(--v-theme-success));">${{ formatPrice(service.rate) }}</div>
+                            </div>
+                            <div class="card" style="text-align:center;padding:14px 8px;">
+                                <div class="label">{{ $t('servicesPage.min') }}</div>
+                                <div style="font-size:1.1rem;font-weight:800;">{{ fmtNum(service.min) }}</div>
+                            </div>
+                            <div class="card" style="text-align:center;padding:14px 8px;">
+                                <div class="label">{{ $t('servicesPage.max') }}</div>
+                                <div style="font-size:1.1rem;font-weight:800;">{{ fmtNum(service.max) }}</div>
+                            </div>
+                            <div class="card" style="text-align:center;padding:14px 8px;">
+                                <div class="label">/1K</div>
+                                <div style="font-size:1.1rem;font-weight:800;">${{ formatPrice(service.rate) }}</div>
+                            </div>
+                        </div>
 
-        <v-col cols="12" lg="4">
-          <!-- Order Card -->
-          <div class="card" style="position: sticky; top: 80px; padding: 0; overflow: hidden;">
-            <div :style="{ background: store.gradientStyle }" style="padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-              <v-icon color="white">mdi-cart</v-icon>
-              <span class="heading-md" style="color: #fff;">{{ $t('servicesPage.placeOrder') || 'Place Order' }}</span>
-            </div>
-            <div style="padding: 1.5rem;">
-              <div class="card-flat mb-4" style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <v-icon color="info">mdi-login</v-icon>
-                <span class="text-muted">{{ $t('servicesPage.loginToOrder') || 'Login to place orders' }}</span>
-              </div>
+                        <div class="features-row">
+                            <span v-if="service.refill" class="feature-chip"><v-icon size="12">mdi-refresh</v-icon> {{ $t('services.refill') }}</span>
+                            <span v-if="service.cancel" class="feature-chip" style="background:rgba(var(--v-theme-warning),0.08);color:rgb(var(--v-theme-warning));"><v-icon size="12">mdi-close-circle</v-icon> {{ $t('common.cancel') }}</span>
+                            <span class="feature-chip"><v-icon size="12">mdi-lightning-bolt</v-icon> {{ $t('home.instantDelivery') }}</span>
+                            <span class="feature-chip"><v-icon size="12">mdi-shield-check</v-icon> {{ $t('home.securePayment') }}</span>
+                        </div>
+                    </div>
 
-              <v-text-field
-                v-model="orderForm.link"
-                :label="$t('servicesPage.link') || 'Link'"
-                :placeholder="$t('servicesPage.linkPlaceholder') || 'Enter your profile/post link'"
-                prepend-inner-icon="mdi-link"
-                variant="outlined"
-                density="comfortable"
-                class="mb-4"
-              />
+                    <div v-if="relatedServices.length">
+                        <h3 class="heading-md" style="margin-bottom:14px;">{{ $t('servicesPage.featuredServices') }}</h3>
+                        <div class="services-grid">
+                            <router-link v-for="rs in relatedServices" :key="rs.service_id" :to="`/service/${rs.service_id}`" class="svc">
+                                <div class="svc-top">
+                                    <span class="svc-id">#{{ rs.service_id }}</span>
+                                    <span class="svc-price">${{ formatPrice(rs.rate) }}<small>/1K</small></span>
+                                </div>
+                                <div class="svc-name">{{ rs.name || rs.name_en }}</div>
+                                <div class="svc-cat"><v-icon size="12">mdi-tag</v-icon> {{ rs.category || rs.category_en }}</div>
+                                <div class="svc-bottom">
+                                    <span class="svc-range">{{ fmtNum(rs.min) }} - {{ fmtNum(rs.max) }}</span>
+                                </div>
+                            </router-link>
+                        </div>
+                    </div>
+                </v-col>
 
-              <v-text-field
-                v-model="orderForm.quantity"
-                :label="$t('servicesPage.quantity') || 'Quantity'"
-                type="number"
-                :min="service.min"
-                :max="service.max"
-                prepend-inner-icon="mdi-numeric"
-                variant="outlined"
-                density="comfortable"
-                :hint="`${$t('servicesPage.min') || 'Min'}: ${formatNumber(service.min)} - ${$t('servicesPage.max') || 'Max'}: ${formatNumber(service.max)}`"
-                persistent-hint
-                class="mb-4"
-              />
-
-              <hr style="border: none; border-top: 1px solid var(--v-border-color, rgba(0,0,0,0.12)); margin: 1rem 0;" />
-
-              <div class="d-flex justify-space-between mb-2">
-                <span class="text-muted">{{ $t('servicesPage.pricePer1000') || 'Price per 1000:' }}</span>
-                <span class="font-weight-bold">${{ formatPrice(service.rate) }}</span>
-              </div>
-              <div class="d-flex justify-space-between mb-4">
-                <span class="text-muted">{{ $t('servicesPage.total') || 'Total:' }}</span>
-                <span class="heading-lg text-gradient">${{ calculatedPrice }}</span>
-              </div>
-
-              <v-btn color="primary" size="large" block href="/login" class="mb-4">
-                <v-icon start>mdi-login</v-icon>
-                {{ $t('servicesPage.loginToOrderBtn') || 'Login to Order' }}
-              </v-btn>
-
-              <p class="text-muted" style="text-align: center; font-size: 0.75rem;">
-                {{ $t('servicesPage.noAccount') || "Don't have an account?" }}
-                <a href="/register" class="text-primary font-weight-bold">{{ $t('servicesPage.signUp') || 'Sign up' }}</a>
-              </p>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-
-      <!-- Loading -->
-      <v-row v-else-if="loading">
-        <v-col cols="12" lg="8">
-          <v-skeleton-loader type="card" height="400" />
-        </v-col>
-        <v-col cols="12" lg="4">
-          <v-skeleton-loader type="card" height="400" />
-        </v-col>
-      </v-row>
-
-      <!-- Not Found -->
-      <div v-else class="card text-center" style="padding: 4rem 2rem;">
-        <v-icon size="80" color="error" class="mb-4">mdi-alert-circle</v-icon>
-        <h2 class="heading-lg mb-4">{{ $t('servicesPage.serviceNotFound') || 'Service not found' }}</h2>
-        <v-btn color="primary" to="/all-services">
-          <v-icon start>mdi-arrow-left</v-icon>
-          {{ $t('servicesPage.browseAll') || 'Browse all services' }}
-        </v-btn>
-      </div>
-    </v-container>
-  </div>
+                <v-col cols="12" md="4">
+                    <div class="card" style="position:sticky;top:72px;">
+                        <h3 class="heading-md" style="margin-bottom:16px;">
+                            <v-icon size="18" color="primary" class="mr-1">mdi-cart</v-icon>
+                            {{ $t('home.orderNow') }}
+                        </h3>
+                        <div style="margin-bottom:12px;">
+                            <div class="label" style="margin-bottom:6px;">{{ $t('orders.link') }}</div>
+                            <v-text-field v-model="orderForm.link" placeholder="https://..." prepend-inner-icon="mdi-link"></v-text-field>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <div class="label" style="margin-bottom:6px;">{{ $t('orders.quantity') }}</div>
+                            <v-text-field v-model.number="orderForm.quantity" type="number" :min="service.min" :max="service.max" prepend-inner-icon="mdi-numeric"></v-text-field>
+                            <div style="font-size:0.7rem;opacity:0.4;margin-top:2px;">Min: {{ fmtNum(service.min) }} — Max: {{ fmtNum(service.max) }}</div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:10px;background:rgba(var(--v-theme-success),0.06);margin-bottom:16px;">
+                            <span style="font-size:0.82rem;font-weight:600;">{{ $t('common.total') }}</span>
+                            <span style="font-size:1.3rem;font-weight:800;color:rgb(var(--v-theme-success));">${{ calculatedPrice }}</span>
+                        </div>
+                        <v-btn color="primary" size="large" block href="/login" prepend-icon="mdi-login">
+                            {{ $t('publicNav.signIn') }} & {{ $t('home.orderNow') }}
+                        </v-btn>
+                        <p style="text-align:center;margin-top:10px;font-size:0.75rem;opacity:0.4;">
+                            {{ $t('home.noAccount') }} <a href="/register" style="color:rgb(var(--v-theme-primary));text-decoration:none;">{{ $t('publicNav.signUp') }}</a>
+                        </p>
+                    </div>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useAppStore } from '../stores/app'
-import { useHead } from '@vueuse/head'
+import axios from 'axios'
 
 const route = useRoute()
-const router = useRouter()
 const store = useAppStore()
 
 const service = ref(null)
 const relatedServices = ref([])
 const loading = ref(true)
+const orderForm = ref({ link: '', quantity: 0 })
 
-const BASE_URL = 'https://smmjd.com'
-
-const orderForm = ref({
-  link: '',
-  quantity: 100
-})
-
-const locale = computed(() => store.locale)
-
-const breadcrumbs = computed(() => [
-  { title: locale.value === 'ar' ? 'الرئيسية' : 'Home', to: '/' },
-  { title: locale.value === 'ar' ? 'الخدمات' : 'Services', to: '/all-services' },
-  { title: service.value ? (service.value.category || service.value.category_en) : '...', disabled: true },
-  { title: service.value ? `#${service.value.service_id}` : '...', disabled: true },
-])
-
-const descriptionPoints = computed(() => {
-  return locale.value === 'ar'
-    ? [
-        'تفاعل حقيقي ونشط',
-        'طرق توصيل آمنة',
-        'لا يلزم كلمة مرور',
-        'دعم العملاء على مدار الساعة',
-        'ضمان استرداد الأموال',
-        'التسليم السريع'
-      ]
-    : [
-        'Real and active engagement',
-        'Safe delivery methods',
-        'No password required',
-        '24/7 customer support',
-        'Money-back guarantee',
-        'Fast delivery'
-      ]
-})
-
-const formatPrice = (r) => {
-  const n = Number(r)
-  if (n < 0.001) return n.toFixed(7)
-  if (n < 0.01) return n.toFixed(5)
-  if (n < 1) return n.toFixed(4)
-  return n.toFixed(2)
-}
-
+const serviceName = computed(() => service.value?.name || service.value?.name_en || '')
+const serviceCategory = computed(() => service.value?.category || service.value?.category_en || '')
 const calculatedPrice = computed(() => {
-  if (!service.value || !orderForm.value.quantity) return '0.00'
-  const price = (parseFloat(service.value.rate) * orderForm.value.quantity) / 1000
-  return formatPrice(price)
+    if (!service.value || !orderForm.value.quantity) return '0.00'
+    return formatPrice((orderForm.value.quantity / 1000) * Number(service.value.rate))
 })
 
-const formatNumber = (num) => {
-  return new Intl.NumberFormat().format(num)
+const fmtNum = (n) => new Intl.NumberFormat().format(n)
+const formatPrice = (r) => { const n = Number(r); if (n < 0.001) return n.toFixed(7); if (n < 0.01) return n.toFixed(5); if (n < 1) return n.toFixed(4); return n.toFixed(2) }
+
+const fetchService = async (id) => {
+    loading.value = true
+    try {
+        const res = await axios.get(`/api/services/${id}`, { params: { lang: store.locale } })
+        service.value = res.data.service
+        relatedServices.value = res.data.related_services || []
+        if (service.value) orderForm.value.quantity = service.value.min
+    } catch (e) { service.value = null }
+    finally { loading.value = false }
 }
 
-const fetchService = async () => {
-  loading.value = true
-  try {
-    const id = route.params.id
-    const response = await fetch(`/api/services/${id}?lang=${locale.value}`)
-    const data = await response.json()
-
-    if (data.error) {
-      service.value = null
-    } else {
-      service.value = data.service
-      relatedServices.value = data.related_services || []
-      orderForm.value.quantity = service.value?.min || 100
-    }
-  } catch (error) {
-    console.error('Error fetching service:', error)
-    service.value = null
-  } finally {
-    loading.value = false
-  }
-}
-
-const goToService = (id) => {
-  router.push(`/service/${id}`)
-}
-
-// SEO: Product structured data for Google Shopping
-const productStructuredData = computed(() => {
-  if (!service.value) return null
-
-  const serviceName = service.value.name || service.value.name_en
-  const categoryName = service.value.category || service.value.category_en
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: serviceName,
-    description: locale.value === 'ar'
-      ? `خدمة ${serviceName} - تفاعل عالي الجودة لحسابك على وسائل التواصل الاجتماعي`
-      : `${serviceName} - High-quality engagement for your social media account`,
-    sku: `SMM-${service.value.service_id}`,
-    mpn: `SMM-${service.value.service_id}`,
-    brand: {
-      '@type': 'Brand',
-      name: 'SMM Panel'
-    },
-    category: categoryName,
-    offers: {
-      '@type': 'Offer',
-      url: `${BASE_URL}/service/${service.value.service_id}`,
-      priceCurrency: 'USD',
-      price: Number(service.value.rate).toFixed(4),
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      availability: 'https://schema.org/InStock',
-      itemCondition: 'https://schema.org/NewCondition',
-      seller: {
-        '@type': 'Organization',
-        name: 'SMM Panel'
-      },
-      hasMerchantReturnPolicy: {
-        '@type': 'MerchantReturnPolicy',
-        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-        merchantReturnDays: 30,
-        returnMethod: 'https://schema.org/ReturnByMail',
-        returnFees: 'https://schema.org/FreeReturn'
-      },
-      shippingDetails: {
-        '@type': 'OfferShippingDetails',
-        shippingRate: {
-          '@type': 'MonetaryAmount',
-          value: 0,
-          currency: 'USD'
-        },
-        deliveryTime: {
-          '@type': 'ShippingDeliveryTime',
-          handlingTime: {
-            '@type': 'QuantitativeValue',
-            minValue: 0,
-            maxValue: 15,
-            unitCode: 'MIN'
-          },
-          transitTime: {
-            '@type': 'QuantitativeValue',
-            minValue: 0,
-            maxValue: 24,
-            unitCode: 'HUR'
-          }
-        }
-      }
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      reviewCount: '150',
-      bestRating: '5',
-      worstRating: '1'
-    },
-    review: [
-      {
-        '@type': 'Review',
-        reviewRating: {
-          '@type': 'Rating',
-          ratingValue: '5',
-          bestRating: '5'
-        },
-        author: {
-          '@type': 'Person',
-          name: 'Verified Buyer'
-        },
-        reviewBody: locale.value === 'ar'
-          ? 'خدمة ممتازة! توصيل سريع وجودة عالية.'
-          : 'Excellent service! Fast delivery and high quality.'
-      }
-    ]
-  }
-})
-
-// SEO: BreadcrumbList structured data
-const breadcrumbStructuredData = computed(() => {
-  if (!service.value) return null
-
-  const categoryName = service.value.category || service.value.category_en
-  const serviceName = service.value.name || service.value.name_en
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: locale.value === 'ar' ? 'الرئيسية' : 'Home',
-        item: BASE_URL
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: locale.value === 'ar' ? 'الخدمات' : 'Services',
-        item: `${BASE_URL}/all-services`
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: categoryName,
-        item: `${BASE_URL}/all-services?category=${encodeURIComponent(categoryName)}`
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: serviceName
-      }
-    ]
-  }
-})
-
-// Dynamic SEO head configuration
-const seoHead = computed(() => {
-  if (!service.value) {
-    return {
-      title: 'Service Details | SMM Panel',
-      meta: [{ name: 'robots', content: 'noindex' }]
-    }
-  }
-
-  const serviceName = service.value.name || service.value.name_en
-  const categoryName = service.value.category || service.value.category_en
-  const title = `${serviceName} | SMM Panel`
-  const description = locale.value === 'ar'
-    ? `اشترِ ${serviceName} بأرخص الأسعار. السعر: $${Number(service.value.rate).toFixed(4)}/1000. توصيل فوري، دعم على مدار الساعة.`
-    : `Buy ${serviceName} at the cheapest prices. Price: $${Number(service.value.rate).toFixed(4)}/1000. Instant delivery, 24/7 support.`
-
-  const structuredDataArray = []
-  if (productStructuredData.value) {
-    structuredDataArray.push({
-      type: 'application/ld+json',
-      children: JSON.stringify(productStructuredData.value)
-    })
-  }
-  if (breadcrumbStructuredData.value) {
-    structuredDataArray.push({
-      type: 'application/ld+json',
-      children: JSON.stringify(breadcrumbStructuredData.value)
-    })
-  }
-
-  return {
-    title,
-    meta: [
-      { name: 'description', content: description },
-      { name: 'keywords', content: `${serviceName}, ${categoryName}, SMM panel, buy followers, buy likes, social media marketing` },
-      { name: 'robots', content: 'index, follow' },
-      { property: 'og:title', content: title },
-      { property: 'og:description', content: description },
-      { property: 'og:type', content: 'product' },
-      { property: 'og:url', content: `${BASE_URL}/service/${service.value.service_id}` },
-      { property: 'og:image', content: `${BASE_URL}/images/logo.png` },
-      { property: 'og:locale', content: locale.value === 'ar' ? 'ar_SA' : 'en_US' },
-      { property: 'product:price:amount', content: Number(service.value.rate).toFixed(4) },
-      { property: 'product:price:currency', content: 'USD' },
-      { property: 'product:availability', content: 'in stock' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: title },
-      { name: 'twitter:description', content: description }
-    ],
-    link: [
-      { rel: 'canonical', href: `${BASE_URL}/service/${service.value.service_id}` }
-    ],
-    script: structuredDataArray
-  }
-})
-
-useHead(seoHead)
-
-onMounted(fetchService)
-watch(() => route.params.id, fetchService)
-watch(locale, fetchService)
+watch(() => route.params.id, (id) => { if (id) fetchService(id) })
+onMounted(() => { fetchService(route.params.id) })
 </script>
