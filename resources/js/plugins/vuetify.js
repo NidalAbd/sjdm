@@ -16,11 +16,11 @@ const lightTheme = {
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#3b82f6',
-        background: '#f5f5f5',
+        background: '#fafafa',
         surface: '#ffffff',
-        'surface-variant': '#f0f0f0',
+        'surface-variant': '#f5f5f5',
         'on-background': '#111111',
-        'on-surface': '#222222',
+        'on-surface': '#333333',
         'on-primary': '#ffffff',
     }
 }
@@ -35,11 +35,11 @@ const darkTheme = {
         warning: '#fbbf24',
         error: '#f87171',
         info: '#60a5fa',
-        background: '#343a40',
-        surface: '#3d444b',
-        'surface-variant': '#454d55',
-        'on-background': '#e9ecef',
-        'on-surface': '#dee2e6',
+        background: '#0c0c0e',
+        surface: '#161618',
+        'surface-variant': '#1c1c1f',
+        'on-background': '#f5f5f5',
+        'on-surface': '#d4d4d4',
         'on-primary': '#ffffff',
     }
 }
@@ -53,47 +53,12 @@ const vuetify = createVuetify({
         },
     },
     defaults: {
-        VBtn: {
-            rounded: 'lg',
-            elevation: 0,
-            density: 'comfortable',
-        },
-        VCard: {
-            rounded: 'xl',
-            elevation: 0,
-            color: 'surface',
-        },
-        VTextField: {
-            variant: 'outlined',
-            density: 'compact',
-            hideDetails: 'auto',
-            color: 'primary',
-        },
-        VSelect: {
-            variant: 'outlined',
-            density: 'compact',
-            hideDetails: 'auto',
-            color: 'primary',
-        },
-        VTextarea: {
-            variant: 'outlined',
-            density: 'compact',
-            hideDetails: 'auto',
-            color: 'primary',
-        },
-        VChip: {
-            rounded: 'lg',
-            size: 'small',
-        },
-        VDialog: {
-            maxWidth: 600,
-        },
-        VNavigationDrawer: {
-            elevation: 0,
-        },
-        VAppBar: {
-            elevation: 0,
-        },
+        VBtn: { rounded: 'lg', elevation: 0 },
+        VCard: { rounded: 'xl', elevation: 0 },
+        VTextField: { variant: 'outlined', density: 'compact', hideDetails: 'auto', color: 'primary' },
+        VSelect: { variant: 'outlined', density: 'compact', hideDetails: 'auto', color: 'primary' },
+        VChip: { rounded: 'lg', size: 'small' },
+        VAppBar: { elevation: 0 },
     },
 })
 

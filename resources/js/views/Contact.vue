@@ -1,62 +1,63 @@
 <template>
     <div>
         <!-- Hero -->
-        <section class="section-padding" :style="{ background: heroBg }">
+        <section class="hero">
             <v-container>
-                <h1 class="text-h4 font-weight-bold mb-2">{{ $t('contact.title') }}</h1>
-                <p class="text-body-2 text-medium-emphasis">{{ $t('contact.getInTouchDesc') }}</p>
+                <div class="hero-badge"><v-icon size="14">mdi-email-outline</v-icon> {{ $t('contact.title') }}</div>
+                <h1 class="heading-xl hero-title">{{ $t('contact.title') }}</h1>
+                <p class="hero-desc">{{ $t('contact.getInTouchDesc') }}</p>
             </v-container>
         </section>
 
-        <!-- Content -->
-        <section class="section-padding">
+        <!-- Contact Info + Form -->
+        <section class="section">
             <v-container>
                 <v-row>
                     <!-- Contact Info -->
                     <v-col cols="12" lg="5">
-                        <v-card class="mb-3 pa-4 hover-lift" variant="outlined">
+                        <div class="card" style="padding: 20px; margin-bottom: 16px;">
                             <div class="d-flex align-center">
-                                <v-avatar color="primary" size="40" class="mr-3">
+                                <v-avatar color="primary" size="40" style="margin-right: 16px;">
                                     <v-icon size="20">mdi-email</v-icon>
                                 </v-avatar>
                                 <div>
-                                    <div class="text-caption text-medium-emphasis">{{ $t('contact.emailUs') }}</div>
-                                    <span class="text-body-2 font-weight-medium">support@smmjd.com</span>
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ $t('contact.emailUs') }}</div>
+                                    <span style="font-weight: 500;">support@smmjd.com</span>
                                 </div>
                             </div>
-                        </v-card>
+                        </div>
 
-                        <v-card class="mb-3 pa-4 hover-lift" variant="outlined">
+                        <div class="card" style="padding: 20px; margin-bottom: 16px;">
                             <div class="d-flex align-center">
-                                <v-avatar color="success" size="40" class="mr-3">
+                                <v-avatar color="success" size="40" style="margin-right: 16px;">
                                     <v-icon size="20">mdi-clock</v-icon>
                                 </v-avatar>
                                 <div>
-                                    <div class="text-caption text-medium-emphasis">{{ $t('contact.supportHours') }}</div>
-                                    <span class="text-body-2 font-weight-medium">{{ $t('contact.available247') }}</span>
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ $t('contact.supportHours') }}</div>
+                                    <span style="font-weight: 500;">{{ $t('contact.available247') }}</span>
                                 </div>
                             </div>
-                        </v-card>
+                        </div>
 
-                        <v-card class="mb-3 pa-4 hover-lift" variant="outlined">
+                        <div class="card" style="padding: 20px; margin-bottom: 16px;">
                             <div class="d-flex align-center">
-                                <v-avatar color="info" size="40" class="mr-3">
+                                <v-avatar color="info" size="40" style="margin-right: 16px;">
                                     <v-icon size="20">mdi-ticket</v-icon>
                                 </v-avatar>
                                 <div>
-                                    <div class="text-caption text-medium-emphasis">{{ $t('contact.supportTicket') }}</div>
-                                    <a href="/support" class="text-body-2 font-weight-medium text-primary text-decoration-none">
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ $t('contact.supportTicket') }}</div>
+                                    <a href="/support" style="font-weight: 500; text-decoration: none; color: rgb(var(--v-theme-primary));">
                                         {{ $t('contact.openTicket') }}
                                     </a>
                                 </div>
                             </div>
-                        </v-card>
+                        </div>
                     </v-col>
 
                     <!-- Contact Form -->
                     <v-col cols="12" lg="7">
-                        <v-card class="pa-6" variant="outlined">
-                            <h2 class="text-h6 font-weight-bold mb-4">{{ $t('contact.sendMessage') }}</h2>
+                        <div class="card" style="padding: 32px;">
+                            <h2 class="heading-md" style="margin-bottom: 20px;">{{ $t('contact.sendMessage') }}</h2>
                             <v-form @submit.prevent="submitForm">
                                 <v-row>
                                     <v-col cols="12" sm="6">
@@ -79,7 +80,7 @@
                                     </v-col>
                                 </v-row>
                             </v-form>
-                        </v-card>
+                        </div>
                     </v-col>
                 </v-row>
             </v-container>
@@ -101,13 +102,6 @@ const seoConfig = computed(() => {
     return config
 })
 useSeo(seoConfig.value)
-
-const heroBg = computed(() => {
-    const c = store.currentThemeColor
-    const p = store.isDark ? c.primaryDark : c.primary
-    const r = parseInt(p.slice(1,3),16), g = parseInt(p.slice(3,5),16), b = parseInt(p.slice(5,7),16)
-    return `linear-gradient(135deg, rgba(${r},${g},${b}, 0.06) 0%, transparent 60%)`
-})
 
 const loading = ref(false)
 const form = reactive({ name: '', email: '', subject: '', message: '' })

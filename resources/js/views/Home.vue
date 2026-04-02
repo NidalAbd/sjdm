@@ -1,187 +1,152 @@
 <template>
     <div>
         <!-- Hero -->
-        <section class="section-py">
+        <section class="hero">
             <v-container>
                 <v-row align="center">
                     <v-col cols="12" lg="7">
-                        <v-chip color="primary" variant="tonal" size="small" class="mb-4">
-                            <v-icon start size="14">mdi-star</v-icon>
+                        <div class="hero-badge">
+                            <v-icon size="14">mdi-star</v-icon>
                             #1 SMM Panel
-                        </v-chip>
-
-                        <h1 class="text-h3 text-sm-h2 font-weight-black mb-4" style="line-height: 1.1;">
-                            {{ $t('home.heroTitle') }}
-                            <br>
+                        </div>
+                        <h1 class="heading-xl hero-title">
+                            {{ $t('home.heroTitle') }}<br>
                             <span class="text-gradient">{{ $t('home.heroTitleHighlight') }}</span>
                         </h1>
-
-                        <p class="text-body-1 mb-5" style="opacity: 0.7; line-height: 1.7; max-width: 520px;">
-                            {{ $t('home.heroDescription') }}
-                        </p>
-
-                        <div class="d-flex flex-wrap ga-2 mb-6">
-                            <v-chip v-for="feat in heroFeatures" :key="feat" variant="tonal" color="success" size="small">
-                                <v-icon start size="14">mdi-check-circle</v-icon>
-                                {{ $t(feat) }}
-                            </v-chip>
+                        <p class="hero-desc">{{ $t('home.heroDescription') }}</p>
+                        <div class="features-row">
+                            <span class="feature-chip" v-for="f in heroFeats" :key="f">
+                                <v-icon size="12">mdi-check-circle</v-icon>
+                                {{ $t(f) }}
+                            </span>
                         </div>
-
-                        <div class="d-flex flex-wrap ga-3">
-                            <v-btn size="large" color="primary" to="/all-services" class="px-6">
-                                <v-icon start>mdi-view-grid</v-icon>
-                                {{ $t('home.viewServices') }}
-                            </v-btn>
-                            <v-btn size="large" variant="outlined" href="/register" class="px-6">
-                                <v-icon start>mdi-account-plus</v-icon>
-                                {{ $t('home.getStarted') }}
-                            </v-btn>
+                        <div class="hero-actions">
+                            <v-btn size="large" color="primary" to="/all-services" prepend-icon="mdi-view-grid">{{ $t('home.viewServices') }}</v-btn>
+                            <v-btn size="large" variant="outlined" href="/register" prepend-icon="mdi-account-plus">{{ $t('home.getStarted') }}</v-btn>
                         </div>
                     </v-col>
 
-                    <!-- Quick Sign In -->
                     <v-col cols="12" lg="5" class="d-none d-lg-block">
-                        <v-card class="pa-6">
-                            <div class="text-center mb-5">
-                                <v-avatar color="primary" variant="tonal" size="56" class="mb-3">
-                                    <v-icon size="28">mdi-account</v-icon>
-                                </v-avatar>
-                                <h3 class="text-h6 font-weight-bold">{{ $t('home.quickSignIn') }}</h3>
-                                <p class="text-caption" style="opacity: 0.6;">{{ $t('home.accessDashboard') }}</p>
+                        <div class="card" style="padding:28px;">
+                            <div style="text-align:center;margin-bottom:20px;">
+                                <div style="width:52px;height:52px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;background:rgba(var(--v-theme-primary),0.1);margin-bottom:10px;">
+                                    <v-icon size="24" color="primary">mdi-account</v-icon>
+                                </div>
+                                <h3 class="heading-md">{{ $t('home.quickSignIn') }}</h3>
+                                <p style="font-size:0.8rem;opacity:0.4;">{{ $t('home.accessDashboard') }}</p>
                             </div>
-                            <v-form @submit.prevent="handleLogin">
+                            <form @submit.prevent="handleLogin">
                                 <v-text-field v-model="loginForm.email" :label="$t('contact.email')" type="email" prepend-inner-icon="mdi-email" class="mb-3"></v-text-field>
-                                <v-text-field v-model="loginForm.password" :label="$t('home.password')" :type="showPassword ? 'text' : 'password'" prepend-inner-icon="mdi-lock" :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="showPassword = !showPassword" class="mb-4"></v-text-field>
-                                <v-btn type="submit" color="primary" size="large" block :loading="loginLoading">
-                                    <v-icon start>mdi-login</v-icon>
-                                    {{ $t('publicNav.signIn') }}
-                                </v-btn>
-                            </v-form>
-                            <div class="text-center mt-4">
-                                <span class="text-body-2" style="opacity: 0.5;">{{ $t('home.noAccount') }}</span>
-                                <a href="/register" class="text-primary text-decoration-none font-weight-bold ml-1">{{ $t('publicNav.signUp') }}</a>
-                            </div>
-                        </v-card>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </section>
-
-        <!-- Stats Bar -->
-        <section style="border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));">
-            <v-container class="py-6">
-                <v-row>
-                    <v-col v-for="(stat, i) in homeStats" :key="i" cols="6" md="3">
-                        <div class="text-center">
-                            <div class="text-h4 font-weight-black text-gradient stat-value">{{ stat.value }}</div>
-                            <div class="text-caption" style="opacity: 0.5;">{{ $t(stat.labelKey) }}</div>
+                                <v-text-field v-model="loginForm.password" :label="$t('home.password')" :type="showPw ? 'text' : 'password'" prepend-inner-icon="mdi-lock" :append-inner-icon="showPw ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="showPw = !showPw" class="mb-4"></v-text-field>
+                                <v-btn type="submit" color="primary" size="large" block :loading="loginLoading" prepend-icon="mdi-login">{{ $t('publicNav.signIn') }}</v-btn>
+                            </form>
+                            <p style="text-align:center;margin-top:14px;font-size:0.8rem;opacity:0.4;">{{ $t('home.noAccount') }} <a href="/register" style="color:rgb(var(--v-theme-primary));text-decoration:none;font-weight:600;">{{ $t('publicNav.signUp') }}</a></p>
                         </div>
                     </v-col>
                 </v-row>
             </v-container>
         </section>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div v-for="s in homeStats" :key="s.label" class="stats-bar-item">
+                <div class="stats-bar-value text-gradient">{{ s.value }}</div>
+                <div class="stats-bar-label">{{ $t(s.label) }}</div>
+            </div>
+        </div>
 
         <!-- Platforms -->
-        <section class="section-py">
+        <section class="section">
             <v-container>
-                <div class="text-center mb-8">
-                    <h2 class="text-h4 font-weight-bold mb-2">{{ $t('home.platformsWeSupport') }}</h2>
-                    <p class="text-body-2" style="opacity: 0.5;">{{ $t('home.platformsDesc') }}</p>
+                <div class="section-header">
+                    <h2 class="heading-lg">{{ $t('home.platformsWeSupport') }}</h2>
+                    <p>{{ $t('home.platformsDesc') }}</p>
                 </div>
-                <v-row justify="center">
-                    <v-col v-for="platform in platforms" :key="platform.name" cols="4" sm="2">
-                        <v-card class="text-center pa-4 hover-lift" :to="`/all-services?platform=${platform.key}`">
-                            <v-icon :color="platform.color" size="36" class="mb-2">{{ platform.icon }}</v-icon>
-                            <div class="text-caption font-weight-bold">{{ platform.name }}</div>
-                        </v-card>
-                    </v-col>
-                </v-row>
+                <div class="platforms-grid">
+                    <router-link v-for="p in platforms" :key="p.key" :to="`/all-services?platform=${p.key}`" class="platform-card">
+                        <v-icon :color="p.color" size="32">{{ p.icon }}</v-icon>
+                        <span class="platform-card-name">{{ p.name }}</span>
+                    </router-link>
+                </div>
             </v-container>
         </section>
 
         <!-- Featured Services -->
-        <section class="section-py" style="background: rgb(var(--v-theme-surface-variant));">
+        <section class="section section-alt">
             <v-container>
-                <div class="text-center mb-8">
-                    <h2 class="text-h4 font-weight-bold mb-2">{{ $t('home.popularServices') }}</h2>
-                    <p class="text-body-2" style="opacity: 0.5;">{{ $t('home.popularServicesDesc') }}</p>
+                <div class="section-header">
+                    <h2 class="heading-lg">{{ $t('home.popularServices') }}</h2>
+                    <p>{{ $t('home.popularServicesDesc') }}</p>
                 </div>
-
-                <v-row v-if="!store.loading">
-                    <v-col v-for="service in featuredServices" :key="service.service_id" cols="12" sm="6" lg="4">
-                        <ServiceCard :service="service" />
-                    </v-col>
-                </v-row>
-                <v-row v-else>
-                    <v-col v-for="n in 6" :key="n" cols="12" sm="6" lg="4">
-                        <v-skeleton-loader type="card" height="160"></v-skeleton-loader>
-                    </v-col>
-                </v-row>
-
-                <div class="text-center mt-8">
-                    <v-btn size="large" color="primary" to="/all-services" class="px-8">
-                        {{ $t('home.viewServices') }}
-                        <v-icon end>mdi-arrow-right</v-icon>
-                    </v-btn>
+                <div v-if="!store.loading" class="services-grid">
+                    <router-link v-for="svc in featuredServices" :key="svc.service_id" :to="`/service/${svc.service_id}`" class="svc">
+                        <div class="svc-top">
+                            <span class="svc-id">#{{ svc.service_id }}</span>
+                            <span class="svc-price">${{ formatPrice(svc.rate) }}<small>/1K</small></span>
+                        </div>
+                        <div class="svc-name">{{ svc.name || svc.name_en }}</div>
+                        <div class="svc-cat"><v-icon size="12">mdi-tag</v-icon>{{ svc.category || svc.category_en }}</div>
+                        <div class="svc-bottom">
+                            <span class="svc-range">{{ fmtNum(svc.min) }} - {{ fmtNum(svc.max) }}</span>
+                            <div class="svc-badges">
+                                <span v-if="svc.refill" class="svc-badge svc-badge-ok">Refill</span>
+                                <span v-if="svc.cancel" class="svc-badge svc-badge-warn">Cancel</span>
+                            </div>
+                        </div>
+                    </router-link>
+                </div>
+                <div v-else style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+                    <v-skeleton-loader v-for="n in 6" :key="n" type="card" height="160"></v-skeleton-loader>
+                </div>
+                <div style="text-align:center;margin-top:40px;">
+                    <v-btn size="large" color="primary" to="/all-services" append-icon="mdi-arrow-right">{{ $t('home.viewServices') }}</v-btn>
                 </div>
             </v-container>
         </section>
 
         <!-- How It Works -->
-        <section class="section-py">
+        <section class="section">
             <v-container>
-                <div class="text-center mb-8">
-                    <h2 class="text-h4 font-weight-bold mb-2">{{ $t('home.threeSimpleSteps') }}</h2>
+                <div class="section-header">
+                    <h2 class="heading-lg">{{ $t('home.threeSimpleSteps') }}</h2>
                 </div>
-                <v-row justify="center">
-                    <v-col v-for="(step, i) in steps" :key="i" cols="12" md="4">
-                        <v-card class="text-center pa-8 h-100">
-                            <v-avatar color="primary" size="56" class="mb-4">
-                                <span class="text-h5 font-weight-bold">{{ i + 1 }}</span>
-                            </v-avatar>
-                            <h3 class="text-h6 font-weight-bold mb-2">{{ $t(step.titleKey) }}</h3>
-                            <p class="text-body-2" style="opacity: 0.6;">{{ $t(step.descKey) }}</p>
-                        </v-card>
-                    </v-col>
-                </v-row>
+                <div class="steps-grid">
+                    <div v-for="(step, i) in steps" :key="i" class="card step-card">
+                        <div class="step-num">{{ i + 1 }}</div>
+                        <div class="step-title">{{ $t(step.t) }}</div>
+                        <div class="step-desc">{{ $t(step.d) }}</div>
+                    </div>
+                </div>
             </v-container>
         </section>
 
         <!-- FAQ -->
-        <section class="section-py" style="background: rgb(var(--v-theme-surface-variant));">
+        <section class="section section-alt">
             <v-container>
-                <div class="text-center mb-8">
-                    <h2 class="text-h4 font-weight-bold mb-2">{{ $t('home.commonQuestions') }}</h2>
+                <div class="section-header">
+                    <h2 class="heading-lg">{{ $t('home.commonQuestions') }}</h2>
                 </div>
                 <v-row justify="center">
                     <v-col cols="12" lg="8">
                         <v-expansion-panels variant="accordion">
-                            <v-expansion-panel v-for="(faq, i) in faqs" :key="i" :title="$t(faq.questionKey)" :text="$t(faq.answerKey)"></v-expansion-panel>
+                            <v-expansion-panel v-for="(faq, i) in faqs" :key="i" :title="$t(faq.q)" :text="$t(faq.a)"></v-expansion-panel>
                         </v-expansion-panels>
                     </v-col>
                 </v-row>
-                <div class="text-center mt-6">
-                    <v-btn variant="outlined" to="/faq">
-                        {{ $t('home.viewAllFaqs') }}
-                        <v-icon end>mdi-arrow-right</v-icon>
-                    </v-btn>
+                <div style="text-align:center;margin-top:28px;">
+                    <v-btn variant="outlined" to="/faq" append-icon="mdi-arrow-right">{{ $t('home.viewAllFaqs') }}</v-btn>
                 </div>
             </v-container>
         </section>
 
         <!-- CTA -->
-        <section class="section-py">
+        <section class="section">
             <v-container>
-                <v-card class="pa-8 pa-md-12 text-center" variant="flat" :style="{ background: store.gradientStyle }">
-                    <h2 class="text-h4 text-md-h3 font-weight-bold text-white mb-3">{{ $t('home.readyToGrow') }}</h2>
-                    <p class="text-body-1 text-white mb-6" style="opacity: 0.8; max-width: 480px; margin: 0 auto;">
-                        {{ $t('home.readyToGrowDesc') }}
-                    </p>
-                    <v-btn size="large" color="white" href="/register" class="px-8">
-                        <v-icon start>mdi-rocket-launch</v-icon>
-                        {{ $t('home.getStartedNow') }}
-                    </v-btn>
-                </v-card>
+                <div class="cta-card" :style="{ background: store.gradientStyle }">
+                    <h2>{{ $t('home.readyToGrow') }}</h2>
+                    <p>{{ $t('home.readyToGrowDesc') }}</p>
+                    <v-btn size="large" color="white" href="/register" prepend-icon="mdi-rocket-launch">{{ $t('home.getStartedNow') }}</v-btn>
+                </div>
             </v-container>
         </section>
     </div>
@@ -190,43 +155,32 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useAppStore } from '../stores/app'
-import ServiceCard from '../components/ServiceCard.vue'
 
 const store = useAppStore()
-const showPassword = ref(false)
+const showPw = ref(false)
 const loginLoading = ref(false)
 const loginForm = ref({ email: '', password: '' })
 
 const handleLogin = () => {
     loginLoading.value = true
-    const form = document.createElement('form')
-    form.method = 'POST'
-    form.action = '/login'
-    const csrf = document.createElement('input')
-    csrf.type = 'hidden'; csrf.name = '_token'; csrf.value = document.querySelector('meta[name="csrf-token"]').content
-    form.appendChild(csrf)
-    const email = document.createElement('input')
-    email.type = 'hidden'; email.name = 'email'; email.value = loginForm.value.email
-    form.appendChild(email)
-    const pw = document.createElement('input')
-    pw.type = 'hidden'; pw.name = 'password'; pw.value = loginForm.value.password
-    form.appendChild(pw)
-    document.body.appendChild(form)
-    form.submit()
+    const f = document.createElement('form'); f.method = 'POST'; f.action = '/login'
+    const c = document.createElement('input'); c.type = 'hidden'; c.name = '_token'; c.value = document.querySelector('meta[name="csrf-token"]').content; f.appendChild(c)
+    const e = document.createElement('input'); e.type = 'hidden'; e.name = 'email'; e.value = loginForm.value.email; f.appendChild(e)
+    const p = document.createElement('input'); p.type = 'hidden'; p.name = 'password'; p.value = loginForm.value.password; f.appendChild(p)
+    document.body.appendChild(f); f.submit()
 }
 
 const featuredServices = computed(() => store.services.slice(0, 6))
-const formatNumber = (num) => new Intl.NumberFormat().format(num)
+const fmtNum = (n) => new Intl.NumberFormat().format(n)
+const formatPrice = (r) => { const n = Number(r); if (n < 0.001) return n.toFixed(7); if (n < 0.01) return n.toFixed(5); if (n < 1) return n.toFixed(4); return n.toFixed(2) }
 
-const heroFeatures = ['home.instantDelivery', 'home.support247', 'home.bestPrices']
-
+const heroFeats = ['home.instantDelivery', 'home.support247', 'home.bestPrices']
 const homeStats = [
-    { value: '10K+', labelKey: 'home.activeUsers' },
-    { value: '500+', labelKey: 'home.servicesCount' },
-    { value: '1M+', labelKey: 'home.ordersCompleted' },
-    { value: '24/7', labelKey: 'home.support' },
+    { value: '10K+', label: 'home.activeUsers' },
+    { value: '500+', label: 'home.servicesCount' },
+    { value: '1M+', label: 'home.ordersCompleted' },
+    { value: '24/7', label: 'home.support' },
 ]
-
 const platforms = [
     { key: 'instagram', name: 'Instagram', icon: 'mdi-instagram', color: '#E4405F' },
     { key: 'tiktok', name: 'TikTok', icon: 'mdi-music-note', color: '#ff0050' },
@@ -235,17 +189,15 @@ const platforms = [
     { key: 'twitter', name: 'Twitter', icon: 'mdi-twitter', color: '#1DA1F2' },
     { key: 'telegram', name: 'Telegram', icon: 'mdi-telegram', color: '#0088cc' },
 ]
-
 const steps = [
-    { titleKey: 'howItWorks.step1Title', descKey: 'howItWorks.step1Desc' },
-    { titleKey: 'howItWorks.step2Title', descKey: 'howItWorks.step2Desc' },
-    { titleKey: 'home.getResultsTitle', descKey: 'home.getResultsDesc' },
+    { t: 'howItWorks.step1Title', d: 'howItWorks.step1Desc' },
+    { t: 'howItWorks.step2Title', d: 'howItWorks.step2Desc' },
+    { t: 'home.getResultsTitle', d: 'home.getResultsDesc' },
 ]
-
 const faqs = [
-    { questionKey: 'home.faq1Question', answerKey: 'home.faq1Answer' },
-    { questionKey: 'home.faq2Question', answerKey: 'home.faq2Answer' },
-    { questionKey: 'home.faq3Question', answerKey: 'home.faq3Answer' },
-    { questionKey: 'home.faq4Question', answerKey: 'home.faq4Answer' },
+    { q: 'home.faq1Question', a: 'home.faq1Answer' },
+    { q: 'home.faq2Question', a: 'home.faq2Answer' },
+    { q: 'home.faq3Question', a: 'home.faq3Answer' },
+    { q: 'home.faq4Question', a: 'home.faq4Answer' },
 ]
 </script>

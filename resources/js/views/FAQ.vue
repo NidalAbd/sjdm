@@ -1,15 +1,16 @@
 <template>
     <div>
         <!-- Hero -->
-        <section class="section-padding" :style="{ background: heroBg }">
+        <section class="hero">
             <v-container>
-                <h1 class="text-h4 font-weight-bold mb-2">{{ $t('faq.title') }}</h1>
-                <p class="text-body-2 text-medium-emphasis">{{ $t('faq.subtitle') }}</p>
+                <div class="hero-badge"><v-icon size="14">mdi-help-circle-outline</v-icon> FAQ</div>
+                <h1 class="heading-xl hero-title">{{ $t('faq.title') }}</h1>
+                <p class="hero-desc">{{ $t('faq.subtitle') }}</p>
             </v-container>
         </section>
 
         <!-- FAQ Accordion -->
-        <section class="section-padding">
+        <section class="section">
             <v-container>
                 <v-row justify="center">
                     <v-col cols="12" lg="8">
@@ -18,22 +19,27 @@
                                 <v-expansion-panel-title>
                                     <div class="d-flex align-center">
                                         <v-avatar color="primary" variant="tonal" size="28" class="mr-3 flex-shrink-0">
-                                            <span class="text-caption font-weight-bold">{{ i + 1 }}</span>
+                                            <span style="font-size: 0.75rem; font-weight: 700;">{{ i + 1 }}</span>
                                         </v-avatar>
-                                        <span class="text-body-1 font-weight-bold">{{ $t(faq.questionKey) }}</span>
+                                        <span style="font-weight: 700;">{{ $t(faq.questionKey) }}</span>
                                     </div>
                                 </v-expansion-panel-title>
                                 <v-expansion-panel-text>
-                                    <p class="text-body-2 text-medium-emphasis">{{ $t(faq.answerKey) }}</p>
+                                    <p class="text-muted">{{ $t(faq.answerKey) }}</p>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
                         </v-expansion-panels>
                     </v-col>
                 </v-row>
+            </v-container>
+        </section>
 
-                <div class="text-center mt-8">
-                    <p class="text-body-2 text-medium-emphasis mb-3">{{ $t('faq.stillHaveQuestions') }}</p>
-                    <v-btn color="primary" size="default" to="/contact-us">
+        <!-- Support CTA -->
+        <section class="section section-alt">
+            <v-container>
+                <div class="cta-card" :style="{ background: store.gradientStyle }" style="text-align: center;">
+                    <h2 class="heading-lg" style="color: #fff; margin-bottom: 12px;">{{ $t('faq.stillHaveQuestions') }}</h2>
+                    <v-btn color="white" size="large" to="/contact-us">
                         <v-icon start>mdi-message-question</v-icon>
                         {{ $t('faq.contactSupport') }}
                     </v-btn>
@@ -57,13 +63,6 @@ const seoConfig = computed(() => {
     return config
 })
 useSeo(seoConfig.value)
-
-const heroBg = computed(() => {
-    const c = store.currentThemeColor
-    const p = store.isDark ? c.primaryDark : c.primary
-    const r = parseInt(p.slice(1,3),16), g = parseInt(p.slice(3,5),16), b = parseInt(p.slice(5,7),16)
-    return `linear-gradient(135deg, rgba(${r},${g},${b}, 0.06) 0%, transparent 60%)`
-})
 
 const faqs = ref([
     { questionKey: 'faq.q1', answerKey: 'faq.a1' },

@@ -1,55 +1,52 @@
 <template>
     <div>
         <!-- Hero -->
-        <section class="section-padding" :style="{ background: heroBg }">
+        <section class="hero">
             <v-container>
-                <h1 class="text-h4 font-weight-bold mb-2">{{ $t('howItWorks.title') }}</h1>
-                <p class="text-body-2 text-medium-emphasis">{{ $t('howItWorks.subtitle') }}</p>
+                <div class="hero-badge"><v-icon size="14">mdi-information-outline</v-icon> {{ $t('howItWorks.title') }}</div>
+                <h1 class="heading-xl hero-title">{{ $t('howItWorks.title') }}</h1>
+                <p class="hero-desc">{{ $t('howItWorks.subtitle') }}</p>
             </v-container>
         </section>
 
         <!-- Steps -->
-        <section class="section-padding">
+        <section class="section">
             <v-container>
-                <v-row>
-                    <v-col v-for="(step, i) in steps" :key="i" cols="12" md="4">
-                        <v-card class="pa-6 text-center h-100 hover-lift" variant="outlined">
-                            <v-avatar color="primary" variant="tonal" size="48" class="mb-4">
-                                <span class="text-h6 font-weight-bold">{{ i + 1 }}</span>
-                            </v-avatar>
-                            <v-icon :color="step.color" size="36" class="d-block mb-3">{{ step.icon }}</v-icon>
-                            <h3 class="text-subtitle-1 font-weight-bold mb-2">{{ $t(step.titleKey) }}</h3>
-                            <p class="text-body-2 text-medium-emphasis">{{ $t(step.descKey) }}</p>
-                        </v-card>
-                    </v-col>
-                </v-row>
+                <div class="steps-grid">
+                    <div v-for="(step, i) in steps" :key="i" class="step-card">
+                        <div class="step-num">{{ i + 1 }}</div>
+                        <v-icon :color="step.color" size="36" style="margin-bottom: 12px;">{{ step.icon }}</v-icon>
+                        <h3 class="step-title">{{ $t(step.titleKey) }}</h3>
+                        <p class="step-desc">{{ $t(step.descKey) }}</p>
+                    </div>
+                </div>
             </v-container>
         </section>
 
         <!-- Features -->
-        <section class="section-padding bg-surface-variant">
+        <section class="section section-alt">
             <v-container>
-                <div class="text-center mb-8">
-                    <h2 class="text-h5 font-weight-bold">{{ $t('howItWorks.whyChooseUs') }}</h2>
+                <div class="section-header">
+                    <h2 class="heading-lg">{{ $t('howItWorks.whyChooseUs') }}</h2>
                 </div>
                 <v-row>
                     <v-col v-for="feature in features" :key="feature.titleKey" cols="12" sm="6" lg="3">
-                        <v-card class="pa-5 text-center h-100 hover-lift" variant="outlined">
-                            <v-icon :color="feature.color" size="32" class="mb-3">{{ feature.icon }}</v-icon>
-                            <h4 class="text-subtitle-2 font-weight-bold mb-1">{{ $t(feature.titleKey) }}</h4>
-                            <p class="text-body-2 text-medium-emphasis">{{ $t(feature.descKey) }}</p>
-                        </v-card>
+                        <div class="card" style="padding: 28px; text-align: center; height: 100%;">
+                            <v-icon :color="feature.color" size="32" style="margin-bottom: 12px;">{{ feature.icon }}</v-icon>
+                            <h4 class="heading-md" style="margin-bottom: 6px;">{{ $t(feature.titleKey) }}</h4>
+                            <p class="text-muted">{{ $t(feature.descKey) }}</p>
+                        </div>
                     </v-col>
                 </v-row>
             </v-container>
         </section>
 
         <!-- CTA -->
-        <section class="section-padding">
+        <section class="section">
             <v-container>
-                <v-card class="pa-8 text-center" :style="{ background: store.gradientStyle }">
-                    <h2 class="text-h5 font-weight-bold text-white mb-3">{{ $t('howItWorks.readyToStart') }}</h2>
-                    <p class="text-body-2 text-white mb-6" style="opacity: 0.9;">{{ $t('howItWorks.createFreeAccount') }}</p>
+                <div class="cta-card" :style="{ background: store.gradientStyle }" style="text-align: center;">
+                    <h2 class="heading-lg" style="color: #fff; margin-bottom: 12px;">{{ $t('howItWorks.readyToStart') }}</h2>
+                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 24px;">{{ $t('howItWorks.createFreeAccount') }}</p>
                     <div class="d-flex justify-center ga-3 flex-wrap">
                         <v-btn size="large" color="white" href="/register">
                             <v-icon start>mdi-account-plus</v-icon>
@@ -59,7 +56,7 @@
                             {{ $t('howItWorks.browseServices') }}
                         </v-btn>
                     </div>
-                </v-card>
+                </div>
             </v-container>
         </section>
     </div>
@@ -79,13 +76,6 @@ const seoConfig = computed(() => {
     return config
 })
 useSeo(seoConfig.value)
-
-const heroBg = computed(() => {
-    const c = store.currentThemeColor
-    const p = store.isDark ? c.primaryDark : c.primary
-    const r = parseInt(p.slice(1,3),16), g = parseInt(p.slice(3,5),16), b = parseInt(p.slice(5,7),16)
-    return `linear-gradient(135deg, rgba(${r},${g},${b}, 0.06) 0%, transparent 60%)`
-})
 
 const steps = ref([
     {
