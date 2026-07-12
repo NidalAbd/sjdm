@@ -2,9 +2,10 @@
     <div>
         <!-- Hero -->
         <section class="hero hero-bold">
+            <div class="hero-blob" aria-hidden="true"></div>
             <div class="hero-decor" aria-hidden="true">
                 <span v-for="(p, i) in platforms" :key="p.key" class="hero-decor-icon" :style="decorStyle(i)">
-                    <v-icon :color="p.color" size="24">{{ p.icon }}</v-icon>
+                    <v-icon :color="p.color" :size="decorIconSize(i)">{{ p.icon }}</v-icon>
                 </span>
             </div>
             <v-container>
@@ -19,6 +20,11 @@
                             <span class="text-gradient">{{ $t('home.heroTitleHighlight') }}</span>
                         </h1>
                         <p class="hero-desc">{{ $t('home.heroDescription') }}</p>
+                        <div class="hero-trust-row">
+                            <span class="hero-trust-item"><v-icon size="16" color="primary">mdi-account-group</v-icon> <strong>10K+</strong> {{ $t('home.activeUsers') }}</span>
+                            <span class="hero-trust-divider"></span>
+                            <span class="hero-trust-item"><v-icon size="16" color="success">mdi-check-decagram</v-icon> <strong>1M+</strong> {{ $t('home.ordersCompleted') }}</span>
+                        </div>
                         <div class="features-row">
                             <span class="feature-chip" v-for="f in heroFeats" :key="f">
                                 <v-icon size="12">mdi-check-circle</v-icon>
@@ -198,17 +204,18 @@ const platforms = [
 // Kept within the clear strip above the headline/login-card content (top < 15%) so icons
 // never render behind the opaque login card.
 const decorPositions = [
-    { top: '2%', left: '8%', rotate: '-8deg' },
-    { top: '9%', left: '23%', rotate: '6deg' },
-    { top: '0%', left: '39%', rotate: '-5deg' },
-    { top: '11%', left: '54%', rotate: '9deg' },
-    { top: '3%', left: '70%', rotate: '-6deg' },
-    { top: '10%', left: '86%', rotate: '5deg' },
+    { top: '1%', left: '6%', rotate: '-8deg', size: 56 },
+    { top: '10%', left: '21%', rotate: '6deg', size: 44 },
+    { top: '-2%', left: '37%', rotate: '-5deg', size: 60 },
+    { top: '12%', left: '53%', rotate: '9deg', size: 48 },
+    { top: '2%', left: '69%', rotate: '-6deg', size: 64 },
+    { top: '11%', left: '85%', rotate: '5deg', size: 50 },
 ]
 const decorStyle = (i) => {
     const p = decorPositions[i % decorPositions.length]
-    return { top: p.top, left: p.left, transform: `rotate(${p.rotate})` }
+    return { top: p.top, left: p.left, transform: `rotate(${p.rotate})`, width: p.size + 'px', height: p.size + 'px' }
 }
+const decorIconSize = (i) => Math.round(decorPositions[i % decorPositions.length].size * 0.44)
 const steps = [
     { t: 'howItWorks.step1Title', d: 'howItWorks.step1Desc' },
     { t: 'howItWorks.step2Title', d: 'howItWorks.step2Desc' },
