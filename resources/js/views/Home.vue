@@ -1,12 +1,17 @@
 <template>
     <div>
         <!-- Hero -->
-        <section class="hero">
+        <section class="hero hero-bold">
+            <div class="hero-decor" aria-hidden="true">
+                <span v-for="(p, i) in platforms" :key="p.key" class="hero-decor-icon" :style="decorStyle(i)">
+                    <v-icon :color="p.color" size="24">{{ p.icon }}</v-icon>
+                </span>
+            </div>
             <v-container>
                 <v-row align="center">
                     <v-col cols="12" lg="7">
-                        <div class="hero-badge">
-                            <v-icon size="14">mdi-star</v-icon>
+                        <div class="hero-badge hero-badge-lg">
+                            <v-icon size="16">mdi-star</v-icon>
                             #1 SMM Panel
                         </div>
                         <h1 class="heading-xl hero-title">
@@ -27,7 +32,7 @@
                     </v-col>
 
                     <v-col cols="12" lg="5" class="d-none d-lg-block">
-                        <div class="card" style="padding:28px;">
+                        <div class="card hero-login-card" style="padding:28px;">
                             <div style="text-align:center;margin-bottom:20px;">
                                 <div style="width:52px;height:52px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;background:rgba(var(--v-theme-primary),0.1);margin-bottom:10px;">
                                     <v-icon size="24" color="primary">mdi-account</v-icon>
@@ -188,6 +193,20 @@ const platforms = [
     { key: 'twitter', name: 'Twitter', icon: 'mdi-twitter', color: '#1DA1F2' },
     { key: 'telegram', name: 'Telegram', icon: 'mdi-telegram', color: '#0088cc' },
 ]
+
+// Scattered positions for the hero's floating platform-icon decoration (desktop only, see .hero-decor CSS)
+const decorPositions = [
+    { top: '8%', left: '46%', rotate: '-8deg' },
+    { top: '2%', left: '62%', rotate: '6deg' },
+    { top: '20%', left: '73%', rotate: '-4deg' },
+    { top: '42%', left: '68%', rotate: '10deg' },
+    { top: '55%', left: '80%', rotate: '-6deg' },
+    { top: '68%', left: '58%', rotate: '5deg' },
+]
+const decorStyle = (i) => {
+    const p = decorPositions[i % decorPositions.length]
+    return { top: p.top, left: p.left, transform: `rotate(${p.rotate})` }
+}
 const steps = [
     { t: 'howItWorks.step1Title', d: 'howItWorks.step1Desc' },
     { t: 'howItWorks.step2Title', d: 'howItWorks.step2Desc' },
