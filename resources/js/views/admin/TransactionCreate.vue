@@ -83,7 +83,7 @@
                             >
                                 <v-radio :value="method.id" hide-details class="mr-3"></v-radio>
                                 <v-avatar size="40" class="mr-3" color="grey-darken-3">
-                                    <v-img v-if="method.logo" :src="`/storage/${method.logo}`" :alt="method.name"></v-img>
+                                    <v-img v-if="method.logo && !logoFailed[method.id]" :src="`/storage/${method.logo}`" :alt="method.name" @error="logoFailed[method.id] = true"></v-img>
                                     <v-icon v-else color="white">{{ methodIcon(method) }}</v-icon>
                                 </v-avatar>
                                 <div class="flex-grow-1">
@@ -186,6 +186,7 @@ const selectedMethod = ref(null)
 const processing = ref(false)
 const loadingMethods = ref(true)
 const paymentMethods = ref([])
+const logoFailed = ref({})
 
 const finalAmount = computed(() => selectedAmount.value || parseFloat(customAmount.value) || 0)
 
