@@ -37,7 +37,6 @@
         <!-- Topbar -->
         <v-app-bar flat density="comfortable" border>
             <v-app-bar-nav-icon @click="drawer = !drawer" v-if="!mdAndUp"></v-app-bar-nav-icon>
-            <v-toolbar-title class="text-body-1 font-weight-bold">{{ route.meta.breadcrumb || route.meta.title || 'Admin' }}</v-toolbar-title>
 
             <v-spacer></v-spacer>
 
@@ -104,11 +103,13 @@
         </v-app-bar>
 
         <v-main>
-            <router-view v-slot="{ Component }">
-                <transition name="fade" mode="out-in">
-                    <component :is="Component" />
-                </transition>
-            </router-view>
+            <div class="admin-content">
+                <router-view v-slot="{ Component }">
+                    <transition name="fade" mode="out-in">
+                        <component :is="Component" />
+                    </transition>
+                </router-view>
+            </div>
         </v-main>
 
         <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000" location="top right">
@@ -119,7 +120,6 @@
 
 <script setup>
 import { ref, computed, onMounted, provide } from 'vue'
-import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import axios from 'axios'
 import { useAppStore } from './stores/app'
@@ -128,7 +128,6 @@ import { loadLocaleMessages } from './plugins/i18n'
 import { updateThemeColors } from './plugins/vuetify'
 import { adminMenu } from './config/adminMenu'
 
-const route = useRoute()
 const store = useAppStore()
 const authStore = useAuthStore()
 const { mdAndUp } = useDisplay()
@@ -188,4 +187,6 @@ onMounted(async () => {
 <style scoped>
 .admin-brand { display: flex; align-items: center; gap: 8px; padding: 16px; font-weight: 800; font-size: 1rem; }
 .admin-brand img { border-radius: 6px; }
+.admin-content { padding: 24px 28px; }
+@media (max-width: 600px) { .admin-content { padding: 16px; } }
 </style>
