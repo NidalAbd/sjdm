@@ -424,4 +424,38 @@ class ServiceApiController extends Controller
             'deleted' => $deleted,
         ]);
     }
+
+    /**
+     * Wipe the entire services table and re-fetch fresh from the upstream API.
+     * Used when upstream pricing/availability may have drifted and a full resync is wanted.
+     */
+    public function wipeAndReimport(Request $request)
+    {
+        Log::info('API: Admin Services wipe & reimport requested', ['admin_id' => $request->user()?->id]);
+
+        $language = $request->input('language', 'en');
+
+        $api = new Api();
+        $servicesFromApi = $api->services();
+
+        if (!is_array($servicesFromApi) && !is_object($servicesFromApi)) {
+            return response()->json([
+                'message' => 'Failed to fetch services from API — aborted before wiping existing data.'
+            ], 500);
+        }
+
+        $wiped = Service::count();
+        Service::query()->delete();
+
+        $request->merge(['language' => $language]);
+        $response = $this->fetchFromApi($request);
+        $data = $response->getData(true);
+
+        return response()->json([
+            'message' => "Wiped {$wiped} services and re-imported " . ($data['created'] ?? 0) . " fresh from the API.",
+            'wiped' => $wiped,
+            'created' => $data['created'] ?? 0,
+            'updated' => $data['updated'] ?? 0,
+        ]);
+    }
 }

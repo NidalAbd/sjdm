@@ -1,12 +1,21 @@
 <template>
     <div>
-        <v-card class="mb-4">
-            <v-card-title class="d-flex align-center flex-wrap ga-2">
-                <v-icon class="mr-2">mdi-cog</v-icon>
-                <span>Manage Services</span>
-                <v-spacer></v-spacer>
-            </v-card-title>
-        </v-card>
+        <PageHeader title="Services" icon="mdi-cog" subtitle="Manage your service catalog">
+            <template #actions>
+                <v-btn v-if="authStore.isAdmin" variant="outlined" prepend-icon="mdi-cloud-download" to="/admin/services/fetch-en">
+                    Fetch EN
+                </v-btn>
+                <v-btn v-if="authStore.isAdmin" variant="outlined" prepend-icon="mdi-cloud-download" to="/admin/services/fetch-ar">
+                    Fetch AR
+                </v-btn>
+                <v-btn v-if="authStore.isAdmin" color="error" variant="tonal" prepend-icon="mdi-delete-sweep" @click="wipeDialog = true">
+                    Wipe &amp; Re-import
+                </v-btn>
+            </template>
+        </PageHeader>
+
+        <!-- Catalog Stats -->
+        <StatsRow v-if="catalogStats" :stats="catalogStatItems" class="mb-4" />
 
         <!-- Admin Bulk Rate Management -->
         <v-card v-if="authStore.isAdmin" class="mb-4 bulk-rate-card">
@@ -480,17 +489,50 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <!-- Wipe & Re-import Confirmation -->
+        <v-dialog v-model="wipeDialog" max-width="480" persistent>
+            <v-card>
+                <v-card-title class="bg-error text-white d-flex align-center">
+                    <v-icon class="mr-2">mdi-alert</v-icon>
+                    Wipe &amp; Re-import Services
+                </v-card-title>
+                <v-card-text class="pa-4">
+                    <p class="mb-3">
+                        This will <strong>permanently delete all {{ catalogStats?.total ?? '' }} services</strong> currently
+                        in your database, then re-fetch a fresh catalog from the API. Any manual rate overrides you've
+                        made will be lost and replaced with freshly-computed rates.
+                    </p>
+                    <v-select
+                        v-model="wipeLanguage"
+                        :items="[{ title: 'English', value: 'en' }, { title: 'Arabic', value: 'ar' }]"
+                        label="Language to re-import"
+                        variant="outlined"
+                        density="compact"
+                        hide-details
+                    ></v-select>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn variant="text" :disabled="wiping" @click="wipeDialog = false">Cancel</v-btn>
+                    <v-btn color="error" :loading="wiping" @click="wipeAndReimport">Wipe &amp; Re-import</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import { useAppStore } from '../../stores/app'
+import PageHeader from '../../components/PageHeader.vue'
+import StatsRow from '../../components/StatsRow.vue'
 import axios from 'axios'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
+const showSnackbar = inject('showSnackbar')
 
 const locale = computed(() => appStore.locale)
 
@@ -539,6 +581,23 @@ const updatingRates = ref(false)
 const previewing = ref(false)
 const loadingStats = ref(false)
 const stats = ref(null)
+
+// Catalog-wide stats shown at the top of the page
+const catalogStats = ref(null)
+const catalogStatItems = computed(() => {
+    if (!catalogStats.value) return []
+    return [
+        { value: String(catalogStats.value.total || 0), label: 'Total Services', icon: 'mdi-cog', color: 'primary' },
+        { value: String(catalogStats.value.active || 0), label: 'Active', icon: 'mdi-check-circle', color: 'success' },
+        { value: String(catalogStats.value.categories || 0), label: 'Categories', icon: 'mdi-shape', color: 'info' },
+        { value: String(catalogStats.value.platforms || 0), label: 'Platforms', icon: 'mdi-apps', color: 'warning' },
+    ]
+})
+
+// Wipe & re-import
+const wipeDialog = ref(false)
+const wiping = ref(false)
+const wipeLanguage = ref('en')
 
 // Dialogs
 const serviceDialog = ref(false)
@@ -634,6 +693,14 @@ const fetchServices = async () => {
                 { title: 'All Categories', value: null },
                 ...response.data.categories.map(c => ({ title: c, value: c }))
             ]
+        }
+        if (response.data.stats) {
+            catalogStats.value = {
+                total: response.data.stats.total,
+                active: response.data.stats.active,
+                categories: response.data.stats.categories,
+                platforms: (response.data.platforms || []).length,
+            }
         }
     } catch (error) {
         console.error('Error fetching services:', error)
@@ -773,6 +840,24 @@ const confirmDigitRates = async () => {
         console.error('Error updating digit rates:', error)
     } finally {
         updatingRates.value = false
+    }
+}
+
+const wipeAndReimport = async () => {
+    wiping.value = true
+    try {
+        const response = await axios.post('/api/admin/services/wipe-and-reimport', {
+            language: wipeLanguage.value,
+        })
+        showSnackbar?.(response.data.message || 'Services re-imported', 'success')
+        wipeDialog.value = false
+        page.value = 1
+        await fetchServices()
+    } catch (error) {
+        console.error('Error wiping/re-importing services:', error)
+        showSnackbar?.(error.response?.data?.message || 'Failed to wipe & re-import services', 'error')
+    } finally {
+        wiping.value = false
     }
 }
 

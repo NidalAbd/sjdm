@@ -193,6 +193,7 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::post('/services/{service}/duplicate', [App\Http\Controllers\Api\Admin\ServiceApiController::class, 'duplicate']);
         Route::post('/services/update-all-rates', [App\Http\Controllers\Api\Admin\ServiceApiController::class, 'updateAllRates']);
         Route::post('/services/fetch', [App\Http\Controllers\Api\Admin\ServiceApiController::class, 'fetchFromApi']);
+        Route::post('/services/wipe-and-reimport', [App\Http\Controllers\Api\Admin\ServiceApiController::class, 'wipeAndReimport']);
         Route::post('/services/bulk-toggle', [App\Http\Controllers\Api\Admin\ServiceApiController::class, 'bulkToggle']);
         Route::post('/services/bulk-delete', [App\Http\Controllers\Api\Admin\ServiceApiController::class, 'bulkDelete']);
 
