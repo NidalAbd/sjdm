@@ -194,14 +194,16 @@ const platforms = [
     { key: 'telegram', name: 'Telegram', icon: 'mdi-telegram', color: '#0088cc' },
 ]
 
-// Scattered positions for the hero's floating platform-icon decoration (desktop only, see .hero-decor CSS)
+// Scattered positions for the hero's floating platform-icon decoration (desktop only, see .hero-decor CSS).
+// Kept within the clear strip above the headline/login-card content (top < 15%) so icons
+// never render behind the opaque login card.
 const decorPositions = [
-    { top: '8%', left: '46%', rotate: '-8deg' },
-    { top: '2%', left: '62%', rotate: '6deg' },
-    { top: '20%', left: '73%', rotate: '-4deg' },
-    { top: '42%', left: '68%', rotate: '10deg' },
-    { top: '55%', left: '80%', rotate: '-6deg' },
-    { top: '68%', left: '58%', rotate: '5deg' },
+    { top: '2%', left: '8%', rotate: '-8deg' },
+    { top: '9%', left: '23%', rotate: '6deg' },
+    { top: '0%', left: '39%', rotate: '-5deg' },
+    { top: '11%', left: '54%', rotate: '9deg' },
+    { top: '3%', left: '70%', rotate: '-6deg' },
+    { top: '10%', left: '86%', rotate: '5deg' },
 ]
 const decorStyle = (i) => {
     const p = decorPositions[i % decorPositions.length]
