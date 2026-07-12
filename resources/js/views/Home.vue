@@ -142,11 +142,9 @@
         <!-- CTA -->
         <section class="section">
             <v-container>
-                <div class="cta-card" :style="{ background: store.gradientStyle }">
-                    <h2>{{ $t('home.readyToGrow') }}</h2>
-                    <p>{{ $t('home.readyToGrowDesc') }}</p>
+                <CtaCard :title="$t('home.readyToGrow')" :description="$t('home.readyToGrowDesc')">
                     <v-btn size="large" color="white" href="/register" prepend-icon="mdi-rocket-launch">{{ $t('home.getStartedNow') }}</v-btn>
-                </div>
+                </CtaCard>
             </v-container>
         </section>
     </div>
@@ -155,6 +153,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useAppStore } from '../stores/app'
+import CtaCard from '../components/public/CtaCard.vue'
 
 const store = useAppStore()
 const showPw = ref(false)

@@ -1,13 +1,6 @@
 <template>
     <div>
-        <!-- Hero -->
-        <section class="hero">
-            <v-container>
-                <div class="hero-badge"><v-icon size="14">mdi-shield-lock-outline</v-icon> {{ $t('privacyPage.title') }}</div>
-                <h1 class="heading-xl hero-title">{{ $t('privacyPage.title') }}</h1>
-                <p class="hero-desc">{{ $t('privacyPage.lastUpdated') }}: {{ new Date().toLocaleDateString() }}</p>
-            </v-container>
-        </section>
+        <PageHero icon="mdi-shield-lock-outline" :badge="$t('privacyPage.title')" :title="$t('privacyPage.title')" :subtitle="`${$t('privacyPage.lastUpdated')}: ${new Date().toLocaleDateString()}`" />
 
         <!-- Policy Content -->
         <section class="section">
@@ -33,6 +26,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/app'
 import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
+import PageHero from '../components/public/PageHero.vue'
 
 const { locale } = useI18n()
 const store = useAppStore()

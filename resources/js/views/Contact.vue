@@ -1,13 +1,6 @@
 <template>
     <div>
-        <!-- Hero -->
-        <section class="hero">
-            <v-container>
-                <div class="hero-badge"><v-icon size="14">mdi-email-outline</v-icon> {{ $t('contact.title') }}</div>
-                <h1 class="heading-xl hero-title">{{ $t('contact.title') }}</h1>
-                <p class="hero-desc">{{ $t('contact.getInTouchDesc') }}</p>
-            </v-container>
-        </section>
+        <PageHero icon="mdi-email-outline" :badge="$t('contact.title')" :title="$t('contact.title')" :subtitle="$t('contact.getInTouchDesc')" />
 
         <!-- Contact Info + Form -->
         <section class="section">
@@ -93,6 +86,7 @@ import { ref, reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/app'
 import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
+import PageHero from '../components/public/PageHero.vue'
 
 const { t, locale } = useI18n()
 const store = useAppStore()

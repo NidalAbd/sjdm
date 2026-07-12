@@ -1,43 +1,20 @@
-@extends('adminlte::page')
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="robots" content="noindex, nofollow">
 
-@section('title', 'SJDM Panel')
+    <title>Admin - SJDM</title>
 
-@section('content')
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo.png') }}">
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/admin.js'])
+</head>
+<body>
     <div id="admin-app"></div>
-@stop
-
-@push('css')
-    @vite(['resources/css/admin.css'])
-@endpush
-
-@push('js')
-    @vite(['resources/js/admin.js'])
-    <script>
-        // Dark mode toggle for AdminLTE
-        document.addEventListener('DOMContentLoaded', function() {
-            var toggle = document.getElementById('dark-mode-toggle');
-            if (toggle) {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.body.classList.toggle('dark-mode');
-                    var icon = this.querySelector('i');
-                    if (document.body.classList.contains('dark-mode')) {
-                        icon.classList.remove('fa-moon');
-                        icon.classList.add('fa-sun');
-                        localStorage.setItem('adminlte-dark', '1');
-                    } else {
-                        icon.classList.remove('fa-sun');
-                        icon.classList.add('fa-moon');
-                        localStorage.setItem('adminlte-dark', '0');
-                    }
-                });
-            }
-            // Restore dark mode from localStorage
-            if (localStorage.getItem('adminlte-dark') === '1') {
-                document.body.classList.add('dark-mode');
-                var icon = document.querySelector('#dark-mode-toggle i');
-                if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
-            }
-        });
-    </script>
-@endpush
+</body>
+</html>

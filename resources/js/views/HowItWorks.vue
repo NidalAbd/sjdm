@@ -1,13 +1,6 @@
 <template>
     <div>
-        <!-- Hero -->
-        <section class="hero">
-            <v-container>
-                <div class="hero-badge"><v-icon size="14">mdi-information-outline</v-icon> {{ $t('howItWorks.title') }}</div>
-                <h1 class="heading-xl hero-title">{{ $t('howItWorks.title') }}</h1>
-                <p class="hero-desc">{{ $t('howItWorks.subtitle') }}</p>
-            </v-container>
-        </section>
+        <PageHero icon="mdi-information-outline" :badge="$t('howItWorks.title')" :title="$t('howItWorks.title')" :subtitle="$t('howItWorks.subtitle')" />
 
         <!-- Steps -->
         <section class="section">
@@ -44,19 +37,15 @@
         <!-- CTA -->
         <section class="section">
             <v-container>
-                <div class="cta-card" :style="{ background: store.gradientStyle }" style="text-align: center;">
-                    <h2 class="heading-lg" style="color: #fff; margin-bottom: 12px;">{{ $t('howItWorks.readyToStart') }}</h2>
-                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 24px;">{{ $t('howItWorks.createFreeAccount') }}</p>
-                    <div class="d-flex justify-center ga-3 flex-wrap">
-                        <v-btn size="large" color="white" href="/register">
-                            <v-icon start>mdi-account-plus</v-icon>
-                            {{ $t('howItWorks.signUpFree') }}
-                        </v-btn>
-                        <v-btn size="large" variant="outlined" color="white" to="/all-services">
-                            {{ $t('howItWorks.browseServices') }}
-                        </v-btn>
-                    </div>
-                </div>
+                <CtaCard :title="$t('howItWorks.readyToStart')" :description="$t('howItWorks.createFreeAccount')">
+                    <v-btn size="large" color="white" href="/register">
+                        <v-icon start>mdi-account-plus</v-icon>
+                        {{ $t('howItWorks.signUpFree') }}
+                    </v-btn>
+                    <v-btn size="large" variant="outlined" color="white" to="/all-services">
+                        {{ $t('howItWorks.browseServices') }}
+                    </v-btn>
+                </CtaCard>
             </v-container>
         </section>
     </div>
@@ -67,6 +56,8 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/app'
 import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
+import PageHero from '../components/public/PageHero.vue'
+import CtaCard from '../components/public/CtaCard.vue'
 
 const { locale } = useI18n()
 const store = useAppStore()

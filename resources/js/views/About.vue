@@ -1,13 +1,6 @@
 <template>
     <div>
-        <!-- Hero -->
-        <section class="hero">
-            <v-container>
-                <div class="hero-badge"><v-icon size="14">mdi-domain</v-icon> {{ $t('about.whoWeAre') }}</div>
-                <h1 class="heading-xl hero-title">{{ $t('about.whoWeAre') }}</h1>
-                <p class="hero-desc">{{ $t('about.whoWeAreDesc') }}</p>
-            </v-container>
-        </section>
+        <PageHero icon="mdi-domain" :badge="$t('about.whoWeAre')" :title="$t('about.whoWeAre')" :subtitle="$t('about.whoWeAreDesc')" />
 
         <!-- Our Story -->
         <section class="section">
@@ -59,11 +52,9 @@
         <!-- CTA -->
         <section class="section">
             <v-container>
-                <div class="cta-card" :style="{ background: store.gradientStyle }" style="text-align: center;">
-                    <h2 class="heading-lg" style="color: #fff; margin-bottom: 12px;">{{ $t('home.readyToGrow') }}</h2>
-                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 24px;">{{ $t('about.joinCustomers') }}</p>
+                <CtaCard :title="$t('home.readyToGrow')" :description="$t('about.joinCustomers')">
                     <v-btn size="large" color="white" href="/register">{{ $t('home.getStarted') }}</v-btn>
-                </div>
+                </CtaCard>
             </v-container>
         </section>
     </div>
@@ -74,6 +65,8 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/app'
 import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
+import PageHero from '../components/public/PageHero.vue'
+import CtaCard from '../components/public/CtaCard.vue'
 
 const { locale } = useI18n()
 const store = useAppStore()

@@ -1,13 +1,6 @@
 <template>
     <div>
-        <!-- Hero -->
-        <section class="hero">
-            <v-container>
-                <div class="hero-badge"><v-icon size="14">mdi-help-circle-outline</v-icon> FAQ</div>
-                <h1 class="heading-xl hero-title">{{ $t('faq.title') }}</h1>
-                <p class="hero-desc">{{ $t('faq.subtitle') }}</p>
-            </v-container>
-        </section>
+        <PageHero icon="mdi-help-circle-outline" badge="FAQ" :title="$t('faq.title')" :subtitle="$t('faq.subtitle')" />
 
         <!-- FAQ Accordion -->
         <section class="section">
@@ -37,13 +30,12 @@
         <!-- Support CTA -->
         <section class="section section-alt">
             <v-container>
-                <div class="cta-card" :style="{ background: store.gradientStyle }" style="text-align: center;">
-                    <h2 class="heading-lg" style="color: #fff; margin-bottom: 12px;">{{ $t('faq.stillHaveQuestions') }}</h2>
+                <CtaCard :title="$t('faq.stillHaveQuestions')">
                     <v-btn color="white" size="large" to="/contact-us">
                         <v-icon start>mdi-message-question</v-icon>
                         {{ $t('faq.contactSupport') }}
                     </v-btn>
-                </div>
+                </CtaCard>
             </v-container>
         </section>
     </div>
@@ -54,6 +46,8 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from '../stores/app'
 import { useSeo, seoConfigs, seoConfigsAr } from '../composables/useSeo'
+import PageHero from '../components/public/PageHero.vue'
+import CtaCard from '../components/public/CtaCard.vue'
 
 const { locale } = useI18n()
 const store = useAppStore()
