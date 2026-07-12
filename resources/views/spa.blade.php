@@ -5,7 +5,7 @@
         'keywords' => 'SMM panel, social media marketing, buy instagram followers, buy tiktok followers, buy youtube subscribers',
         'locale' => 'en',
         'supportedLangs' => ['en','zh','hi','es','fr','ar','pt','ru','ja','de','ko','tr','it','pl','nl','vi','th'],
-        'baseUrl' => config('app.url', 'https://smmjd.com'),
+        'baseUrl' => config('app.url', 'https://smm-followerss.com'),
         'page' => 'home',
     ];
     $locale = $seo['locale'] ?? app()->getLocale();
@@ -240,6 +240,15 @@
             }
         ]
     }
+    </script>
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWMQW2P5G8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-ZWMQW2P5G8');
     </script>
 
     <!-- Vite Assets -->
