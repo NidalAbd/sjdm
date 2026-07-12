@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Welcome -->
-        <div class="welcome-card mb-6" :style="{ background: store.gradientStyle }">
+        <div class="welcome-card mb-5" :style="{ background: store.gradientStyle }">
             <div class="welcome-content">
                 <div>
                     <div class="welcome-greeting">{{ $t('dashboard.welcome') }}, {{ authStore.userName }}</div>
@@ -14,33 +14,71 @@
             </div>
         </div>
 
+        <!-- Quick Actions (moved up top for fast access) -->
+        <div class="actions-grid mb-6">
+            <router-link v-for="action in quickActions" :key="action.key" :to="action.to" class="action-item">
+                <div class="action-icon" :style="{ background: `rgba(var(--v-theme-${action.color}), 0.1)` }">
+                    <v-icon :color="action.color" size="22">{{ action.icon }}</v-icon>
+                </div>
+                <span class="action-text">{{ $t(action.titleKey) }}</span>
+            </router-link>
+        </div>
+
         <!-- Balance Stats -->
         <StatsRow :stats="balanceStats" />
 
         <!-- Admin Section -->
         <template v-if="authStore.isAdmin">
-            <!-- Financial Overview -->
-            <PageHeader :title="$t('dashboard.financialOverview')" icon="mdi-chart-line" subtitle="" />
-            <div class="finance-grid mb-6">
-                <div v-for="period in timePeriods" :key="period.key" class="finance-card">
-                    <div class="finance-header">
-                        <span class="finance-badge" :style="{ background: `rgba(var(--v-theme-${period.color}), 0.1)`, color: `rgb(var(--v-theme-${period.color}))` }">
-                            {{ $t(period.labelKey) }}
-                        </span>
+            <div class="dash-columns">
+                <!-- Main column: financial overview -->
+                <div class="dash-main">
+                    <PageHeader :title="$t('dashboard.financialOverview')" icon="mdi-chart-line" subtitle="" />
+                    <div class="finance-hero mb-3">
+                        <div class="finance-hero-label">{{ $t('dashboard.lifetime') }}</div>
+                        <div class="finance-hero-row">
+                            <div>
+                                <div class="finance-hero-value">${{ formatNumber(adminStats.totals?.lifetime?.cost || 0) }}</div>
+                                <div class="finance-label">{{ $t('dashboard.totalCost') }}</div>
+                            </div>
+                            <div class="finance-hero-divider"></div>
+                            <div>
+                                <div class="finance-hero-value finance-hero-profit">${{ formatNumber(adminStats.totals?.lifetime?.profit || 0) }}</div>
+                                <div class="finance-label">{{ $t('dashboard.totalProfit') }}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="finance-cost">${{ formatNumber(adminStats.totals?.[period.key]?.cost || 0) }}</div>
-                    <div class="finance-label">{{ $t('dashboard.totalCost') }}</div>
-                    <div class="finance-divider"></div>
-                    <div class="finance-profit">${{ formatNumber(adminStats.totals?.[period.key]?.profit || 0) }}</div>
-                    <div class="finance-label">{{ $t('dashboard.totalProfit') }}</div>
+                    <div class="finance-grid mb-6">
+                        <div v-for="period in timePeriods.filter(p => p.key !== 'lifetime')" :key="period.key" class="finance-card">
+                            <div class="finance-header">
+                                <span class="finance-badge" :style="{ background: `rgba(var(--v-theme-${period.color}), 0.1)`, color: `rgb(var(--v-theme-${period.color}))` }">
+                                    {{ $t(period.labelKey) }}
+                                </span>
+                            </div>
+                            <div class="finance-cost">${{ formatNumber(adminStats.totals?.[period.key]?.cost || 0) }}</div>
+                            <div class="finance-label">{{ $t('dashboard.totalCost') }}</div>
+                            <div class="finance-divider"></div>
+                            <div class="finance-profit">${{ formatNumber(adminStats.totals?.[period.key]?.profit || 0) }}</div>
+                            <div class="finance-label">{{ $t('dashboard.totalProfit') }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar column: user & service metrics -->
+                <div class="dash-side">
+                    <PageHeader :title="$t('dashboard.userMetrics')" icon="mdi-account-group" />
+                    <div class="side-stats mb-6">
+                        <div v-for="s in [...adminUserStats, ...adminServiceStats]" :key="s.label" class="side-stat-item" @click="s.to && $router.push(s.to)">
+                            <div class="side-stat-icon" :style="{ background: `rgba(var(--v-theme-${s.color}), 0.1)` }">
+                                <v-icon :color="s.color" size="18">{{ s.icon }}</v-icon>
+                            </div>
+                            <div>
+                                <div class="side-stat-value">{{ s.value }}</div>
+                                <div class="side-stat-label">{{ s.label }}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- User & Transaction Metrics -->
-            <PageHeader :title="$t('dashboard.userMetrics')" icon="mdi-account-group" />
-            <StatsRow :stats="adminUserStats" />
-
-            <StatsRow :stats="adminServiceStats" />
         </template>
 
         <!-- Regular User Stats -->
@@ -60,17 +98,6 @@
                 </div>
             </div>
         </template>
-
-        <!-- Quick Actions -->
-        <PageHeader :title="$t('dashboard.quickActions')" icon="mdi-lightning-bolt" />
-        <div class="actions-grid">
-            <router-link v-for="action in quickActions" :key="action.key" :to="action.to" class="action-item">
-                <div class="action-icon" :style="{ background: `rgba(var(--v-theme-${action.color}), 0.1)` }">
-                    <v-icon :color="action.color" size="22">{{ action.icon }}</v-icon>
-                </div>
-                <span class="action-text">{{ $t(action.titleKey) }}</span>
-            </router-link>
-        </div>
     </div>
 </template>
 
@@ -158,7 +185,23 @@ onMounted(() => { fetchDashboardData() })
 .welcome-greeting { font-size: 1.3rem; font-weight: 700; color: white; }
 .welcome-sub { font-size: 0.82rem; color: rgba(255,255,255,0.7); margin-top: 4px; }
 
-.finance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+/* Two-column dashboard layout */
+.dash-columns { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+.dash-main, .dash-side { min-width: 0; }
+
+.finance-hero {
+    padding: 22px 24px; border-radius: 16px;
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    border-top: 3px solid rgb(var(--v-theme-error));
+}
+.finance-hero-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.5; margin-bottom: 10px; }
+.finance-hero-row { display: flex; align-items: center; gap: 24px; }
+.finance-hero-value { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; }
+.finance-hero-profit { color: rgb(var(--v-theme-success)); }
+.finance-hero-divider { width: 1px; height: 40px; background: rgba(var(--v-border-color), var(--v-border-opacity)); }
+
+.finance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 .finance-card {
     padding: 18px; border-radius: 14px;
     background: rgb(var(--v-theme-surface));
@@ -170,6 +213,18 @@ onMounted(() => { fetchDashboardData() })
 .finance-label { font-size: 0.68rem; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
 .finance-divider { height: 1px; background: rgba(var(--v-border-color), var(--v-border-opacity)); margin: 10px 0; }
 .finance-profit { font-size: 1.1rem; font-weight: 700; color: rgb(var(--v-theme-success)); }
+
+.side-stats { display: flex; flex-direction: column; gap: 10px; }
+.side-stat-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px;
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    cursor: pointer; transition: border-color 0.15s ease;
+}
+.side-stat-item:hover { border-color: rgba(var(--v-theme-primary), 0.3); }
+.side-stat-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.side-stat-value { font-size: 1.05rem; font-weight: 800; line-height: 1.2; }
+.side-stat-label { font-size: 0.7rem; opacity: 0.45; margin-top: 1px; }
 
 .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
 .status-item {
@@ -192,9 +247,14 @@ onMounted(() => { fetchDashboardData() })
 .action-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 .action-text { font-size: 0.75rem; font-weight: 600; text-align: center; }
 
+@media (max-width: 1100px) {
+    .dash-columns { grid-template-columns: 1fr; }
+}
 @media (max-width: 600px) {
     .finance-grid { grid-template-columns: repeat(2, 1fr); }
     .actions-grid { grid-template-columns: repeat(3, 1fr); }
     .welcome-greeting { font-size: 1.1rem; }
+    .finance-hero-row { gap: 14px; }
+    .finance-hero-value { font-size: 1.3rem; }
 }
 </style>
