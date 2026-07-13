@@ -39,6 +39,15 @@ class Kernel extends ConsoleKernel
         // Schedule the sitemap refresh command to run daily at midnight
         $schedule->command('sitemap:refresh')->dailyAt('00:00');
 
+        // Translate services in small resumable chunks — a single long-running background
+        // process gets killed by the host's process limits before finishing the full catalog,
+        // so this runs every few minutes and naturally skips services already translated,
+        // becoming a no-op once the whole catalog is done.
+        $schedule->command('services:translate --limit=100 --batch=40 --concurrency=10')
+            ->everyFiveMinutes()
+            ->withoutOverlapping(10)
+            ->runInBackground();
+
         // Schedule the ProcessPendingOrders job every minute
         $schedule->call(function () {
             ProcessPendingOrders::dispatch(new Api);

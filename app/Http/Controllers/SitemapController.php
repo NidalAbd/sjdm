@@ -3,13 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Models\Language;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class SitemapController extends Controller
 {
     protected $cacheDuration = 86400; // 1 day
-    protected $languages = ['en', 'ar'];
+    protected $languages;
+
+    public function __construct()
+    {
+        $this->languages = Cache::remember('sitemap_active_languages', $this->cacheDuration, function () {
+            $codes = Language::where('is_active', true)->pluck('code')->all();
+            return in_array('en', $codes) ? $codes : array_merge(['en'], $codes);
+        });
+    }
 
     /**
      * Generate the main sitemap index - UPDATED to exclude categories/platforms
