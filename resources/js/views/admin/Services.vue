@@ -452,7 +452,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="lang in store.languages" :key="lang.code">
+                                    <tr v-for="lang in appStore.languages" :key="lang.code">
                                         <td>{{ lang.native_name }} <span class="text-caption opacity-60">({{ lang.code }})</span></td>
                                         <td>{{ translatedField(lang.code, 'name') }}</td>
                                         <td>{{ translatedField(lang.code, 'category') }}</td>
@@ -772,8 +772,8 @@ const translatedField = (langCode, field) => {
 }
 
 const translationCompleteness = computed(() => {
-    const total = store.languages.length
-    const done = store.languages.filter(l => isNativelyTranslated(l.code)).length
+    const total = appStore.languages.length
+    const done = appStore.languages.filter(l => isNativelyTranslated(l.code)).length
     return { done, total, color: done === total ? 'success' : done > 2 ? 'warning' : 'grey' }
 })
 
