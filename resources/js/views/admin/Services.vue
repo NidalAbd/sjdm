@@ -430,6 +430,40 @@
                                 </div>
                             </v-card>
                         </v-col>
+
+                        <!-- Translations across all supported languages -->
+                        <v-col cols="12">
+                            <div class="d-flex align-center justify-space-between mb-2">
+                                <div class="text-subtitle-2 font-weight-bold">
+                                    <v-icon size="small" class="mr-1">mdi-translate</v-icon>
+                                    Translations
+                                </div>
+                                <v-chip size="small" :color="translationCompleteness.color">
+                                    {{ translationCompleteness.done }}/{{ translationCompleteness.total }} languages
+                                </v-chip>
+                            </div>
+                            <v-table density="compact">
+                                <thead>
+                                    <tr>
+                                        <th>Language</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="lang in store.languages" :key="lang.code">
+                                        <td>{{ lang.native_name }} <span class="text-caption opacity-60">({{ lang.code }})</span></td>
+                                        <td>{{ translatedField(lang.code, 'name') }}</td>
+                                        <td>{{ translatedField(lang.code, 'category') }}</td>
+                                        <td class="text-center">
+                                            <v-icon v-if="isNativelyTranslated(lang.code)" color="success" size="small">mdi-check-circle</v-icon>
+                                            <v-icon v-else color="grey" size="small" title="Falling back to English">mdi-minus-circle-outline</v-icon>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </v-table>
+                        </v-col>
                     </v-row>
                 </v-card-text>
                 <v-card-actions>
@@ -719,6 +753,29 @@ const viewService = (service) => {
     selectedService.value = service
     serviceDialog.value = true
 }
+
+// en/ar always exist as dedicated columns; every other language lives in the
+// `translations` JSON column and only appears once the translate job reaches it.
+const isNativelyTranslated = (langCode) => {
+    if (!selectedService.value) return false
+    if (langCode === 'en') return !!selectedService.value.name_en
+    if (langCode === 'ar') return !!selectedService.value.name_ar
+    return !!selectedService.value.translations?.name?.[langCode]
+}
+
+const translatedField = (langCode, field) => {
+    const svc = selectedService.value
+    if (!svc) return ''
+    if (langCode === 'en') return svc[`${field}_en`] || ''
+    if (langCode === 'ar') return svc[`${field}_ar`] || ''
+    return svc.translations?.[field]?.[langCode] || svc[`${field}_en`] || ''
+}
+
+const translationCompleteness = computed(() => {
+    const total = store.languages.length
+    const done = store.languages.filter(l => isNativelyTranslated(l.code)).length
+    return { done, total, color: done === total ? 'success' : done > 2 ? 'warning' : 'grey' }
+})
 
 const startEditRate = (service) => {
     editingRate.value = service.service_id
