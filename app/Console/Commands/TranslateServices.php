@@ -35,10 +35,16 @@ class TranslateServices extends Command
             return 1;
         }
 
+        $lastLang = end($this->langs);
         $query = Service::query();
         if (!$force) {
-            $query->where(function ($q) {
-                $q->whereNull('translations')->orWhere('translations', '');
+            // A service only counts as "fully done" once the last language in the
+            // sequence is present — translations is non-null the moment any single
+            // language (even just en/ar seeding) is written, so that alone can't be
+            // used as the "needs work" signal once a run has been interrupted partway.
+            $query->where(function ($q) use ($lastLang) {
+                $q->whereNull('translations')
+                    ->orWhereRaw("JSON_EXTRACT(translations, '$.name.\"{$lastLang}\"') IS NULL");
             });
         }
 
@@ -50,7 +56,7 @@ class TranslateServices extends Command
 
         $count = $limit > 0 ? min($limit, $total) : $total;
         $services = $query->orderBy('service_id')->limit($count)
-            ->get(['service_id', 'name_en', 'name_ar', 'category_en', 'category_ar']);
+            ->get(['service_id', 'name_en', 'name_ar', 'category_en', 'category_ar', 'translations']);
 
         // Seed every service with its en/ar translations up front so a partial run
         // (killed halfway) still leaves valid data instead of nulls.
@@ -64,16 +70,28 @@ class TranslateServices extends Command
             }
         }
 
-        $totalCalls = count($this->langs) * ceil($count / $batchSize);
-        $this->info("Translating {$count} services x " . count($this->langs) . " languages (batch: {$batchSize}, concurrency: {$concurrency}) — {$totalCalls} API calls total...");
+        // Per language, only the services still missing that specific language need a
+        // call — this is what actually makes an interrupted run resume correctly instead
+        // of re-translating languages a service already has.
+        $perLangPending = [];
+        $totalCalls = 0;
+        foreach ($this->langs as $lang) {
+            $pending = $services->filter(fn ($svc) => empty($svc->translations['name'][$lang] ?? null))->values();
+            $perLangPending[$lang] = $pending;
+            $totalCalls += (int) ceil($pending->count() / $batchSize);
+        }
+
+        $this->info("Translating {$count} services across " . count($this->langs) . " languages (batch: {$batchSize}, concurrency: {$concurrency}) — {$totalCalls} API calls needed...");
 
         $bar = $this->output->createProgressBar($totalCalls);
         $bar->start();
 
-        $itemBatches = $services->chunk($batchSize)->values();
         $failed = 0;
 
         foreach ($this->langs as $lang) {
+            $itemBatches = $perLangPending[$lang]->chunk($batchSize)->values();
+            if ($itemBatches->isEmpty()) continue;
+
             foreach ($itemBatches->chunk($concurrency) as $group) {
                 $responses = Http::pool(fn ($pool) => $group->map(
                     fn ($batch, $i) => $pool->as("b{$i}")
