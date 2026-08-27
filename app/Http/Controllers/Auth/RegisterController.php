@@ -11,7 +11,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
-use Faker\Factory as Faker;
 
 class RegisterController extends Controller
 {
@@ -32,7 +31,6 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
-        $this->faker = Faker::create();  // Initialize Faker
     }
 
     /**

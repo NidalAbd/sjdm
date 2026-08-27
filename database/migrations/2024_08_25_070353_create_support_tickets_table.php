@@ -34,7 +34,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('status_id')->references('id')->on('ticket_statuses')->onDelete('cascade');
+            // support_tickets_status_id_foreign is added in the ticket_statuses table
+            // migration, which must run first since it creates the referenced table.
         });
     }
 

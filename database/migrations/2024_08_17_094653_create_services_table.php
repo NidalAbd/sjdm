@@ -28,6 +28,13 @@ return new class extends Migration
             $table->boolean('cancel')->default(false);
             $table->timestamps();
         });
+
+        // Added here (instead of the orders migration) because this table
+        // must exist before the foreign key can reference it, and this
+        // migration runs after create_orders_table.
+        Schema::table('orders', function (Blueprint $table) {
+            $table->foreign('service_id')->references('service_id')->on('services')->onDelete('cascade');
+        });
     }
 
 
@@ -38,6 +45,9 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropForeign('orders_service_id_foreign');
+        });
         Schema::dropIfExists('services');
     }
 };

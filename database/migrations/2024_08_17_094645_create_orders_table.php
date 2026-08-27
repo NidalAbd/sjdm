@@ -26,7 +26,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('service_id')->references('service_id')->on('services')->onDelete('cascade');
+            // orders_service_id_foreign is added in the services table migration,
+            // which must run first since it creates the referenced table.
         });
     }
 

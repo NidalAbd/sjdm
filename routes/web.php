@@ -160,7 +160,9 @@ Route::get('/home', function () {
     return redirect('/admin/dashboard');
 })->name('dashboard')->middleware('auth');
 
-Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])->name('orders.updateStatuses');
+Route::get('/orders/updateStatuses', [OrderController::class, 'updateOrderStatuses'])
+    ->name('orders.updateStatuses')
+    ->middleware(['auth', 'check.banned']);
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 // =============================================
