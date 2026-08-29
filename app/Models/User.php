@@ -6,7 +6,6 @@ use App\Notifications\ProfileUpdatedNotification;
 use App\Notifications\TicketNotification;
 use App\Notifications\TransactionNotification;
 use App\Notifications\UserStatusChangedNotification;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,7 +18,7 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens,SoftDeletes, HasFactory, Notifiable, HasRoles;
 

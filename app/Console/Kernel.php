@@ -54,7 +54,6 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         // Other scheduled commands
-        $schedule->command('notify:unverified-users')->daily();
         $schedule->command('transaction:send-reminder')->daily();
 
         // SEO Data Sync Commands

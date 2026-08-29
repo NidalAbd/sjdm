@@ -55,7 +55,6 @@ class RouteSmokeTest extends TestCase
             'checkout.cancel' => ['checkout.cancel', ['transaction_id' => $dummyId]],
             'checkout.fail' => ['checkout.fail', ['transaction_id' => $dummyId]],
             'checkout.success' => ['checkout.success', ['transaction_id' => $dummyId]],
-            'verification.notice' => ['verification.notice', []],
             'notifications.index' => ['notifications.index', []],
             'notifications.latest' => ['notifications.latest', []],
             'notifications.loadMore' => ['notifications.loadMore', []],

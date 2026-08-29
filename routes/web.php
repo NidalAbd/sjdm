@@ -89,8 +89,8 @@ Route::get('robots.txt', [SitemapController::class, 'robots']);
 // AUTHENTICATION ROUTES
 // =============================================
 
-// Auth routes
-Auth::routes(['verify' => true]);
+// Auth routes (no email verification required)
+Auth::routes();
 
 // Apply redirect handling to auth routes
 Route::middleware(['handle.auth.redirects'])->group(function () {
