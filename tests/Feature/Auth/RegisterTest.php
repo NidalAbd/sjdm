@@ -3,7 +3,9 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use Illuminate\Contracts\Mail\Factory as MailFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use RuntimeException;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
@@ -45,6 +47,31 @@ class RegisterTest extends TestCase
         $response->assertRedirect('/register');
         $response->assertSessionHasErrors(['name', 'email', 'password']);
         $this->assertGuest();
+    }
+
+    public function test_registration_succeeds_even_if_verification_email_fails_to_send()
+    {
+        $this->app->bind(MailFactory::class, function () {
+            return new class implements MailFactory {
+                public function mailer($name = null)
+                {
+                    throw new RuntimeException('SMTP authentication failed');
+                }
+            };
+        });
+
+        $response = $this->post('/register', [
+            'name' => 'Test User',
+            'email' => 'mail-failure@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertRedirect('/home');
+        $this->assertDatabaseHas('users', [
+            'email' => 'mail-failure@example.com',
+        ]);
+        $this->assertAuthenticated();
     }
 
     public function test_registration_fails_when_email_already_taken()
